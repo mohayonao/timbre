@@ -78,21 +78,12 @@ var MozPlayer = function(sys) {
     };
 };
 
-var NopPlayer = function(sys) {
-    return {
-        on : function() {},
-        off: function() {}
-    };
-};
-
 if (typeof webkitAudioContext === "function") {
     timbre.env = "webkit";
     timbre._sys.bind(WebKitPlayer);
 } else if (typeof Audio === "function" && typeof (new Audio).mozSetup === "function") {
     timbre.env = "moz";
     timbre._sys.bind(MozPlayer);
-} else {
-    timbre._sys.bind(NopPlayer);
 }
 
 // __END__
