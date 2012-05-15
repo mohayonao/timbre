@@ -50,7 +50,8 @@ timbre.fn = (function(timbre) {
             instance = new BooleanWrapper([key]);
             break;
         case "function":
-            break; // TODO:
+            instance = new FunctionWrapper(args);
+            break;
         case "object":
             break; // TODO:
         }
@@ -212,6 +213,99 @@ var BooleanWrapper = (function() {
     return BooleanWrapper;
 }());
 timbre.fn.register("boolean", BooleanWrapper);
+
+var FunctionWrapper = (function() {
+    var FunctionWrapper = function() {
+        initialize.apply(this, arguments);
+    }, $this = FunctionWrapper.prototype;
+
+    var initialize = function(_args) {
+        var i, tmp;
+        
+        this._func = function(x) { return x; };
+        this._freq = 0;
+        
+        i = 0;
+        if (typeof _args[i] === "function") {
+            this._func = _args[i++];
+        }
+        if (typeof _args[i] === "object") {
+            this._freq = _args[i++];
+        } else {
+            this._freq = timbre(_args[i++]);
+        }
+        
+        this._phase = 0;
+        this._coeff = 1 / timbre.samplerate;
+        
+        tmp = this._func(0);
+        if (tmp instanceof Float32Array || tmp instanceof Array) {
+            this.seq = ary_seq;
+            this._array_saved = [];
+            this._array_index = 0;
+        } else if (typeof tmp === "number") {
+            this.seq = num_seq;
+        } else {
+            this._func = function(x) { return 0; };
+            this.seq = num_seq;
+        }
+    };
+
+    var num_ary = function(seq_id) {
+        var cell, func, tmp;
+        var freq, phase, coeff;
+        var i, imax, j, jmax;
+        
+        cell = this._cell;
+        if (seq_id !== this._seq_id) {
+            func = this._func;
+            freq  = this._freq.seq(seq_id);
+            phase = this._phase;
+            coeff  = this._coeff;
+            tmp = this._array_saved;
+            j   = this._array_index; jmax = tmp.length;
+            for (i = 0, imax = cell.length; i < imax; ++i, ++j) {
+                if (j >= jmax) {
+                    tmp = func(phase, freq[i] * coeff);
+                    j = 0; jmax = tmp.length;
+                }
+                cell[i] = tmp[j];
+                phase += freq[i] * coeff;
+                while (phase >= 1.0) phase -= 1.0;
+            }
+            this._array_saved = tmp;
+            this._array_index = j;
+            this._phase = phase;
+            this._seq_id = seq_id;
+        }
+        return cell;
+    };
+    
+    var num_seq = function(seq_id) {
+        var cell, func;
+        var freq, phase, coeff;
+        var i, imax;
+        
+        cell = this._cell;
+        if (seq_id !== this._seq_id) {
+            func = this._func;
+            freq  = this._freq.seq(seq_id);
+            phase = this._phase;
+            coeff  = this._coeff;
+            for (i = 0, imax = cell.length; i < imax; ++i) {
+                cell[i] = func(phase);
+                phase += freq[i] * coeff;
+                while (phase >= 1.0) phase -= 1.0;
+            }
+            this._phase = phase;
+            this._seq_id = seq_id;
+        }
+        return cell;
+    };
+    
+    return FunctionWrapper;
+}());
+timbre.fn.register("function", FunctionWrapper);
 
 var UndefinedWrapper = function() {};
 timbre.fn.register("undefined", UndefinedWrapper);
