@@ -3,18 +3,19 @@ path = require("path")
 exec = require("child_process").exec
 
 TIMBRE_SOURCES = [
-
+    "timbre"
 ]
 
 WINDOW_SOURCES = [
-
+    "window/exports"
 ]
 
 WORKER_SOURCES = [
+    "worker/exports"
 ]
 
 NODE_SOURCES = [
-
+    "node/exports"
 ]
 
 PRODUCT_NAME = "timbre"
