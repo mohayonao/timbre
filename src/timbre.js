@@ -4,7 +4,9 @@
 "use strict";
 
 // __BEGIN__
-var timbre = {};
+var timbre = function() {
+    return timbre.fn.init.apply(timbre, arguments);
+};
 timbre.VERSION    = "${VERSION}";
 timbre.BUILD      = "${DATE}";
 timbre.env        = "";
@@ -17,6 +19,72 @@ timbre.verbose    = true;
 timbre.dacs       = [];
 timbre._sys       = null;
 timbre._global    = {};
+
+
+timbre.fn = (function(timbre) {
+    var fn = {};
+
+    var klasses = {};
+    klasses.find = function(key) {
+        if (typeof klasses[key] === "function") {
+            return klasses[key];
+        }
+    };
+    
+    fn.init = function() {
+        var args, key, klass, instance;
+        args = Array.prototype.slice.call(arguments);
+        key  = args[0];
+
+        switch (typeof key) {
+        case "string":
+            klass = klasses.find(key);
+            if (klass) {
+                instance = new klass(args.slice(1));
+            }
+            break;
+        }
+        
+        if (instance) {
+            object_init.call(instance);
+        }
+        return instance;
+    };
+    
+    fn.register = function(key, klass) {
+        if (typeof klass === "function") {
+            if (typeof key === "string") {
+                klass.prototype._klass = klass;
+                klass.prototype._name  = key;
+                klasses[key] = klass;
+            }
+        }
+    };
+    
+    fn.valist = function(_args) {
+        this.args = _args;
+    };
+    
+    fn.appendTo = function(set) {
+        var i;
+        if ((i = set.indexOf(this)) === -1) {
+            set.push(this);
+        }
+    };
+    
+    fn.removeFrom = function(set) {
+        var i;
+        if ((i = set.indexOf(this)) != -1) {
+            set.splice(i, 1);
+        }
+    };
+    
+    var object_init = function() {
+        
+    };
+    
+    return fn;
+}(timbre));
 
 
 var SoundSystem = (function() {
