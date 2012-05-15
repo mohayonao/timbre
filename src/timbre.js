@@ -35,7 +35,7 @@ timbre.fn = (function(timbre) {
         var args, key, klass, instance;
         args = Array.prototype.slice.call(arguments);
         key  = args[0];
-
+        
         switch (typeof key) {
         case "string":
             klass = klasses.find(key);
@@ -43,12 +43,26 @@ timbre.fn = (function(timbre) {
                 instance = new klass(args.slice(1));
             }
             break;
+        case "number":
+            instance = new NumberWrapper([key]);
+            break;
+        case "boolean":
+            instance = new BooleanWrapper([key]);
+            break;
+        case "function":
+            break; // TODO:
+        case "object":
+            break; // TODO:
         }
         
-        if (instance) {
-            object_init.call(instance);
+        if (instance === undefined) {
+            if (key === null) {
+                instance = new NullWrapper();
+            } else {
+                instance = new UndefinedWrapper();
+            }
         }
-        return instance;
+        return object_init.call(instance);
     };
     
     fn.register = function(key, klass) {
@@ -62,7 +76,30 @@ timbre.fn = (function(timbre) {
     };
     
     fn.valist = function(_args) {
-        this.args = _args;
+        var args;
+        var i, imax;
+        
+        this.args = args = [];
+        for(i = 0, imax = _args.length; i < imax; ++i) {
+            switch (typeof _args[i]) {
+            case "number":
+            case "boolean":
+            case "function":
+            case "undefined":
+                args.push(timbre(_args[i]));
+                break;
+            case "object":
+                if (_args[i] === null) {
+                    args.push(timbre(null));
+                } else {
+                    args.push(_args[i]);
+                }
+                break;
+            default:
+                args.push(timbre(undefined));
+                break;
+            }
+        }
     };
     
     fn.appendTo = function(set) {
@@ -79,12 +116,92 @@ timbre.fn = (function(timbre) {
         }
     };
     
+    var defaults = {};
+    defaults.seq = function() {
+        return this._cell;
+    };
+    
     var object_init = function() {
+        this._seq_id = -1;
+
+        if (!this._cell) {
+            this._cell = new Float32Array(timbre.cellsize);
+        }
+        if (!this.args) {
+            this.args = [];
+        }
+        if (typeof this.seq !== "function") {
+            this.seq = defaults.seq;
+        }
         
+        if (this._post_init) {
+            this._post_init();
+        }
+        
+        return this;
     };
     
     return fn;
 }(timbre));
+
+// built-in-types
+var NumberWrapper = (function() {
+    var NumberWrapper = function() {
+        initialize.apply(this, arguments);
+    }, $this = NumberWrapper.prototype;
+
+    var initialize = function(_args) {
+        if (typeof _args[0] === "number") {
+            this._value = _args[0];
+        } else{
+            this._value = 0;
+        }
+    };
+    
+    $this._post_init = function() {
+        var cell, value, i;
+        cell  = this._cell;
+        value = this._value;
+        for (i = cell.length; i--; ) {
+            cell[i] = value;
+        }
+    };
+    
+    return NumberWrapper;
+}());
+timbre.fn.register("number", NumberWrapper);
+
+var BooleanWrapper = (function() {
+    var BooleanWrapper = function() {
+        initialize.apply(this, arguments);
+    }, $this = BooleanWrapper.prototype;
+
+    var initialize = function(_args) {
+        if (typeof _args[0] === "boolean") {
+            this._value = _args[0];
+        } else{
+            this._value = false;
+        }
+    };
+    
+    $this._post_init = function() {
+        var cell, value, i;
+        cell  = this._cell;
+        value = this._value ? 1 : 0;
+        for (i = cell.length; i--; ) {
+            cell[i] = value;
+        }
+    };
+    
+    return BooleanWrapper;
+}());
+timbre.fn.register("boolean", BooleanWrapper);
+
+var UndefinedWrapper = function() {};
+timbre.fn.register("undefined", UndefinedWrapper);
+
+var NullWrapper = function() {};
+timbre.fn.register("null", NullWrapper);
 
 
 var SoundSystem = (function() {
