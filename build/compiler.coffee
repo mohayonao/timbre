@@ -7,6 +7,7 @@ TIMBRE_SOURCES = [
 ]
 
 WINDOW_SOURCES = [
+    "window/player"
     "window/exports"
 ]
 
