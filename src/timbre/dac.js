@@ -12,18 +12,21 @@ var Dac = (function() {
     }, $this = Dac.prototype;
 
     var initialize = function(_args) {
-        this.L = new Float32Array(timbre.cellsize);
-        this.R = new Float32Array(timbre.cellsize);
-        this._panL = this._panR = Math.sin(Math.PI * 0.25);
         this.args = timbre.fn.valist.call(this, _args);
+        this._L = new Float32Array(timbre.cellsize);
+        this._R = new Float32Array(timbre.cellsize);
+        this._panL = this._panR = Math.sin(Math.PI * 0.25);
+        this._amp  = 1.0;
     };
     
     $this.on = function() {
         timbre.dacs.append(this);
+        return this;
     };
     
     $this.off = function() {
         timbre.dacs.remove(this);
+        return this;
     };
     
     $this.seq = function(seq_id) {
@@ -34,9 +37,11 @@ var Dac = (function() {
         cell = this._cell;
         if (seq_id !== this._seq_id) {
             args = this.args;
-            L = this.L;
-            R = this.R;
+            L = this._L;
+            R = this._R;
             amp = this._amp;
+            panL = this._panL * amp;
+            panR = this._panR * amp;
             jmax = timbre.cellsize;
             for (j = jmax; j--; ) {
                 cell[j] = L[j] = R[j] = 0;
@@ -47,7 +52,7 @@ var Dac = (function() {
                     cell[j] += tmp[j] * amp;
                     L[j] += tmp[j] * panL;
                     R[j] += tmp[j] * panR;
-                }                
+                }
             }
             this._seq_id = seq_id;
         }

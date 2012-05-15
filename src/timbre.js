@@ -234,14 +234,13 @@ var SoundSystem = (function() {
         this.channels   = channels;
         this.L = new Float32Array(streamsize);
         this.R = new Float32Array(streamsize);
-
+        
         this._impl = null;
         this._cell = new Float32Array(timbre.cellsize);
         this._cellsize = timbre.cellsize;
         this._seq_id = 0;
-        
     };
-
+    
     $this.bind = function(PlayerKlass) {
         this._impl = new PlayerKlass(this);
     };
@@ -284,8 +283,8 @@ var SoundSystem = (function() {
             for (j = dacs.length; j--; ) {
                 dac = dacs[j];
                 dac.seq(seq_id);
-                tmpL = dac.L;
-                tmpR = dac.R;
+                tmpL = dac._L;
+                tmpR = dac._R;
                 for (k = 0, i = saved_i; k < kmax; ++k, ++i) {
                     L[i] += tmpL[k];
                     R[i] += tmpR[k];
