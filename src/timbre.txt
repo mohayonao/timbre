@@ -1,0 +1,24 @@
+/**
+ * timbre ${VERSION} / JavaScript Library for Objective Sound Programming
+ * build: ${DATE}
+ */
+;
+var timbre = (function(context, timbre) {
+    "use strict";
+    
+    ${TIMBRE_CODE}
+    
+    typeof window === "object" && (function(window, timbre) {
+        ${WINDOW_CODE}
+    }(context, timbre));
+    
+    typeof importScripts === "function" && (function(worker, timbre) {
+        ${WORKER_CODE}
+    }(context, timbre));
+    
+    typeof process === "object" && process.title === "node" && (function(node, timbre) {
+        ${NODE_CODE}
+    }(context, timbre));
+    
+    return timbre;
+}(this));
