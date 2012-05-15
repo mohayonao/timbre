@@ -37,6 +37,47 @@ var WebKitPlayer = function(sys) {
     };
 };
 
+var MozPlayer = function(sys) {
+    var audio, timer;
+    var interval, interleaved;
+    var onaudioprocess;
+    
+    audio = new Audio();
+    audio.mozSetup(sys.channels, timbre.samplerate);
+    timbre.samplerate = audio.mozSampleRate;
+    timbre.channels   = audio.mozChannels;
+    
+    timer = new MutekiTimer();
+    interval    = (sys.streamsize / timbre.samplerate) * 1000;
+    
+    interleaved = new Float32Array(sys.streamsize * sys.channels);
+    
+    onaudioprocess = function() {
+        var inL, inR, i, j;
+        audio.mozWriteAudio(interleaved);
+        sys.process();
+        
+        inL  = sys.L;
+        inR  = sys.R;
+        
+        i = interleaved.length;
+        j = inL.length;
+        while (j--) {
+            interleaved[--i] = inR[j];            
+            interleaved[--i] = inL[j];
+        }
+    };
+
+    return {
+        on : function() {
+            timer.setInterval(onaudioprocess, interval);
+        },
+        off: function() {
+            timer.clearInterval();
+        }
+    };
+};
+
 var NopPlayer = function(sys) {
     return {
         on : function() {},
@@ -47,6 +88,9 @@ var NopPlayer = function(sys) {
 if (typeof webkitAudioContext === "function") {
     timbre.env = "webkit";
     timbre._sys.bind(WebKitPlayer);
+} else if (typeof (new Audio).mozSetup === "function") {
+    timbre.env = "moz";
+    timbre._sys.bind(MozPlayer);
 } else {
     timbre._sys.bind(NopPlayer);
 }
