@@ -15,15 +15,15 @@ var Dac = (function() {
         this.L = new Float32Array(timbre.cellsize);
         this.R = new Float32Array(timbre.cellsize);
         this._panL = this._panR = Math.sin(Math.PI * 0.25);
-        timbre.fn.valist.call(this, _args);
+        this.args = timbre.fn.valist.call(this, _args);
     };
     
     $this.on = function() {
-        timbre.fn.appendTo.call(this, timbre.dacs);
+        timbre.dacs.append(this);
     };
     
     $this.off = function() {
-        timbre.fn.removeFrom(this, timbre.dacs);
+        timbre.dacs.remove(this);
     };
     
     $this.seq = function(seq_id) {

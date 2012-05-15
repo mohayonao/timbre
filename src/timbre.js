@@ -79,7 +79,7 @@ timbre.fn = (function(timbre) {
         var args;
         var i, imax;
         
-        this.args = args = [];
+        args = [];
         for(i = 0, imax = _args.length; i < imax; ++i) {
             switch (typeof _args[i]) {
             case "number":
@@ -100,20 +100,34 @@ timbre.fn = (function(timbre) {
                 break;
             }
         }
+        
+        return args;
     };
     
-    fn.appendTo = function(set) {
-        var i;
-        if ((i = set.indexOf(this)) === -1) {
-            set.push(this);
-        }
-    };
-    
-    fn.removeFrom = function(set) {
-        var i;
-        if ((i = set.indexOf(this)) != -1) {
-            set.splice(i, 1);
-        }
+    fn.init_set = function() {
+        this.append = function() {
+            var args, i;
+            args = fn.valist(arguments);
+            for (i = args.length; i--; ) {
+                if (this.indexOf(args[i]) === -1) {
+                    this.push(args[i]);
+                }
+            }
+            return this;
+        };
+        this.remove = function() {
+            var i, j;
+            for (i = arguments.length; i--; ) {
+                if ((j = this.indexOf(arguments[i])) !== -1) {
+                    this.splice(j, 1);
+                }
+            }
+            return this;
+        };
+        this.update = function(list) {
+            this.append.apply(this, list);
+        };
+        return this;
     };
     
     var defaults = {};
@@ -143,6 +157,8 @@ timbre.fn = (function(timbre) {
     
     return fn;
 }(timbre));
+timbre.fn.init_set.call(timbre.dacs);
+
 
 // built-in-types
 var NumberWrapper = (function() {
