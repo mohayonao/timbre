@@ -88,7 +88,7 @@ var NopPlayer = function(sys) {
 if (typeof webkitAudioContext === "function") {
     timbre.env = "webkit";
     timbre._sys.bind(WebKitPlayer);
-} else if (typeof (new Audio).mozSetup === "function") {
+} else if (typeof Audio === "function" && typeof (new Audio).mozSetup === "function") {
     timbre.env = "moz";
     timbre._sys.bind(MozPlayer);
 } else {
