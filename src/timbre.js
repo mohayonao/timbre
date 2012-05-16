@@ -513,64 +513,65 @@ global.object_test = function(klass, instance) {
     });
 };
 
-
-describe("NumberWrapper", function() {
-    var instance = timbre(100);
-    object_test(NumberWrapper, instance);
-    describe("#value", function() {
-        it("should equal 100", function() {
-            instance.value.should.equal(100);
-        });
-        it("should changed", function() {
-            instance.value = 10;
-            instance.value.should.equal(10);
-            instance._cell[0].should.equal(10);
-        });
-        it("should not changed with no number", function() {
-            instance.value = "1";
-            instance.value.should.equal(10);
-        });
-    });
-});
-describe("BooleanWrapper", function() {
-    var instance = timbre(true);
-    object_test(BooleanWrapper, instance);
-    describe("#value", function() {
-        it("should equal true", function() {
-            instance.value.should.equal(true);
-        });
-        it("should changed", function() {
-            instance.value = false;
-            instance.value.should.equal(false);
-            instance._cell[0].should.equal(0);
-            
-            instance.value = true;
-            instance.value.should.equal(true);
-            instance._cell[0].should.equal(1);
-            
-            instance.value = false;
-            instance.value = 1000;
-            instance.value.should.equal(true);
+if (! module.parent) {
+    describe("NumberWrapper", function() {
+        var instance = timbre(100);
+        object_test(NumberWrapper, instance);
+        describe("#value", function() {
+            it("should equal 100", function() {
+                instance.value.should.equal(100);
+            });
+            it("should changed", function() {
+                instance.value = 10;
+                instance.value.should.equal(10);
+                instance._cell[0].should.equal(10);
+            });
+            it("should not changed with no number", function() {
+                instance.value = "1";
+                instance.value.should.equal(10);
+            });
         });
     });
-});
-describe("FunctionWrapper", function() {
-    var instance = timbre(function(x) { return x/2; });
-    object_test(FunctionWrapper, instance);
-    describe("#func", function() {
-        it("should be an instance of Function", function() {
-            instance.func.should.be.an.instanceOf(Function);
+    describe("BooleanWrapper", function() {
+        var instance = timbre(true);
+        object_test(BooleanWrapper, instance);
+        describe("#value", function() {
+            it("should equal true", function() {
+                instance.value.should.equal(true);
+            });
+            it("should changed", function() {
+                instance.value = false;
+                instance.value.should.equal(false);
+                instance._cell[0].should.equal(0);
+                
+                instance.value = true;
+                instance.value.should.equal(true);
+                instance._cell[0].should.equal(1);
+                
+                instance.value = false;
+                instance.value = 1000;
+                instance.value.should.equal(true);
+            });
         });
     });
-    describe("#freq", function() {
-        it("should be an instance of Object", function() {
-            object_test(UndefinedWrapper, instance.freq);
+    describe("FunctionWrapper", function() {
+        var instance = timbre(function(x) { return x/2; });
+        object_test(FunctionWrapper, instance);
+        describe("#func", function() {
+            it("should be an instance of Function", function() {
+                instance.func.should.be.an.instanceOf(Function);
+            });
+        });
+        describe("#freq", function() {
+            it("should be an instance of Object", function() {
+                object_test(UndefinedWrapper, instance.freq);
+            });
         });
     });
-});
-describe("NullWrapper", function() {
-    object_test(NullWrapper, timbre(null));
-});
-describe("UndefinedWrapper", function() {
-    object_test(UndefinedWrapper, timbre(undefined));
-});
+    describe("NullWrapper", function() {
+        object_test(NullWrapper, timbre(null));
+    });
+    describe("UndefinedWrapper", function() {
+        object_test(UndefinedWrapper, timbre(undefined));
+    });
+}
