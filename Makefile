@@ -4,7 +4,7 @@ timbre:
 	coffee ./build/compiler.coffee
 
 test:
-	mocha ./src/*/*.js
+	find ./src -name "*.js" | xargs mocha
 
 clean:
 	rm -rf ./timbre.js
