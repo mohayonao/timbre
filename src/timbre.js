@@ -308,12 +308,7 @@ var NumberWrapper = (function() {
     };
     
     $this._post_init = function() {
-        var cell, value, i;
-        cell  = this._cell;
-        value = this._value;
-        for (i = cell.length; i--; ) {
-            cell[i] = value;
-        }
+        this.value = this._value;
     };
     
     return NumberWrapper;
@@ -349,12 +344,7 @@ var BooleanWrapper = (function() {
     };
     
     $this._post_init = function() {
-        var cell, value, i;
-        cell  = this._cell;
-        value = this._value ? 1 : 0;
-        for (i = cell.length; i--; ) {
-            cell[i] = value;
-        }
+        this.value = this._value;
     };
     
     return BooleanWrapper;
@@ -397,7 +387,7 @@ var FunctionWrapper = (function() {
             this.seq = num_seq;
         }
     };
-
+    
     var num_ary = function(seq_id) {
         var cell, func, tmp;
         var freq, phase, coeff;
@@ -545,4 +535,3 @@ describe("NullWrapper", function() {
 describe("UndefinedWrapper", function() {
     object_test(UndefinedWrapper, timbre(undefined));
 });
-
