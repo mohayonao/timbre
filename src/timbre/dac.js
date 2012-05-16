@@ -65,6 +65,6 @@ timbre.fn.register("dac", Dac)
 
 // __END__
 
-describe("dac object", function() {
+describe("dac", function() {
     object_test(Dac, timbre("dac"));
 });

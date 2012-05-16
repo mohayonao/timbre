@@ -467,21 +467,25 @@ module.exports = timbre;
 
 var should = require("should");
 global.object_test = function(klass, instance) {
-    describe("#new()", function() {
-        it("create an instance", function() {
+    describe("timbre(...)", function() {
+        it("should return new instance", function() {
             should.exist(instance);
             instance.should.be.an.instanceOf(klass);
         });
-        it("args is an Array()", function() {
+    });
+    describe("#args", function() {
+        it("should be an instance of Array", function() {
             instance.args.should.be.an.instanceOf(Array);
         });
-        it("cell is a Float32Array(timbre.cellsize)", function() {
+    });
+    describe("#_cell", function() {
+        it("should be an Float32Array(timbre.cellsize)", function() {
             instance._cell.should.be.an.instanceOf(Float32Array);
             instance._cell.should.have.length(timbre.cellsize);
         });
     });
     describe("#seq()", function() {
-        it("execute", function() {
+        it("should return Float32Array(timbre.cellsize)", function() {
             var _;
             instance.seq.should.be.an.instanceOf(Function);
             _ = instance.seq(0);
@@ -491,55 +495,54 @@ global.object_test = function(klass, instance) {
     });
 };
 
-describe("timbre built-in object", function() {
-    describe("NumberWrapper", function() {
-        var instance = timbre(100);
-        object_test(NumberWrapper, instance);
-        describe(".value", function() {
-            it("should have a value", function() {
-                instance.value.should.equal(100);
-            });
-            it("should change a value with a number", function() {
-                instance.value = 10;
-                instance.value.should.equal(10);
-                instance._cell[0].should.equal(10);
-            });
-            it("should not change a value with not a number", function() {
-                instance.value = "1";
-                instance.value.should.equal(10);
-            });
+
+describe("NumberWrapper", function() {
+    var instance = timbre(100);
+    object_test(NumberWrapper, instance);
+    describe("#value", function() {
+        it("should equal 100", function() {
+            instance.value.should.equal(100);
         });
-    });
-    describe("BooleanWrapper", function() {
-        var instance = timbre(true);
-        object_test(BooleanWrapper, instance);
-        describe(".value", function() {
-            it("should have a value", function() {
-                instance.value.should.equal(true);
-            });
-            it("should change a value with a boolean", function() {
-                instance.value = false;
-                instance.value.should.equal(false);
-                instance._cell[0].should.equal(0);
-                
-                instance.value = true;
-                instance.value.should.equal(true);
-                instance._cell[0].should.equal(1);
-            });
-            it("should change a converted value with not a boolean", function() {
-                instance.value = false;
-                instance.value = 1000;
-                instance.value.should.equal(true);
-            });
+        it("should changed", function() {
+            instance.value = 10;
+            instance.value.should.equal(10);
+            instance._cell[0].should.equal(10);
         });
-    });
-    describe("FunctionWrapper", function() {
-        object_test(FunctionWrapper, timbre(function(x) { return x/2; }));
-    });
-    describe("NullWrapper", function() {
-        object_test(NullWrapper, timbre(null));
-    });
-    describe("UndefinedWrapper", function() {
-        object_test(UndefinedWrapper, timbre(undefined));
+        it("should not changed with no number", function() {
+            instance.value = "1";
+            instance.value.should.equal(10);
+        });
     });
 });
+describe("BooleanWrapper", function() {
+    var instance = timbre(true);
+    object_test(BooleanWrapper, instance);
+    describe("#value", function() {
+        it("should equal true", function() {
+            instance.value.should.equal(true);
+        });
+        it("should changed", function() {
+            instance.value = false;
+            instance.value.should.equal(false);
+            instance._cell[0].should.equal(0);
+            
+            instance.value = true;
+            instance.value.should.equal(true);
+            instance._cell[0].should.equal(1);
+            
+            instance.value = false;
+            instance.value = 1000;
+            instance.value.should.equal(true);
+        });
+    });
+});
+describe("FunctionWrapper", function() {
+    object_test(FunctionWrapper, timbre(function(x) { return x/2; }));
+});
+describe("NullWrapper", function() {
+    object_test(NullWrapper, timbre(null));
+});
+describe("UndefinedWrapper", function() {
+    object_test(UndefinedWrapper, timbre(undefined));
+});
+
