@@ -497,16 +497,16 @@ describe("timbre built-in object", function() {
         object_test(NumberWrapper, instance);
         describe(".value", function() {
             it("should have a value", function() {
-                instance.should.have.property("value", 100);
+                instance.value.should.equal(100);
             });
             it("should change a value with a number", function() {
                 instance.value = 10;
-                instance.should.have.property("value", 10);
+                instance.value.should.equal(10);
                 instance._cell[0].should.equal(10);
             });
             it("should not change a value with not a number", function() {
                 instance.value = "1";
-                instance.should.property("value", 10);
+                instance.value.should.equal(10);
             });
         });
     });
@@ -515,21 +515,21 @@ describe("timbre built-in object", function() {
         object_test(BooleanWrapper, instance);
         describe(".value", function() {
             it("should have a value", function() {
-                instance.should.have.property("value", true);
+                instance.value.should.equal(true);
             });
             it("should change a value with a boolean", function() {
                 instance.value = false;
-                instance.should.have.property("value", false);
+                instance.value.should.equal(false);
                 instance._cell[0].should.equal(0);
                 
                 instance.value = true;
-                instance.should.have.property("value", true);
+                instance.value.should.equal(true);
                 instance._cell[0].should.equal(1);
             });
             it("should change a converted value with not a boolean", function() {
                 instance.value = false;
                 instance.value = 1000;
-                instance.should.have.property("value", true);
+                instance.value.should.equal(true);
             });
         });
     });
