@@ -247,9 +247,22 @@ timbre.fn = (function(timbre) {
         return this;
     };
     
+    var noneseq = (function() {
+        var nonecell = new Float32Array(timbre.cellsize);
+        return function() { return nonecell; };
+    }());
+    
     var defaults = {};
     defaults.seq = function() {
         return this._cell;
+    };
+    defaults.on = function() {
+        this.seq = this._seq;
+        return this;
+    };
+    defaults.off = function() {
+        this.seq = noneseq;
+        return this;
     };
     
     var object_init = function() {
@@ -263,6 +276,14 @@ timbre.fn = (function(timbre) {
         }
         if (typeof this.seq !== "function") {
             this.seq = defaults.seq;
+        }
+        this._seq = this.seq;
+        
+        if (typeof this.on !== "function") {
+            this.on = defaults.on;
+        }
+        if (typeof this.off !== "function") {
+            this.off = defaults.off;
         }
         
         if (this._post_init) {
@@ -511,9 +532,25 @@ global.object_test = function(klass, instance) {
             _.should.have.length(timbre.cellsize);
         });
     });
+    describe("#on()", function() {
+        it("should return self", function() {
+            var _;
+            instance.on.should.be.an.instanceOf(Function);
+            _ = instance.on();
+            _.should.equal(instance);
+        });
+    });
+    describe("#off()", function() {
+        it("should return self", function() {
+            var _;
+            instance.off.should.be.an.instanceOf(Function);
+            _ = instance.off();
+            _.should.equal(instance);
+        });
+    });
 };
 
-if (! module.parent) {
+if (module.parent && !module.parent.parent) {
     describe("NumberWrapper", function() {
         var instance = timbre(100);
         object_test(NumberWrapper, instance);
