@@ -355,37 +355,65 @@ var FunctionWrapper = (function() {
     var FunctionWrapper = function() {
         initialize.apply(this, arguments);
     }, $this = FunctionWrapper.prototype;
-
+    
+    var DEFAULT_FUNCTION = function(x) { return x; };
+    
+    Object.defineProperty($this, "func", {
+        set: function(value) {
+            var tmp;
+            if (typeof value === "function") {
+                this._func = value;
+                
+                tmp = this._func(0);
+                if (tmp instanceof Float32Array || tmp instanceof Array) {
+                    this.seq = ary_seq;
+                    this._array_saved = [];
+                    this._array_index = 0;
+                } else {
+                    if (typeof tmp !== "number") {
+                        this._func = DEFAULT_FUNCTION;
+                    }
+                    this.seq = num_seq;
+                    delete this._array_saved;
+                    delete this._array_index;
+                }
+            }
+        },
+        get: function() {
+            return this._func;
+        }
+    });
+    Object.defineProperty($this, "freq", {
+        set: function(value) {
+            if (typeof value === "object") {
+                this._freq = value;
+            } else {
+                this._freq = timbre(value);
+            }
+        },
+        get: function() {
+            return this._freq;
+        }
+    });
+    
     var initialize = function(_args) {
         var i, tmp;
-        
-        this._func = function(x) { return x; };
-        this._freq = 0;
         
         i = 0;
         if (typeof _args[i] === "function") {
             this._func = _args[i++];
-        }
-        if (typeof _args[i] === "object") {
-            this._freq = _args[i++];
         } else {
-            this._freq = timbre(_args[i++]);
+            this._func = DEFAULT_FUNCTION;    
         }
+        this._freq = _args[i++];
         
         this._phase = 0;
         this._coeff = 1 / timbre.samplerate;
-        
-        tmp = this._func(0);
-        if (tmp instanceof Float32Array || tmp instanceof Array) {
-            this.seq = ary_seq;
-            this._array_saved = [];
-            this._array_index = 0;
-        } else if (typeof tmp === "number") {
-            this.seq = num_seq;
-        } else {
-            this._func = function(x) { return 0; };
-            this.seq = num_seq;
-        }
+    };
+    
+    $this._post_init = function() {
+        this.func = this._func;
+        this.freq = this._freq;
     };
     
     var num_ary = function(seq_id) {
@@ -527,7 +555,18 @@ describe("BooleanWrapper", function() {
     });
 });
 describe("FunctionWrapper", function() {
-    object_test(FunctionWrapper, timbre(function(x) { return x/2; }));
+    var instance = timbre(function(x) { return x/2; });
+    object_test(FunctionWrapper, instance);
+    describe("#func", function() {
+        it("should be an instance of Function", function() {
+            instance.func.should.be.an.instanceOf(Function);
+        });
+    });
+    describe("#freq", function() {
+        it("should be an instance of Object", function() {
+            object_test(UndefinedWrapper, instance.freq);
+        });
+    });
 });
 describe("NullWrapper", function() {
     object_test(NullWrapper, timbre(null));
