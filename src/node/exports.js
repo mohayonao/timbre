@@ -9,4 +9,6 @@ var timbre = require("../timbre");
 timbre.platform = "node";
 timbre._global  = global;
 
+module.exports = timbre;
+
 // __END__
