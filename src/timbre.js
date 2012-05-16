@@ -464,8 +464,6 @@ global.object_test = function() {
             _.should.have.length(timbre.cellsize);
         });
     });
-
-    return instance;
 };
 
 describe("timbre built-in object", function() {
