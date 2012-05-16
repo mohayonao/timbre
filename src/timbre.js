@@ -283,6 +283,22 @@ var NumberWrapper = (function() {
         initialize.apply(this, arguments);
     }, $this = NumberWrapper.prototype;
     
+    Object.defineProperty($this, "value", {
+        set: function(value) {
+            var cell, i;
+            if (typeof value === "number") {
+                this._value = value;
+                cell = this._cell;
+                for (i = cell.length; i--; ) {
+                    cell[i] = value;
+                }
+            }
+        },
+        get: function() {
+            return this._value;
+        }
+    });
+    
     var initialize = function(_args) {
         if (typeof _args[0] === "number") {
             this._value = _args[0];
@@ -308,7 +324,22 @@ var BooleanWrapper = (function() {
     var BooleanWrapper = function() {
         initialize.apply(this, arguments);
     }, $this = BooleanWrapper.prototype;
-
+    
+    Object.defineProperty($this, "value", {
+        set: function(value) {
+            var cell, i, x;
+            this._value = !!value;
+            cell = this._cell;
+            x = this._value ? 1 : 0;
+            for (i = cell.length; i--; ) {
+                cell[i] = x;
+            }
+        },
+        get: function() {
+            return this._value;
+        }
+    });
+    
     var initialize = function(_args) {
         if (typeof _args[0] === "boolean") {
             this._value = _args[0];
@@ -475,7 +506,7 @@ describe("timbre built-in object", function() {
             });
             it("should not change a value with not a number", function() {
                 instance.value = "1";
-                instance.should.not.have.property("value", 10);
+                instance.should.property("value", 10);
             });
         });
     });
@@ -498,7 +529,7 @@ describe("timbre built-in object", function() {
             it("should change a converted value with not a boolean", function() {
                 instance.value = false;
                 instance.value = 1000;
-                instance.should.not.have.property("value", true);
+                instance.should.have.property("value", true);
             });
         });
     });
