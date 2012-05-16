@@ -64,3 +64,7 @@ var Dac = (function() {
 timbre.fn.register("dac", Dac)
 
 // __END__
+
+describe("dac object", function() {
+    object_test(Dac, "dac");
+});

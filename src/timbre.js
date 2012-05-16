@@ -431,3 +431,55 @@ timbre.off = function() {
 // __END__
 global.T = global.timbre = timbre;
 module.exports = timbre;
+
+var should = require("should");
+global.object_test = function() {
+    var klass, args, instance;
+    
+    klass = arguments[0];
+    args  = Array.prototype.slice.call(arguments, 1);
+    
+    describe("#new()", function() {
+        it("create an instance", function() {
+            instance = timbre.apply(null, args);
+            should.exist(instance);
+            instance.should.be.an.instanceOf(klass);
+        });
+        it("args is an Array()", function() {
+            instance.args.should.be.an.instanceOf(Array);
+        });
+        it("cell is a Float32Array(timbre.cellsize)", function() {
+            instance._cell.should.be.an.instanceOf(Float32Array);
+            instance._cell.should.have.length(timbre.cellsize);
+        });
+    });
+    describe("#seq()", function() {
+        it("execute", function() {
+            var _;
+            instance.seq.should.be.an.instanceOf(Function);
+            _ = instance.seq(0);
+            _.should.be.an.instanceOf(Float32Array);
+            _.should.have.length(timbre.cellsize);
+        });
+    });
+
+    return instance;
+};
+
+describe("timbre built-in object", function() {
+    describe("NumberWrapper", function() {
+        object_test(NumberWrapper, 100);
+    });
+    describe("BooleanWrapper", function() {
+        object_test(BooleanWrapper, true);
+    });
+    describe("FunctionWrapper", function() {
+        object_test(FunctionWrapper, function(x) { return x/2; });
+    });
+    describe("NullWrapper", function() {
+        object_test(NullWrapper, null);
+    });
+    describe("UndefinedWrapper", function() {
+        object_test(UndefinedWrapper, undefined);
+    });
+});
