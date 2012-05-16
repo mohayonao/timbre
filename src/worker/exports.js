@@ -4,6 +4,7 @@
 "use strict";
 
 var timbre = require("../timbre");
+var worker = {};
 // __BEGIN__
 
 timbre.platform = "web";
