@@ -435,15 +435,9 @@ global.T = global.timbre = timbre;
 module.exports = timbre;
 
 var should = require("should");
-global.object_test = function() {
-    var klass, args, instance;
-    
-    klass = arguments[0];
-    args  = Array.prototype.slice.call(arguments, 1);
-    
+global.object_test = function(klass, instance) {
     describe("#new()", function() {
         it("create an instance", function() {
-            instance = timbre.apply(null, args);
             should.exist(instance);
             instance.should.be.an.instanceOf(klass);
         });
@@ -468,18 +462,18 @@ global.object_test = function() {
 
 describe("timbre built-in object", function() {
     describe("NumberWrapper", function() {
-        object_test(NumberWrapper, 100);
+        object_test(NumberWrapper, timbre(100));
     });
     describe("BooleanWrapper", function() {
-        object_test(BooleanWrapper, true);
+        object_test(BooleanWrapper, timbre(true));
     });
     describe("FunctionWrapper", function() {
-        object_test(FunctionWrapper, function(x) { return x/2; });
+        object_test(FunctionWrapper, timbre(function(x) { return x/2; }));
     });
     describe("NullWrapper", function() {
-        object_test(NullWrapper, null);
+        object_test(NullWrapper, timbre(null));
     });
     describe("UndefinedWrapper", function() {
-        object_test(UndefinedWrapper, undefined);
+        object_test(UndefinedWrapper, timbre(undefined));
     });
 });
