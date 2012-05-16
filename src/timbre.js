@@ -169,7 +169,10 @@ timbre.fn = (function(timbre) {
             instance = new FunctionWrapper(args);
             break;
         case "object":
-            break; // TODO:
+            if (key && typeof key.clone === "function") {
+                instance = key.clone();
+            }
+            break;
         }
         
         if (instance === undefined) {
@@ -221,8 +224,8 @@ timbre.fn = (function(timbre) {
         return args;
     };
     
-    fn.init_set = function() {
-        this.append = function() {
+    fn.init_set = (function() {
+        var append = function() {
             var args, i;
             args = fn.valist(arguments);
             for (i = args.length; i--; ) {
@@ -232,7 +235,7 @@ timbre.fn = (function(timbre) {
             }
             return this;
         };
-        this.remove = function() {
+        var remove = function() {
             var i, j;
             for (i = arguments.length; i--; ) {
                 if ((j = this.indexOf(arguments[i])) !== -1) {
@@ -241,11 +244,16 @@ timbre.fn = (function(timbre) {
             }
             return this;
         };
-        this.update = function(list) {
+        var update = function() {
             this.append.apply(this, list);
         };
-        return this;
-    };
+        return function() {
+            this.append = append;
+            this.remove = remove;
+            this.update = update;
+            return this;
+        };
+    }());
     
     var noneseq = (function() {
         var nonecell = new Float32Array(timbre.cellsize);
@@ -264,6 +272,9 @@ timbre.fn = (function(timbre) {
         this.seq = noneseq;
         return this;
     };
+    defaults.clone = function() {
+        return new this._klass(this.args);
+    };
     
     var object_init = function() {
         this._seq_id = -1;
@@ -274,6 +285,8 @@ timbre.fn = (function(timbre) {
         if (!this.args) {
             this.args = [];
         }
+        timbre.fn.init_set.call(this.args);
+        
         if (typeof this.seq !== "function") {
             this.seq = defaults.seq;
         }
@@ -284,6 +297,9 @@ timbre.fn = (function(timbre) {
         }
         if (typeof this.off !== "function") {
             this.off = defaults.off;
+        }
+        if (typeof this.clone !== "function") {
+            this.clone = defaults.clone;
         }
         
         if (this._post_init) {
@@ -332,6 +348,10 @@ var NumberWrapper = (function() {
         this.value = this._value;
     };
     
+    $this.clone = function() {
+        return new NumberWrapper([this.value]);
+    };
+    
     return NumberWrapper;
 }());
 timbre.fn.register("number", NumberWrapper);
@@ -366,6 +386,10 @@ var BooleanWrapper = (function() {
     
     $this._post_init = function() {
         this.value = this._value;
+    };
+    
+    $this.clone = function() {
+        return new BooleanWrapper([this.value]);
     };
     
     return BooleanWrapper;
@@ -435,6 +459,10 @@ var FunctionWrapper = (function() {
     $this._post_init = function() {
         this.func = this._func;
         this.freq = this._freq;
+    };
+    
+    $this.clone = function() {
+        return new FunctionWrapper([this.func, this.freq]);
     };
     
     var num_ary = function(seq_id) {
@@ -548,6 +576,14 @@ global.object_test = function(klass, instance) {
             _.should.equal(instance);
         });
     });
+    describe("#clone()", function() {
+        it("should return an instance of a same class", function() {
+            var _;
+            instance.clone.should.be.an.instanceOf(Function);
+            _ = instance.clone();
+            _.should.be.an.instanceOf(instance._klass);
+        });
+    });
 };
 
 if (module.parent && !module.parent.parent) {
@@ -566,6 +602,12 @@ if (module.parent && !module.parent.parent) {
             it("should not changed with no number", function() {
                 instance.value = "1";
                 instance.value.should.equal(10);
+            });
+        });
+        describe("#clone()", function() {
+            it("should have same values", function() {
+                var _ = timbre(instance);    
+                _.value.should.equal(instance.value);
             });
         });
     });
@@ -590,6 +632,12 @@ if (module.parent && !module.parent.parent) {
                 instance.value.should.equal(true);
             });
         });
+        describe("#clone()", function() {
+            it("should have same values", function() {
+                var _ = timbre(instance);
+                _.value.should.equal(instance.value);
+            });
+        });
     });
     describe("FunctionWrapper", function() {
         var instance = timbre(function(x) { return x/2; });
@@ -602,6 +650,13 @@ if (module.parent && !module.parent.parent) {
         describe("#freq", function() {
             it("should be an instance of Object", function() {
                 object_test(UndefinedWrapper, instance.freq);
+            });
+        });
+        describe("#clone()", function() {
+            it("should have same values", function() {
+                var _ = timbre(instance);
+                _.func.should.equal(instance.func);
+                _.freq.should.equal(instance.freq);
             });
         });
     });

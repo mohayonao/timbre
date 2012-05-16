@@ -66,5 +66,12 @@ timbre.fn.register("dac", Dac)
 // __END__
 
 describe("dac", function() {
-    object_test(Dac, timbre("dac"));
+    var instance = timbre("dac", 10, false, null);
+    object_test(Dac, instance);
+    describe("#clone()", function() {
+        it("should have same values", function() {
+            var _ = timbre(instance);
+            _.args.should.eql(instance.args);
+        });
+    });
 });
