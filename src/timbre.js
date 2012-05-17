@@ -476,7 +476,7 @@ var FunctionWrapper = (function() {
             if (typeof value === "number") {
                 while (value >= 1.0) value -= 1.0;
                 while (value <  0.0) value += 1.0;
-                this._phase = value;
+                this._phase = this._x = value;
             }
         },
         get: function() {
@@ -509,37 +509,28 @@ var FunctionWrapper = (function() {
         
         i = 0;
         if (typeof _args[i] === "function") {
-            this._func = _args[i++];
+            this.func = _args[i++];
         } else {
-            this._func = DEFAULT_FUNCTION;    
+            this.func = DEFAULT_FUNCTION;    
         }
-        this._freq  = _args[i++];
+        this.freq  = _args[i++];
         if (typeof _args[i] === "number") {
-            this._phase = _args[i++];
+            this.phase = _args[i++];
         } else {
-            this._phase = 0.0;
-        }
-        if (typeof _args[i] === "number") {
-            this._mul = _args[i++];    
-        } else {
-            this._mul = 1.0;
+            this.phase = 0.0;
         }
         if (typeof _args[i] === "number") {
-            this._add = _args[i++];    
+            this.mul = _args[i++];    
         } else {
-            this._add = 0.0;
+            this.mul = 1.0;
         }
+        if (typeof _args[i] === "number") {
+            this.add = _args[i++];    
+        } else {
+            this.add = 0.0;
+        }
+        this._x = this._phase;        
         this._coeff = 1 / timbre.samplerate;
-    };
-    
-    $this._post_init = function() {
-        this.func  = this._func;
-        this.freq  = this._freq;
-        this.phase = this._phase;
-        this.mul   = this._mul;
-        this.add   = this._add;
-        
-        this._x = this.phase;
     };
     
     $this.clone = function() {
