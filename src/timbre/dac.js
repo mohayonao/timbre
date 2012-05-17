@@ -10,7 +10,7 @@ var Dac = (function() {
     var Dac = function() {
         initialize.apply(this, arguments);
     }, $this = Dac.prototype;
-
+    
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);
         this._L = new Float32Array(timbre.cellsize);
@@ -33,7 +33,7 @@ var Dac = (function() {
         var args, cell, L, R;
         var amp, panL, panR;
         var tmp, i, j, jmax;
-
+        
         cell = this._cell;
         if (seq_id !== this._seq_id) {
             args = this.args;
@@ -57,11 +57,11 @@ var Dac = (function() {
             this._seq_id = seq_id;
         }
         return cell;
-    };    
+    };
     
     return Dac;
 }());
-timbre.fn.register("dac", Dac)
+timbre.fn.register("dac", Dac);
 
 // __END__
 
