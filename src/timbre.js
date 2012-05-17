@@ -299,6 +299,9 @@ timbre.fn = (function(timbre) {
         }
         return res;
     };
+    defaults.bang = function() {
+        return this;
+    };
     
     var object_init = function() {
         this._seq_id = -1;
@@ -316,6 +319,10 @@ timbre.fn = (function(timbre) {
         }
         if (!this.get) {
             this.get = defaults.get;
+        }
+
+        if (!this.bang) {
+            this.bang = defaults.bang;
         }
         
         if (typeof this.seq !== "function") {
@@ -476,7 +483,7 @@ var FunctionWrapper = (function() {
             if (typeof value === "number") {
                 while (value >= 1.0) value -= 1.0;
                 while (value <  0.0) value += 1.0;
-                this._phase = this._x = value;
+                this._x = this._phase = value;
             }
         },
         get: function() {
@@ -535,6 +542,11 @@ var FunctionWrapper = (function() {
     
     $this.clone = function() {
         return new FunctionWrapper([this.func, this.freq, this.phase, this.mul, this.add]);
+    };
+    
+    $this.bang = function() {
+        this._x = this._phase;
+        return this;
     };
     
     var ary_seq = function(seq_id) {
@@ -666,6 +678,12 @@ global.object_test = function(klass, instance) {
         it("should return self", function() {
             instance.get.should.be.an.instanceOf(Function);
             should.equal(instance.get(), undefined);
+        });
+    });
+    describe("#bang()", function() {
+        it("should return self", function() {
+            instance.bang.should.be.an.instanceOf(Function);
+            instance.bang().should.equal(instance);
         });
     });
     describe("#clone()", function() {

@@ -119,6 +119,11 @@ var Oscillator = (function() {
     $this.clone = function() {
         return new Oscillator([this.wavelet, this.freq, this.phase, this.mul, this.add]);
     };
+    
+    $this.bang = function() {
+        this._x = 1024 * this._phase;
+        return this;
+    };
 
     $this.seq = function(seq_id) {
         var cell;
