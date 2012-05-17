@@ -619,6 +619,12 @@ timbre.fn.register("null", NullWrapper);
 global.T = global.timbre = timbre;
 module.exports = timbre;
 
+global.NumberWrapper    = NumberWrapper;
+global.BooleanWrapper   = BooleanWrapper;
+global.FunctionWrapper  = FunctionWrapper;
+global.UndefinedWrapper = UndefinedWrapper;
+global.NullWrapper      = NullWrapper;
+
 var should = require("should");
 global.object_test = function(klass, instance) {
     describe("timbre(...)", function() {
