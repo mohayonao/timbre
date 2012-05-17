@@ -275,6 +275,30 @@ timbre.fn = (function(timbre) {
     defaults.clone = function() {
         return new this._klass(this.args);
     };
+    defaults.set = function(key, value) {
+        var self;
+        self = this;
+        while (self !== null) {
+            if (Object.getOwnPropertyDescriptor(self, key)) {
+                this[key] = value;
+                break;
+            }
+            self = Object.getPrototypeOf(self);
+        }
+        return this;
+    };
+    defaults.get = function(key) {
+        var self, res;
+        self = this;
+        while (self !== null) {
+            if (Object.getOwnPropertyDescriptor(self, key)) {
+                res = this[key];
+                break;
+            }
+            self = Object.getPrototypeOf(self);
+        }
+        return res;
+    };
     
     var object_init = function() {
         this._seq_id = -1;
@@ -286,6 +310,13 @@ timbre.fn = (function(timbre) {
             this.args = [];
         }
         timbre.fn.init_set.call(this.args);
+        
+        if (!this.set) {
+            this.set = defaults.set;
+        }
+        if (!this.get) {
+            this.get = defaults.get;
+        }
         
         if (typeof this.seq !== "function") {
             this.seq = defaults.seq;
@@ -618,18 +649,26 @@ global.object_test = function(klass, instance) {
     });
     describe("#on()", function() {
         it("should return self", function() {
-            var _;
             instance.on.should.be.an.instanceOf(Function);
-            _ = instance.on();
-            _.should.equal(instance);
+            instance.on().should.equal(instance);
         });
     });
     describe("#off()", function() {
         it("should return self", function() {
-            var _;
             instance.off.should.be.an.instanceOf(Function);
-            _ = instance.off();
-            _.should.equal(instance);
+            instance.off().should.equal(instance);
+        });
+    });
+    describe("#set()", function() {
+        it("should return self", function() {
+            instance.set.should.be.an.instanceOf(Function);
+            instance.set().should.equal(instance);
+        });
+    });
+    describe("#get()", function() {
+        it("should return self", function() {
+            instance.get.should.be.an.instanceOf(Function);
+            should.equal(instance.get(), undefined);
         });
     });
     describe("#clone()", function() {
@@ -662,8 +701,7 @@ if (module.parent && !module.parent.parent) {
         });
         describe("#clone()", function() {
             it("should have same values", function() {
-                var _ = timbre(instance);    
-                _.value.should.equal(instance.value);
+                timbre(instance).value.should.equal(instance.value);
             });
         });
     });
@@ -690,8 +728,7 @@ if (module.parent && !module.parent.parent) {
         });
         describe("#clone()", function() {
             it("should have same values", function() {
-                var _ = timbre(instance);
-                _.value.should.equal(instance.value);
+                timbre(instance).value.should.equal(instance.value);
             });
         });
     });
@@ -725,22 +762,19 @@ if (module.parent && !module.parent.parent) {
         });
         describe("#seq()", function() {
             it("should return signal ((1-0.5)*2+100)", function() {
-                var _;
+
                 instance.phase = 0.5;
                 instance.freq  = 0;
                 instance.mul   = 2;
                 instance.add   = 100;
-                _ = instance.on().seq(1);
-                _.should.eql(timbre( (1-0.5)*2+100 ).seq(0));
+                instance.on().seq(1).should.eql(timbre( (1-0.5)*2+100 ).seq(0));
             });
             it("should return signal not ((1-0.5)*2+100)", function() {
-                var _;
                 instance.phase = 0.5;
                 instance.freq  = 800;
                 instance.mul   = 2;
                 instance.add   = 100;
-                _ = instance.on().seq(2);
-                _.should.not.eql(timbre( (1-0.5)*2+100 ).seq(0));
+                instance.on().seq(2).should.not.eql(timbre( (1-0.5)*2+100 ).seq(0));
             });
         });
         describe("#clone()", function() {
@@ -748,6 +782,9 @@ if (module.parent && !module.parent.parent) {
                 var _ = timbre(instance);
                 _.func.should.equal(instance.func);
                 _.freq.should.equal(instance.freq);
+                _.phase.should.equal(instance.phase);
+                _.mul.should.equal(instance.mul);
+                _.add.should.equal(instance.add);
             });
         });
     });
