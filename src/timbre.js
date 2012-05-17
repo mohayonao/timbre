@@ -17,6 +17,7 @@ timbre.cellsize   = 128;
 timbre.streamsize = 1024;
 timbre.verbose    = true;
 timbre.dacs       = [];
+timbre._ev        = {};
 timbre._sys       = null;
 timbre._global    = {};
 
@@ -127,12 +128,47 @@ timbre._sys = new SoundSystem();
 
 timbre.on = function() {
     timbre._sys.on();
+    timbre.fn.do_event(this, "on");
     return timbre;
 };
 
 timbre.off = function() {
     timbre._sys.off();
+    timbre.fn.do_event(this, "off");
     return timbre;
+};
+
+timbre.addEventListener = function(name, func) {
+    var list, i;
+    if (typeof func === "function") {
+        list = this._ev[name];
+        if (list === undefined) {
+            this._ev[name] = list = [];
+        }
+        if ((i = list.indexOf(func)) === -1) {
+            list.push(func);
+        }
+    }
+    return this;
+};
+timbre.removeEventListener = function(name, func) {
+    var list, i;
+    if (typeof name === "string" && name !== "") {
+        list = this._ev[name];
+        if (list !== undefined) {
+            if ((i = list.indexOf(func)) !== -1) {
+                list.splice(i, 1);
+            }
+        }
+    }
+    return this;
+};
+timbre.removeAllEventListeners = function(name) {
+    if (typeof name === "string" && name !== "") {
+        delete this._ev[name];
+        delete this["on" + name];
+    }
+    return this;
 };
 
 
@@ -255,6 +291,20 @@ timbre.fn = (function(timbre) {
         };
     }());
     
+    fn.do_event = function(obj, name, args) {
+        var func, list, i;
+        func = obj["on" + name];
+        if (typeof func === "function") {
+            func.apply(obj, args);
+        }
+        list = obj._ev[name];
+        if (list !== undefined) {
+            for (i = list.length; i--; ) {
+                list[i].apply(obj, args);
+            }
+        }
+    };
+    
     var noneseq = (function() {
         var nonecell = new Float32Array(timbre.cellsize);
         return function() { return nonecell; };
@@ -266,10 +316,12 @@ timbre.fn = (function(timbre) {
     };
     defaults.on = function() {
         this.seq = this._seq;
+        timbre.fn.do_event(this, "on");
         return this;
     };
     defaults.off = function() {
         this.seq = noneseq;
+        timbre.fn.do_event(this, "off");
         return this;
     };
     defaults.clone = function() {
@@ -300,8 +352,13 @@ timbre.fn = (function(timbre) {
         return res;
     };
     defaults.bang = function() {
+        timbre.fn.do_event(this, "bang");
         return this;
     };
+    defaults.addEventListener        = timbre.addEventListener;
+    defaults.removeEventListener     = timbre.removeEventListener;
+    defaults.removeAllEventListeners = timbre.removeAllEventListeners;
+    
     
     var object_init = function() {
         this._seq_id = -1;
@@ -313,6 +370,10 @@ timbre.fn = (function(timbre) {
             this.args = [];
         }
         timbre.fn.init_set.call(this.args);
+        
+        if (!this._ev) {
+            this._ev = {};
+        }
         
         if (!this.set) {
             this.set = defaults.set;
@@ -338,6 +399,12 @@ timbre.fn = (function(timbre) {
         }
         if (typeof this.clone !== "function") {
             this.clone = defaults.clone;
+        }
+        if (typeof this.addEventListener !== "function") {
+            this.addEventListener = defaults.addEventListener;
+        }
+        if (typeof this.removeEventListener !== "function") {
+            this.removeEventListener = defaults.removeEventListener;
         }
         
         if (this._post_init) {
@@ -546,6 +613,7 @@ var FunctionWrapper = (function() {
     
     $this.bang = function() {
         this._x = this._phase;
+        timbre.fn.do_event(this, "bang");
         return this;
     };
     

@@ -21,11 +21,13 @@ var Dac = (function() {
     
     $this.on = function() {
         timbre.dacs.append(this);
+        timbre.fn.do_event(this, "on");
         return this;
     };
     
     $this.off = function() {
         timbre.dacs.remove(this);
+        timbre.fn.do_event(this, "off");
         return this;
     };
     

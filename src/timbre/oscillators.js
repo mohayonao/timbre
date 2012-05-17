@@ -122,9 +122,10 @@ var Oscillator = (function() {
     
     $this.bang = function() {
         this._x = 1024 * this._phase;
+        timbre.fn.do_event(this, "bang");
         return this;
     };
-
+    
     $this.seq = function(seq_id) {
         var cell;
         var freq, mul, add, wavelet;
