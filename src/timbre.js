@@ -411,14 +411,14 @@ var FunctionWrapper = (function() {
                 
                 tmp = this._func(0);
                 if (tmp instanceof Float32Array || tmp instanceof Array) {
-                    this.seq = ary_seq;
+                    this.seq = this._seq = ary_seq;
                     this._array_saved = [];
                     this._array_index = 0;
                 } else {
                     if (typeof tmp !== "number") {
                         this._func = DEFAULT_FUNCTION;
                     }
-                    this.seq = num_seq;
+                    this.seq = this._seq = num_seq;
                     delete this._array_saved;
                     delete this._array_index;
                 }
@@ -440,6 +440,38 @@ var FunctionWrapper = (function() {
             return this._freq;
         }
     });
+    Object.defineProperty($this, "phase", {
+        set: function(value) {
+            if (typeof value === "number") {
+                while (value >= 1.0) value -= 1.0;
+                while (value <  0.0) value += 1.0;
+                this._phase = value;
+            }
+        },
+        get: function() {
+            return this._phase;
+        }
+    });
+    Object.defineProperty($this, "mul", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._mul = value;
+            }
+        },
+        get: function() {
+            return this._mul;
+        }
+    });
+    Object.defineProperty($this, "add", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._add = value;
+            }
+        },
+        get: function() {
+            return this._add;
+        }
+    });
     
     var initialize = function(_args) {
         var i, tmp;
@@ -450,46 +482,67 @@ var FunctionWrapper = (function() {
         } else {
             this._func = DEFAULT_FUNCTION;    
         }
-        this._freq = _args[i++];
-        
-        this._phase = 0;
+        this._freq  = _args[i++];
+        if (typeof _args[i] === "number") {
+            this._phase = _args[i++];
+        } else {
+            this._phase = 0.0;
+        }
+        if (typeof _args[i] === "number") {
+            this._mul = _args[i++];    
+        } else {
+            this._mul = 1.0;
+        }
+        if (typeof _args[i] === "number") {
+            this._add = _args[i++];    
+        } else {
+            this._add = 0.0;
+        }
         this._coeff = 1 / timbre.samplerate;
     };
     
     $this._post_init = function() {
-        this.func = this._func;
-        this.freq = this._freq;
+        this.func  = this._func;
+        this.freq  = this._freq;
+        this.phase = this._phase;
+        this.mul   = this._mul;
+        this.add   = this._add;
+        
+        this._x = this.phase;
     };
     
     $this.clone = function() {
-        return new FunctionWrapper([this.func, this.freq]);
+        return new FunctionWrapper([this.func, this.freq, this.phase, this.mul, this.add]);
     };
     
-    var num_ary = function(seq_id) {
+    var ary_seq = function(seq_id) {
         var cell, func, tmp;
-        var freq, phase, coeff;
+        var freq, mul, add;
+        var x, coeff;
         var i, imax, j, jmax;
         
         cell = this._cell;
         if (seq_id !== this._seq_id) {
             func = this._func;
-            freq  = this._freq.seq(seq_id);
-            phase = this._phase;
+            freq = this._freq.seq(seq_id);
+            mul  = this._mul;
+            add  = this._add;
+            x = this._x;
             coeff  = this._coeff;
             tmp = this._array_saved;
             j   = this._array_index; jmax = tmp.length;
             for (i = 0, imax = cell.length; i < imax; ++i, ++j) {
                 if (j >= jmax) {
-                    tmp = func(phase, freq[i] * coeff);
+                    tmp = func(x, freq[i] * coeff);
                     j = 0; jmax = tmp.length;
                 }
-                cell[i] = tmp[j];
-                phase += freq[i] * coeff;
-                while (phase >= 1.0) phase -= 1.0;
+                cell[i] = tmp[j] * mul + add;
+                x += freq[i] * coeff;
+                while (x >= 1.0) x -= 1.0;
             }
             this._array_saved = tmp;
             this._array_index = j;
-            this._phase = phase;
+            this._x = x;
             this._seq_id = seq_id;
         }
         return cell;
@@ -497,21 +550,24 @@ var FunctionWrapper = (function() {
     
     var num_seq = function(seq_id) {
         var cell, func;
-        var freq, phase, coeff;
+        var freq, mul, add;
+        var x, coeff;
         var i, imax;
         
         cell = this._cell;
         if (seq_id !== this._seq_id) {
             func = this._func;
-            freq  = this._freq.seq(seq_id);
-            phase = this._phase;
+            freq = this._freq.seq(seq_id);
+            mul  = this._mul;
+            add  = this._add;
+            x = this._x;
             coeff  = this._coeff;
             for (i = 0, imax = cell.length; i < imax; ++i) {
-                cell[i] = func(phase);
-                phase += freq[i] * coeff;
-                while (phase >= 1.0) phase -= 1.0;
+                cell[i] = func(x) * mul + add;
+                x += freq[i] * coeff;
+                while (x >= 1.0) x -= 1.0;
             }
-            this._phase = phase;
+            this._x = x;
             this._seq_id = seq_id;
         }
         return cell;
@@ -640,7 +696,7 @@ if (module.parent && !module.parent.parent) {
         });
     });
     describe("FunctionWrapper", function() {
-        var instance = timbre(function(x) { return x/2; });
+        var instance = timbre(function(x) { return 1.0-x; }, 0, 0.5, 2, 100);
         object_test(FunctionWrapper, instance);
         describe("#func", function() {
             it("should be an instance of Function", function() {
@@ -649,7 +705,42 @@ if (module.parent && !module.parent.parent) {
         });
         describe("#freq", function() {
             it("should be an instance of Object", function() {
-                object_test(UndefinedWrapper, instance.freq);
+                object_test(NumberWrapper, instance.freq);
+            });
+        });
+        describe("#phase", function() {
+            it("should equal 0.5", function() {
+                instance.phase.should.equal(0.5);
+            });
+        });
+        describe("#mul", function() {
+            it("should equal 2", function() {
+                instance.mul.should.equal(2);
+            });
+        });
+        describe("#add", function() {
+            it("should equal 100", function() {
+                instance.add.should.equal(100);
+            });
+        });
+        describe("#seq()", function() {
+            it("should return signal ((1-0.5)*2+100)", function() {
+                var _;
+                instance.phase = 0.5;
+                instance.freq  = 0;
+                instance.mul   = 2;
+                instance.add   = 100;
+                _ = instance.on().seq(1);
+                _.should.eql(timbre( (1-0.5)*2+100 ).seq(0));
+            });
+            it("should return signal not ((1-0.5)*2+100)", function() {
+                var _;
+                instance.phase = 0.5;
+                instance.freq  = 800;
+                instance.mul   = 2;
+                instance.add   = 100;
+                _ = instance.on().seq(2);
+                _.should.not.eql(timbre( (1-0.5)*2+100 ).seq(0));
             });
         });
         describe("#clone()", function() {
