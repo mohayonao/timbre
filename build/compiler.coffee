@@ -6,6 +6,7 @@ TIMBRE_SOURCES = [
     "timbre"
     "timbre/dac"
     "timbre/operators"
+    "timbre/oscillators"
 ]
 
 WINDOW_SOURCES = [
