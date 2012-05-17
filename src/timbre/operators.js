@@ -95,12 +95,10 @@ describe("*", function() {
     object_test(Multiply, instance);
     describe("#clone()", function() {
         it("should have same values", function() {
-            var _ = timbre(instance);
-            _.args.should.eql(instance.args);
+            timbre(instance).args.should.eql(instance.args);
         });
     });
     describe("#seq()", function() {
-        var _ = instance.seq(0);
-        _.should.eql(timbre(10 * 20 * 30).seq(0));
+        instance.seq(0).should.eql(timbre(10 * 20 * 30).seq(0));
     });
 });

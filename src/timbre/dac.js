@@ -70,8 +70,7 @@ describe("dac", function() {
     object_test(Dac, instance);
     describe("#clone()", function() {
         it("should have same values", function() {
-            var _ = timbre(instance);
-            _.args.should.eql(instance.args);
+            timbre(instance).args.should.eql(instance.args);
         });
     });
 });
