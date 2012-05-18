@@ -14,7 +14,7 @@
         position:absolute;top:0;left:0;margin:10px;
       }
       .prettyprint {
-        margin-top:0px;padding:10px !important;background:rgba(255,255,255,0.6);
+        margin-top:0px;padding:10px !important;background:rgba(255,255,255,0.75);
         font-family: 'Courier New', monospace; font-weight: bold;
       }
     </style>
@@ -39,14 +39,14 @@ T("sin", 1320);
 // 880Hz pulse with tremolo(10Hz)
           
 T("*", T("pulse", 880),
-       T("tri", 10, 0, 0.6, 0.8));
+       T("tri", 10, 0, 0.6, 0.8).kr());
       </pre>
       <button id="play2">play</button><button id="pause2">pause</button>
       
       <pre id="code" class="prettyprint">
 // 660Hz triangle with vibrato(5Hz)
 
-T("tri", T("sin", 5, 0, 6, 660));
+T("tri", T("sin", 5, 0, 6, 660).kr());
       </pre>
       <button id="play3">play</button><button id="pause3">pause</button>
       <pre id="code" class="prettyprint">
@@ -62,27 +62,27 @@ setInterval(function() {
       <button id="play4">play</button><button id="pause4">pause</button>
       <pre id="code" class="prettyprint">
 // chord
-// FM7 | G7onF | Em7 | Am | FM7 | G7onF | E7 | Am
+// FM7 | G7onF | Em7 | Am | FM7 | G7onF | E9 | Am
 
-T("+", T("*", c_env = T("perc", 1600),
+T("+", T("*", c_env = T("adsr", 20, 1740, 0.5),
               T("+", t1 = T("konami"),
                      t2 = T("konami"),
                      t3 = T("konami"))),
-       T("*", b_env = T("perc", 1600 / 8),
+       T("*", b_env = T("adsr", 0, 220),
               b = T("pulse")));
 
 c_env.onbang = function() {
-    t1.freq = chords[chords.index][0] / 2;
-    t2.freq = chords[chords.index][1] / 2;
-    t3.freq = chords[chords.index][2] / 2;
-    b .freq = chords[chords.index][3] / 2;
+    t1.freq = chords[chords.index][0];
+    t2.freq = chords[chords.index][1];
+    t3.freq = chords[chords.index][2];
+    b .freq = chords[chords.index][3];
     chords.index = ++chords.index % chords.length;
     b_env.bang();
 };    
-c_env.onended = function() {
+c_env.onDended = function() {
     c_env.bang();
 };
-b_env.onended = function() {
+b_env.onDended = function() {
     b_env.bang();
 };
       </pre>
@@ -110,11 +110,11 @@ b_env.onended = function() {
 
     
         dac1 = T("dac", T("*", T("pulse", 880),
-                        T("tri", 10, 0, 0.6, 0.8)));
+                        T("tri", 10, 0, 0.6, 0.8).kr()));
         dac1.amp = 0.8;
     
     
-        dac2 = T("dac", T("tri", T("sin", 5, 0, 6, 660)));
+        dac2 = T("dac", T("tri", T("sin", 5, 0, 6, 660).kr()));
 
     
         dac3 = T("dac", fami = T("fami", 880));
@@ -127,11 +127,11 @@ b_env.onended = function() {
             clearInterval(timerId);
         });
 
-        dac4 = T("dac", T("*", c_env = T("perc", 1714),
+        dac4 = T("dac", T("*", c_env = T("adsr", 20, 1740, 0.5),
                                T("+", t1 = T("konami"),
                                       t2 = T("konami"),
                                       t3 = T("konami"))),
-                        T("*", b_env = T("perc", 1714 / 8),
+                        T("*", b_env = T("adsr", 0, 220),
                                b = T("pulse")));
 
         var chords = [
@@ -141,7 +141,7 @@ b_env.onended = function() {
             [ 659.255, 783.456, 1046.502, 440.000 ], // Am7  = E G C / A
             [ 698.456, 880.000, 1318.510, 349.228 ], // FM7  = F A E / F
             [ 783.456, 987.766, 1174.659, 349.228 ], // G7/F = G B D / F
-            [ 830.609, 987.766, 1396.129, 329.627 ], // E7   = G#B F / E
+            [ 830.609, 987.766, 1396.129, 329.627 ], // E9   = G#B F / E
             [ 880.000,1046.502, 1318.510, 440.000 ], // Am   = A C E / A
         ]; chords.index = 0;
 
@@ -158,10 +158,10 @@ b_env.onended = function() {
             chords.index = ++chords.index % chords.length;
             b_env.bang();
         };
-        c_env.onended = function() {
+        c_env.onDended = function() {
             c_env.bang();
         };
-        b_env.onended = function() {
+        b_env.onDended = function() {
             b_env.bang();
         };
         
