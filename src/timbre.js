@@ -758,11 +758,23 @@ global.object_test = function(klass, instance) {
             instance.on.should.be.an.instanceOf(Function);
             instance.on().should.equal(instance);
         });
+        it("should call 'on' event", function() {
+            var _ = false;
+            instance.addEventListener("on", function() { _ = true; });
+            instance.on();
+            _.should.equal(true);
+        });
     });
     describe("#off()", function() {
         it("should return self", function() {
             instance.off.should.be.an.instanceOf(Function);
             instance.off().should.equal(instance);
+        });
+        it("should call 'off' event", function() {
+            var _ = false;
+            instance.addEventListener("off", function() { _ = true; });
+            instance.off();
+            _.should.equal(true);
         });
     });
     describe("#set()", function() {
@@ -781,6 +793,12 @@ global.object_test = function(klass, instance) {
         it("should return self", function() {
             instance.bang.should.be.an.instanceOf(Function);
             instance.bang().should.equal(instance);
+        });
+        it("should call 'bang' event", function() {
+            var _ = false;
+            instance.addEventListener("bang", function() { _ = true; });
+            instance.bang();
+            _.should.equal(true);
         });
     });
     describe("#clone()", function() {
