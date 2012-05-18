@@ -15,8 +15,10 @@ timbre.samplerate = 44100;
 timbre.channels   = 2;
 timbre.cellsize   = 128;
 timbre.streamsize = 1024;
+timbre.amp        = 0.8;
 timbre.verbose    = true;
 timbre.dacs       = [];
+timbre._isPlaying = false;
 timbre._ev        = {};
 timbre._sys       = null;
 timbre._global    = {};
@@ -64,6 +66,7 @@ var SoundSystem = (function() {
         cell = this._cell;
         L = this.L;
         R = this.R;
+        amp = timbre.amp;
         dacs = timbre.dacs;
         seq_id = this._seq_id;
         
@@ -72,7 +75,6 @@ var SoundSystem = (function() {
         kmax = this._cellsize;
         nmax = this.streamsize / kmax;
         saved_i = 0;
-        amp     = 1.0;
         
         // clear
         for (i = imax; i--; ) {
@@ -116,7 +118,13 @@ var SoundSystem = (function() {
         }
         
         for (k = kmax; k--; ) {
-            cell[k] *= 0.5;
+            x = cell[k] * amp * 0.5;
+            if (x < -1.0) {
+                x = -1.0;
+            } else if (1.0 < x) {
+                x = 1.0;
+            }
+            cell[k] = x;
         }
         
         this._seq_id = seq_id;
@@ -126,15 +134,27 @@ var SoundSystem = (function() {
 }());
 timbre._sys = new SoundSystem();
 
+Object.defineProperty(timbre, "isPlaying", {
+    get: function() {
+        return timbre._isPlaying;
+    }
+});
+
 timbre.on = function() {
-    timbre._sys.on();
-    timbre.fn.do_event(this, "on");
+    if (!timbre._isPlaying) {
+        timbre._sys.on();
+        timbre.fn.do_event(this, "on");
+        timbre._isPlaying = true;
+    }
     return timbre;
 };
 
 timbre.off = function() {
-    timbre._sys.off();
-    timbre.fn.do_event(this, "off");
+    if (timbre._isPlaying) {
+        timbre._sys.off();
+        timbre.fn.do_event(this, "off");
+        timbre._isPlaying = false;
+    }
     return timbre;
 };
 
