@@ -49,6 +49,7 @@ var Perc = (function() {
         this._dx = 1.0 / this._samples;
         this._x  = 1.0;
         timbre.fn.do_event(this, "bang");
+        return this;
     };
     
     $this.seq = function(seq_id) {
@@ -83,6 +84,7 @@ var Perc = (function() {
 timbre.fn.register("perc", Perc);
 
 // __END__
+
 describe("perc", function() {
     var instance = timbre("perc", 1000);
     object_test(Perc, instance);
