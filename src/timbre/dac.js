@@ -33,6 +33,16 @@ var Dac = (function() {
             return this._pan;
         }
     });
+    Object.defineProperty($this, "isOn", {
+        get: function() {
+            return this._ison;
+        }
+    });
+    Object.defineProperty($this, "isOff", {
+        get: function() {
+            return !this._ison;
+        }
+    });
     
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);
@@ -42,15 +52,18 @@ var Dac = (function() {
         this._panL = Math.cos(0.5 * Math.PI * this._pan);
         this._panR = Math.sin(0.5 * Math.PI * this._pan);
         this._amp  = 1.0;
+        this._ison = false;
     };
     
     $this.on = function() {
+        this._ison = true;
         timbre.dacs.append(this);
         timbre.fn.do_event(this, "on");
         return this;
     };
     
     $this.off = function() {
+        this._ison = false;
         timbre.dacs.remove(this);
         timbre.fn.do_event(this, "off");
         return this;
