@@ -1,0 +1,7 @@
+#!/usr/bin/env coffee
+
+express = require "express"
+
+app = express.createServer()
+app.use express.static "#{__dirname}/.."
+app.listen process.env.PORT or 3000
