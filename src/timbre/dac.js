@@ -11,11 +11,36 @@ var Dac = (function() {
         initialize.apply(this, arguments);
     }, $this = Dac.prototype;
     
+    Object.defineProperty($this, "amp", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._amp = value;
+            }
+        },
+        get: function() {
+            return this._amp;
+        }
+    });
+    Object.defineProperty($this, "pan", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._pan  = value;
+                this._panL = Math.cos(0.5 * Math.PI * this._pan);
+                this._panR = Math.sin(0.5 * Math.PI * this._pan);
+            }
+        },
+        get: function() {
+            return this._pan;
+        }
+    });
+    
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);
         this._L = new Float32Array(timbre.cellsize);
         this._R = new Float32Array(timbre.cellsize);
-        this._panL = this._panR = Math.sin(Math.PI * 0.25);
+        this._pan  = 0.5;
+        this._panL = Math.cos(0.5 * Math.PI * this._pan);
+        this._panR = Math.sin(0.5 * Math.PI * this._pan);
         this._amp  = 1.0;
     };
     
