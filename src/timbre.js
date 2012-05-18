@@ -92,7 +92,6 @@ var SoundSystem = (function() {
                 for (k = 0, i = saved_i; k < kmax; ++k, ++i) {
                     L[i] += tmpL[k];
                     R[i] += tmpR[k];
-                    cell[k] = tmpL[k] + tmpR[k];
                 }
             }
             saved_i = i;
@@ -118,6 +117,7 @@ var SoundSystem = (function() {
         }
         
         for (k = kmax; k--; ) {
+            cell[k] = L[k] + R[k];
             x = cell[k] * amp * 0.5;
             if (x < -1.0) {
                 x = -1.0;
