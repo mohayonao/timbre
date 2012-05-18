@@ -111,7 +111,6 @@ var ADSR = (function() {
         this._samplesMax = (timbre.samplerate * (this._a / 1000))|0;
         this._samples    = 0;
     };
-    $this._kr_only = true;
     
     $this.bang = function() {
         this._mode = 0;
@@ -135,6 +134,7 @@ var ADSR = (function() {
         var mode, samples, samplesMax;
         var mul, add;
         var s0, s1, x, i, imax;
+        
         cell = this._cell;
         if (seq_id !== this._seq_id) {
             mode    = this._mode;
@@ -144,68 +144,65 @@ var ADSR = (function() {
             add = this._add;
             s0 = this._s;
             s1 = 1.0 - this._s;
-            if (this._ar) {
-                // TODO:
-            } else {
-                while (samples >= samplesMax) {
-                    if (mode === 0) { // A -> D
-                        this._mode = 1;
-                        this._samples   -= samplesMax;
-                        this._samplesMax = (timbre.samplerate * (this._d / 1000))|0;
-                        timbre.fn.do_event(this, "D");
-                        mode = this._mode;
-                        samplesMax = this._samplesMax;
-                        samples    = this._samples;
-                        continue;
-                    }
-                    if (mode === 1) { // D -> S
-                        this._mode = 2;
-                        this._samples    = 0;
-                        this._samplesMax = Infinity;
-                        timbre.fn.do_event(this, "S");
-                        mode = this._mode;
-                        samplesMax = this._samplesMax;
-                        samples    = this._samples;
-                        continue;
-                    }
-                    if (mode === 3) { // S -> end
-                        mode = 4;
-                        this._samples    = 0;
-                        this._samplesMax = Infinity;
-                        timbre.fn.do_event(this, "ended");
-                        mode = this._mode;
-                        samplesMax = this._samplesMax;
-                        samples    = this._samples;
-                        continue;
-                    }
+            
+            while (samples >= samplesMax) {
+                if (mode === 0) { // A -> D
+                    this._mode = 1;
+                    this._samples   -= samplesMax;
+                    this._samplesMax = (timbre.samplerate * (this._d / 1000))|0;
+                    timbre.fn.do_event(this, "D");
+                    mode = this._mode;
+                    samplesMax = this._samplesMax;
+                    samples    = this._samples;
+                    continue;
                 }
-                switch (mode) {
-                case 0:
-                    x = samples / samplesMax;
-                    break;
-                case 1:
-                    x = samples / samplesMax;
-                    x = (1.0 - x) * s1 + s0;
-                    break;
-                case 2:
-                    x = s0;
-                    break;
-                case 3:
-                    x = samples / samplesMax;
-                    x = (1.0 - x) * s1;
-                    break;
-                default:
-                    x = 0;
-                    break;
+                if (mode === 1) { // D -> S
+                    this._mode = 2;
+                    this._samples    = 0;
+                    this._samplesMax = Infinity;
+                    timbre.fn.do_event(this, "S");
+                    mode = this._mode;
+                    samplesMax = this._samplesMax;
+                    samples    = this._samples;
+                    continue;
                 }
-                x = x * mul + add;
-                for (i = 0, imax = cell.length; i < imax; ++i) {
-                    cell[i] = x;
+                if (mode === 3) { // S -> end
+                    mode = 4;
+                    this._samples    = 0;
+                    this._samplesMax = Infinity;
+                    timbre.fn.do_event(this, "ended");
+                    mode = this._mode;
+                    samplesMax = this._samplesMax;
+                    samples    = this._samples;
+                    continue;
                 }
-                this._mode = mode;
-                this._samples    = samples + imax;
-                this._samplesMax = samplesMax;
             }
+            switch (mode) {
+            case 0:
+                x = samples / samplesMax;
+                break;
+            case 1:
+                x = samples / samplesMax;
+                x = (1.0 - x) * s1 + s0;
+                break;
+            case 2:
+                x = s0;
+                break;
+            case 3:
+                x = samples / samplesMax;
+                x = (1.0 - x) * s1;
+                break;
+            default:
+                x = 0;
+                break;
+            }
+            x = x * mul + add;
+            for (i = 0, imax = cell.length; i < imax; ++i) {
+                cell[i] = x;
+            }
+            this._mode = mode;
+            this._samples    = samples + imax;
+            this._samplesMax = samplesMax;
         }
         return cell;
     };

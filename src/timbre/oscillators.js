@@ -128,6 +128,16 @@ var Oscillator = (function() {
         return this;
     };
     
+    $this.ar = function() {
+        this._ar = true;
+        return this;
+    };
+    
+    $this.kr = function() {
+        this._ar = false;
+        return this;
+    };
+    
     $this.seq = function(seq_id) {
         var cell;
         var freq, mul, add, wavelet;
@@ -143,7 +153,7 @@ var Oscillator = (function() {
             x = this._x;
             coeff = this._coeff;
             if (this._ar) {
-                if (this._freq.ar) {
+                if (this._freq._ar) {
                     for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
                         index = x|0;
                         delta = x - index;

@@ -53,8 +53,8 @@ var Dac = (function() {
         this._panR = Math.sin(0.5 * Math.PI * this._pan);
         this._amp  = 1.0;
         this._ison = false;
+        this._ar = true;
     };
-    $this._ar_only = true;
     
     $this.on = function() {
         this._ison = true;

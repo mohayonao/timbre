@@ -384,17 +384,6 @@ timbre.fn = (function(timbre) {
         timbre.fn.do_event(this, "bang");
         return this;
     };
-    defaults.ar = function() {
-        this._ar = true;
-        return this;
-    };
-    defaults.kr = function() {
-        this._ar = false;
-        return this;
-    };
-    defaults.nop = function() {
-        return this;
-    };
     defaults.addEventListener        = timbre.addEventListener;
     defaults.removeEventListener     = timbre.removeEventListener;
     defaults.removeAllEventListeners = timbre.removeAllEventListeners;
@@ -425,19 +414,9 @@ timbre.fn = (function(timbre) {
         if (!this.bang) {
             this.bang = defaults.bang;
         }
-        if (!this.ar) {
-            if (this._kr_only || this._ar_only) {
-                this.ar = defaults.nop;
-            } else {
-                this.ar = defaults.ar;
-            }
-        }
-        if (!this.kr) {
-            if (this._kr_only || this._ar_only) {
-                this.kr = defaults.nop;
-            } else {
-                this.kr = defaults.kr;
-            }
+        
+        if (typeof this._ar !== "boolean") {
+            this._ar = false;
         }
         Object.defineProperty(this, "isAr", {
             get: function() { return this._ar; }
@@ -445,9 +424,6 @@ timbre.fn = (function(timbre) {
         Object.defineProperty(this, "isKr", {
             get: function() { return !this._ar; }
         });
-        if (typeof this._ar !== "boolean") {
-            this._ar = !!this._ar_only;
-        }
         
         if (typeof this.seq !== "function") {
             this.seq = defaults.seq;
@@ -511,7 +487,6 @@ var NumberWrapper = (function() {
             this._value = 0;
         }
     };
-    $this._kr_only = true;
     
     $this._post_init = function() {
         this.value = this._value;
@@ -552,7 +527,6 @@ var BooleanWrapper = (function() {
             this._value = false;
         }
     };
-    $this._kr_only = true;
     
     $this._post_init = function() {
         this.value = this._value;
@@ -671,7 +645,6 @@ var FunctionWrapper = (function() {
         this._x = this._phase;        
         this._coeff = 1 / timbre.samplerate;
     };
-    $this._kr_only = true;
     
     $this.clone = function() {
         return new FunctionWrapper([this.func, this.freq, this.phase, this.mul, this.add]);
@@ -746,11 +719,9 @@ var FunctionWrapper = (function() {
 timbre.fn.register("function", FunctionWrapper);
 
 var UndefinedWrapper = function() {};
-UndefinedWrapper.prototype._kr_only = true;
 timbre.fn.register("undefined", UndefinedWrapper);
 
 var NullWrapper = function() {};
-NullWrapper.prototype._kr_only = true;
 timbre.fn.register("null", NullWrapper);
 
 
@@ -838,18 +809,6 @@ global.object_test = function(klass, instance) {
             instance.addEventListener("bang", function() { _ = true; });
             instance.bang();
             _.should.equal(true);
-        });
-    });
-    describe("#ar()", function() {
-        it("should return self", function() {
-            instance.ar.should.be.an.instanceOf(Function);
-            instance.ar().should.equal(instance);
-        });
-    });
-    describe("#kr()", function() {
-        it("should return self", function() {
-            instance.kr.should.be.an.instanceOf(Function);
-            instance.kr().should.equal(instance);
         });
     });
     describe("#clone()", function() {
