@@ -1,6 +1,6 @@
 /**
  * timbre 0.0.0 / JavaScript Library for Objective Sound Programming
- * build: Fri May 18 2012 23:51:08 GMT+0900 (JST)
+ * build: Sat May 19 2012 00:11:32 GMT+0900 (JST)
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,7 +10,7 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.0.0";
-    timbre.BUILD      = "Fri May 18 2012 23:51:08 GMT+0900 (JST)";
+    timbre.BUILD      = "Sat May 19 2012 00:11:32 GMT+0900 (JST)";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 44100;
@@ -1327,6 +1327,7 @@ var timbre = (function(context, timbre) {
             this._samplesMax = (timbre.samplerate * (this._a / 1000))|0;
             this._samples    = 0;
             timbre.fn.do_event(this, "bang");
+            timbre.fn.do_event(this, "A");
             return this;
         };
         
@@ -1334,6 +1335,7 @@ var timbre = (function(context, timbre) {
             this._mode = 3;
             this._samples = 0;
             this._samplesMax = (timbre.samplerate * (this._r / 1000))|0;
+            timbre.fn.do_event(this, "R");
             return this;
         };
         
@@ -1359,7 +1361,7 @@ var timbre = (function(context, timbre) {
                             this._mode = 1;
                             this._samples   -= samplesMax;
                             this._samplesMax = (timbre.samplerate * (this._d / 1000))|0;
-                            timbre.fn.do_event(this, "Aended");
+                            timbre.fn.do_event(this, "D");
                             mode = this._mode;
                             samplesMax = this._samplesMax;
                             samples    = this._samples;
@@ -1369,7 +1371,7 @@ var timbre = (function(context, timbre) {
                             this._mode = 2;
                             this._samples    = 0;
                             this._samplesMax = Infinity;
-                            timbre.fn.do_event(this, "Dended");
+                            timbre.fn.do_event(this, "S");
                             mode = this._mode;
                             samplesMax = this._samplesMax;
                             samples    = this._samples;
@@ -1379,7 +1381,7 @@ var timbre = (function(context, timbre) {
                             mode = 4;
                             this._samples    = 0;
                             this._samplesMax = Infinity;
-                            timbre.fn.do_event(this, "Rended");
+                            timbre.fn.do_event(this, "ended");
                             mode = this._mode;
                             samplesMax = this._samplesMax;
                             samples    = this._samples;
