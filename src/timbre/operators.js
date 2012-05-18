@@ -13,6 +13,7 @@ var Add = (function() {
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);
     };
+    $this._ar_only = true;
     
     $this.seq = function(seq_id) {
         var args, cell;
@@ -47,6 +48,7 @@ var Multiply = (function() {
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);
     };
+    $this._ar_only = true;
     
     $this.seq = function(seq_id) {
         var args, cell;
@@ -68,7 +70,7 @@ var Multiply = (function() {
         }
         return cell;
     };
-
+    
     return Multiply;
 }());
 timbre.fn.register("*", Multiply);

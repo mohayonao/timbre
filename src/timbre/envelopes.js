@@ -61,16 +61,37 @@ var Perc = (function() {
             x  = this._x;
             dx = this._dx;
             samples = this._samples;
-            for (i = 0, imax = cell.length; i < imax; ++i) {
-                cell[i] = x;
-                x -= dx;
-                if (x < 0.0) x = 0.0;                
-                if (--samples === 0.0) {
-                    this._samples = 0;
-                    this.onended();
-                    x  = this._x;
-                    dx = this._dx;
-                    samples = this._samples;
+            if (this._ar) {
+                for (i = 0, imax = cell.length; i < imax; ++i) {
+                    cell[i] = x;
+                    x -= dx;
+                    if (x < 0.0) x = 0.0;
+                    if (samples > 0) {
+                        samples -= 1;
+                        if (samples <= 0) {
+                            this._samples = 0;
+                            this.onended();
+                            x  = this._x;
+                            dx = this._dx;
+                            samples = this._samples;
+                        }
+                    }
+                }
+            } else {
+                for (i = 0, imax = cell.length; i < imax; ++i) {
+                    cell[i] = x;
+                }
+                x -= dx * imax;
+                if (x < 0.0) x = 0.0;
+                if (samples > 0) {
+                    samples -= imax;
+                    if (samples <= 0) {
+                        this._samples = 0;
+                        this.onended();
+                        x  = this._x;
+                        dx = this._dx;
+                        samples = this._samples;
+                    }
                 }
             }
             this._x = x;

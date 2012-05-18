@@ -54,6 +54,7 @@ var Dac = (function() {
         this._amp  = 1.0;
         this._ison = false;
     };
+    $this._ar_only = true;
     
     $this.on = function() {
         this._ison = true;

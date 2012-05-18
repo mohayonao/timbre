@@ -114,6 +114,8 @@ var Oscillator = (function() {
         
         this._x = 1024 * this._phase;
         this._coeff = 1024 / timbre.samplerate;
+        
+        this._ar = true;
     };
     
     $this.clone = function() {
@@ -129,7 +131,7 @@ var Oscillator = (function() {
     $this.seq = function(seq_id) {
         var cell;
         var freq, mul, add, wavelet;
-        var x, coeff;
+        var x, dx, coeff;
         var index, delta, x0, x1, xx;
         var i, imax;
         cell = this._cell;
@@ -140,18 +142,44 @@ var Oscillator = (function() {
             wavelet = this._wavelet;
             x = this._x;
             coeff = this._coeff;
-            for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+            if (this._ar) {
+                if (this._freq.ar) {
+                    for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                        index = x|0;
+                        delta = x - index;
+                        x0 = wavelet[(index  ) & 1023];
+                        x1 = wavelet[(index+1) & 1023];
+                        xx = (1.0 - delta) * x0 + delta * x1;
+                        cell[i] = xx * mul + add;
+                        x += freq[i] * coeff;
+                    }
+                } else {
+                    dx = freq[0] * coeff;
+                    for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                        index = x|0;
+                        delta = x - index;
+                        x0 = wavelet[(index  ) & 1023];
+                        x1 = wavelet[(index+1) & 1023];
+                        xx = (1.0 - delta) * x0 + delta * x1;
+                        cell[i] = xx * mul + add;
+                        x += dx;
+                    }
+                }
+            } else {
                 index = x|0;
                 delta = x - index;
                 x0 = wavelet[(index  ) & 1023];
                 x1 = wavelet[(index+1) & 1023];
                 xx = (1.0 - delta) * x0 + delta * x1;
-                cell[i] = xx * mul + add;
-                x += freq[i] * coeff;
+                xx = xx * mul + add;
+                for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                    cell[i] = xx;
+                }
+                x += freq[0] * coeff * imax;
             }
             this._x = x;
             this._seq_id = seq_id;
-        }        
+        }
         return cell;
     }
     
