@@ -79,10 +79,10 @@ c_env.onbang = function() {
     chords.index = ++chords.index % chords.length;
     b_env.bang();
 };    
-c_env.onDended = function() {
+c_env.onS = function() {
     c_env.bang();
 };
-b_env.onDended = function() {
+b_env.onS = function() {
     b_env.bang();
 };
       </pre>
@@ -158,10 +158,10 @@ b_env.onDended = function() {
             chords.index = ++chords.index % chords.length;
             b_env.bang();
         };
-        c_env.onDended = function() {
+        c_env.onS = function() {
             c_env.bang();
         };
-        b_env.onDended = function() {
+        b_env.onS = function() {
             b_env.bang();
         };
         
