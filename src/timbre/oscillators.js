@@ -224,6 +224,19 @@ Oscillator.wavelets.fami = (function() {
     }
     return l;
 }());
+Oscillator.wavelets.konami = (function() {
+    var l, d, x, i, j;
+        d = [-0.625, -0.875, -0.125, +0.750, + 0.500, +0.125, +0.500, +0.750,
+             +0.250, -0.125, +0.500, +0.875, + 0.625, +0.000, +0.250, +0.375,
+             -0.125, -0.750, +0.000, +0.625, + 0.125, -0.500, -0.375, -0.125,
+             -0.750, -1.000, -0.625, +0.000, - 0.375, -0.875, -0.625, -0.250 ];
+    l = new Float32Array(1024);
+    for (i = 0; i < 1024; ++i) {
+        l[i] = d[((i / 1024) * d.length)|0];
+    }
+    return l;
+}());
+
 
 timbre.fn.register("sin", function(_args) {
     return new Oscillator(["sin"].concat(_args));
@@ -248,6 +261,9 @@ timbre.fn.register("sawdown", function(_args) {
 });
 timbre.fn.register("fami", function(_args) {
     return new Oscillator(["fami"].concat(_args));
+});
+timbre.fn.register("konami", function(_args) {
+    return new Oscillator(["konami"].concat(_args));
 });
 
 // __END__
