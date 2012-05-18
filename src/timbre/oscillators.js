@@ -279,7 +279,7 @@ describe("osc", function() {
     });
     describe("#freq", function() {
         it("should be an instance of Object", function() {
-            object_test(NumberWrapper, instance.freq);
+            object_test(timbre(0)._klass, instance.freq);
         });
     });
     describe("#phase", function() {
