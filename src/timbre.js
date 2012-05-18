@@ -446,7 +446,7 @@ timbre.fn = (function(timbre) {
             get: function() { return !this._ar; }
         });
         if (typeof this._ar !== "boolean") {
-            this._ar = false;
+            this._ar = !!this._ar_only;
         }
         
         if (typeof this.seq !== "function") {

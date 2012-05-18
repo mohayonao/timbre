@@ -111,6 +111,7 @@ var ADSR = (function() {
         this._samplesMax = (timbre.samplerate * (this._a / 1000))|0;
         this._samples    = 0;
     };
+    $this._kr_only = true;
     
     $this.bang = function() {
         this._mode = 0;
@@ -312,6 +313,10 @@ timbre.fn.register("perc", Perc);
 
 // __END__
 
+describe("adsr", function() {
+    var instance = timbre("adsr", 1000, 1000, 0.2, 200);
+    object_test(ADSR, instance);
+});
 describe("perc", function() {
     var instance = timbre("perc", 1000);
     object_test(Perc, instance);
