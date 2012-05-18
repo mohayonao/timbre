@@ -14,7 +14,8 @@
         position:absolute;top:0;left:0;margin:10px;
       }
       .prettyprint {
-        margin-top:0px;padding:10px;background:rgba(255,255,255,0.5);
+        margin-top:0px;padding:10px !important;background:rgba(255,255,255,0.6);
+        font-family: 'Courier New', monospace; font-weight: bold;
       }
     </style>
   </head>
@@ -31,7 +32,6 @@
 // generate sinewave
           
 T("sin", 1320);
-
       </pre>
       
       <button id="play1">play</button><button id="pause1">pause</button>
@@ -40,7 +40,6 @@ T("sin", 1320);
           
 T("*", T("pulse", 880),
        T("tri", 10, 0, 0.6, 0.8));
-
       </pre>
       <button id="play2">play</button><button id="pause2">pause</button>
       
@@ -48,7 +47,6 @@ T("*", T("pulse", 880),
 // 660Hz triangle with vibrato(5Hz)
 
 T("tri", T("sin", 5, 0, 6, 660));
-
       </pre>
       <button id="play3">play</button><button id="pause3">pause</button>
       <pre id="code" class="prettyprint">
@@ -59,7 +57,6 @@ fami = T("fami", 440);
 setInterval(function() {
     fami.freq = (Math.random() * 2000) + 200;
 }, 100);
-
       </pre>
 
       <button id="play4">play</button><button id="pause4">pause</button>
@@ -88,7 +85,6 @@ c_env.onended = function() {
 b_env.onended = function() {
     b_env.bang();
 };
-
       </pre>
     </section>
   </body>
@@ -99,7 +95,7 @@ b_env.onended = function() {
     $(function() {
         prettyPrint();
     
-        var viewer = new WaveViewer(timbre._sys, "waveviewer", 512, 256);
+        var viewer = new WaveViewer(timbre._sys, 60, "waveviewer", 512, 256);
         
         timbre.addEventListener("on", function() {
             viewer.start();
@@ -145,7 +141,7 @@ b_env.onended = function() {
             [ 659.255, 783.456, 1046.502, 440.000 ], // Am7  = E G C / A
             [ 698.456, 880.000, 1318.510, 349.228 ], // FM7  = F A E / F
             [ 783.456, 987.766, 1174.659, 349.228 ], // G7/F = G B D / F
-            [ 830.609, 987.766, 1174.659, 329.627 ], // E7   = G B D / E
+            [ 830.609, 987.766, 1396.129, 329.627 ], // E7   = G#B F / E
             [ 880.000,1046.502, 1318.510, 440.000 ], // Am   = A C E / A
         ]; chords.index = 0;
 
