@@ -18,7 +18,6 @@ timbre.streamsize = 1024;
 timbre.amp        = 0.8;
 timbre.verbose    = true;
 timbre.dacs       = [];
-timbre._isPlaying = false;
 timbre._ev        = {};
 timbre._sys       = null;
 timbre._global    = {};
@@ -40,6 +39,7 @@ var SoundSystem = (function() {
         this.R = new Float32Array(streamsize);
         
         this._impl = null;
+        this._ison = false;
         this._cell = new Float32Array(timbre.cellsize);
         this._cellsize = timbre.cellsize;
         this._seq_id = 0;
@@ -50,11 +50,17 @@ var SoundSystem = (function() {
     };
 
     $this.on = function() {
-        if (this._impl) this._impl.on();
+        if (this._impl) {
+            this._ison = true;
+            this._impl.on();
+        }
     };
     
     $this.off = function() {
-        if (this._impl) this._impl.off();
+        if (this._impl) {
+            this._impl.off();
+            this._ison = false;
+        }
     };
     
     $this.process = function() {
@@ -134,26 +140,29 @@ var SoundSystem = (function() {
 }());
 timbre._sys = new SoundSystem();
 
-Object.defineProperty(timbre, "isPlaying", {
+Object.defineProperty(timbre, "isOn", {
     get: function() {
-        return timbre._isPlaying;
+        return timbre._sys._ison;
+    }
+});
+Object.defineProperty(timbre, "isOff", {
+    get: function() {
+        return !timbre._sys._ison;
     }
 });
 
 timbre.on = function() {
-    if (!timbre._isPlaying) {
+    if (!timbre._sys._ison) {
         timbre._sys.on();
         timbre.fn.do_event(this, "on");
-        timbre._isPlaying = true;
     }
     return timbre;
 };
 
 timbre.off = function() {
-    if (timbre._isPlaying) {
+    if (timbre._sys._ison) {
         timbre._sys.off();
         timbre.fn.do_event(this, "off");
-        timbre._isPlaying = false;
     }
     return timbre;
 };
