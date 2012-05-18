@@ -55,7 +55,8 @@ replace_souce = (wrapper, placeholder, source)->
         return {line:i, indent:m[1]} if (m = re.exec x) != null
 
     if items != undefined
-        wrapper.splice items.line, 1, source.replace /^/gm, items.indent
+        source = ("#{items.indent}#{line}" for line in source.split "\n").join "\n"
+        wrapper.splice items.line, 1, source
 
     wrapper.join "\n"
 
