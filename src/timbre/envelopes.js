@@ -118,6 +118,7 @@ var ADSR = (function() {
         this._samplesMax = (timbre.samplerate * (this._a / 1000))|0;
         this._samples    = 0;
         timbre.fn.do_event(this, "bang");
+        timbre.fn.do_event(this, "A");
         return this;
     };
     
@@ -125,6 +126,7 @@ var ADSR = (function() {
         this._mode = 3;
         this._samples = 0;
         this._samplesMax = (timbre.samplerate * (this._r / 1000))|0;
+        timbre.fn.do_event(this, "R");
         return this;
     };
     
@@ -150,7 +152,7 @@ var ADSR = (function() {
                         this._mode = 1;
                         this._samples   -= samplesMax;
                         this._samplesMax = (timbre.samplerate * (this._d / 1000))|0;
-                        timbre.fn.do_event(this, "Aended");
+                        timbre.fn.do_event(this, "D");
                         mode = this._mode;
                         samplesMax = this._samplesMax;
                         samples    = this._samples;
@@ -160,7 +162,7 @@ var ADSR = (function() {
                         this._mode = 2;
                         this._samples    = 0;
                         this._samplesMax = Infinity;
-                        timbre.fn.do_event(this, "Dended");
+                        timbre.fn.do_event(this, "S");
                         mode = this._mode;
                         samplesMax = this._samplesMax;
                         samples    = this._samples;
@@ -170,7 +172,7 @@ var ADSR = (function() {
                         mode = 4;
                         this._samples    = 0;
                         this._samplesMax = Infinity;
-                        timbre.fn.do_event(this, "Rended");
+                        timbre.fn.do_event(this, "ended");
                         mode = this._mode;
                         samplesMax = this._samplesMax;
                         samples    = this._samples;
