@@ -80,7 +80,7 @@ var Interval = (function() {
                 samples = this._samples - timbre.cellsize;
                 if (samples <= 0) {
                     this._samples = samples + this._interval_samples;
-                    count = ++this._interval_count;
+                    count = this._interval_count;
                     args = this.args;
                     for (i = args.length; i--; ) {
                         if (typeof args[i] === "function") {
@@ -89,6 +89,7 @@ var Interval = (function() {
                             args[i].bang();
                         }
                     }
+                    ++this._interval_count;
                     samples = this._samples;
                 }
                 this._samples = samples;
