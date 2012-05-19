@@ -8,6 +8,7 @@ TIMBRE_SOURCES = [
     "timbre/operators"
     "timbre/oscillators"
     "timbre/envelopes"
+    "timbre/filters"
     "timbre/timers"
 ]
 
