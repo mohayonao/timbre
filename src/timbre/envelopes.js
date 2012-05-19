@@ -51,26 +51,8 @@ var ADSR = (function() {
             return this._r;
         }
     });
-    Object.defineProperty($this, "mul", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._mul = value;
-            }
-        },
-        get: function() {
-            return this._mul;
-        }
-    });
-    Object.defineProperty($this, "add", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._add = value;
-            }
-        },
-        get: function() {
-            return this._add;
-        }
-    });
+    
+    timbre.fn.bind_properties($this, {mul:1, add:0});
     
     var initialize = function(_args) {
         var i;
@@ -98,15 +80,11 @@ var ADSR = (function() {
         }
         if (typeof _args[i] === "number") {
             this.mul = _args[i++];
-        } else {
-            this.mul = 1.0;
         }
         if (typeof _args[i] === "number") {
             this.add = _args[i++];
-        } else {
-            this.add = 0.0;
         }
-
+        
         this._mode = 0;
         this._samplesMax = (timbre.samplerate * (this._a / 1000))|0;
         this._samples    = 0;
@@ -261,27 +239,8 @@ var Tween = (function() {
             return this._stop;
         }
     });
-    Object.defineProperty($this, "mul", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._mul = value;
-            }
-        },
-        get: function() {
-            return this._mul;
-        }
-    });
-    Object.defineProperty($this, "add", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._add = value;
-            }
-        },
-        get: function() {
-            return this._add;
-        }
-    });
     
+    timbre.fn.bind_properties($this, {mul:1, add:0});
     
     var initialize = function(_args) {
         var i, type;
@@ -309,13 +268,9 @@ var Tween = (function() {
         }
         if (typeof _args[i] === "number") {
             this.mul = _args[i++];
-        } else {
-            this.mul = 1;
         }
         if (typeof _args[i] === "number") {
             this.add = _args[i++];
-        } else {
-            this.add = 0;
         }
         
         this._phase     = 0;
@@ -521,26 +476,8 @@ var Perc = (function() {
             return this._d;
         }
     });
-    Object.defineProperty($this, "mul", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._mul = value;
-            }
-        },
-        get: function() {
-            return this._mul;
-        }
-    });
-    Object.defineProperty($this, "add", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._add = value;
-            }
-        },
-        get: function() {
-            return this._add;
-        }
-    });
+    
+    timbre.fn.bind_properties($this, {mul:1, add:0});
     
     var initialize = function(_args) {
         var i;
@@ -553,13 +490,9 @@ var Perc = (function() {
         }
         if (typeof _args[i] === "number") {
             this.mul = _args[i++];
-        } else {
-            this.mul = 1.0;
         }
         if (typeof _args[i] === "number") {
             this.add = _args[i++];
-        } else {
-            this.add = 0.0;
         }
         if (typeof _args[i] === "function") {
             this.onended = _args[i++];

@@ -9,7 +9,9 @@ var Add = (function() {
     var Add = function() {
         initialize.apply(this, arguments);
     }, $this = Add.prototype;
-
+    
+    timbre.fn.bind_properties($this, {mul:1, add:0});
+    
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);
         this._ar = true;
@@ -44,6 +46,8 @@ var Multiply = (function() {
     var Multiply = function() {
         initialize.apply(this, arguments);
     }, $this = Multiply.prototype;
+    
+    timbre.fn.bind_properties($this, {mul:1, add:0});
 
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);

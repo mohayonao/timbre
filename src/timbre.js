@@ -177,8 +177,12 @@ timbre.off = function() {
 };
 
 timbre.addEventListener = function(name, func) {
-    var list, i;
+    var list, rm, i;
     if (typeof func === "function") {
+        if (name[0] === "~") {
+            name = name.substr(1);
+            func.rm = true;
+        }
         list = this._ev[name];
         if (list === undefined) {
             this._ev[name] = list = [];
@@ -329,6 +333,39 @@ timbre.fn = (function(timbre) {
         };
     }());
     
+    fn.bind_properties = function(self, properties) {
+        for (var name in properties) {
+            switch (name) {
+            case "mul":
+                Object.defineProperty(self, "mul", {
+                    set: function(value) {
+                        if (typeof value === "number") {
+                            this._mul = value;
+                        }
+                    },
+                    get: function() {
+                        return this._mul;
+                    }
+                });
+                self._mul = properties[name];
+                break;
+            case "add":
+                Object.defineProperty(self, "add", {
+                    set: function(value) {
+                        if (typeof value === "number") {
+                            this._add = value;
+                        }
+                    },
+                    get: function() {
+                        return this._add;
+                    }
+                });
+                self._add = properties[name];
+                break;
+            }
+        }
+    };
+    
     fn.do_event = function(obj, name, args) {
         var func, list, i;
         func = obj["on" + name];
@@ -338,7 +375,9 @@ timbre.fn = (function(timbre) {
         list = obj._ev[name];
         if (list !== undefined) {
             for (i = list.length; i--; ) {
-                list[i].apply(obj, args);
+                func = list[i];
+                func.apply(obj, args);
+                if (func.rm) obj.removeEventListener(name, func);
             }
         }
     };

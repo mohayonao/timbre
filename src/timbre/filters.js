@@ -61,26 +61,8 @@ var Filter = (function() {
             return this._gain;
         }
     });
-    Object.defineProperty($this, "mul", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._mul = value;
-            }
-        },
-        get: function() {
-            return this._mul;
-        }
-    });
-    Object.defineProperty($this, "add", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._add = value;
-            }
-        },
-        get: function() {
-            return this._add;
-        }
-    });
+    
+    timbre.fn.bind_properties($this, {mul:1, add:0});
     
     var initialize = function(_args) {
         var i, type;
@@ -418,26 +400,8 @@ var ResonantFilter = (function() {
             return this._depth;
         }
     });
-    Object.defineProperty($this, "mul", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._mul = value;
-            }
-        },
-        get: function() {
-            return this._mul;
-        }
-    });
-    Object.defineProperty($this, "add", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._add = value;
-            }
-        },
-        get: function() {
-            return this._add;
-        }
-    });
+    
+    timbre.fn.bind_properties($this, {mul:1, add:0});
     
     var initialize = function(_args) {
         var i, type;
@@ -465,13 +429,9 @@ var ResonantFilter = (function() {
         }
         if (typeof _args[i] === "number") {
             this.mul = _args[i++];
-        } else {
-            this.mul = 1.0;
         }
         if (typeof _args[i] === "number") {
             this.add = _args[i++];
-        } else {
-            this.add = 0.0;
         }
         this.args = timbre.fn.valist.call(this, _args.slice(i));
         
