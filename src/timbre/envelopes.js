@@ -270,7 +270,7 @@ var Perc = (function() {
             for (i = 0, imax = cell.length; i < imax; ++i) {
                 cell[i] = x;
             }
-            x -= dx * imax;
+            x -= dx;
             if (x < 0.0) x = 0.0;
             if (samples > 0) {
                 samples -= imax;
