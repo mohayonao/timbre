@@ -304,6 +304,86 @@ timbre.fn.register("konami", function(_args) {
     return new Oscillator(["konami"].concat(_args));
 });
 
+var Noise = (function() {
+    var Noise = function() {
+        initialize.apply(this, arguments);
+    }, $this = Noise.prototype;
+
+    Object.defineProperty($this, "mul", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._mul = value;
+            }
+        },
+        get: function() {
+            return this._mul;
+        }
+    });
+    Object.defineProperty($this, "add", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._add = value;
+            }
+        },
+        get: function() {
+            return this._add;
+        }
+    });
+    
+    var initialize = function(_args) {
+        var i;
+
+        i = 0;
+        if (typeof _args[i] === "number") {
+            this.mul = _args[i++];
+        } else {
+            this.mul = 1.0;
+        }
+        if (typeof _args[i] === "number") {
+            this.add = _args[i++];
+        } else {
+            this.add = 1.0;
+        }
+        this._ar = true;
+    };
+    
+    $this.ar = function() {
+        this._ar = true;
+        return this;
+    };
+    
+    $this.kr = function() {
+        this._ar = false;
+        return this;
+    };
+    
+    $this.seq = function(seq_id) {
+        var cell;
+        var mul, add, x, i;
+        
+        cell = this._cell;
+        if (seq_id !== this._seq_id) {
+            mul = this._mul;
+            add = this._add;
+            if (this._ar) {
+                for (i = cell.length; i--; ) {
+                    cell[i] = (Math.random() * 2.0 - 1.0) * mul * add;
+                }
+            } else {
+                x = (Math.random() * 2.0 - 1.0) * mul * add;
+                for (i = cell.length; i--; ) {
+                    cell[i] = x;
+                }
+            }
+            this._seq_id = seq_id;
+        }
+        return cell;
+    };
+
+    return Noise;
+}());
+timbre.fn.register("noise", Noise);
+
 // __END__
 
 describe("osc", function() {
