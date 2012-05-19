@@ -31,7 +31,7 @@
         <span>JavaScript Library for Objective Sound Programming</span><br/>
       </header>
       
-      <div id="caution">system requirements: Chrome 14- or Firefox 6-</div>
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
       
       <button id="play0">play</button><button id="pause0">pause</button>
       <pre id="code" class="prettyprint">
@@ -99,8 +99,9 @@ b_env.onS = function() {
   <link type="text/css" media="screen" rel="stylesheet" href="css/prettify.css" />
   <script type="text/javascript">
     $(function() {
+        if (!timbre._sys._impl) $("#caution").show();
         prettyPrint();
-    
+        
         var viewer = new WaveViewer(timbre._sys, 60, "waveviewer", 512, 256);
         
         timbre.addEventListener("on", function() {
@@ -181,8 +182,6 @@ b_env.onS = function() {
             $("#play"  + i).on("click", function() { dac.on() ; });
             $("#pause" + i).on("click", function() { dac.off(); });
         });
-
-        if (!timbre._sys._impl) $("#caution").show();
     });
   </script>
 </html>
