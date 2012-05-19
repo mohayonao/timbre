@@ -66,7 +66,7 @@ var SoundSystem = (function() {
     
     $this.process = function() {
         var cell, L, R;
-        var seq_id, dacs, dac, timers;
+        var seq_id, dacs, dac, timers, timer;
         var i, imax, j, jmax, k, kmax, n, nmax;
         var saved_i, tmpL, tmpR, amp, x;
         
@@ -94,16 +94,19 @@ var SoundSystem = (function() {
         for (n = nmax; n--; ) {
             ++seq_id;
             for (j = timers.length; j--; ) {
-                timers[j].seq(seq_id);
+                if ((timer = timers[j]) !== undefined) {
+                    timer.seq(seq_id);
+                }
             }
             for (j = dacs.length; j--; ) {
-                dac = dacs[j];
-                dac.seq(seq_id);
-                tmpL = dac._L;
-                tmpR = dac._R;
-                for (k = 0, i = saved_i; k < kmax; ++k, ++i) {
-                    L[i] += tmpL[k];
-                    R[i] += tmpR[k];
+                if ((dac = dacs[j]) !== undefined) {
+                    dac.seq(seq_id);
+                    tmpL = dac._L;
+                    tmpR = dac._R;
+                    for (k = 0, i = saved_i; k < kmax; ++k, ++i) {
+                        L[i] += tmpL[k];
+                        R[i] += tmpR[k];
+                    }
                 }
             }
             saved_i = i;
