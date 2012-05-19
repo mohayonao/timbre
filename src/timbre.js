@@ -404,6 +404,14 @@ timbre.fn = (function(timbre) {
     defaults.clone = function() {
         return new this._klass(this.args);
     };
+    defaults.append = function() {
+        this.args.append.apply(this.args, arguments);
+        return this;
+    };
+    defaults.remove = function() {
+        this.args.remove.apply(this.args, arguments);
+        return this;
+    };
     defaults.set = function(key, value) {
         var self;
         self = this;
@@ -486,6 +494,12 @@ timbre.fn = (function(timbre) {
         }
         if (typeof this.clone !== "function") {
             this.clone = defaults.clone;
+        }
+        if (typeof this.append !== "function") {
+            this.append = defaults.append;
+        }
+        if (typeof this.remove !== "function") {
+            this.remove = defaults.remove;
         }
         if (typeof this.addEventListener !== "function") {
             this.addEventListener = defaults.addEventListener;
