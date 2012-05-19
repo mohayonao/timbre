@@ -217,14 +217,14 @@ var Perc = (function() {
         initialize.apply(this, arguments);
     }, $this = Perc.prototype;
     
-    Object.defineProperty($this, "duration", {
+    Object.defineProperty($this, "d", {
         set: function(value) {
             if (typeof value === "number") {
-                this._duration = value;
+                this._d = value;
             }
         },
         get: function() {
-            return this._duration;
+            return this._d;
         }
     });
     
@@ -235,24 +235,22 @@ var Perc = (function() {
         
         i = 0;
         if (typeof _args[i] === "number") {
-            this.duration = _args[i++];
+            this.d = _args[i++];
         } else {
-            this.duration = 0.0;
+            this.d = 100.0;
         }
         if (typeof _args[i] === "function") {
             this.onended = _args[i++];
-        } else {
-            this.onended = nop;
         }
         
-        this._samples = (timbre.samplerate * (this._duration/1000))|0;
-        this._dx = 1.0 / this._samples;
+        this._samples = (timbre.samplerate * (this._d / 1000))|0;
+        this._dx = timbre.cellsize / this._samples;
         this._x  = 1.0;
     };
     
     $this.bang = function() {
-        this._samples = (timbre.samplerate * (this._duration/1000))|0;
-        this._dx = 1.0 / this._samples;
+        this._samples = (timbre.samplerate * (this._d / 1000))|0;
+        this._dx = timbre.cellsize / this._samples;
         this._x  = 1.0;
         timbre.fn.do_event(this, "bang");
         return this;
@@ -262,44 +260,28 @@ var Perc = (function() {
         var cell;
         var x, dx, samples;
         var i, imax;
+        
         cell = this._cell;
         if (seq_id !== this._seq_id) {
             x  = this._x;
             dx = this._dx;
             samples = this._samples;
-            if (this._ar) {
-                for (i = 0, imax = cell.length; i < imax; ++i) {
-                    cell[i] = x;
-                    x -= dx;
-                    if (x < 0.0) x = 0.0;
-                    if (samples > 0) {
-                        samples -= 1;
-                        if (samples <= 0) {
-                            this._samples = 0;
-                            this.onended();
-                            x  = this._x;
-                            dx = this._dx;
-                            samples = this._samples;
-                        }
-                    }
-                }
-            } else {
-                for (i = 0, imax = cell.length; i < imax; ++i) {
-                    cell[i] = x;
-                }
-                x -= dx * imax;
-                if (x < 0.0) x = 0.0;
-                if (samples > 0) {
-                    samples -= imax;
-                    if (samples <= 0) {
-                        this._samples = 0;
-                        this.onended();
-                        x  = this._x;
-                        dx = this._dx;
-                        samples = this._samples;
-                    }
+            
+            for (i = 0, imax = cell.length; i < imax; ++i) {
+                cell[i] = x;
+            }
+            x -= dx * imax;
+            if (x < 0.0) x = 0.0;
+            if (samples > 0) {
+                samples -= imax;
+                if (samples <= 0) {
+                    this._samples = 0;
+                    timbre.fn.do_event(this, "ended");
+                    x  = this._x;
+                    samples = this._samples;
                 }
             }
+            
             this._x = x;
             this._samples = samples;
         }
