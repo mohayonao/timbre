@@ -18,6 +18,7 @@ timbre.streamsize = 1024;
 timbre.amp        = 0.8;
 timbre.verbose    = true;
 timbre.dacs       = [];
+timbre.timers     = [];
 timbre._ev        = {};
 timbre._sys       = null;
 timbre._global    = {};
@@ -65,7 +66,7 @@ var SoundSystem = (function() {
     
     $this.process = function() {
         var cell, L, R;
-        var seq_id, dacs, dac;
+        var seq_id, dacs, dac, timers;
         var i, imax, j, jmax, k, kmax, n, nmax;
         var saved_i, tmpL, tmpR, amp, x;
         
@@ -73,7 +74,9 @@ var SoundSystem = (function() {
         L = this.L;
         R = this.R;
         amp = timbre.amp;
-        dacs = timbre.dacs;
+        
+        dacs   = timbre.dacs;
+        timers = timbre.timers;
         seq_id = this._seq_id;
         
         imax = L.length;
@@ -90,6 +93,9 @@ var SoundSystem = (function() {
         // signal process
         for (n = nmax; n--; ) {
             ++seq_id;
+            for (j = timers.length; j--; ) {
+                timers[j].seq(seq_id);
+            }
             for (j = dacs.length; j--; ) {
                 dac = dacs[j];
                 dac.seq(seq_id);
@@ -456,6 +462,7 @@ timbre.fn = (function(timbre) {
     return fn;
 }(timbre));
 timbre.fn.init_set.call(timbre.dacs);
+timbre.fn.init_set.call(timbre.timers);
 
 
 // built-in-types
