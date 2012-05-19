@@ -13,6 +13,10 @@
       #body {
         position:absolute;top:0;left:0;margin:10px;
       }
+      #caution {
+        margin:15px 0px;padding:5px;color:red;background:#ffeeee;text-align:center;
+        font-size: 1.1em;font-weight:bold;border:solid 1px #ff9999;display:none;
+      }
       .prettyprint {
         margin-top:0px;padding:10px !important;background:rgba(255,255,255,0.75);
         font-family: 'Courier New', monospace; font-weight: bold;
@@ -24,8 +28,10 @@
     <selction id="body">
       <header style="margin:5px 0px 15px 0px">
         <h1>timbre</h1>
-        <span>JavaScript Library for Objective Sound Programming</span>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
       </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 6-</div>
       
       <button id="play0">play</button><button id="pause0">pause</button>
       <pre id="code" class="prettyprint">
@@ -175,6 +181,8 @@ b_env.onS = function() {
             $("#play"  + i).on("click", function() { dac.on() ; });
             $("#pause" + i).on("click", function() { dac.off(); });
         });
+
+        if (!timbre._sys._impl) $("#caution").show();
     });
   </script>
 </html>
