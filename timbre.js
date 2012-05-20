@@ -1,6 +1,6 @@
 /**
  * timbre 0.0.0 / JavaScript Library for Objective Sound Programming
- * build: Sun May 20 2012 17:26:31 GMT+0900 (JST)
+ * build: Sun May 20 2012 20:07:33 GMT+0900 (JST)
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,7 +10,7 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.0.0";
-    timbre.BUILD      = "Sun May 20 2012 17:26:31 GMT+0900 (JST)";
+    timbre.BUILD      = "Sun May 20 2012 20:07:33 GMT+0900 (JST)";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 44100;
@@ -749,10 +749,19 @@ var timbre = (function(context, timbre) {
             this._ison = false;
             this._ar = true;
         };
+    
+        $this._post_init = function() {
+            var i, args;
+            args = this.args;
+            for (i = args.length; i--; ) {
+                args[i].dac = this;
+            }
+        };
         
         $this.on = $this.play = function() {
             this._ison = true;
             timbre.dacs.append(this);
+            timbre.fn.do_event(this, "play");        
             timbre.fn.do_event(this, "on");
             return this;
         };
@@ -761,6 +770,7 @@ var timbre = (function(context, timbre) {
             this._ison = false;
             timbre.dacs.remove(this);
             timbre.fn.do_event(this, "off");
+            timbre.fn.do_event(this, "pause");        
             return this;
         };
         
@@ -1281,7 +1291,11 @@ var timbre = (function(context, timbre) {
             this._samples    = 0;
         };
         
-        $this.bang = function() {
+        $this.clone = function() {
+            return new ADSR([this.a, this.d, this.s, this.r, this.mul, this.add]);
+        };
+        
+        $this.bang = $this.keyOn = function() {
             this._mode = 0;
             this._samplesMax = (timbre.samplerate * (this._a / 1000))|0;
             this._samples    = 0;
@@ -1467,6 +1481,10 @@ var timbre = (function(context, timbre) {
             this._value     = 0;
             this._enabled   = false;
             this.type = type;        
+        };
+    
+        $this.clone = function() {
+            return new Tween([this.type, this.d, this.start, this.stop, this.mul, this.add]);
         };
         
         $this.bang = function() {
@@ -1688,6 +1706,10 @@ var timbre = (function(context, timbre) {
             this._samples = 0;
             this._dx = timbre.cellsize / this._samples;
             this._x  = 0;
+        };
+    
+        $this.clone = function() {
+            return new Perc([this.d, this.mul, this.add]);
         };
         
         $this.bang = function() {
@@ -2307,7 +2329,7 @@ var timbre = (function(context, timbre) {
             this._interval_count = 0;
         };
         
-        $this.on = $this.play = function() {
+        $this.on = function() {
             this._ison = true;
             this._samples = this._interval_samples;
             this._interval_count = 0;
@@ -2316,10 +2338,14 @@ var timbre = (function(context, timbre) {
             return this;
         };
         
-        $this.off = $this.pause = function() {
+        $this.off = function() {
             this._ison = false;
             timbre.timers.remove(this);
             timbre.fn.do_event(this, "off");
+            return this;
+        };
+        
+        $this.play = $this.pause = function() {
             return this;
         };
         
@@ -2404,7 +2430,7 @@ var timbre = (function(context, timbre) {
             this._samples = 0;
         };
         
-        $this.on = $this.play = function() {
+        $this.on = function() {
             this._ison = true;
             this._samples = this._timeout_samples;
             timbre.timers.append(this);
@@ -2412,10 +2438,14 @@ var timbre = (function(context, timbre) {
             return this;
         };
         
-        $this.off = $this.pause = function() {
+        $this.off = function() {
             this._ison = false;
             timbre.timers.remove(this);
             timbre.fn.do_event(this, "off");
+            return this;
+        };
+        
+        $this.play = $this.pause = function() {
             return this;
         };
         
