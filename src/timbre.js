@@ -568,23 +568,8 @@ var FunctionWrapper = (function() {
     
     Object.defineProperty($this, "func", {
         set: function(value) {
-            var tmp;
             if (typeof value === "function") {
                 this._func = value;
-                
-                tmp = this._func(0);
-                if (tmp instanceof Float32Array || tmp instanceof Array) {
-                    this.seq = this._seq = ary_seq;
-                    this._array_saved = [];
-                    this._array_index = 0;
-                } else {
-                    if (typeof tmp !== "number") {
-                        this._func = DEFAULT_FUNCTION;
-                    }
-                    this.seq = this._seq = num_seq;
-                    delete this._array_saved;
-                    delete this._array_index;
-                }
             }
         },
         get: function() {
@@ -651,58 +636,20 @@ var FunctionWrapper = (function() {
         return this;
     };
     
-    var ary_seq = function(seq_id) {
-        var cell, func, tmp;
-        var freq, mul, add;
-        var x, coeff;
-        var i, imax, j, jmax;
-        
-        cell = this._cell;
-        if (seq_id !== this._seq_id) {
-            func = this._func;
-            freq = this._freq.seq(seq_id);
-            mul  = this._mul;
-            add  = this._add;
-            x = this._x;
-            coeff  = this._coeff;
-            tmp = this._array_saved;
-            j   = this._array_index; jmax = tmp.length;
-            for (i = 0, imax = cell.length; i < imax; ++i, ++j) {
-                if (j >= jmax) {
-                    tmp = func(x, freq[i] * coeff);
-                    j = 0; jmax = tmp.length;
-                }
-                cell[i] = tmp[j] * mul + add;
-                x += freq[i] * coeff;
-                while (x >= 1.0) x -= 1.0;
-            }
-            this._array_saved = tmp;
-            this._array_index = j;
-            this._x = x;
-            this._seq_id = seq_id;
-        }
-        return cell;
-    };
-    
-    var num_seq = function(seq_id) {
-        var cell, func;
-        var freq, mul, add;
-        var x, coeff;
+    $this.seq = function(seq_id) {
+        var cell;
+        var x, value;
         var i, imax;
         
         cell = this._cell;
         if (seq_id !== this._seq_id) {
-            func = this._func;
-            freq = this._freq.seq(seq_id);
-            mul  = this._mul;
-            add  = this._add;
             x = this._x;
-            coeff  = this._coeff;
-            for (i = 0, imax = cell.length; i < imax; ++i) {
-                cell[i] = func(x) * mul + add;
-                x += freq[i] * coeff;
-                while (x >= 1.0) x -= 1.0;
+            value = this._func(x) * this._mul + this._add;
+            for (i = cell.length; i--; ) {
+                cell[i] = value;
             }
+            x += this._freq.seq(seq_id)[0] * this._coeff;
+            while (x >= 1.0) x -= 1.0;
             this._x = x;
             this._seq_id = seq_id;
         }
