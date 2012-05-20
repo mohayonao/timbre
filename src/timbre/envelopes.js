@@ -52,8 +52,6 @@ var ADSR = (function() {
         }
     });
     
-    timbre.fn.bind_properties($this, {mul:1, add:0});
-    
     var initialize = function(_args) {
         var i;
 
@@ -239,8 +237,6 @@ var Tween = (function() {
             return this._stop;
         }
     });
-    
-    timbre.fn.bind_properties($this, {mul:1, add:0});
     
     var initialize = function(_args) {
         var i, type;
@@ -476,8 +472,6 @@ var Perc = (function() {
             return this._d;
         }
     });
-    
-    timbre.fn.bind_properties($this, {mul:1, add:0});
     
     var initialize = function(_args) {
         var i;

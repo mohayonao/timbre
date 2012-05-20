@@ -62,8 +62,6 @@ var Oscillator = (function() {
         }
     });
     
-    timbre.fn.bind_properties($this, {mul:1, add:0});
-    
     var initialize = function(_args) {
         var i ;
         
@@ -286,27 +284,6 @@ var Noise = (function() {
     var Noise = function() {
         initialize.apply(this, arguments);
     }, $this = Noise.prototype;
-
-    Object.defineProperty($this, "mul", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._mul = value;
-            }
-        },
-        get: function() {
-            return this._mul;
-        }
-    });
-    Object.defineProperty($this, "add", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._add = value;
-            }
-        },
-        get: function() {
-            return this._add;
-        }
-    });
     
     var initialize = function(_args) {
         var i;
@@ -314,13 +291,9 @@ var Noise = (function() {
         i = 0;
         if (typeof _args[i] === "number") {
             this.mul = _args[i++];
-        } else {
-            this.mul = 1.0;
         }
         if (typeof _args[i] === "number") {
             this.add = _args[i++];
-        } else {
-            this.add = 1.0;
         }
         this._ar = true;
     };
@@ -345,10 +318,10 @@ var Noise = (function() {
             add = this._add;
             if (this._ar) {
                 for (i = cell.length; i--; ) {
-                    cell[i] = (Math.random() * 2.0 - 1.0) * mul * add;
+                    cell[i] = (Math.random() * 2.0 - 1.0) * mul + add;
                 }
             } else {
-                x = (Math.random() * 2.0 - 1.0) * mul * add;
+                x = (Math.random() * 2.0 - 1.0) * mul + add;
                 for (i = cell.length; i--; ) {
                     cell[i] = x;
                 }

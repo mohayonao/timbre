@@ -62,8 +62,6 @@ var Filter = (function() {
         }
     });
     
-    timbre.fn.bind_properties($this, {mul:1, add:0});
-    
     var initialize = function(_args) {
         var i, type;
         
@@ -317,28 +315,28 @@ Filter.types.highboost = {
         this._b2 =      ((A + 1) - (A - 1) * cos - alpsA2) * A * ia0;
     }
 };
-timbre.fn.register("LPF", function(_args) {
+timbre.fn.register("LPF", Filter, function(_args) {
     return new Filter(["LPF"].concat(_args));
 });
-timbre.fn.register("HPF", function(_args) {
+timbre.fn.register("HPF", Filter, function(_args) {
     return new Filter(["HPF"].concat(_args));
 });
-timbre.fn.register("BPF", function(_args) {
+timbre.fn.register("BPF", Filter, function(_args) {
     return new Filter(["BPF"].concat(_args));
 });
-timbre.fn.register("BRF", function(_args) {
+timbre.fn.register("BRF", Filter, function(_args) {
     return new Filter(["BRF"].concat(_args));
 });
-timbre.fn.register("allpass", function(_args) {
+timbre.fn.register("allpass", Filter, function(_args) {
     return new Filter(["allpass"].concat(_args));
 });
-timbre.fn.register("peaking", function(_args) {
+timbre.fn.register("peaking", Filter, function(_args) {
     return new Filter(["peaking"].concat(_args));
 });
-timbre.fn.register("lowboost", function(_args) {
+timbre.fn.register("lowboost", Filter, function(_args) {
     return new Filter(["lowboost"].concat(_args));
 });
-timbre.fn.register("highboost", function(_args) {
+timbre.fn.register("highboost", Filter, function(_args) {
     return new Filter(["highboost"].concat(_args));
 });
 
@@ -400,8 +398,6 @@ var ResonantFilter = (function() {
             return this._depth;
         }
     });
-    
-    timbre.fn.bind_properties($this, {mul:1, add:0});
     
     var initialize = function(_args) {
         var i, type;
@@ -522,16 +518,16 @@ var ResonantFilter = (function() {
     
     return ResonantFilter;
 }());
-timbre.fn.register("rLPF", function(_args) {
+timbre.fn.register("rLPF", ResonantFilter, function(_args) {
     return new ResonantFilter(["LPF"].concat(_args));
 });
-timbre.fn.register("rHPF", function(_args) {
+timbre.fn.register("rHPF", ResonantFilter, function(_args) {
     return new ResonantFilter(["HPF"].concat(_args));
 });
-timbre.fn.register("rBPF", function(_args) {
+timbre.fn.register("rBPF", ResonantFilter, function(_args) {
     return new ResonantFilter(["BPF"].concat(_args));
 });
-timbre.fn.register("rBRF", function(_args) {
+timbre.fn.register("rBRF", ResonantFilter, function(_args) {
     return new ResonantFilter(["BRF"].concat(_args));
 });
 
