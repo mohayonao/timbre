@@ -293,6 +293,12 @@ timbre.fn = (function(timbre) {
     }());
     
     var defaults = {};
+    defaults.play = function() {
+        this.dac.on();
+    };
+    defaults.pause = function() {
+        this.dac.off();
+    };
     defaults.bang = function() {
         timbre.fn.do_event(this, "bang");
         return this;
@@ -352,6 +358,20 @@ timbre.fn = (function(timbre) {
     defaults.properties = {};
     defaults.properties.isAr = { get: function() { return !!this._ar; } };
     defaults.properties.isKr = { get: function() { return  !this._ar; } };
+    defaults.properties.dac = {
+        set: function(value) {
+            if (this._dac) {
+                this._dac.remove(this);
+            }
+            this._dac = value.append(this);
+        },
+        get: function() {
+            if (!this._dac) {
+                this._dac = timbre("dac", this);
+            }
+            return this._dac;
+        },
+    };
     defaults.properties.mul  = {
         set: function(value) {
             if (typeof value === "number") { this._mul = value; }

@@ -11,6 +11,8 @@ var Dac = (function() {
         initialize.apply(this, arguments);
     }, $this = Dac.prototype;
     
+    Object.defineProperty($this, "dac", { get: function() { return this; } });
+    
     Object.defineProperty($this, "amp", {
         set: function(value) {
             if (typeof value === "number") {
@@ -56,14 +58,14 @@ var Dac = (function() {
         this._ar = true;
     };
     
-    $this.on = function() {
+    $this.on = $this.play = function() {
         this._ison = true;
         timbre.dacs.append(this);
         timbre.fn.do_event(this, "on");
         return this;
     };
     
-    $this.off = function() {
+    $this.off = $this.pause = function() {
         this._ison = false;
         timbre.dacs.remove(this);
         timbre.fn.do_event(this, "off");

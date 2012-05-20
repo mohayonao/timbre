@@ -49,7 +49,7 @@ var Interval = (function() {
         this._interval_count = 0;
     };
     
-    $this.on = function() {
+    $this.on = $this.play = function() {
         this._ison = true;
         this._samples = this._interval_samples;
         this._interval_count = 0;
@@ -58,7 +58,7 @@ var Interval = (function() {
         return this;
     };
     
-    $this.off = function() {
+    $this.off = $this.pause = function() {
         this._ison = false;
         timbre.timers.remove(this);
         timbre.fn.do_event(this, "off");
@@ -146,7 +146,7 @@ var Timeout = (function() {
         this._samples = 0;
     };
     
-    $this.on = function() {
+    $this.on = $this.play = function() {
         this._ison = true;
         this._samples = this._timeout_samples;
         timbre.timers.append(this);
@@ -154,7 +154,7 @@ var Timeout = (function() {
         return this;
     };
     
-    $this.off = function() {
+    $this.off = $this.pause = function() {
         this._ison = false;
         timbre.timers.remove(this);
         timbre.fn.do_event(this, "off");
