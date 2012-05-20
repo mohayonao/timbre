@@ -57,10 +57,19 @@ var Dac = (function() {
         this._ison = false;
         this._ar = true;
     };
+
+    $this._post_init = function() {
+        var i, args;
+        args = this.args;
+        for (i = args.length; i--; ) {
+            args[i].dac = this;
+        }
+    };
     
     $this.on = $this.play = function() {
         this._ison = true;
         timbre.dacs.append(this);
+        timbre.fn.do_event(this, "play");        
         timbre.fn.do_event(this, "on");
         return this;
     };
@@ -69,6 +78,7 @@ var Dac = (function() {
         this._ison = false;
         timbre.dacs.remove(this);
         timbre.fn.do_event(this, "off");
+        timbre.fn.do_event(this, "pause");        
         return this;
     };
     
