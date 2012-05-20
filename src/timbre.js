@@ -294,10 +294,18 @@ timbre.fn = (function(timbre) {
     
     var defaults = {};
     defaults.play = function() {
-        this.dac.on();
+        if (this.dac.isOff) {
+            this.dac.on();
+            timbre.fn.do_event(this, "play");
+        }
+        return this;
     };
     defaults.pause = function() {
-        this.dac.off();
+        if (this.dac.isOn) {
+            this.dac.off();
+            timbre.fn.do_event(this, "pause");
+        }
+        return this;
     };
     defaults.bang = function() {
         timbre.fn.do_event(this, "bang");
