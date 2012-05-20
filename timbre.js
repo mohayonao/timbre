@@ -1,6 +1,6 @@
 /**
  * timbre 0.0.0 / JavaScript Library for Objective Sound Programming
- * build: Sun May 20 2012 15:05:18 GMT+0900 (JST)
+ * build: Sun May 20 2012 16:09:15 GMT+0900 (JST)
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,7 +10,7 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.0.0";
-    timbre.BUILD      = "Sun May 20 2012 15:05:18 GMT+0900 (JST)";
+    timbre.BUILD      = "Sun May 20 2012 16:09:15 GMT+0900 (JST)";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 44100;
@@ -295,6 +295,12 @@ var timbre = (function(context, timbre) {
         }());
         
         var defaults = {};
+        defaults.play = function() {
+            this.dac.on();
+        };
+        defaults.pause = function() {
+            this.dac.off();
+        };
         defaults.bang = function() {
             timbre.fn.do_event(this, "bang");
             return this;
@@ -354,6 +360,20 @@ var timbre = (function(context, timbre) {
         defaults.properties = {};
         defaults.properties.isAr = { get: function() { return !!this._ar; } };
         defaults.properties.isKr = { get: function() { return  !this._ar; } };
+        defaults.properties.dac = {
+            set: function(value) {
+                if (this._dac) {
+                    this._dac.remove(this);
+                }
+                this._dac = value.append(this);
+            },
+            get: function() {
+                if (!this._dac) {
+                    this._dac = timbre("dac", this);
+                }
+                return this._dac;
+            },
+        };
         defaults.properties.mul  = {
             set: function(value) {
                 if (typeof value === "number") { this._mul = value; }
@@ -675,6 +695,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = Dac.prototype;
         
+        Object.defineProperty($this, "dac", { get: function() { return this; } });
+        
         Object.defineProperty($this, "amp", {
             set: function(value) {
                 if (typeof value === "number") {
@@ -720,14 +742,14 @@ var timbre = (function(context, timbre) {
             this._ar = true;
         };
         
-        $this.on = function() {
+        $this.on = $this.play = function() {
             this._ison = true;
             timbre.dacs.append(this);
             timbre.fn.do_event(this, "on");
             return this;
         };
         
-        $this.off = function() {
+        $this.off = $this.pause = function() {
             this._ison = false;
             timbre.dacs.remove(this);
             timbre.fn.do_event(this, "off");
@@ -2277,7 +2299,7 @@ var timbre = (function(context, timbre) {
             this._interval_count = 0;
         };
         
-        $this.on = function() {
+        $this.on = $this.play = function() {
             this._ison = true;
             this._samples = this._interval_samples;
             this._interval_count = 0;
@@ -2286,7 +2308,7 @@ var timbre = (function(context, timbre) {
             return this;
         };
         
-        $this.off = function() {
+        $this.off = $this.pause = function() {
             this._ison = false;
             timbre.timers.remove(this);
             timbre.fn.do_event(this, "off");
@@ -2374,7 +2396,7 @@ var timbre = (function(context, timbre) {
             this._samples = 0;
         };
         
-        $this.on = function() {
+        $this.on = $this.play = function() {
             this._ison = true;
             this._samples = this._timeout_samples;
             timbre.timers.append(this);
@@ -2382,7 +2404,7 @@ var timbre = (function(context, timbre) {
             return this;
         };
         
-        $this.off = function() {
+        $this.off = $this.pause = function() {
             this._ison = false;
             timbre.timers.remove(this);
             timbre.fn.do_event(this, "off");
