@@ -1,0 +1,198 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>timbre - oscillators</title>
+    <script type="text/javascript" src="../timbre.js"></script>
+    <script type="text/javascript" src="js/waveviewer.js"></script>
+    <style>
+      h1 { margin:0px; }
+      header span { font-size:0.8em }
+      #waveviewer {
+        position:fixed;top:0;left:0;width:100%;height:100%;
+      }
+      #body {
+        position:absolute;top:0;left:0;margin:10px;
+      }
+      #caution {
+        margin:15px 0px;padding:5px;color:red;background:#ffeeee;text-align:center;
+        font-size: 1.1em;font-weight:bold;border:solid 1px #ff9999;display:none;
+      }
+      .prettyprint {
+        margin-top:0px;padding:10px !important;background:rgba(255,255,255,0.75);
+        font-family: 'Courier New', monospace; font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <selction id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1>timbre</h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+      
+      <button id="play0">play</button><button id="pause0">pause</button>
+      <pre id="code" class="prettyprint">
+// hello, sinewave
+
+T("sin", 1320).play();
+      </pre>
+      
+      <button id="play1">play</button><button id="pause1">pause</button>
+      <pre id="code" class="prettyprint">
+// 880Hz pulse with tremolo(10Hz)
+          
+T("*", T("pulse", 880),
+       T("tri", 10, 0, 0.6, 0.8).kr()).play();
+      </pre>
+      <button id="play2">play</button><button id="pause2">pause</button>
+      
+      <pre id="code" class="prettyprint">
+// 660Hz triangle with vibrato(5Hz)
+
+T("tri", T("sin", 5, 0, 6, 660).kr()).play();
+      </pre>
+      <button id="play3">play</button><button id="pause3">pause</button>
+      <pre id="code" class="prettyprint">
+// computer noise
+
+fami = T("fami", 440).play();
+
+fami.onplay = function() {
+    fami.timerId = setInterval(function() {
+        fami.freq = (Math.random() * 2000) + 200;
+    }, 100);
+};
+fami.onpause = function() {
+    clearInterval(fami.timerId);
+};
+      </pre>
+
+      <button id="play4">play</button><button id="pause4">pause</button>
+      <pre id="code" class="prettyprint">
+// chord
+// FM7 | G7onF | Em7 | Am | FM7 | G7onF | E9 | Am
+
+T("+", T("*", c_env = T("adsr", 20, 1740, 0.5),
+              T("+", t1 = T("konami"),
+                     t2 = T("konami"),
+                     t3 = T("konami"))),
+       T("*", b_env = T("adsr", 0, 220),
+              b = T("pulse"))).play();
+
+c_env.onbang = function() {
+    t1.freq = chords[chords.index][0];
+    t2.freq = chords[chords.index][1];
+    t3.freq = chords[chords.index][2];
+    b .freq = chords[chords.index][3];
+    chords.index = ++chords.index % chords.length;
+    b_env.bang();
+};    
+c_env.onS = function() {
+    c_env.bang();
+};
+b_env.onS = function() {
+    b_env.bang();
+};
+      </pre>
+    </section>
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+  <script type="text/javascript" src="js/prettify.js"></script>
+  <link type="text/css" media="screen" rel="stylesheet" href="css/prettify.css" />
+  <script type="text/javascript">
+    $(function() {
+        if (!timbre._sys._impl) $("#caution").show();
+        prettyPrint();
+        
+        var viewer = new WaveViewer(timbre._sys, 60, "waveviewer", 512, 256);
+        
+        timbre.addEventListener("on", function() {
+            viewer.start();
+        });
+        timbre.addEventListener("off", function() {
+            viewer.pause();
+        });
+
+        // hello, sinewave
+        ex1 = T("sin", 1320);
+
+
+        // tremolo
+        ex2 = T("*", T("pulse", 880),
+                        T("tri", 10, 0, 0.6, 0.8).kr());
+        ex2.amp = 0.8;
+    
+
+        // vibrato
+        ex3 = T("tri", T("sin", 5, 0, 6, 660).kr());
+        
+        
+        // computer noise
+        ex4 = fami = T("fami", 880);
+        
+        fami.onplay = function() {
+            fami.timerId = setInterval(function() {
+                fami.freq = (Math.random() * 2000) + 200;
+            }, 100);
+        };
+        fami.onpause = function() {
+            clearInterval(fami.timerId);
+        };
+        
+        
+        // chords
+        var chords = [
+            [ 698.456, 880.000, 1318.510, 349.228 ], // FM7  = F A E / F
+            [ 783.456, 987.766, 1174.659, 349.228 ], // G7/F = G B D / F
+            [ 783.456, 987.766, 1174.659, 329.627 ], // Em7  = G B D / E
+            [ 659.255, 783.456, 1046.502, 440.000 ], // Am7  = E G C / A
+            [ 698.456, 880.000, 1318.510, 349.228 ], // FM7  = F A E / F
+            [ 783.456, 987.766, 1174.659, 349.228 ], // G7/F = G B D / F
+            [ 830.609, 987.766, 1396.129, 329.627 ], // E9   = G#B F / E
+            [ 880.000,1046.502, 1318.510, 440.000 ], // Am   = A C E / A
+        ]; chords.index = 0;
+        
+        ex5 = T("+", T("*", c_env = T("adsr", 20, 1740, 0.5),
+                            T("+", c1 = T("konami"),
+                                   c2 = T("konami"),
+                                   c3 = T("konami"))),
+                     T("*", b_env = T("adsr", 0, 220),
+                            b = T("pulse")));
+
+        ex5.onplay = function() {
+            chords.index = 0;
+            c_env.bang();
+        };
+        
+        c_env.onbang = function() {
+            c1.freq = chords[chords.index][0] / 2;
+            c2.freq = chords[chords.index][1] / 2;
+            c3.freq = chords[chords.index][2] / 2;
+            b .freq = chords[chords.index][3] / 2;
+            chords.index = ++chords.index % chords.length;
+            b_env.bang();
+        };
+        c_env.onS = function() {
+            c_env.bang();
+        };
+        b_env.onS = function() {
+            b_env.bang();
+        };
+        
+        
+        var list = [ ex1, ex2, ex3, ex4, ex5 ];
+        list.forEach(function(ex, i) {
+            var dac = ex.dac;
+            dac.addEventListener("on" , function() {timbre.on();});
+            dac.addEventListener("off", function() {
+                if (list.every(function(ex) {return ex.dac.isOff;})) timbre.off();
+            });
+            $("#play"  + i).on("click", function() { ex.play() ; });
+            $("#pause" + i).on("click", function() { ex.pause(); });
+        });
+    });
+  </script>
+</html>
