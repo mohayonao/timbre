@@ -12,7 +12,7 @@ var WebKitPlayer = function(sys) {
 
     ctx = new webkitAudioContext();
     timbre.samplerate = ctx.sampleRate;
-    node = ctx.createJavaScriptNode(sys.streamsize, 0, sys.channels);
+    node = ctx.createJavaScriptNode(sys.streamsize, 1, sys.channels);
     
     node.onaudioprocess = function(e) {
         var inL, inR, outL, outR, i;
