@@ -1,6 +1,6 @@
 /**
  * timbre 0.0.0 / JavaScript Library for Objective Sound Programming
- * build: Sun May 20 2012 20:07:33 GMT+0900 (JST)
+ * build: Sun May 20 2012 21:52:13 GMT+0900 (JST)
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,7 +10,7 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.0.0";
-    timbre.BUILD      = "Sun May 20 2012 20:07:33 GMT+0900 (JST)";
+    timbre.BUILD      = "Sun May 20 2012 21:52:13 GMT+0900 (JST)";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 44100;
@@ -2552,7 +2552,7 @@ var timbre = (function(context, timbre) {
         
             ctx = new webkitAudioContext();
             timbre.samplerate = ctx.sampleRate;
-            node = ctx.createJavaScriptNode(sys.streamsize, 0, sys.channels);
+            node = ctx.createJavaScriptNode(sys.streamsize, 1, sys.channels);
             
             node.onaudioprocess = function(e) {
                 var inL, inR, outL, outR, i;
