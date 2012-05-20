@@ -88,7 +88,11 @@ var ADSR = (function() {
         this._samples    = 0;
     };
     
-    $this.bang = function() {
+    $this.clone = function() {
+        return new ADSR([this.a, this.d, this.s, this.r, this.mul, this.add]);
+    };
+    
+    $this.bang = $this.keyOn = function() {
         this._mode = 0;
         this._samplesMax = (timbre.samplerate * (this._a / 1000))|0;
         this._samples    = 0;
@@ -274,6 +278,10 @@ var Tween = (function() {
         this._value     = 0;
         this._enabled   = false;
         this.type = type;        
+    };
+
+    $this.clone = function() {
+        return new Tween([this.type, this.d, this.start, this.stop, this.mul, this.add]);
     };
     
     $this.bang = function() {
@@ -495,6 +503,10 @@ var Perc = (function() {
         this._samples = 0;
         this._dx = timbre.cellsize / this._samples;
         this._x  = 0;
+    };
+
+    $this.clone = function() {
+        return new Perc([this.d, this.mul, this.add]);
     };
     
     $this.bang = function() {
