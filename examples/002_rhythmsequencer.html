@@ -1,0 +1,197 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>timbre - rhythmsequencer</title>
+    <style>
+      #title {
+        color: rgb(136, 136, 136);
+        margin:0px;
+        letter-spacing: 2.5px;
+        text-shadow: 0px 3px 0px #ddd;
+      }
+      #title a {
+        color: inherit;
+        text-decoration: none;
+      }
+      header span {
+        font-size:0.8em;
+      }
+      #waveviewer {
+        position:fixed;top:0;left:0;width:100%;height:100%;
+      }
+      #body {
+        position:absolute;top:0;left:0;margin:10px;
+      }
+      #caution {
+        margin:15px 0px;padding:5px;color:red;background:#ffeeee;text-align:center;
+        font-size: 1.1em;font-weight:bold;border:solid 1px #ff9999;display:none;
+      }
+      .prettyprint {
+        margin-top:0px;padding:10px !important;background:rgba(255,255,255,0.75);
+        font-family: 'Courier New', monospace; font-weight: bold;
+      }
+      #p {
+        margin:5px;padding:5px;background:#ededed;
+        border:solid 1px gray;opacity:0.9;
+      }
+      #p label {
+        font-size:0.8em;margin-right:10px;font-family:'Courier New', monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <selction id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+      
+      <button id="play0">play</button><button id="pause0">pause</button>
+      <div id="p"></div>
+      <pre id="code" class="prettyprint">
+// rhythm sequencer
+
+// extern p = [ /* ui.checkbox */ ];
+var bpm = 132, msec = (60 / bpm) * (4 / 16) * 1000;
+var s1, s2, hh, hh_env, sd, sd_env, bd, bd_env;
+var interval, dac;
+
+// sequence(1)
+s1 = function(freq) {
+    var s1, env;
+    s1 = T("*", T("fami", freq, 0, 0.6),
+                T("*", T("pulse", 12), env = T("perc", 120))).play();
+    env.addEventListener("~ended", function() {
+        s1.pause();
+    }).bang();
+};
+s1.freqs = [ 880, 440, 880*2, 220, 880*2, 660, 880*2, 660 ];
+s1.i = 0;
+
+// sequence(2)
+s2 = function() {
+    var s2, env;
+    s2 = T("*", T("saw", T("tween", "cubic.out", 300, 880*4, 220).bang(), 0, 0.4),
+                env = T("perc", 300)).play();
+    env.addEventListener("~ended", function() {
+        s2.pause();
+    }).bang();
+};
+s2.i = 1;
+
+// hihat
+hh = T("*", T("HPF", 8000, T("noise")),
+            hh_env = T("perc", 30));
+hh.i = 2;
+
+// snare
+sd = T("*", T("rLPF", 5000, 0.4, T("noise")),
+            sd_env = T("perc", 120));
+sd.i = 3;
+
+// bass drum
+bd = T("*", T("rLPF", 40, 0.5, T("pulse", 40, 0, 2)),
+            bd_env = T("perc", 60));
+bd.i = 4;
+
+// interval    
+interval = T("interval", msec, function(i) {
+    i %= p[0].length;
+    
+    if (p[s1.i][i]) s1(s1.freqs[i & 7]);
+    if (p[s2.i][i]) s2();
+    
+    if (p[hh.i][i]) {
+        hh_env.mul = [0.2, 0.4][i & 1];
+        hh_env.bang();
+    }
+    if (p[sd.i][i]) {
+        sd_env.mul = [0.6, 0.4][i & 1];
+        sd_env.d   = [180, 120][i & 1];
+        sd_env.bang();
+    }
+    if (p[bd.i][i]) {
+        bd_env.bang();
+    }
+});
+
+// drumkit
+drumkit = T("dac", hh, sd, bd);
+
+drumkit.onplay = function() {
+    interval.on();
+};
+drumkit.onpause = function() {
+    interval.off();
+};
+
+drumkit.play();
+      </pre>
+      
+    </section>
+  </body>
+  <script type="text/javascript" src="js/prettify.js"></script>
+  <link type="text/css" media="screen" rel="stylesheet" href="css/prettify.css" />
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="js/002.js"></script>
+  <script type="text/javascript" src="js/waveviewer.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(function() {
+        if (!timbre._sys._impl) $("#caution").show();    
+    
+        var viewer = new WaveViewer(timbre._sys, 60, "waveviewer", 512, 256);
+        
+        timbre.addEventListener("on", function() {
+            $("#title").css("color", "rgb(0, 136, 0)");
+            viewer.start();
+        });
+        timbre.addEventListener("off", function() {
+            $("#title").css("color", "rgb(136, 136, 136)");
+            viewer.pause();
+        });
+        
+        
+        // UI
+        (function(elem) {
+            var div, x, i, j;
+            for (i = 0; i < p.length; i++) {
+                div = $(document.createElement("div"));
+                div.append($(document.createElement("label")).text(["S1","S2","HH","SD","BD"][i]));
+                for (j = 0; j < p[i].length; j++) {
+                    x = $(document.createElement("input")).attr("type", "checkbox")
+                        .on("click", (function(i, j) {
+                            return function() {
+                               p[i][j] = $(this).attr("checked") ? 1 : 0;
+                            };
+                        }(i, j)));
+                    if (p[i][j]) x.attr("checked", true);
+                    if (j === 15) {
+                        x.css("margin-right", "25px");
+                    } else if (j % 4 === 3) {
+                        x.css("margin-right", "10px");
+                    }
+                    div.append(x);
+                }
+                div.appendTo(elem);
+            }
+        }(document.getElementById("p")));
+        
+        
+        var list = [ ex1 ];
+        list.forEach(function(ex, i) {
+            var dac = ex.dac;
+            dac.addEventListener("on" , function() {timbre.on();});
+            dac.addEventListener("off", function() {
+                if (list.every(function(dac) {return ex.dac.isOff;})) timbre.off();
+            });
+            $("#play"  + i).on("click", function() { ex.play() ; });
+            $("#pause" + i).on("click", function() { ex.pause(); });
+        });
+    });
+  </script>
+</html>
