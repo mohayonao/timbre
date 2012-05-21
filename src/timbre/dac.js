@@ -16,11 +16,11 @@ var Dac = (function() {
     Object.defineProperty($this, "amp", {
         set: function(value) {
             if (typeof value === "number") {
-                this._amp = value;
+                this._mul = value;
             }
         },
         get: function() {
-            return this._amp;
+            return this._mul;
         }
     });
     Object.defineProperty($this, "pan", {
@@ -53,7 +53,7 @@ var Dac = (function() {
         this._pan  = 0.5;
         this._panL = Math.cos(0.5 * Math.PI * this._pan);
         this._panR = Math.sin(0.5 * Math.PI * this._pan);
-        this._amp  = 1.0;
+        this._mul  = 1.0;
         this._ison = false;
         this._ar = true;
     };
@@ -84,7 +84,7 @@ var Dac = (function() {
     
     $this.seq = function(seq_id) {
         var args, cell, L, R;
-        var amp, panL, panR;
+        var mul, panL, panR;
         var tmp, i, j, jmax;
         
         cell = this._cell;
@@ -92,9 +92,9 @@ var Dac = (function() {
             args = this.args;
             L = this._L;
             R = this._R;
-            amp = this._amp;
-            panL = this._panL * amp;
-            panR = this._panR * amp;
+            mul = this._mul;
+            panL = this._panL * mul;
+            panR = this._panR * mul;
             jmax = timbre.cellsize;
             for (j = jmax; j--; ) {
                 cell[j] = L[j] = R[j] = 0;
@@ -102,7 +102,7 @@ var Dac = (function() {
             for (i = args.length; i--; ) {
                 tmp = args[i].seq(seq_id);
                 for (j = jmax; j--; ) {
-                    cell[j] += tmp[j] * amp;
+                    cell[j] += tmp[j] * mul;
                     L[j] += tmp[j] * panL;
                     R[j] += tmp[j] * panR;
                 }
