@@ -12,6 +12,11 @@ TIMBRE_SOURCES = [
     "timbre/timers"
 ]
 
+UTILS_SOURCES = [
+    "utils/converters"
+    "utils/exports"
+]
+
 WINDOW_SOURCES = [
     "window/mutekitimer"
     "window/player"
@@ -74,6 +79,7 @@ uglify = (src, dst, callback)->
 # build timbre.js
 source = fs.readFileSync "#{SRC_DIR}/timbre.txt", "utf-8"
 source = replace_souce source, "TIMBRE_CODE", concat_source TIMBRE_SOURCES
+source = replace_souce source, "UTILS_CODE" , concat_source UTILS_SOURCES
 source = replace_souce source, "WINDOW_CODE", concat_source WINDOW_SOURCES
 source = replace_souce source, "WORKER_CODE", concat_source WORKER_SOURCES
 source = replace_souce source, "NODE_CODE"  , concat_source NODE_SOURCES

@@ -7,6 +7,12 @@ var timbre = (function(context, timbre) {
     "use strict";
     
     ${TIMBRE_CODE}
+
+    timbre.utils = (function(timbre) {
+        var utils = { $exports:{} };
+        ${UTILS_CODE}
+        return utils;
+    }(timbre));
     
     typeof window === "object" && (function(window, timbre) {
         ${WINDOW_CODE}
