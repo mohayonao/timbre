@@ -206,6 +206,200 @@ var Timeout = (function() {
 }());
 timbre.fn.register("timeout", Timeout);
 
+
+var Schedule = (function() {
+    var Schedule = function() {
+        initialize.apply(this, arguments);
+    }, $this = Schedule.prototype;
+    
+    Object.defineProperty($this, "mode", {
+        get: function() { return this._mode; }
+    });
+    Object.defineProperty($this, "isOn", {
+        get: function() {
+            return this._ison;
+        }
+    });
+    Object.defineProperty($this, "isOff", {
+        get: function() {
+            return !this._ison;
+        }
+    });
+    
+    var initialize = function(_args) {
+        var i, list, j;
+        
+        this._mode = "msec";
+        this._msec = 1;
+        this._timetable = [];
+        this._index = 0;
+        this._init = true;
+        
+        i = 0;
+        if (typeof _args[i] === "string") {
+            setMode.call(this, _args[i++]);
+        }
+        if (typeof _args[i] === "object" && _args[i] instanceof Array) {
+            list = _args[i++];
+            for (j = list.length; j--; ) {
+                this.append(list[j]);
+            }
+            this._timetable.sort(function(a, b) { return a[0] - b[0]; });
+        }
+        if (typeof _args[i] === "boolean") {
+            this._loop = _args[i++];
+        } else {
+            this._loop = false;
+        }
+        
+        this._ison  = false;
+        this._currentTime = 0;
+        this._loopcount   = 0;
+        
+        delete this._init;
+    };
+    
+    var setMode = function(mode) {
+        var m;
+        if ((m = /^bpm\s*\(\s*(\d+(?:\.\d*)?)\s*(?:,\s*(\d+))?\s*\)/.exec(mode))) {
+            this._mode = "bpm";
+            this._msec = timbre.utils.bpm2msec(m[1], m[2] || 16);
+        }
+    };
+    
+    $this.on = function() {
+        this._ison = true;
+        this._index = 0;
+        this._currentTime = 0;
+        this._loopcount   = 0;
+        timbre.timers.append(this);
+        timbre.fn.do_event(this, "on");
+        return this;
+    };
+    
+    $this.off = function() {
+        this._ison = false;
+        this._index = 0;
+        this._currentTime = 0;
+        this._loopcount   = 0;
+        timbre.timers.remove(this);
+        timbre.fn.do_event(this, "off");
+        return this;
+    };
+    
+    $this.play = function() {
+        this._ison = true;
+        timbre.fn.do_event(this, "play");
+        return this;
+    };
+    
+    $this.pause = function() {
+        this._ison = false;
+        timbre.fn.do_event(this, "pause");
+        return this;
+    };
+    
+    $this.bang = function() {
+        if (this._ison) {
+            this._index = 0;
+            this._currentTime = 0;
+            this._loopcount   = 0;
+            timbre.fn.do_event(this, "bang");
+        }
+        return this;
+    };
+    
+    $this.append = function(items) {
+        var tt, schedule;
+        
+        if (typeof items !== "object") return this;
+        if (!(items instanceof Array)) return this;
+        if (items.length === 0) return this;
+
+        tt = this._timetable;
+        schedule = tt[this._index];
+        
+        items[0] *= this._msec;
+        tt.push(items);
+        
+        if (! this._init) {
+            if (schedule && items[0] < schedule[0]) {
+                this._index += 1;
+            }
+            tt.sort(function(a, b) { return a[0] - b[0]; });
+        }
+        return this;
+    };
+    
+    $this.remove = function(items) {
+        var tt, cnt;
+        
+        if (typeof items !== "object") return this;
+        if (!(items instanceof Array)) return this;
+        if (items.length === 0) return this;
+        
+        tt = this._timetable;
+        schedule = tt[this._index];
+        
+        items[0] *= this._msec;
+
+        cnt = 0;
+        for (i = tt.length; i--; ) {
+            if (tt[i][0] === items[0] &&
+                tt[i][1] == items[1] && tt[i][2] === items[2]) {
+                tt.slice(i, 1);
+                cnt += 1;
+            }
+        }
+        
+        if (schedule && schedule[0] < items[0]) {
+            this._index -= cnt;
+        }
+        return this;
+    };
+    
+    $this.seq = function(seq_id) {
+        var tt, schedule, target;
+        if (seq_id !== this._seq_id) {
+            if (this._ison) {
+                tt = this._timetable;
+                while ((schedule = tt[this._index]) !== undefined) {
+                    if (this._currentTime < schedule[0]) {
+                        break;
+                    } else {
+                        if ((target = schedule[1]) !== undefined) {
+                            if (typeof target === "function") {
+                                target.apply(target, schedule[2]);
+                            } else if (typeof target.bang === "function") {
+                                if (target.bang) target.bang();
+                            }
+                        }
+                        if ((++this._index) >= tt.length) {
+                            if (this._index >= tt.length) {
+                                if (this._loop) {
+                                    timbre.fn.do_event(this, "looped",
+                                                       [++this._loopcount]);
+                                    this._index = 0;
+                                    this._currentTime -= schedule[0];
+                                } else {
+                                    timbre.fn.do_event(this, "ended");
+                                    this.off();
+                                }
+                            }
+                        }
+                    }
+                }
+                this._currentTime += (timbre.cellsize / timbre.samplerate) * 1000;
+            }
+            this._seq_id = seq_id;
+        }
+        return this._cell;
+    };
+    
+    return Schedule;
+}());
+timbre.fn.register("schedule", Schedule);
+
 // __END__
 
 describe("interval", function() {
