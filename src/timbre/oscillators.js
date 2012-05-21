@@ -123,7 +123,7 @@ var Oscillator = (function() {
         cell = this._cell;
         if (seq_id !== this._seq_id) {
             freq = this._freq.seq(seq_id);
-            mul  = this._mul * this._mul;
+            mul  = this._mul;
             add  = this._add;
             wavelet = this._wavelet;
             x = this._x;
