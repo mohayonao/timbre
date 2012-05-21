@@ -19,7 +19,7 @@ var Oscillator = (function() {
                 for (i = 0; i < 1024; i++) {
                     wavelet[i] = value(i / 1024);
                 }
-            } else if (typeof value === "string" && value instanceof Float32Array) {
+            } else if (typeof value === "object" && value instanceof Float32Array) {
                 dx = value.length / 1024;
                 for (i = 0; i < 1024; i++) {
                     wavelet[i] = value[(i * dx)|0] || 0.0;

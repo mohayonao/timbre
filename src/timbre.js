@@ -67,7 +67,7 @@ var SoundSystem = (function() {
     $this.process = function() {
         var cell, L, R;
         var seq_id, dacs, dac, timers, timer;
-        var i, imax, j, jmax, k, kmax, n, nmax;
+        var i, imax, j, k, kmax, n, nmax;
         var saved_i, tmpL, tmpR, amp, x;
         
         cell = this._cell;
@@ -75,12 +75,9 @@ var SoundSystem = (function() {
         R = this.R;
         amp = timbre.amp;
         
-        dacs   = timbre.dacs;
-        timers = timbre.timers;
         seq_id = this._seq_id;
         
         imax = L.length;
-        jmax = dacs.length;        
         kmax = this._cellsize;
         nmax = this.streamsize / kmax;
         saved_i = 0;
@@ -93,11 +90,13 @@ var SoundSystem = (function() {
         // signal process
         for (n = nmax; n--; ) {
             ++seq_id;
+            timers = timbre.timers.slice(0);
             for (j = timers.length; j--; ) {
                 if ((timer = timers[j]) !== undefined) {
                     timer.seq(seq_id);
                 }
             }
+            dacs = timbre.dacs.slice(0);
             for (j = dacs.length; j--; ) {
                 if ((dac = dacs[j]) !== undefined) {
                     dac.seq(seq_id);
