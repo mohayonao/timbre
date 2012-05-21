@@ -17,10 +17,9 @@ var Filter = (function() {
             if (typeof value === "string") {
                 if ((f = Filter.types[value]) !== undefined) {
                     this._type = value;
-                    if (typeof this._freq !== "number") this._freq = f.default_freq;
-                    if (typeof this._band !== "number") this._band = f.default_band;
+                    if (typeof this._freq !== "object") this.freq = f.default_freq;
+                    if (typeof this._band !== "number") this.band = f.default_band;
                     this._set_params = f.set_params;
-                    this._set_params(this._freq, this._band, this._gain);
                 }
             }
         },
@@ -30,9 +29,10 @@ var Filter = (function() {
     });
     Object.defineProperty($this, "freq", {
         set: function(value) {
-            if (typeof value === "number") {
+            if (typeof value !== "object") {
+                this._freq = timbre(value);
+            } else {
                 this._freq = value;
-                this._set_params(this._freq, this._band, this._gain);
             }
         },
         get: function() {
@@ -43,7 +43,6 @@ var Filter = (function() {
         set: function(value) {
             if (typeof value === "number") {
                 this._band = value;
-                this._set_params(this._freq, this._band, this._gain);
             }
         },
         get: function() {
@@ -54,7 +53,6 @@ var Filter = (function() {
         set: function(value) {
             if (typeof value === "number") {
                 this._gain = value;
-                this._set_params(this._freq, this._band, this._gain);
             }
         },
         get: function() {
@@ -75,9 +73,9 @@ var Filter = (function() {
         } else {
             type = "LPF";
         }
-        if (typeof _args[i] === "number") {
-            this._freq = _args[i++];
-        }
+        
+        this.freq = _args[i++];
+        
         if (typeof _args[i] === "number") {
             this._band = _args[i++];
         }
@@ -94,9 +92,13 @@ var Filter = (function() {
         }
         this.args = timbre.fn.valist.call(this, _args.slice(i));
 
+        this._prev_type = undefined;
+        this._prev_freq = undefined;
+        this._prev_band = undefined;
+        this._prev_gain = undefined;
+        
         this._ison = true;
         this._in1 = this._in2 = this._out1 = this._out2 = 0;
-        
         this._ar = true;
         this.type = type;
     };
@@ -115,6 +117,7 @@ var Filter = (function() {
     
     $this.seq = function(seq_id) {
         var args, cell, mul, add;
+        var type, freq, band, gain;
         var tmp, i, imax, j, jmax;
         
         var a1, a2, b0, b1, b2;
@@ -136,6 +139,20 @@ var Filter = (function() {
             
             // filter
             if (this._ison) {
+                type = this._type;
+                freq = this._freq.seq(seq_id)[0];
+                band = this._band;
+                gain = this._gain;
+                if (type !== this._prev_type ||
+                    freq !== this._prev_freq ||
+                    band !== this._prev_band ||
+                    gain !== this._prev_gain) {
+                    this._set_params(freq, band, gain);
+                    this._prev_type = type;
+                    this._prev_freq = freq;
+                    this._prev_band = band;
+                    this._prev_gain = gain;
+                }
                 mul = this._mul;
                 add = this._add;
                 a1 = this._a1; a2 = this._a2;
@@ -355,7 +372,6 @@ var ResonantFilter = (function() {
                 if ((mode = ResonantFilter.types[value]) !== undefined) {
                     this._type = value;
                     this._mode = mode;
-                    this._set_params(this._cutoff, this._Q);
                 }
             }
         },
@@ -366,9 +382,10 @@ var ResonantFilter = (function() {
     
     Object.defineProperty($this, "cutoff", {
         set: function(value) {
-            if (typeof value === "number") {
+            if (typeof value !== "object") {
+                this._cutoff = timbre(value);
+            } else {
                 this._cutoff = value;
-                this._set_params(this._cutoff, this._Q);
             }
         },
         get: function() {
@@ -377,9 +394,10 @@ var ResonantFilter = (function() {
     });
     Object.defineProperty($this, "Q", {
         set: function(value) {
-            if (typeof value === "number") {
+            if (typeof value !== "object") {
+                this._Q = timbre(value);
+            } else {
                 this._Q = value;
-                this._set_params(this._cutoff, this._Q);
             }
         },
         get: function() {
@@ -408,16 +426,18 @@ var ResonantFilter = (function() {
         } else {
             type = "LPF";
         }
-        if (typeof _args[i] === "number") {
-            this._cutoff = _args[i++];
+
+        if (typeof _args[i] === "object" || typeof _args[i] === "number") {
+            this.cutoff = _args[i++];
         } else {
-            this._cutoff = 2000;
+            this.cutoff = 800;
         }
-        if (typeof _args[i] === "number") {
-            this._Q = _args[i++];
+        if (typeof _args[i] === "object" || typeof _args[i] === "number") {
+            this.Q = _args[i++];
         } else {
-            this._Q = 0;
+            this.Q = 0.5;
         }
+        
         if (typeof _args[i] === "number") {
             this.depth = _args[i++];
         } else {
@@ -430,6 +450,9 @@ var ResonantFilter = (function() {
             this.add = _args[i++];
         }
         this.args = timbre.fn.valist.call(this, _args.slice(i));
+        
+        this._prev_cutoff = undefined;
+        this._prev_Q      = undefined;
         
         this._ison = true;
         this._f = new Float32Array(4);
@@ -461,6 +484,7 @@ var ResonantFilter = (function() {
     
     $this.seq = function(seq_id) {
         var args, cell, mul, add;
+        var cutoff, Q;
         var tmp, i, imax, j, jmax;
         var f, mode, damp, freq, depth0, depth1;
         var input, output;
@@ -480,10 +504,20 @@ var ResonantFilter = (function() {
             
             // filter
             if (this._ison) {
+                mode   = this._mode;
+                cutoff = this._cutoff.seq(seq_id)[0];
+                Q      = this._Q.seq(seq_id)[0];
+                
+                if (cutoff !== this._prev_cutoff ||
+                    Q      !== this._prev_Q ) {
+                    this._set_params(cutoff, Q);
+                    this._prev_cutoff = cutoff;
+                    this._prev_Q      = Q;
+                }
+                
                 mul = this._mul;
                 add = this._add;
                 f = this._f;
-                mode = this._mode;
                 damp = this._damp;
                 freq = this._freq;
                 depth0 = this._depth0;
@@ -491,7 +525,7 @@ var ResonantFilter = (function() {
                 
                 for (i = 0, imax = cell.length; i < imax; ++i) {
                     input = cell[i];
-
+                    
                     f[3] = input - damp * f[2];
                     f[0] = f[0] + freq * f[2];
                     f[1] = f[3] - f[0];
