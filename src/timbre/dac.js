@@ -13,6 +13,18 @@ var Dac = (function() {
     
     Object.defineProperty($this, "dac", { get: function() { return this; } });
     
+    Object.defineProperty($this, "pan", {
+        set: function(value) {
+            if (typeof value !== "object") {
+                this._pan = timbre(value);
+            } else {
+                this._pan = value;
+            }
+        },
+        get: function() {
+            return this._pan;
+        }
+    });
     Object.defineProperty($this, "amp", {
         set: function(value) {
             if (typeof value === "number") {
@@ -21,18 +33,6 @@ var Dac = (function() {
         },
         get: function() {
             return this._mul;
-        }
-    });
-    Object.defineProperty($this, "pan", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._pan  = value;
-                this._panL = Math.cos(0.5 * Math.PI * this._pan);
-                this._panR = Math.sin(0.5 * Math.PI * this._pan);
-            }
-        },
-        get: function() {
-            return this._pan;
         }
     });
     Object.defineProperty($this, "isOn", {
@@ -48,11 +48,10 @@ var Dac = (function() {
     
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);
+        this.pan = 0.5;
         this._L = new Float32Array(timbre.cellsize);
         this._R = new Float32Array(timbre.cellsize);
-        this._pan  = 0.5;
-        this._panL = Math.cos(0.5 * Math.PI * this._pan);
-        this._panR = Math.sin(0.5 * Math.PI * this._pan);
+        this._prev_pan = undefined;
         this._mul  = 1.0;
         this._ison = false;
         this._ar = true;
@@ -84,7 +83,7 @@ var Dac = (function() {
     
     $this.seq = function(seq_id) {
         var args, cell, L, R;
-        var mul, panL, panR;
+        var mul, pan, panL, panR;
         var tmp, i, j, jmax;
         
         cell = this._cell;
@@ -92,6 +91,12 @@ var Dac = (function() {
             args = this.args;
             L = this._L;
             R = this._R;
+            pan = this._pan.seq(seq_id)[0];
+            if (pan !== this._prev_pan) {
+                this._panL = Math.cos(0.5 * Math.PI * pan);
+                this._panR = Math.sin(0.5 * Math.PI * pan);
+                this._prev_pan = pan;
+            }
             mul = this._mul;
             panL = this._panL * mul;
             panR = this._panR * mul;
@@ -115,6 +120,12 @@ var Dac = (function() {
     return Dac;
 }());
 timbre.fn.register("dac", Dac);
+
+timbre.fn.register("pandac", Dac, function(_args) {
+    var instance = new Dac(_args.slice(1));
+    instance.pan = _args[0];
+    return instance;
+});
 
 // __END__
 
