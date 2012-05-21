@@ -18,7 +18,7 @@ var Filter = (function() {
                 if ((f = Filter.types[value]) !== undefined) {
                     this._type = value;
                     if (typeof this._freq !== "object") this.freq = f.default_freq;
-                    if (typeof this._band !== "number") this.band = f.default_band;
+                    if (typeof this._band !== "object") this.band = f.default_band;
                     this._set_params = f.set_params;
                 }
             }
@@ -41,7 +41,9 @@ var Filter = (function() {
     });
     Object.defineProperty($this, "band", {
         set: function(value) {
-            if (typeof value === "number") {
+            if (typeof value !== "object") {
+                this._band = timbre(value);
+            } else {
                 this._band = value;
             }
         },
@@ -51,7 +53,9 @@ var Filter = (function() {
     });
     Object.defineProperty($this, "gain", {
         set: function(value) {
-            if (typeof value === "number") {
+            if (typeof value !== "object") {
+                this._gain = timbre(value);
+            } else {
                 this._gain = value;
             }
         },
@@ -76,13 +80,15 @@ var Filter = (function() {
         
         this.freq = _args[i++];
         
-        if (typeof _args[i] === "number") {
-            this._band = _args[i++];
+        if (typeof _args[i] === "object" || typeof _args[i] === "number") {
+            this.band = _args[i++];
         }
         if (type === "peaking" || type === "lowboost" || type === "highboost") {
-            if (typeof _args[i] === "number") {
-                this._gain = _args[i++];
+            if (typeof _args[i] === "object" || typeof _args[i] === "number") {
+                this.gain = _args[i++];
             }
+        } else {
+            this.gain = 0;
         }
         if (typeof _args[i] === "number") {
             this._mul = _args[i++];
@@ -141,8 +147,8 @@ var Filter = (function() {
             if (this._ison) {
                 type = this._type;
                 freq = this._freq.seq(seq_id)[0];
-                band = this._band;
-                gain = this._gain;
+                band = this._band.seq(seq_id)[0];
+                gain = this._gain.seq(seq_id)[0];
                 if (type !== this._prev_type ||
                     freq !== this._prev_freq ||
                     band !== this._prev_band ||
@@ -406,10 +412,10 @@ var ResonantFilter = (function() {
     });
     Object.defineProperty($this, "depth", {
         set: function(value) {
-            if (typeof value === "number") {
+            if (typeof value !== "object") {
+                this._depth = timbre(value);
+            } else {
                 this._depth = value;
-                this._depth0 = Math.cos(0.5 * Math.PI * value);
-                this._depth1 = Math.sin(0.5 * Math.PI * value);
             }
         },
         get: function() {
@@ -437,8 +443,7 @@ var ResonantFilter = (function() {
         } else {
             this.Q = 0.5;
         }
-        
-        if (typeof _args[i] === "number") {
+        if (typeof _args[i] === "number" || typeof _args[i] === "number") {
             this.depth = _args[i++];
         } else {
             this.depth = 0.5;
@@ -453,6 +458,7 @@ var ResonantFilter = (function() {
         
         this._prev_cutoff = undefined;
         this._prev_Q      = undefined;
+        this._prev_depth  = undefined;
         
         this._ison = true;
         this._f = new Float32Array(4);
@@ -486,7 +492,7 @@ var ResonantFilter = (function() {
         var args, cell, mul, add;
         var cutoff, Q;
         var tmp, i, imax, j, jmax;
-        var f, mode, damp, freq, depth0, depth1;
+        var f, mode, damp, freq, depth, depth0, depth1;
         var input, output;
         
         cell = this._cell;
@@ -507,14 +513,16 @@ var ResonantFilter = (function() {
                 mode   = this._mode;
                 cutoff = this._cutoff.seq(seq_id)[0];
                 Q      = this._Q.seq(seq_id)[0];
-                
-                if (cutoff !== this._prev_cutoff ||
-                    Q      !== this._prev_Q ) {
+                if (cutoff !== this._prev_cutoff || Q !== this._prev_Q ) {
                     this._set_params(cutoff, Q);
                     this._prev_cutoff = cutoff;
                     this._prev_Q      = Q;
                 }
-                
+                depth = this._depth.seq(seq_id)[0];
+                if (depth !== this._prev_depth) {
+                    this._depth0 = Math.cos(0.5 * Math.PI * depth);
+                    this._depth1 = Math.sin(0.5 * Math.PI * depth);
+                }
                 mul = this._mul;
                 add = this._add;
                 f = this._f;
