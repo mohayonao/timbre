@@ -137,6 +137,10 @@ var ADSR = (function() {
                     continue;
                 }
                 if (mode === 1) { // D -> S
+                    if (s0 === 0) {
+                        mode = 3;
+                        continue;
+                    }
                     this._mode = 2;
                     this._samples    = 0;
                     this._samplesMax = Infinity;
