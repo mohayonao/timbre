@@ -19,6 +19,7 @@ var timbre = (function(context, timbre) {
     }(context, timbre));
     
     typeof importScripts === "function" && (function(worker, timbre) {
+        worker.actions = {};
         ${WORKER_CODE}
     }(context, timbre));
     

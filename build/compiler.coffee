@@ -10,10 +10,13 @@ TIMBRE_SOURCES = [
     "timbre/envelopes"
     "timbre/filters"
     "timbre/timers"
+    "timbre/wav"
 ]
 
 UTILS_SOURCES = [
     "utils/converters"
+    "utils/binary"
+    "utils/wav"
     "utils/exports"
 ]
 
@@ -24,6 +27,7 @@ WINDOW_SOURCES = [
 ]
 
 WORKER_SOURCES = [
+    "worker/wav"
     "worker/exports"
 ]
 

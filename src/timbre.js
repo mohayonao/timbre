@@ -11,6 +11,7 @@ timbre.VERSION    = "${VERSION}";
 timbre.BUILD      = "${DATE}";
 timbre.env        = "";
 timbre.platform   = "";
+timbre.workerpath = "";
 timbre.samplerate = 44100;
 timbre.channels   = 2;
 timbre.cellsize   = 128;
