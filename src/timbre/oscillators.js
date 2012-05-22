@@ -63,7 +63,7 @@ var Oscillator = (function() {
     });
     
     var initialize = function(_args) {
-        var i ;
+        var i;
         
         i = 0;
         this._wavelet = new Float32Array(1024);        
@@ -280,10 +280,10 @@ timbre.fn.register("konami", function(_args) {
     return new Oscillator(["konami"].concat(_args));
 });
 
-var Noise = (function() {
-    var Noise = function() {
+var WhiteNoise = (function() {
+    var WhiteNoise = function() {
         initialize.apply(this, arguments);
-    }, $this = Noise.prototype;
+    }, $this = WhiteNoise.prototype;
     
     var initialize = function(_args) {
         var i;
@@ -331,9 +331,9 @@ var Noise = (function() {
         return cell;
     };
 
-    return Noise;
+    return WhiteNoise;
 }());
-timbre.fn.register("noise", Noise);
+timbre.fn.register("noise", WhiteNoise);
 
 // __END__
 

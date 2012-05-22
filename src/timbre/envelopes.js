@@ -6,10 +6,10 @@
 var timbre = require("../timbre");
 // __BEGIN__
 
-var ADSR = (function() {
-    var ADSR = function() {
+var ADSREnvelope = (function() {
+    var ADSREnvelope = function() {
         initialize.apply(this, arguments);
-    }, $this = ADSR.prototype;
+    }, $this = ADSREnvelope.prototype;
     
     Object.defineProperty($this, "a", {
         set: function(value) {
@@ -89,7 +89,7 @@ var ADSR = (function() {
     };
     
     $this.clone = function() {
-        return new ADSR([this.a, this.d, this.s, this.r, this.mul, this.add]);
+        return new ADSREnvelope([this.a, this.d, this.s, this.r, this.mul, this.add]);
     };
     
     $this.bang = $this.keyOn = function() {
@@ -191,9 +191,9 @@ var ADSR = (function() {
         return cell;
     };
     
-    return ADSR;
+    return ADSREnvelope;
 }());
-timbre.fn.register("adsr", ADSR);
+timbre.fn.register("adsr", ADSREnvelope);
 
 
 var Tween = (function() {
@@ -469,10 +469,10 @@ Tween.functions = {
 
 
 
-var Perc = (function() {
-    var Perc = function() {
+var Percussive = (function() {
+    var Percussive = function() {
         initialize.apply(this, arguments);
-    }, $this = Perc.prototype;
+    }, $this = Percussive.prototype;
     
     Object.defineProperty($this, "d", {
         set: function(value) {
@@ -510,7 +510,7 @@ var Perc = (function() {
     };
 
     $this.clone = function() {
-        return new Perc([this.d, this.mul, this.add]);
+        return new Percussive([this.d, this.mul, this.add]);
     };
     
     $this.bang = function() {
@@ -553,17 +553,17 @@ var Perc = (function() {
         return cell;
     };
     
-    return Perc;
+    return Percussive;
 }());
-timbre.fn.register("perc", Perc);
+timbre.fn.register("perc", Percussive);
 
 // __END__
 
 describe("adsr", function() {
     var instance = timbre("adsr", 1000, 1000, 0.2, 200);
-    object_test(ADSR, instance);
+    object_test(ADSREnvelope, instance);
 });
 describe("perc", function() {
     var instance = timbre("perc", 1000);
-    object_test(Perc, instance);
+    object_test(Percussive, instance);
 });
