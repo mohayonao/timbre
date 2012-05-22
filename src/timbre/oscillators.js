@@ -13,16 +13,20 @@ var Oscillator = (function() {
     
     Object.defineProperty($this, "wavelet", {
         set: function(value) {
-            var wavelet, i, dx;
+            var wavelet, i, j, k, x, dx;
             wavelet = this._wavelet;
             if (typeof value === "function") {
                 for (i = 0; i < 1024; i++) {
                     wavelet[i] = value(i / 1024);
                 }
             } else if (typeof value === "object" && value instanceof Float32Array) {
-                dx = value.length / 1024;
-                for (i = 0; i < 1024; i++) {
-                    wavelet[i] = value[(i * dx)|0] || 0.0;
+                if (value.length === 1024) {
+                    wavelet.set(value, 0, 1024);
+                } else {
+                    dx = value.length / 1024;
+                    for (i = 0; i < 1024; i++) {
+                        wavelet[i] = value[(i * dx)|0] || 0.0;
+                    }
                 }
             } else if (typeof value === "string") {
                 if ((dx = Oscillator.wavelets[value]) !== undefined) {
