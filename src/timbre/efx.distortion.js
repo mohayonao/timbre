@@ -157,6 +157,7 @@ var EfxDistortion = (function() {
         var tmp, i, imax, j, jmax;
         var preGain, postGain, lpfFreq, lpfSlope;
         var preScale, limit;
+        var mul, add;
         var a1, a2, b0, b1, b2;
         var in1, in2, out1, out2;
         var input, output;
@@ -189,6 +190,8 @@ var EfxDistortion = (function() {
                 
                 preScale = this._preScale;
                 limit    = this._limit;
+                mul      = this._mul;
+                add      = this._add;
                 
                 if (this._lpfFreq) {
                     a1 = this._a1; a2 = this._a2;
@@ -219,7 +222,7 @@ var EfxDistortion = (function() {
                         out2 = out1;
                         out1 = output;
                         
-                        cell[i] = output;
+                        cell[i] = output * mul + add;
                     }
                     this._in1  = in1;  this._in2  = in2;
                     this._out1 = out1; this._out2 = out2;
@@ -231,7 +234,7 @@ var EfxDistortion = (function() {
                         } else if (input < -limit) {
                             input = -limit;
                         }
-                        cell[i] = input;
+                        cell[i] = input * mul + add;
                     }
                 }
             }
