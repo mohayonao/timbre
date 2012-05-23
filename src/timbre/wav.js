@@ -79,12 +79,18 @@ var Wav = (function() {
     
     $this.load = function(callback) {
         var self = this;
-        var worker, buffer, samplerate;        
+        var worker, src, m, buffer, samplerate;        
         if (this._loaded_src === this._src) {
             send.call(this, {samplerate:this._samplerate, buffer:this._buffer}, callback);
         } else if (this._src !== "") {
             timbre.fn.do_event(this, "loading");
             if (timbre.platform === "web" && timbre.workerpath) {
+                src = this._src;
+                if ((m = /^(?:\.)(.*)$/.exec(src)) !== null) {
+                    src = location.pathname;
+                    src = src.substr(0, src.lastIndexOf("/"));
+                    src += m[1];
+                }
                 worker = new Worker(timbre.workerpath);
                 worker.onmessage = function(e) {
                     var data = e.data;
@@ -110,7 +116,7 @@ var Wav = (function() {
                         break;
                     }
                 };
-                worker.postMessage({action:"wav.decode", src:this._src});
+                worker.postMessage({action:"wav.decode", src:src});
             } else {
                 timbre.utils.binary.load(this._src, function(binary) {
                     timbre.utils.wav.decode(binary, function(res) {
