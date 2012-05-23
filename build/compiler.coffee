@@ -15,6 +15,7 @@ TIMBRE_SOURCES = [
 ]
 
 UTILS_SOURCES = [
+    "utils/consts"
     "utils/converters"
     "utils/binary"
     "utils/wav"
