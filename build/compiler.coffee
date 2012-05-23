@@ -10,6 +10,7 @@ TIMBRE_SOURCES = [
     "timbre/envelopes"
     "timbre/filters"
     "timbre/efx.distortion"
+    "timbre/efx.delay"
     "timbre/timers"
     "timbre/wav"
 ]
