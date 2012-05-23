@@ -53,7 +53,7 @@ var Interval = (function() {
     
     $this.on = function() {
         this._ison = true;
-        this._samples = this._interval_samples;
+        this._samples = 0;
         timbre.timers.append(this);
         timbre.fn.do_event(this, "on");
         return this;
@@ -72,7 +72,7 @@ var Interval = (function() {
     
     $this.bang = function() {
         if (this._ison) {
-            this._samples = this._interval_samples;
+            this._samples = 0;
             this._interval_count = 0;
             timbre.fn.do_event(this, "bang");
         }
