@@ -58,9 +58,9 @@ var Wav = (function() {
         this._duration   = 0;
         this._phaseStep  = 0;
         this._phase = 0;
-
-        this._ar = true;
     };
+    
+    $this._ar = true;
     
     var send = function(result, callback) {
         if (typeof callback === "function") {

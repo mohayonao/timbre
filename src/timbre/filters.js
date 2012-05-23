@@ -119,8 +119,9 @@ var Filter = (function() {
         
         this._ison = true;
         this._in1 = this._in2 = this._out1 = this._out2 = 0;
-        this._ar = true;
     };
+    
+    $this._ar = true;    
     
     $this.on = function() {
         this._ison = true;
@@ -487,10 +488,9 @@ var ResonantFilter = (function() {
         this._mode = 0;
         this._damp = 0;
         this._freq = 0;
-        
-        this._ar = true;
-        this.type = type;
     };
+    
+    $this._ar = true;    
     
     $this._set_params = function(cutoff, Q) {
         var freq = 2 * Math.sin(Math.PI * Math.min(0.25, cutoff / (timbre.samplerate * 2)));

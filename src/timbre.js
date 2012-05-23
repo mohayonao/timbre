@@ -224,6 +224,21 @@ timbre.fn = (function(timbre) {
             return klasses[key];
         }
     };
+
+    var defaults = { optional:{}, properties:{} };
+    
+    defaults.optional.ar = function() {
+        this._ar = true;
+        return this;
+    };
+    defaults.optional.kr = function() {
+        this._ar = false;
+        return this;
+    };
+    defaults.optional.fixArKr = function() {
+        return this;
+    };
+    
     
     fn.init = function() {
         var args, key, klass, instance;
@@ -280,6 +295,18 @@ timbre.fn = (function(timbre) {
         }
         instance._seq = instance.seq;
         
+        if (typeof instance._ar === "boolean") {
+            if (typeof instance.ar !== "function") {
+                instance.ar = defaults.optional.ar;
+            }
+            if (typeof instance.kr !== "function") {
+                instance.kr = defaults.optional.kr;
+            }
+        } else {
+            instance.ar = instance.kr = defaults.optional.fixArKr;
+        }
+        instance._ar = !!instance._ar;
+        
         if (instance._post_init) {
             instance._post_init();
         }
@@ -292,7 +319,7 @@ timbre.fn = (function(timbre) {
         return function() { return nonecell; };
     }());
     
-    var defaults = {};
+
     defaults.play = function() {
         if (this.dac.isOff) {
             this.dac.on();
@@ -363,7 +390,6 @@ timbre.fn = (function(timbre) {
     defaults.removeEventListener     = timbre.removeEventListener;
     defaults.removeAllEventListeners = timbre.removeAllEventListeners;
     
-    defaults.properties = {};
     defaults.properties.isAr = { get: function() { return !!this._ar; } };
     defaults.properties.isKr = { get: function() { return  !this._ar; } };
     defaults.properties.dac = {
@@ -410,6 +436,10 @@ timbre.fn = (function(timbre) {
             }
             p._mul = 1.0;
             p._add = 0.0;
+            
+            if (p._ar === true) {
+                p.ar = p.kr = defaults.optional.fixArKr;
+            }
             
             if (typeof key === "string") {            
                 if (!func) {

@@ -12,7 +12,7 @@ var Add = (function() {
     
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);
-        this._ar = true;
+        $this._ar = true;
     };
     
     $this.seq = function(seq_id) {

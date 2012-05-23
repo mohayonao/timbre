@@ -112,11 +112,11 @@ var EfxDistortion = (function() {
         this._b0  = this._b1  = this._b2 = 0;
         
         this.args = timbre.fn.valist.call(this, _args.slice(i));
-
-        this._ar = true;
         this._enabled = true;
     };
-
+    
+    $this._ar = true;    
+    
     var THRESHOLD = 0.0000152587890625;
     
     $this._set_params = function(preGain, postGain, lpfFreq, lpfSlope) {

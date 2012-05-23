@@ -108,16 +108,6 @@ var Oscillator = (function() {
         return this;
     };
     
-    $this.ar = function() {
-        this._ar = true;
-        return this;
-    };
-    
-    $this.kr = function() {
-        this._ar = false;
-        return this;
-    };
-    
     $this.seq = function(seq_id) {
         var cell;
         var freq, mul, add, wavelet;

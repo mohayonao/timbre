@@ -54,9 +54,10 @@ var Dac = (function() {
         this._prev_pan = undefined;
         this._mul  = 1.0;
         this._ison = false;
-        this._ar = true;
     };
-
+    
+    $this._ar = true;
+    
     $this._post_init = function() {
         var i, args;
         args = this.args;
