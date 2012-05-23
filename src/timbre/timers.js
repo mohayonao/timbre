@@ -54,7 +54,6 @@ var Interval = (function() {
     $this.on = function() {
         this._ison = true;
         this._samples = this._interval_samples;
-        this._interval_count = 0;
         timbre.timers.append(this);
         timbre.fn.do_event(this, "on");
         return this;
@@ -74,13 +73,14 @@ var Interval = (function() {
     $this.bang = function() {
         if (this._ison) {
             this._samples = this._interval_samples;
+            this._interval_count = 0;
             timbre.fn.do_event(this, "bang");
         }
         return this;
     };
     
     $this.seq = function(seq_id) {
-        var samples, count, args, i;
+        var samples, count, args, i, imax;
         if (seq_id !== this._seq_id) {
             if (this._interval_samples !== 0) {
                 samples = this._samples - timbre.cellsize;
@@ -88,7 +88,7 @@ var Interval = (function() {
                     this._samples = samples + this._interval_samples;
                     count = this._interval_count;
                     args = this.args;
-                    for (i = args.length; i--; ) {
+                    for (i = 0, imax = args.length; i < imax; ++i) {
                         if (typeof args[i] === "function") {
                             args[i](count);
                         } else if (args[i].bang === "function") {
@@ -182,14 +182,14 @@ var Timeout = (function() {
     };
     
     $this.seq = function(seq_id) {
-        var samples, args, i;
+        var samples, args, i, imax;
         if (seq_id !== this._seq_id) {
             if (this._timeout_samples !== 0) {
                 samples = this._samples - timbre.cellsize;
                 if (samples <= 0) {
                     this._samples = 0;
                     args = this.args;
-                    for (i = args.length; i--; ) {
+                    for (i = 0, imax = args.length; i < imax; ++i) {
                         if (typeof args[i] === "function") {
                             args[i]();
                         } else if (args[i].bang === "function") {
