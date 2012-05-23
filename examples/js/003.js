@@ -1,29 +1,29 @@
+var dist, delay;
+
 ex1 = (function() {
     "use strict";
     
     var ex1;
-    var amen, dist, bass, timer;
-    var freq, beat, bassphrase;
-    
-    var _2nd_ = Math.pow(2, 3/12);
-    var _5th_ = Math.pow(2, 8/12);
-    
+    var timer, amen, beat, piano, melo;
     
     timbre.workerpath = "../timbre.js";
     timbre.utils.exports("converter"); // use msec2Hz
-    timbre.utils.exports("tension");   // use _1st .. _11th
+    
+    // dac
+    ex1 = T("dac");
     
     
     // timer
-    timer = T("interval", function(i) {
-        if (!(i & 127)) freq = Math.random() * 660 + 220;
-    });
+    timer = T("interval");
+    
     
     // amen (load a wav file and decode it)
+    beat = 24;
     amen = T("wav", "./audio/amen.wav", true).load(function(res) {
         timer.interval = this.duration / 192;
     });
-    dist = T("efx.dist", -30, 12, 3200, amen);
+    dist = T("efx.dist", -30, 12, 4800, amen).set("mul", 0.5);
+    dist.dac = ex1;
     
     (function() {
         var tim = 0, cnt = 0, stay = 0;
@@ -44,108 +44,84 @@ ex1 = (function() {
                 }
             }
         });
-    }());    
+    }());
     
     
-    // chord
-    var chordtone = timbre.utils.wavb("8084888C90989CA4ACB8C0CCE0002C50707C7C78746858483C3024181004F8E0E4E0F804101824303C48586874787C7C70502C00E0CCC0B8ACA49C98908C8884");
-    
-    function playchord(freq, mode) {
-        var synth, chord, tens, lpfFreq, env;
-        
-        tens = [[ _5th, _7th ], [ _6th, _9th  ],
-                [ _7th, _9th ], [ _6th, _1oct ]][mode];
-        
-        chord = T("+");        
-        chord.append(T("osc", chordtone, freq          , 0, 0.25));
-        chord.append(T("osc", chordtone, freq * tens[0], 0, 0.25));
-        chord.append(T("osc", chordtone, freq * tens[1], 0, 0.25));
-        
-        lpfFreq = T("pulse", msec2Hz(amen.duration / 3),
-                             0, 800, freq * 1.25, 0.8).kr();
-        
-        synth = T("rLPF", lpfFreq,
-                    T("*", chord,
-                           T("sin", 5).kr(),
-                           T("adsr", 4000, 2000)));
-        env = synth.args[0].args[2];
-        synth.dac = ex1;
-        
-        env.addEventListener("~ended", function() {
-            synth.dac.remove(synth);
-        }).bang();
-    }
-    
-    timer.append(function(i) {
-        if (!(i & 127)) {
-            playchord(freq, (i % 2048 / 512)|0);
+    // piano (load s wav file and decode it)
+    piano = [];
+    T("wav", "./audio/piano.wav").load(function(res) {
+        var i, dx;
+        dx = this.duration / 17;
+        this.mul = 0.75;
+        for (i = 0; i < 17; i++) {
+            piano[i] = this.slice(dx * i, dx * i + dx);
         }
     });
     
-    
-    // bass
-    var basstone = timbre.utils.wavb("8084B0D800101C1C283C3C48404C5868585C444850747C7C6C60544C403C240C0C0C243C404C54606C7C7C745048445C5868584C40483C3C281C1C1000D8B084");
-    
-    bass = T("rLPF", 400, 0.5, 0.8,
-             T("*", T("+", T("osc", basstone, 0, 0, 0.25),
-                           T("osc", basstone, 0, 0, 0.20)),
-                    T("adsr", 20, 500, 0.4)));
+    function playpiano(p) {
+        var i, chord = T("+");
+        for (i = 0; i < p.length; i++) {
+            chord.append(T(piano[p[i]]));
+        }
+        chord.args[0].addEventListener("~ended", function() {
+            chord.dac.remove(chord);
+        });
+        chord.dac = ex1;
+    }
     
     (function() {
-        var tone1, tone2, env, phrase, root, index;
-        var pattern;
+        var index = 0, pattern = [
+            [5, 9, 16], [7, 11, 16], [5, 9, 16], [4, 7, 12],
+        ];
         
-        tone1 = bass.args[0].args[0].args[0];
-        tone2 = bass.args[0].args[0].args[1];
-        env   = bass.args[0].args[1];
-        index = root = 0;
-        
-        timer.append(function(i) {
-            if (!(i & 7)) {
-                if (!(i & 127)) {
-                    root  = freq;
-                    while (root > 82.5) root /= 2;
-                    index = 0;
-                }
-                if (index >= bassphrase.length) {
-                    index %= bassphrase.length;
-                }
-                tone1.freq.value = root * bassphrase[index];
-                tone2.freq.value = root * bassphrase[index] * 0.996396;
-                env.bang();
-                index += 1;
+        timer.append(function(count) {
+            var p;
+            if (count % 16 === 0) {
+                p = pattern[(index / 4)|0];
+                if (p.length > 0) playpiano(p);
+                index = (index + 1) % 16;
             }
         });
     }());
     
-    // exports
-    ex1 = dist.dac;
-    ex1.append(bass);
+    
+    // melo
+    var melotone = timbre.utils.wavb("8084888C90989CA4ACB8C0CCE0002C50707C7C78746858483C3024181004F8E0E4E0F804101824303C48586874787C7C70502C00E0CCC0B8ACA49C98908C8884");
+    
+    melo = T("rLPF", T("pulse", 0.462, 0, 800, 2000, 0.8).kr(),
+               0.8, 0.8,
+               T("*", T("+", T("osc", melotone, 0, 0, 0.20),
+                             T("osc", melotone, 0, 0, 0.15)),
+                      T("adsr", 20, 500, 0.4)));
+    delay = T("efx.delay", 125, 0.8, melo);
+    delay.mul = 0.5;
+    delay.dac = ex1;
+    
+    (function() {
+        var tone1, tone2, env, phrase;
+        var phrase = [ 0, 0, 0, 0,
+                       atof("E4"), atof("E4"), atof("A4"),
+                       atof("A4"), atof("G4"), atof("C5"), ];
+        
+        tone1 = melo.args[0].args[0].args[0];
+        tone2 = melo.args[0].args[0].args[1];
+        env   = melo.args[0].args[1];
+        
+        timer.append(function(count) {
+            var freq;
+            if (count % 4 === 0) {
+                freq = phrase[(Math.random() * phrase.length)|0];
+                if (freq !== 0) {
+                    tone1.freq.value = freq;
+                    tone2.freq.value = freq * 0.996396;
+                    env.bang();
+                }
+            }
+        });
+    }());
     
     ex1.onplay = function() {
         timer.on();
-        
-        if (Math.random() < 0.75) {
-            dist.on();
-        } else {
-            dist.off();
-        }
-        
-        beat = [ 0, 0, 6, 6, 6, 12, 12, 24, 24, 48 ];
-        beat = beat[ (Math.random() * beat.length)|0 ];
-        
-        bassphrase = [ [ _3rd, _5th , _6th , _3rd , _5th , _7th, _3rd , _5th  ],
-                       [ _3rd, _5th , _6th , _3rd , _5th , _7th, _3rd , _5th  ],
-                       [ _3rd, _5th , _6th , _3rd , _5th , _7th, _3rd , _5th  ],
-                       
-                       [ _3rd, _1oct, _2nd , _5th , _1oct, _7th, _3rd , _1oct ],
-                       [ _3rd, _1oct, _2nd , _5th , _1oct, _7th, _3rd , _1oct ],
-                       
-                       [ _3rd, _9th , _3rd , _2nd , _1oct, _3rd, _9th , _3rd  ],
-                       [ _3rd, _6th , _5th_, _2nd , _1st , _5th, _2nd , _2nd_ ],
-                       [ _3rd, _3rd , _2nd , _5th , _5th , _2nd, _9th , _2nd_ ],
-                     ];
-        bassphrase = bassphrase[ (Math.random() * bassphrase.length)|0 ];
     };
     ex1.onpause = function() {
         timer.off();
