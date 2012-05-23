@@ -49,6 +49,8 @@ var Interval = (function() {
         this._interval_count = 0;
     };
     
+    $this._raw_args = true;
+    
     $this.on = function() {
         this._ison = true;
         this._samples = this._interval_samples;
@@ -149,6 +151,8 @@ var Timeout = (function() {
         this._ison = false;
         this._samples = 0;
     };
+    
+    $this._raw_args = true;
     
     $this.on = function() {
         this._ison = true;
@@ -258,6 +262,8 @@ var Schedule = (function() {
         
         delete this._init;
     };
+    
+    $this._raw_args = true;
     
     var setMode = function(mode) {
         var m;
