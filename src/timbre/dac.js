@@ -106,11 +106,13 @@ var Dac = (function() {
                 cell[j] = L[j] = R[j] = 0;
             }
             for (i = args.length; i--; ) {
-                tmp = args[i].seq(seq_id);
-                for (j = jmax; j--; ) {
-                    cell[j] += tmp[j] * mul;
-                    L[j] += tmp[j] * panL;
-                    R[j] += tmp[j] * panR;
+                if ((tmp = args[i]) !== undefined) {
+                    tmp = tmp.seq(seq_id);
+                    for (j = jmax; j--; ) {
+                        cell[j] += tmp[j] * mul;
+                        L[j] += tmp[j] * panL;
+                        R[j] += tmp[j] * panR;
+                    }
                 }
             }
             this._seq_id = seq_id;
