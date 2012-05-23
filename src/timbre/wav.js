@@ -124,7 +124,7 @@ var Wav = (function() {
                             self._loaded_src = self._src;
                             self._buffer     = res.buffer;
                             self._samplerate = res.samplerate;
-                            self._duration   = (res.buffer.length / samplerate) * 1000;
+                            self._duration   = (res.buffer.length / res.samplerate) * 1000;
                             self._phaseStep  = res.samplerate / timbre.samplerate;
                             self._phase = 0;
                             send.call(self, { samplerate:res.samplerate,
@@ -137,6 +137,49 @@ var Wav = (function() {
             send.call(this, {}, callback);
         }
         return this;
+    };
+
+    $this.clone = function() {
+        var newOne;
+        newOne = timbre("wav");
+        newOne._src        = this._src;
+        newOne._loop       = this._loop;
+        newOne._loaded_src = this._loaded_src;
+        newOne._buffer     = this._buffer;
+        newOne._samplerate = this._samplerate;
+        newOne._duration   = this._duration;
+        newOne._phaseStep  = this._phaseStep;
+        newOne._phase = 0;
+        newOne._mul   = this._mul;
+        newOne._add   = this._add;
+        return newOne;
+    };
+    
+    $this.slice = function(begin, end) {
+        var newOne, tmp;
+        if (typeof begin === "number") {
+            begin = (begin / 1000) * this._samplerate;
+        } else begin = 0;
+        if (typeof end   === "number") {
+            end   = (end   / 1000) * this._samplerate;
+        } else end = this._buffer.length;
+        if (begin > end) {
+            tmp   = begin;
+            begin = end;
+            end   = tmp;
+        }
+        newOne = timbre("wav");
+        newOne._src        = this._src;
+        newOne._loop       = this._loop;
+        newOne._loaded_src = this._loaded_src;
+        newOne._buffer     = this._buffer.subarray(begin, end);
+        newOne._samplerate = this._samplerate;
+        newOne._duration   = (end - begin / this._samplerate) * 1000;
+        newOne._phaseStep  = this._phaseStep;
+        newOne._phase = 0;
+        newOne._mul   = this._mul;
+        newOne._add   = this._add;
+        return newOne;
     };
     
     $this.bang = function() {
@@ -163,7 +206,7 @@ var Wav = (function() {
                 
                 x0 = (buffer[index    ] || 0) / 32768;
                 x1 = (buffer[index + 1] || 0) / 32768;
-                cell[i] = (1.0 - delta) * x0 + (delta * x1) * mul + add;
+                cell[i] = ((1.0 - delta) * x0 + (delta * x1)) * mul + add;
                 
                 phase += phaseStep;
                 if (buffer.length <= phase) {
