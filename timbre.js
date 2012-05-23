@@ -1,6 +1,6 @@
 /**
  * timbre 0.0.0 / JavaScript Library for Objective Sound Programming
- * build: Wed May 23 2012 17:12:22 GMT+0900 (JST)
+ * build: Thu May 24 2012 07:33:32 GMT+0900 (JST)
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,7 +10,7 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.0.0";
-    timbre.BUILD      = "Wed May 23 2012 17:12:22 GMT+0900 (JST)";
+    timbre.BUILD      = "Thu May 24 2012 07:33:32 GMT+0900 (JST)";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.workerpath = "";
@@ -839,11 +839,13 @@ var timbre = (function(context, timbre) {
                     cell[j] = L[j] = R[j] = 0;
                 }
                 for (i = args.length; i--; ) {
-                    tmp = args[i].seq(seq_id);
-                    for (j = jmax; j--; ) {
-                        cell[j] += tmp[j] * mul;
-                        L[j] += tmp[j] * panL;
-                        R[j] += tmp[j] * panR;
+                    if ((tmp = args[i]) !== undefined) {
+                        tmp = tmp.seq(seq_id);
+                        for (j = jmax; j--; ) {
+                            cell[j] += tmp[j] * mul;
+                            L[j] += tmp[j] * panL;
+                            R[j] += tmp[j] * panR;
+                        }
                     }
                 }
                 this._seq_id = seq_id;
@@ -2552,6 +2554,7 @@ var timbre = (function(context, timbre) {
             var tmp, i, imax, j, jmax;
             var preGain, postGain, lpfFreq, lpfSlope;
             var preScale, limit;
+            var mul, add;
             var a1, a2, b0, b1, b2;
             var in1, in2, out1, out2;
             var input, output;
@@ -2584,6 +2587,8 @@ var timbre = (function(context, timbre) {
                     
                     preScale = this._preScale;
                     limit    = this._limit;
+                    mul      = this._mul;
+                    add      = this._add;
                     
                     if (this._lpfFreq) {
                         a1 = this._a1; a2 = this._a2;
@@ -2614,7 +2619,7 @@ var timbre = (function(context, timbre) {
                             out2 = out1;
                             out1 = output;
                             
-                            cell[i] = output;
+                            cell[i] = output * mul + add;
                         }
                         this._in1  = in1;  this._in2  = in2;
                         this._out1 = out1; this._out2 = out2;
@@ -2626,7 +2631,7 @@ var timbre = (function(context, timbre) {
                             } else if (input < -limit) {
                                 input = -limit;
                             }
-                            cell[i] = input;
+                            cell[i] = input * mul + add;
                         }
                     }
                 }
@@ -2637,6 +2642,162 @@ var timbre = (function(context, timbre) {
         return EfxDistortion;
     }());
     timbre.fn.register("efx.dist", EfxDistortion);
+    
+    
+    var EfxDelay = (function() {
+        var EfxDelay = function() {
+            initialize.apply(this, arguments);
+        }, $this = EfxDelay.prototype;
+        
+        Object.defineProperty($this, "time", {
+            set: function(value) {
+                if (typeof value === "number") {
+                    this._delayTime = value;
+                }
+            },
+            get: function() { return this._delayTime; }
+        });
+        Object.defineProperty($this, "fb", {
+            set: function(value) {
+                if (typeof value === "number") {
+                    this._feedback = value;
+                }
+            },
+            get: function() { return this._feedback; }
+                            
+        });
+        Object.defineProperty($this, "wet", {
+            set: function(value) {
+                if (typeof value === "number") {
+                    this._wet = value;
+                }
+            },
+            get: function() { return this._wet; }
+        });
+        
+        var initialize = function(_args) {
+            var i, bits;
+            bits = Math.ceil(Math.log(timbre.samplerate * 1.5) * Math.LOG2E)
+    
+            this._buffer = new Float32Array(1 << bits);
+            this._buffer_mask = (1 << bits) - 1;
+            this._pointerWrite = 0;
+            this._pointerRead  = 0;
+            this._delayTime = 250;
+            this._feedback = 0.25;
+            this._wet = 0.25;
+            
+            i = 0;
+            if (typeof _args[i] === "number") {
+                this._delayTime = _args[i++];
+            }    
+            if (typeof _args[i] === "number") {
+                this._feedback = _args[i++];
+            }    
+            if (typeof _args[i] === "number") {
+                this._wet = _args[i++];
+            }    
+            this._set_params(this._delayTime, this._feedback, this._wet);
+            
+            this.args = timbre.fn.valist.call(this, _args.slice(i));
+            this._enabled = true;
+        };
+    
+        $this._set_params = function(delayTime, feedback, wet) {
+            var offset;
+            offset = delayTime * timbre.samplerate / 1000;
+            
+            this._pointerWrite = (this._pointerRead + offset) & this._buffer_mask;
+            if (feedback >= 1.0) {
+                this._feedback = +0.9990234375;
+            } else if (feedback <= -1.0) {
+                this._feedback = -0.9990234375;
+            } else {
+                this._feedback = feedback;
+            }
+            if (wet < 0) {
+                this._wet = 0;
+            } else if (wet > 1.0) {
+                this._wet = 1.0;
+            } else {
+                this._wet = wet;
+            }
+        };
+        
+        $this.on = function() {
+            this._enabled = true;
+            timbre.fn.do_event(this, "on");
+            return this;
+        };
+        
+        $this.off = function() {
+            this._enabled = false;
+            timbre.fn.do_event(this, "off");
+            return this;
+        };
+        
+        $this.seq = function(seq_id) {
+            var args, cell;
+            var tmp, i, imax, j, jmax;
+            var mul, add;
+            var x, feedback, wet, dry;
+            var buffer, buffer_mask, pointerRead, pointerWrite;
+            
+            cell = this._cell;
+            if (seq_id !== this._seq_id) {
+                args = this.args;
+                for (j = jmax = cell.length; j--; ) {
+                    cell[j] = 0.0;
+                }
+                for (i = args.length; i--; ) {
+                    tmp = args[i].seq(seq_id);
+                    for (j = jmax; j--; ) {
+                        cell[j] += tmp[j];
+                    }
+                }
+                
+                buffer = this._buffer;
+                buffer_mask = this._buffer_mask;
+                feedback = this._feedback;
+                wet = this._wet;
+                dry = 1 - wet;
+                pointerRead  = this._pointerRead;
+                pointerWrite = this._pointerWrite;
+                mul = this._mul;
+                add = this._add;
+                
+                // filter
+                if (this._enabled) {
+                    for (i = 0, imax = cell.length; i < imax; ++i) {
+                        x = buffer[pointerRead];
+                        buffer[pointerWrite] = cell[i] - x * feedback;
+                        cell[i] *= dry;
+                        cell[i] += x * wet;
+                        cell[i] = cell[i] * mul + add;
+                        pointerWrite = (pointerWrite + 1) & buffer_mask;
+                        pointerRead  = (pointerRead  + 1) & buffer_mask;
+                    }
+                } else {
+                    for (i = 0, imax = cell.length; i < imax; ++i) {
+                        x = buffer[pointerRead];
+                        buffer[pointerWrite] = cell[i] - x * feedback;
+                        pointerWrite = (pointerWrite + 1) & buffer_mask;
+                        pointerRead  = (pointerRead  + 1) & buffer_mask;
+                        cell[i] = cell[i] * mul + add;
+                    }
+                }
+                this._pointerRead  = pointerRead;
+                this._pointerWrite = pointerWrite;
+                
+                this._seq_id = seq_id;
+            }
+            return cell;
+        };
+        
+    
+        return EfxDelay;
+    }());
+    timbre.fn.register("efx.delay", EfxDelay);
     
     
     var Interval = (function() {
@@ -2686,7 +2847,7 @@ var timbre = (function(context, timbre) {
         
         $this.on = function() {
             this._ison = true;
-            this._samples = this._interval_samples;
+            this._samples = 0;
             timbre.timers.append(this);
             timbre.fn.do_event(this, "on");
             return this;
@@ -2705,7 +2866,7 @@ var timbre = (function(context, timbre) {
         
         $this.bang = function() {
             if (this._ison) {
-                this._samples = this._interval_samples;
+                this._samples = 0;
                 this._interval_count = 0;
                 timbre.fn.do_event(this, "bang");
             }
@@ -3158,7 +3319,7 @@ var timbre = (function(context, timbre) {
                                 self._loaded_src = self._src;
                                 self._buffer     = res.buffer;
                                 self._samplerate = res.samplerate;
-                                self._duration   = (res.buffer.length / samplerate) * 1000;
+                                self._duration   = (res.buffer.length / res.samplerate) * 1000;
                                 self._phaseStep  = res.samplerate / timbre.samplerate;
                                 self._phase = 0;
                                 send.call(self, { samplerate:res.samplerate,
@@ -3171,6 +3332,49 @@ var timbre = (function(context, timbre) {
                 send.call(this, {}, callback);
             }
             return this;
+        };
+    
+        $this.clone = function() {
+            var newOne;
+            newOne = timbre("wav");
+            newOne._src        = this._src;
+            newOne._loop       = this._loop;
+            newOne._loaded_src = this._loaded_src;
+            newOne._buffer     = this._buffer;
+            newOne._samplerate = this._samplerate;
+            newOne._duration   = this._duration;
+            newOne._phaseStep  = this._phaseStep;
+            newOne._phase = 0;
+            newOne._mul   = this._mul;
+            newOne._add   = this._add;
+            return newOne;
+        };
+        
+        $this.slice = function(begin, end) {
+            var newOne, tmp;
+            if (typeof begin === "number") {
+                begin = (begin / 1000) * this._samplerate;
+            } else begin = 0;
+            if (typeof end   === "number") {
+                end   = (end   / 1000) * this._samplerate;
+            } else end = this._buffer.length;
+            if (begin > end) {
+                tmp   = begin;
+                begin = end;
+                end   = tmp;
+            }
+            newOne = timbre("wav");
+            newOne._src        = this._src;
+            newOne._loop       = this._loop;
+            newOne._loaded_src = this._loaded_src;
+            newOne._buffer     = this._buffer.subarray(begin, end);
+            newOne._samplerate = this._samplerate;
+            newOne._duration   = (end - begin / this._samplerate) * 1000;
+            newOne._phaseStep  = this._phaseStep;
+            newOne._phase = 0;
+            newOne._mul   = this._mul;
+            newOne._add   = this._add;
+            return newOne;
         };
         
         $this.bang = function() {
@@ -3197,7 +3401,7 @@ var timbre = (function(context, timbre) {
                     
                     x0 = (buffer[index    ] || 0) / 32768;
                     x1 = (buffer[index + 1] || 0) / 32768;
-                    cell[i] = (1.0 - delta) * x0 + (delta * x1) * mul + add;
+                    cell[i] = ((1.0 - delta) * x0 + (delta * x1)) * mul + add;
                     
                     phase += phaseStep;
                     if (buffer.length <= phase) {
