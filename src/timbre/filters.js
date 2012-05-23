@@ -17,8 +17,6 @@ var Filter = (function() {
             if (typeof value === "string") {
                 if ((f = Filter.types[value]) !== undefined) {
                     this._type = value;
-                    if (typeof this._freq !== "object") this.freq = f.default_freq;
-                    if (typeof this._band !== "object") this.band = f.default_band;
                     this._set_params = f.set_params;
                 }
             }
@@ -69,27 +67,43 @@ var Filter = (function() {
         
         this._mul  = 1.0;
         this._add  = 0.0;
-        this._gain = 6;
         
         i = 0;
         if (typeof _args[i] === "string" && (Filter.types[_args[i]]) !== undefined) {
-            type = _args[i++];
+            this.type = _args[i++];
         } else {
-            type = "LPF";
+            this.type = "LPF";
+        }
+        type = this._type;
+        
+        if (typeof _args[i] === "object" && !_args[i]._ar) {
+            this._freq = _args[i++];    
+        } else if (typeof _args[i] === "number") {
+            this._freq = timbre(_args[i++]);
+        } else {
+            this._freq = timbre(Filter.types[type].default_freq);
         }
         
-        this.freq = _args[i++];
-        
-        if (typeof _args[i] === "object" || typeof _args[i] === "number") {
-            this.band = _args[i++];
+        if (typeof _args[i] === "object" && !_args[i]._ar) {
+            this._band = _args[i++];
+        } else if (typeof _args[i] === "number") {
+            this._band = timbre(_args[i++]);
+        } else {
+            this._band = timbre(Filter.types[type].default_band);
         }
+        
         if (type === "peaking" || type === "lowboost" || type === "highboost") {
-            if (typeof _args[i] === "object" || typeof _args[i] === "number") {
-                this.gain = _args[i++];
+            if (typeof _args[i] === "object" && !_args[i]._ar) {
+                this._gain = _args[i++];
+            } else if (typeof _args[i] === "number") {
+                this._gain = timbre(_args[i++]);
+            } else {
+                this._gain = timbre(Filter.types[type].default_gain);
             }
         } else {
-            this.gain = 0;
+            this._gain = timbre(undefined);
         }
+        
         if (typeof _args[i] === "number") {
             this._mul = _args[i++];
         }
@@ -97,7 +111,7 @@ var Filter = (function() {
             this._add = _args[i++];
         }
         this.args = timbre.fn.valist.call(this, _args.slice(i));
-
+        
         this._prev_type = undefined;
         this._prev_freq = undefined;
         this._prev_band = undefined;
@@ -106,7 +120,6 @@ var Filter = (function() {
         this._ison = true;
         this._in1 = this._in2 = this._out1 = this._out2 = 0;
         this._ar = true;
-        this.type = type;
     };
     
     $this.on = function() {
@@ -283,7 +296,7 @@ Filter.types.allpass = {
     }
 };
 Filter.types.peaking = {
-    default_freq: 3000, default_band: 1,
+    default_freq: 3000, default_band: 1, default_gain: 6,
     set_params: function(freq, band, gain) {
         var A, omg, cos, sin, alp, alpA, alpiA, n, ia0;
         A = Math.pow(10, gain * 0.025);
@@ -303,7 +316,7 @@ Filter.types.peaking = {
     }
 };
 Filter.types.lowboost = {
-    default_freq: 3000, default_band: 1,
+    default_freq: 3000, default_band: 1, default_gain: 6,
     set_params: function(freq, band, gain) {
         var A, omg, cos, sin, alp, alpsA2, ia0;
         A = Math.pow(10, gain * 0.025);
@@ -321,7 +334,7 @@ Filter.types.lowboost = {
     }
 };
 Filter.types.highboost = {
-    default_freq: 5500, default_band: 1,
+    default_freq: 5500, default_band: 1, default_gain: 6,
     set_params: function(freq, band, gain) {
         var A, omg, cos, sin, alp, alpsA2, ia0;
         A = Math.pow(10, gain * 0.025);
@@ -428,26 +441,35 @@ var ResonantFilter = (function() {
         
         i = 0;
         if (typeof _args[i] === "string" && (ResonantFilter.types[_args[i]]) !== undefined) {
-            type = _args[i++];
+            this.type = _args[i++];
         } else {
-            type = "LPF";
+            this.type = "LPF";
         }
 
-        if (typeof _args[i] === "object" || typeof _args[i] === "number") {
-            this.cutoff = _args[i++];
+        if (typeof _args[i] === "object" && !_args[i]._ar) {
+            this._cutoff = _args[i++];    
+        } else if (typeof _args[i] === "number") {
+            this._cutoff = timbre(_args[i++]);
         } else {
-            this.cutoff = 800;
+            this._cutoff = timbre(800);
         }
-        if (typeof _args[i] === "object" || typeof _args[i] === "number") {
-            this.Q = _args[i++];
+        
+        if (typeof _args[i] === "object" && !_args[i]._ar) {
+            this._Q = _args[i++];    
+        } else if (typeof _args[i] === "number") {
+            this._Q = timbre(_args[i++]);
         } else {
-            this.Q = 0.5;
+            this._Q = timbre(0.5);
         }
-        if (typeof _args[i] === "number" || typeof _args[i] === "number") {
-            this.depth = _args[i++];
+        
+        if (typeof _args[i] === "object" && !_args[i]._ar) {
+            this._depth = _args[i++];    
+        } else if (typeof _args[i] === "number") {
+            this._depth = timbre(_args[i++]);
         } else {
-            this.depth = 0.5;
+            this._depth = timbre(0.5);
         }
+        
         if (typeof _args[i] === "number") {
             this.mul = _args[i++];
         }
