@@ -11,49 +11,41 @@ var Dac = (function() {
         initialize.apply(this, arguments);
     }, $this = Dac.prototype;
     
-    Object.defineProperty($this, "dac", { get: function() { return this; } });
-    
+    Object.defineProperty($this, "dac", {
+        get: function() { return this; }
+    });
     Object.defineProperty($this, "pan", {
         set: function(value) {
             if (typeof value !== "object") {
-                this._pan = timbre(value);
+                this._.pan = timbre(value);
             } else {
-                this._pan = value;
+                this._.pan = value;
             }
         },
-        get: function() {
-            return this._pan;
-        }
+        get: function() { return this._.pan; }
     });
     Object.defineProperty($this, "amp", {
         set: function(value) {
             if (typeof value === "number") {
-                this._mul = value;
+                this._.mul = value;
             }
         },
-        get: function() {
-            return this._mul;
-        }
+        get: function() { return this._.mul; }
     });
     Object.defineProperty($this, "isOn", {
-        get: function() {
-            return this._ison;
-        }
+        get: function() { return this._.ison; }
     });
     Object.defineProperty($this, "isOff", {
-        get: function() {
-            return !this._ison;
-        }
+        get: function() { return !this._.ison; }
     });
     
     var initialize = function(_args) {
+        var _ = this._ = {};
         this.args = timbre.fn.valist.call(this, _args);
         this.pan = 0.5;
-        this._L = new Float32Array(timbre.cellsize);
-        this._R = new Float32Array(timbre.cellsize);
-        this._prev_pan = undefined;
-        this._mul  = 1.0;
-        this._ison = false;
+        this.L = new Float32Array(timbre.cellsize);
+        this.R = new Float32Array(timbre.cellsize);
+        _.prev_pan = undefined;
     };
     timbre.fn.set_ar_only($this);
     
@@ -66,7 +58,7 @@ var Dac = (function() {
     };
     
     $this.on = $this.play = function() {
-        this._ison = true;
+        this._.ison = true;
         timbre.dacs.append(this);
         timbre.fn.do_event(this, "play");        
         timbre.fn.do_event(this, "on");
@@ -74,7 +66,7 @@ var Dac = (function() {
     };
     
     $this.off = $this.pause = function() {
-        this._ison = false;
+        this._.ison = false;
         timbre.dacs.remove(this);
         timbre.fn.do_event(this, "off");
         timbre.fn.do_event(this, "pause");        
@@ -82,6 +74,7 @@ var Dac = (function() {
     };
     
     $this.seq = function(seq_id) {
+        var _ = this._;
         var args, cell, L, R;
         var mul, pan, panL, panR;
         var tmp, i, j, jmax;
@@ -89,17 +82,17 @@ var Dac = (function() {
         cell = this.cell;
         if (seq_id !== this.seq_id) {
             args = this.args;
-            L = this._L;
-            R = this._R;
-            pan = this._pan.seq(seq_id)[0];
-            if (pan !== this._prev_pan) {
-                this._panL = Math.cos(0.5 * Math.PI * pan);
-                this._panR = Math.sin(0.5 * Math.PI * pan);
-                this._prev_pan = pan;
+            L = this.L;
+            R = this.R;
+            pan = _.pan.seq(seq_id)[0];
+            if (pan !== _.prev_pan) {
+                _.panL = Math.cos(0.5 * Math.PI * pan);
+                _.panR = Math.sin(0.5 * Math.PI * pan);
+                _.prev_pan = pan;
             }
-            mul = this._mul;
-            panL = this._panL * mul;
-            panR = this._panR * mul;
+            mul  = _.mul;
+            panL = _.panL * mul;
+            panR = _.panR * mul;
             jmax = timbre.cellsize;
             for (j = jmax; j--; ) {
                 cell[j] = L[j] = R[j] = 0;
