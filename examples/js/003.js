@@ -21,12 +21,12 @@ ex1 = (function() {
         metronome.interval = (this.duration / 3) / 16;
         ex1.ready += 1;
     });
-    dist = T("efx.dist", -30, 12, 4800, amen).set("mul", 0.5);
+    dist = T("efx.dist", 0, -18, 2400, amen).set("mul", 0.5);
     dist.dac = ex1;
     
     var beat = 8, beattimer = (function() {
         var tim = 0, cnt = 0, stay = 0;
-        return T("interval", function(i) {
+        return T("interval", function(count) {
             if (cnt === 0) {
                 if (stay === 0) {
                     tim = ((Math.random() * beat)|0) * (amen.duration / beat);
