@@ -295,7 +295,7 @@ timbre.fn = (function(timbre) {
                 instance._ar = false;
             }
         }
-        instance._seq = instance.seq;
+        instance._.seq = instance.seq;
         
         if (instance._post_init) {
             instance._post_init();
@@ -332,7 +332,7 @@ timbre.fn = (function(timbre) {
         return this.cell;
     };
     defaults.on = function() {
-        this.seq = this._seq;
+        this.seq = this._.seq;
         timbre.fn.do_event(this, "on");
         return this;
     };
