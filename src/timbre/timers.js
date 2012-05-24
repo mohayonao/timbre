@@ -14,29 +14,23 @@ var Interval = (function() {
     Object.defineProperty($this, "interval", {
         set: function(value) {
             if (typeof value === "number") {
-                this._interval = value;
-                this._interval_samples = (timbre.samplerate * (value / 1000))|0;
+                this._.interval = value;
+                this._.interval_samples = (timbre.samplerate * (value / 1000))|0;
             }
         },
-        get: function() {
-            return this._interval;
-        }
+        get: function() { return this._.interval; }
     });
     Object.defineProperty($this, "isOn", {
-        get: function() {
-            return this._ison;
-        }
+        get: function() { return this._.ison; }
     });
     Object.defineProperty($this, "isOff", {
-        get: function() {
-            return !this._ison;
-        }
+        get: function() { return !this._.ison; }
     });
     
     var initialize = function(_args) {
-        var i;
+        var i, _;
         
-        this._interval_samples = 0;
+        this._ = _ = {};
         
         i = 0;
         if (typeof _args[i] === "number") {
@@ -44,24 +38,24 @@ var Interval = (function() {
         }
         this.args = _args.slice(i);
         
-        this._ison = false;
-        this._samples = 0;
-        this._interval_count = 0;
+        _.ison = false;
+        _.samples = 0;
+        _.interval_count = 0;
     };
     timbre.fn.set_kr_only($this);
     
     $this._raw_args = true;
     
     $this.on = function() {
-        this._ison = true;
-        this._samples = 0;
+        this._.ison = true;
+        this._.samples = 0;
         timbre.timers.append(this);
         timbre.fn.do_event(this, "on");
         return this;
     };
     
     $this.off = function() {
-        this._ison = false;
+        this._.ison = false;
         timbre.timers.remove(this);
         timbre.fn.do_event(this, "off");
         return this;
@@ -72,22 +66,23 @@ var Interval = (function() {
     };
     
     $this.bang = function() {
-        if (this._ison) {
-            this._samples = 0;
-            this._interval_count = 0;
+        if (this._.ison) {
+            this._.samples = 0;
+            this._.interval_count = 0;
             timbre.fn.do_event(this, "bang");
         }
         return this;
     };
     
     $this.seq = function(seq_id) {
+        var _ = this._;
         var samples, count, args, i, imax;
         if (seq_id !== this.seq_id) {
-            if (this._interval_samples !== 0) {
-                samples = this._samples - timbre.cellsize;
+            if (_.interval_samples !== 0) {
+                samples = _.samples - timbre.cellsize;
                 if (samples <= 0) {
-                    this._samples = samples + this._interval_samples;
-                    count = this._interval_count;
+                    _.samples = samples + _.interval_samples;
+                    count = _.interval_count;
                     args = this.args;
                     for (i = 0, imax = args.length; i < imax; ++i) {
                         if (typeof args[i] === "function") {
@@ -96,10 +91,10 @@ var Interval = (function() {
                             args[i].bang();
                         }
                     }
-                    ++this._interval_count;
-                    samples = this._samples;
+                    ++_.interval_count;
+                    samples = _.samples;
                 }
-                this._samples = samples;
+                _.samples = samples;
             }
             this.seq_id = seq_id;
         }
@@ -119,29 +114,23 @@ var Timeout = (function() {
     Object.defineProperty($this, "timeout", {
         set: function(value) {
             if (typeof value === "number") {
-                this._timeout = value;
-                this._timeout_samples = (timbre.samplerate * (value / 1000))|0;
+                this._.timeout = value;
+                this._.timeout_samples = (timbre.samplerate * (value / 1000))|0;
             }
         },
-        get: function() {
-            return this._timeout;
-        }
+        get: function() { return this._.timeout; }
     });
     Object.defineProperty($this, "isOn", {
-        get: function() {
-            return this._ison;
-        }
+        get: function() { return this._.ison; }
     });
     Object.defineProperty($this, "isOff", {
-        get: function() {
-            return !this._ison;
-        }
+        get: function() { return !this._.ison; }
     });
     
     var initialize = function(_args) {
-        var i;
-        
-        this._timeout_samples = 0;
+        var i, _;
+
+        this._ = _ = {};
         
         i = 0;
         if (typeof _args[i] === "number") {
@@ -149,23 +138,23 @@ var Timeout = (function() {
         }
         this.args = _args.slice(i);
         
-        this._ison = false;
-        this._samples = 0;
+        _.ison = false;
+        _.samples = 0;
     };
     timbre.fn.set_kr_only($this);
     
     $this._raw_args = true;
     
     $this.on = function() {
-        this._ison = true;
-        this._samples = this._timeout_samples;
+        this._.ison = true;
+        this._.samples = this._timeout_samples;
         timbre.timers.append(this);
         timbre.fn.do_event(this, "on");
         return this;
     };
     
     $this.off = function() {
-        this._ison = false;
+        this._.ison = false;
         timbre.timers.remove(this);
         timbre.fn.do_event(this, "off");
         return this;
@@ -176,20 +165,21 @@ var Timeout = (function() {
     };
     
     $this.bang = function() {
-        if (this._ison) {
-            this._samples = this._timeout_samples;
+        if (this._.ison) {
+            this._.samples = this._.timeout_samples;
             timbre.fn.do_event(this, "bang");
         }
         return this;
     };
     
     $this.seq = function(seq_id) {
+        var _ = this._;
         var samples, args, i, imax;
         if (seq_id !== this.seq_id) {
-            if (this._timeout_samples !== 0) {
-                samples = this._samples - timbre.cellsize;
+            if (_.timeout_samples !== 0) {
+                samples = _.samples - timbre.cellsize;
                 if (samples <= 0) {
-                    this._samples = 0;
+                    _.samples = 0;
                     args = this.args;
                     for (i = 0, imax = args.length; i < imax; ++i) {
                         if (typeof args[i] === "function") {
@@ -198,10 +188,10 @@ var Timeout = (function() {
                             args[i].bang();
                         }
                     }
-                    samples = this._samples;
+                    samples = _.samples;
                     if (samples <= 0) this.off();
                 }
-                this._samples = samples;
+                _.samples = samples;
             }
             this.seq_id = seq_id;
         }
@@ -219,27 +209,25 @@ var Schedule = (function() {
     }, $this = Schedule.prototype;
     
     Object.defineProperty($this, "mode", {
-        get: function() { return this._mode; }
+        get: function() { return this._.mode; }
     });
     Object.defineProperty($this, "isOn", {
-        get: function() {
-            return this._ison;
-        }
+        get: function() { return this._ison; }
     });
     Object.defineProperty($this, "isOff", {
-        get: function() {
-            return !this._ison;
-        }
+        get: function() { return !this._ison; }
     });
     
     var initialize = function(_args) {
-        var i, list, j;
+        var list, i, j, _;
         
-        this._mode = "msec";
-        this._msec = 1;
-        this._timetable = [];
-        this._index = 0;
-        this._init = true;
+        this._ = _ = {};
+        
+        _.mode = "msec";
+        _.msec = 1;
+        _.timetable = [];
+        _.index = 0;
+        _.init = true;
         
         i = 0;
         if (typeof _args[i] === "string") {
@@ -250,19 +238,19 @@ var Schedule = (function() {
             for (j = list.length; j--; ) {
                 this.append(list[j]);
             }
-            this._timetable.sort(function(a, b) { return a[0] - b[0]; });
+            _.timetable.sort(function(a, b) { return a[0] - b[0]; });
         }
         if (typeof _args[i] === "boolean") {
-            this._loop = _args[i++];
+            _.loop = _args[i++];
         } else {
-            this._loop = false;
+            _.loop = false;
         }
         
-        this._ison  = false;
-        this._currentTime = 0;
-        this._loopcount   = 0;
+        _.ison  = false;
+        _.currentTime = 0;
+        _.loopcount   = 0;
         
-        delete this._init;
+        delete _.init;
     };
     timbre.fn.set_kr_only($this);
     
@@ -271,69 +259,73 @@ var Schedule = (function() {
     var setMode = function(mode) {
         var m;
         if ((m = /^bpm\s*\(\s*(\d+(?:\.\d*)?)\s*(?:,\s*(\d+))?\s*\)/.exec(mode))) {
-            this._mode = "bpm";
-            this._msec = timbre.utils.bpm2msec(m[1], m[2] || 16);
+            this._.mode = "bpm";
+            this._.msec = timbre.utils.bpm2msec(m[1], m[2] || 16);
         }
     };
     
     $this.on = function() {
-        this._ison = true;
-        this._index = 0;
-        this._currentTime = 0;
-        this._loopcount   = 0;
+        var _ = this._;
+        _.ison = true;
+        _.index = 0;
+        _.currentTime = 0;
+        _.loopcount   = 0;
         timbre.timers.append(this);
         timbre.fn.do_event(this, "on");
         return this;
     };
     
     $this.off = function() {
-        this._ison = false;
-        this._index = 0;
-        this._currentTime = 0;
-        this._loopcount   = 0;
+        var _ = this._;
+        _.ison = false;
+        _.index = 0;
+        _.currentTime = 0;
+        _.loopcount   = 0;
         timbre.timers.remove(this);
         timbre.fn.do_event(this, "off");
         return this;
     };
     
     $this.play = function() {
-        this._ison = true;
+        this._.ison = true;
         timbre.fn.do_event(this, "play");
         return this;
     };
     
     $this.pause = function() {
-        this._ison = false;
+        this._.ison = false;
         timbre.fn.do_event(this, "pause");
         return this;
     };
     
     $this.bang = function() {
-        if (this._ison) {
-            this._index = 0;
-            this._currentTime = 0;
-            this._loopcount   = 0;
+        var _ = this._;
+        if (_.ison) {
+            _.index = 0;
+            _.currentTime = 0;
+            _.loopcount   = 0;
             timbre.fn.do_event(this, "bang");
         }
         return this;
     };
     
     $this.append = function(items) {
+        var _ = this._;
         var tt, schedule;
         
         if (typeof items !== "object") return this;
         if (!(items instanceof Array)) return this;
         if (items.length === 0) return this;
 
-        tt = this._timetable;
-        schedule = tt[this._index];
+        tt = _.timetable;
+        schedule = tt[_.index];
         
-        items[0] *= this._msec;
+        items[0] *= _.msec;
         tt.push(items);
         
-        if (! this._init) {
+        if (! _.init) {
             if (schedule && items[0] < schedule[0]) {
-                this._index += 1;
+                _.index += 1;
             }
             tt.sort(function(a, b) { return a[0] - b[0]; });
         }
@@ -341,16 +333,17 @@ var Schedule = (function() {
     };
     
     $this.remove = function(items) {
+        var _ = this._;
         var tt, cnt;
         
         if (typeof items !== "object") return this;
         if (!(items instanceof Array)) return this;
         if (items.length === 0) return this;
         
-        tt = this._timetable;
-        schedule = tt[this._index];
+        tt = _.timetable;
+        schedule = tt[_.index];
         
-        items[0] *= this._msec;
+        items[0] *= _.msec;
 
         cnt = 0;
         for (i = tt.length; i--; ) {
@@ -362,18 +355,19 @@ var Schedule = (function() {
         }
         
         if (schedule && schedule[0] < items[0]) {
-            this._index -= cnt;
+            _.index -= cnt;
         }
         return this;
     };
     
     $this.seq = function(seq_id) {
+        var _ = this._;
         var tt, schedule, target;
         if (seq_id !== this.seq_id) {
-            if (this._ison) {
-                tt = this._timetable;
-                while ((schedule = tt[this._index]) !== undefined) {
-                    if (this._currentTime < schedule[0]) {
+            if (_.ison) {
+                tt = _.timetable;
+                while ((schedule = tt[_.index]) !== undefined) {
+                    if (_.currentTime < schedule[0]) {
                         break;
                     } else {
                         if ((target = schedule[1]) !== undefined) {
@@ -383,13 +377,13 @@ var Schedule = (function() {
                                 if (target.bang) target.bang();
                             }
                         }
-                        if ((++this._index) >= tt.length) {
-                            if (this._index >= tt.length) {
-                                if (this._loop) {
+                        if ((++_.index) >= tt.length) {
+                            if (_.index >= tt.length) {
+                                if (_.loop) {
                                     timbre.fn.do_event(this, "looped",
-                                                       [++this._loopcount]);
-                                    this._index = 0;
-                                    this._currentTime -= schedule[0];
+                                                       [++_.loopcount]);
+                                    _.index = 0;
+                                    _.currentTime -= schedule[0];
                                 } else {
                                     timbre.fn.do_event(this, "ended");
                                     this.off();
@@ -398,7 +392,7 @@ var Schedule = (function() {
                         }
                     }
                 }
-                this._currentTime += (timbre.cellsize / timbre.samplerate) * 1000;
+                _.currentTime += (timbre.cellsize / timbre.samplerate) * 1000;
             }
             this.seq_id = seq_id;
         }
