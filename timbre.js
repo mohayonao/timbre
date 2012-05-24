@@ -1,6 +1,6 @@
 /**
  * timbre 0.0.0 / JavaScript Library for Objective Sound Programming
- * build: Thu May 24 2012 17:47:33 GMT+0900 (JST)
+ * build: Thu May 24 2012 21:31:30 GMT+0900 (JST)
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,7 +10,7 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.0.0";
-    timbre.BUILD      = "Thu May 24 2012 17:47:33 GMT+0900 (JST)";
+    timbre.BUILD      = "Thu May 24 2012 21:31:30 GMT+0900 (JST)";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.workerpath = "";
@@ -71,7 +71,7 @@ var timbre = (function(context, timbre) {
         $this.process = function() {
             var cell, L, R;
             var seq_id, dacs, dac, timers, timer;
-            var i, imax, j, k, kmax, n, nmax;
+            var i, imax, j, jmax, k, kmax, n, nmax;
             var saved_i, tmpL, tmpR, amp, x;
             
             cell = this.cell;
@@ -95,13 +95,13 @@ var timbre = (function(context, timbre) {
             for (n = nmax; n--; ) {
                 ++seq_id;
                 timers = timbre.timers.slice(0);
-                for (j = timers.length; j--; ) {
+                for (j = 0, jmax = timers.length; j < jmax; ++j) {
                     if ((timer = timers[j]) !== undefined) {
                         timer.seq(seq_id);
                     }
                 }
                 dacs = timbre.dacs.slice(0);
-                for (j = dacs.length; j--; ) {
+                for (j = 0, jmax = dacs.length; j < jmax; ++j) {
                     if ((dac = dacs[j]) !== undefined) {
                         dac.seq(seq_id);
                         tmpL = dac.L;
@@ -2958,6 +2958,14 @@ var timbre = (function(context, timbre) {
             },
             get: function() { return this._.interval; }
         });
+        Object.defineProperty($this, "count", {
+            set: function(value) {
+                if (typeof value === "number") {
+                    this._.count = value;
+                }
+            },
+            get: function() { return this._.count; }
+        });
         
         var initialize = function(_args) {
             var i, _;
@@ -2972,7 +2980,8 @@ var timbre = (function(context, timbre) {
             
             _.ison = false;
             _.samples = 0;
-            _.interval_count = 0;
+            _.count = 0;
+            _.next_count  = 0;
         };
         timbre.fn.set_kr_only($this);
         $this._raw_args = true;
@@ -3005,7 +3014,7 @@ var timbre = (function(context, timbre) {
         $this.bang = function() {
             if (this._.ison) {
                 this._.samples = 0;
-                this._.interval_count = 0;
+                this._.count = 0;
                 timbre.fn.do_event(this, "bang");
             }
             return this;
@@ -3019,7 +3028,7 @@ var timbre = (function(context, timbre) {
                     samples = _.samples - timbre.cellsize;
                     if (samples <= 0) {
                         _.samples = samples + _.interval_samples;
-                        count = _.interval_count;
+                        count = _.count = _.next_count;
                         args = this.args;
                         for (i = 0, imax = args.length; i < imax; ++i) {
                             if (typeof args[i] === "function") {
@@ -3028,7 +3037,7 @@ var timbre = (function(context, timbre) {
                                 args[i].bang();
                             }
                         }
-                        ++_.interval_count;
+                        ++_.next_count;
                         samples = _.samples;
                     }
                     _.samples = samples;
