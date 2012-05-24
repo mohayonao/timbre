@@ -248,33 +248,34 @@ Oscillator.wavelets.konami = (function() {
 }());
 
 
-timbre.fn.register("sin", function(_args) {
+timbre.fn.register("sin", Oscillator, function(_args) {
     return new Oscillator(["sin"].concat(_args));
 });
-timbre.fn.register("cos", function(_args) {
+timbre.fn.register("cos", Oscillator, function(_args) {
     return new Oscillator(["cos"].concat(_args));
 });
-timbre.fn.register("pulse", function(_args) {
+timbre.fn.register("pulse", Oscillator, function(_args) {
     return new Oscillator(["pulse"].concat(_args));
 });
-timbre.fn.register("tri", function(_args) {
+timbre.fn.register("tri", Oscillator, function(_args) {
     return new Oscillator(["tri"].concat(_args));
 });
-timbre.fn.register("saw", function(_args) {
+timbre.fn.register("saw", Oscillator, function(_args) {
     return new Oscillator(["saw"].concat(_args));
 });
-timbre.fn.register("sawup", function(_args) {
+timbre.fn.register("sawup", Oscillator, function(_args) {
     return new Oscillator(["sawup"].concat(_args));
 });
-timbre.fn.register("sawdown", function(_args) {
+timbre.fn.register("sawdown", Oscillator, function(_args) {
     return new Oscillator(["sawdown"].concat(_args));
 });
-timbre.fn.register("fami", function(_args) {
+timbre.fn.register("fami", Oscillator, function(_args) {
     return new Oscillator(["fami"].concat(_args));
 });
-timbre.fn.register("konami", function(_args) {
+timbre.fn.register("konami", Oscillator, function(_args) {
     return new Oscillator(["konami"].concat(_args));
 });
+
 
 var WhiteNoise = (function() {
     var WhiteNoise = function() {
