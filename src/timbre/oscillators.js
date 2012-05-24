@@ -90,6 +90,7 @@ var Oscillator = (function() {
         
         _.x = 1024 * _.phase;
         _.coeff = 1024 / timbre.samplerate;
+        _.ison = true;
     };
     timbre.fn.set_ar_kr($this);
     
@@ -111,7 +112,7 @@ var Oscillator = (function() {
         var index, delta, x0, x1, xx;
         var i, imax;
         
-        if (!_.ison) return timbre.none;
+        if (!_.ison) return timbre._.none;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
