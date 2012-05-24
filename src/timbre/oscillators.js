@@ -113,7 +113,7 @@ var Oscillator = (function() {
         var x, dx, coeff;
         var index, delta, x0, x1, xx;
         var i, imax;
-        cell = this._cell;
+        cell = this.cell;
         if (seq_id !== this._seq_id) {
             freq = this._freq.seq(seq_id);
             mul  = this._mul;
@@ -295,7 +295,7 @@ var WhiteNoise = (function() {
         var cell;
         var mul, add, x, i;
         
-        cell = this._cell;
+        cell = this.cell;
         if (seq_id !== this._seq_id) {
             mul = this._mul;
             add = this._add;

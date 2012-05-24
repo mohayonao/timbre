@@ -116,7 +116,7 @@ var ADSREnvelope = (function() {
         var mul, add;
         var s0, s1, x, i, imax;
         
-        cell = this._cell;
+        cell = this.cell;
         if (seq_id !== this._seq_id) {
             mode    = this._mode;
             samples = this._samples;
@@ -305,7 +305,7 @@ var Tween = (function() {
         var value, diff, changed, ended;
         var i, imax;
         
-        cell = this._cell;
+        cell = this.cell;
         if (seq_id !== this._seq_id) {
             if (this._enabled) {
                 this._phase += this._phaseStep;
@@ -529,7 +529,7 @@ var Percussive = (function() {
         var x, dx, samples;
         var i, imax;
         
-        cell = this._cell;
+        cell = this.cell;
         if (seq_id !== this._seq_id) {
             x  = this._x;
             dx = this._dx;

@@ -161,7 +161,7 @@ var EfxDistortion = (function() {
         var in1, in2, out1, out2;
         var input, output;
         
-        cell = this._cell;
+        cell = this.cell;
         if (seq_id !== this._seq_id) {
             args = this.args;
             for (j = jmax = cell.length; j--; ) {

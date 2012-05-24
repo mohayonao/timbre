@@ -18,7 +18,7 @@ var Add = (function() {
     $this.seq = function(seq_id) {
         var args, cell;
         var tmp, i, j, jmax;
-        cell = this._cell;
+        cell = this.cell;
         if (seq_id !== this._seq_id) {
             args = this.args;
             jmax = timbre.cellsize;
@@ -53,7 +53,7 @@ var Multiply = (function() {
     $this.seq = function(seq_id) {
         var args, cell;
         var tmp, i, j, jmax;
-        cell = this._cell;
+        cell = this.cell;
         if (seq_id !== this._seq_id) {
             args = this.args;
             jmax = timbre.cellsize;

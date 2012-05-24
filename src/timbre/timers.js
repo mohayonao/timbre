@@ -103,7 +103,7 @@ var Interval = (function() {
             }
             this._seq_id = seq_id;
         }
-        return this._cell;
+        return this.cell;
     };
     
     return Interval;
@@ -205,7 +205,7 @@ var Timeout = (function() {
             }
             this._seq_id = seq_id;
         }
-        return this._cell;
+        return this.cell;
     };
     
     return Timeout;
@@ -402,7 +402,7 @@ var Schedule = (function() {
             }
             this._seq_id = seq_id;
         }
-        return this._cell;
+        return this.cell;
     };
     
     return Schedule;

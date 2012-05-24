@@ -86,7 +86,7 @@ var Dac = (function() {
         var mul, pan, panL, panR;
         var tmp, i, j, jmax;
         
-        cell = this._cell;
+        cell = this.cell;
         if (seq_id !== this._seq_id) {
             args = this.args;
             L = this._L;

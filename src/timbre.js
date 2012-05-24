@@ -42,7 +42,7 @@ var SoundSystem = (function() {
         
         this._impl = null;
         this._ison = false;
-        this._cell = new Float32Array(timbre.cellsize);
+        this.cell = new Float32Array(timbre.cellsize);
         this._cellsize = timbre.cellsize;
         this._seq_id = 0;
     };
@@ -71,7 +71,7 @@ var SoundSystem = (function() {
         var i, imax, j, k, kmax, n, nmax;
         var saved_i, tmpL, tmpR, amp, x;
         
-        cell = this._cell;
+        cell = this.cell;
         L = this.L;
         R = this.R;
         amp = timbre.amp;
@@ -276,14 +276,15 @@ timbre.fn = (function(timbre) {
         }
 
         // init
-        instance._seq_id = -1;
-        
-        if (!instance._cell) {
-            instance._cell = new Float32Array(timbre.cellsize);
+        if (!instance.cell) {
+            instance.cell = new Float32Array(timbre.cellsize);
         }
         if (!instance.args) {
             instance.args = [];
         }
+        
+        instance._seq_id = -1;
+        
         timbre.fn.init_set.call(instance.args, instance._raw_args);
         
         if (!instance._ev) {
@@ -330,7 +331,7 @@ timbre.fn = (function(timbre) {
         return this;
     };
     defaults.seq = function() {
-        return this._cell;
+        return this.cell;
     };
     defaults.on = function() {
         this.seq = this._seq;
@@ -575,7 +576,7 @@ var NumberWrapper = (function() {
             var cell, i;
             if (typeof value === "number") {
                 this._value = value;
-                cell = this._cell;
+                cell = this.cell;
                 for (i = cell.length; i--; ) {
                     cell[i] = value;
                 }
@@ -615,7 +616,7 @@ var BooleanWrapper = (function() {
         set: function(value) {
             var cell, i, x;
             this._value = !!value;
-            cell = this._cell;
+            cell = this.cell;
             x = this._value ? 1 : 0;
             for (i = cell.length; i--; ) {
                 cell[i] = x;
@@ -728,7 +729,7 @@ var FunctionWrapper = (function() {
         var x, value;
         var i, imax;
         
-        cell = this._cell;
+        cell = this.cell;
         if (seq_id !== this._seq_id) {
             x = this._x;
             value = this._func(x) * this._mul + this._add;
@@ -777,10 +778,10 @@ global.object_test = function(klass, instance) {
             instance.args.should.be.an.instanceOf(Array);
         });
     });
-    describe("#_cell", function() {
+    describe("#cell", function() {
         it("should be an Float32Array(timbre.cellsize)", function() {
-            instance._cell.should.be.an.instanceOf(Float32Array);
-            instance._cell.should.have.length(timbre.cellsize);
+            instance.cell.should.be.an.instanceOf(Float32Array);
+            instance.cell.should.have.length(timbre.cellsize);
         });
     });
     describe("#seq()", function() {
@@ -861,7 +862,7 @@ if (module.parent && !module.parent.parent) {
             it("should changed", function() {
                 instance.value = 10;
                 instance.value.should.equal(10);
-                instance._cell[0].should.equal(10);
+                instance.cell[0].should.equal(10);
             });
             it("should not changed with no number", function() {
                 instance.value = "1";
@@ -884,11 +885,11 @@ if (module.parent && !module.parent.parent) {
             it("should changed", function() {
                 instance.value = false;
                 instance.value.should.equal(false);
-                instance._cell[0].should.equal(0);
+                instance.cell[0].should.equal(0);
                 
                 instance.value = true;
                 instance.value.should.equal(true);
-                instance._cell[0].should.equal(1);
+                instance.cell[0].should.equal(1);
                 
                 instance.value = false;
                 instance.value = 1000;

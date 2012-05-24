@@ -192,7 +192,7 @@ var Wav = (function() {
         var buffer, phase, phaseStep;
         var index, delta, x0, x1;
         var i, imax;
-        cell = this._cell;
+        cell = this.cell;
         if (seq_id !== this._seq_id) {
             mul    = this._mul;
             add    = this._add;

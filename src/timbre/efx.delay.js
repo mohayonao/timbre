@@ -106,7 +106,7 @@ var EfxDelay = (function() {
         var x, feedback, wet, dry;
         var buffer, buffer_mask, pointerRead, pointerWrite;
         
-        cell = this._cell;
+        cell = this.cell;
         if (seq_id !== this._seq_id) {
             args = this.args;
             for (j = jmax = cell.length; j--; ) {
