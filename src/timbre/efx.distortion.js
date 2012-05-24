@@ -68,7 +68,7 @@ var EfxDistortion = (function() {
         this._ = _ = {};
         
         i = 0;
-        if (typeof _args[i] === "object" && !_args[i]._ar) {
+        if (typeof _args[i] === "object" && _args[i].isKr) {
             _.preGain = _args[i++];    
         } else if (typeof _args[i] === "number") {
             _.preGain = timbre(_args[i++]);
@@ -76,7 +76,7 @@ var EfxDistortion = (function() {
             _.preGain = timbre(-60);
         }
         
-        if (typeof _args[i] === "object" && !_args[i]._ar) {
+        if (typeof _args[i] === "object" && _args[i].isKr) {
             _.postGain = _args[i++];    
         } else if (typeof _args[i] === "number") {
             _.postGain = timbre(_args[i++]);
@@ -84,7 +84,7 @@ var EfxDistortion = (function() {
             _.postGain = timbre(18);
         }
         
-        if (typeof _args[i] === "object" && !_args[i]._ar) {
+        if (typeof _args[i] === "object" && _args[i].isKr) {
             _.lpfFreq = _args[i++];    
         } else if (typeof _args[i] === "number") {
             _.lpfFreq = timbre(_args[i++]);
@@ -92,7 +92,7 @@ var EfxDistortion = (function() {
             _.lpfFreq = timbre(2400);
         }
         
-        if (typeof _args[i] === "object" && !_args[i]._ar) {
+        if (typeof _args[i] === "object" && _args[i].isKr) {
             _.lpfSlope = _args[i++];    
         } else if (typeof _args[i] === "number") {
             _.lpfSlope = timbre(_args[i++]);

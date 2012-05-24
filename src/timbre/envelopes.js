@@ -243,7 +243,8 @@ var Tween = (function() {
         this._ = _ = {};
         
         i = 0;
-        if (typeof _args[i] === "string" && (Tween.functions[_args[i]]) !== undefined) {
+        if (typeof _args[i] === "string" &&
+            (Tween.functions[_args[i]]) !== undefined) {
             type = _args[i++];
         } else {
             type = "linear";

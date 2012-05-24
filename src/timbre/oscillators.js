@@ -118,8 +118,8 @@ var Oscillator = (function() {
             wavelet = _.wavelet;
             x = _.x;
             coeff = _.coeff;
-            if (true|| _.ar) {
-                if (true|| _.freq._ar) {
+            if (_.ar) {
+                if (_.freq.isAr) {
                     for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
                         index = x|0;
                         delta = x - index;

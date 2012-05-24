@@ -60,14 +60,15 @@ var Filter = (function() {
         this._ = _ = {};
         
         i = 0;
-        if (typeof _args[i] === "string" && (Filter.types[_args[i]]) !== undefined) {
+        if (typeof _args[i] === "string" &&
+            (Filter.types[_args[i]]) !== undefined) {
             this.type = _args[i++];
         } else {
             this.type = "LPF";
         }
         type = this._.type;
         
-        if (typeof _args[i] === "object" && !_args[i]._ar) {
+        if (typeof _args[i] === "object" && _args[i].isKr) {
             _.freq = _args[i++];    
         } else if (typeof _args[i] === "number") {
             _.freq = timbre(_args[i++]);
@@ -75,7 +76,7 @@ var Filter = (function() {
             _.freq = timbre(Filter.types[type].default_freq);
         }
         
-        if (typeof _args[i] === "object" && !_args[i]._ar) {
+        if (typeof _args[i] === "object" && _args[i].isKr) {
             _.band = _args[i++];
         } else if (typeof _args[i] === "number") {
             _.band = timbre(_args[i++]);
@@ -84,7 +85,7 @@ var Filter = (function() {
         }
         
         if (type === "peaking" || type === "lowboost" || type === "highboost") {
-            if (typeof _args[i] === "object" && !_args[i]._ar) {
+            if (typeof _args[i] === "object" && _args[i].isKr) {
                 _.gain = _args[i++];
             } else if (typeof _args[i] === "number") {
                 _.gain = timbre(_args[i++]);
@@ -440,7 +441,7 @@ var ResonantFilter = (function() {
             this.type = "LPF";
         }
         
-        if (typeof _args[i] === "object" && !_args[i]._ar) {
+        if (typeof _args[i] === "object" && _args[i].isKr) {
             _.cutoff = _args[i++];    
         } else if (typeof _args[i] === "number") {
             _.cutoff = timbre(_args[i++]);
@@ -448,7 +449,7 @@ var ResonantFilter = (function() {
             _.cutoff = timbre(800);
         }
         
-        if (typeof _args[i] === "object" && !_args[i]._ar) {
+        if (typeof _args[i] === "object" && _args[i].isKr) {
             _.Q = _args[i++];    
         } else if (typeof _args[i] === "number") {
             _.Q = timbre(_args[i++]);
@@ -456,7 +457,7 @@ var ResonantFilter = (function() {
             _.Q = timbre(0.5);
         }
         
-        if (typeof _args[i] === "object" && !_args[i]._ar) {
+        if (typeof _args[i] === "object" && _args[i].isKr) {
             _.depth = _args[i++];    
         } else if (typeof _args[i] === "number") {
             _.depth = timbre(_args[i++]);

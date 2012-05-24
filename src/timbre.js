@@ -228,11 +228,11 @@ timbre.fn = (function(timbre) {
     var defaults = { optional:{}, properties:{} };
 
     defaults.optional.ar = function() {
-        this._ar = true;
+        this._.ar = true;
         return this;
     };
     defaults.optional.kr = function() {
-        this._ar = false;
+        this._.ar = false;
         return this;
     };
     defaults.optional.fixrate = function() {
@@ -289,11 +289,11 @@ timbre.fn = (function(timbre) {
         
         if (typeof !instance._.ev !== "object") instance._.ev = {};
         
-        if (typeof instance._ar !== "boolean") {
+        if (typeof instance._.ar !== "boolean") {
             if (typeof instance.__proto__._ === "object") {
-                instance._ar = !!instance.__proto__._.ar;
+                instance._.ar = !!instance.__proto__._.ar;
             } else {
-                instance._ar = false;
+                instance._.ar = false;
             }
         }
         instance._.seq = instance.seq;
@@ -388,8 +388,8 @@ timbre.fn = (function(timbre) {
     defaults.removeEventListener     = timbre.removeEventListener;
     defaults.removeAllEventListeners = timbre.removeAllEventListeners;
     
-    defaults.properties.isAr = { get: function() { return !!this._ar; } };
-    defaults.properties.isKr = { get: function() { return  !this._ar; } };
+    defaults.properties.isAr = { get: function() { return !!this._.ar; } };
+    defaults.properties.isKr = { get: function() { return  !this._.ar; } };
     defaults.properties.dac = {
         set: function(value) {
             if (this._.dac) {
