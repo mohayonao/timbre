@@ -4,10 +4,11 @@ ex1 = (function() {
     "use strict";
     
     timbre.workerpath = "../timbre.js";
-    timbre.utils.exports("converter"); // use msec2Hz
+    timbre.utils.exports("converter"); // use atof
     
     // dac
     var ex1 = T("dac");
+    ex1.ready = 0;
     
     // metronome
     var metronome = T("interval", function(count) {
@@ -18,6 +19,7 @@ ex1 = (function() {
     // amen (load a wav file and decode it)
     var amen = T("wav", "./audio/amen.wav", true).load(function(res) {
         metronome.interval = (this.duration / 3) / 16;
+        ex1.ready += 1;
     });
     dist = T("efx.dist", -30, 12, 4800, amen).set("mul", 0.5);
     dist.dac = ex1;
@@ -53,6 +55,7 @@ ex1 = (function() {
             for (var i = 0; i < 9; i++) {
                 pianotones[i] = this.slice(dx * i, dx * i + dx);
             }
+            ex1.ready += 1;
         });
         
         function play_chord(chord, amp) {

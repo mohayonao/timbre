@@ -68,7 +68,7 @@
 // load wav files and decode
 
 timbre.workerpath = "../timbre.js";
-timbre.utils.exports("converter"); // use msec2Hz
+timbre.utils.exports("converter"); // use atof
 
 // dac
 var ex1 = T("dac");
@@ -243,7 +243,7 @@ ex1.play();
             dac.addEventListener("off", function() {
                 if (list.every(function(dac) {return ex.dac.isOff;})) timbre.off();
             });
-            $("#play"  + i).on("click", function() { ex.play() ; });
+            $("#play"  + i).on("click", function() { if (ex.ready === 2) ex.play() ; });
             $("#pause" + i).on("click", function() { ex.pause(); });
         });
     
