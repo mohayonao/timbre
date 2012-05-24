@@ -142,24 +142,24 @@ var Wav = (function() {
 
     $this.clone = function() {
         var _ = this._;
-        var newOne;
-        newOne = timbre("wav");
-        newOne._.src        = _.src;
-        newOne._.loop       = _.loop;
-        newOne._.loaded_src = _.loaded_src;
-        newOne._.buffer     = _.buffer;
-        newOne._.samplerate = _.samplerate;
-        newOne._.duration   = _.duration;
-        newOne._.phaseStep  = _.phaseStep;
-        newOne._.phase = 0;
-        newOne._.mul   = _.mul;
-        newOne._.add   = _.add;
-        return newOne;
+        var newone;
+        newone = timbre("wav");
+        newone._.src        = _.src;
+        newone._.loop       = _.loop;
+        newone._.loaded_src = _.loaded_src;
+        newone._.buffer     = _.buffer;
+        newone._.samplerate = _.samplerate;
+        newone._.duration   = _.duration;
+        newone._.phaseStep  = _.phaseStep;
+        newone._.phase = 0;
+        newone._.mul   = _.mul;
+        newone._.add   = _.add;
+        return newone;
     };
     
     $this.slice = function(begin, end) {
         var _ = this._;
-        var newOne, tmp;
+        var newone, tmp;
         if (typeof begin === "number") {
             begin = (begin / 1000) * _.samplerate;
         } else begin = 0;
@@ -171,18 +171,18 @@ var Wav = (function() {
             begin = end;
             end   = tmp;
         }
-        newOne = timbre("wav");
-        newOne._.src        = _.src;
-        newOne._.loop       = _.loop;
-        newOne._.loaded_src = _.loaded_src;
-        newOne._.buffer     = _.buffer.subarray(begin, end);
-        newOne._.samplerate = _.samplerate;
-        newOne._.duration   = (end - begin / _.samplerate) * 1000;
-        newOne._.phaseStep  = _.phaseStep;
-        newOne._.phase = 0;
-        newOne._.mul   = _.mul;
-        newOne._.add   = _.add;
-        return newOne;
+        newone = timbre("wav");
+        newone._.src        = _.src;
+        newone._.loop       = _.loop;
+        newone._.loaded_src = _.loaded_src;
+        newone._.buffer     = _.buffer.subarray(begin, end);
+        newone._.samplerate = _.samplerate;
+        newone._.duration   = (end - begin / _.samplerate) * 1000;
+        newone._.phaseStep  = _.phaseStep;
+        newone._.phase = 0;
+        newone._.mul   = _.mul;
+        newone._.add   = _.add;
+        return newone;
     };
     
     $this.bang = function() {
