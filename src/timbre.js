@@ -39,29 +39,30 @@ var SoundSystem = (function() {
         this.channels   = channels;
         this.L = new Float32Array(streamsize);
         this.R = new Float32Array(streamsize);
-        
-        this._impl = null;
-        this._ison = false;
         this.cell = new Float32Array(timbre.cellsize);
-        this._cellsize = timbre.cellsize;
         this.seq_id = 0;
+        
+        this._ = {};
+        this._.impl = null;
+        this._.ison = false;
+        this._.cellsize = timbre.cellsize;
     };
     
     $this.bind = function(PlayerKlass) {
-        this._impl = new PlayerKlass(this);
+        this._.impl = new PlayerKlass(this);
     };
 
     $this.on = function() {
-        if (this._impl) {
-            this._ison = true;
-            this._impl.on();
+        if (this._.impl) {
+            this._.ison = true;
+            this._.impl.on();
         }
     };
     
     $this.off = function() {
-        if (this._impl) {
-            this._impl.off();
-            this._ison = false;
+        if (this._.impl) {
+            this._.impl.off();
+            this._.ison = false;
         }
     };
     
@@ -79,7 +80,7 @@ var SoundSystem = (function() {
         seq_id = this.seq_id;
         
         imax = L.length;
-        kmax = this._cellsize;
+        kmax = this._.cellsize;
         nmax = this.streamsize / kmax;
         saved_i = 0;
         
@@ -149,19 +150,25 @@ var SoundSystem = (function() {
 }());
 timbre._sys = new SoundSystem();
 
+Object.defineProperty(timbre, "isEnabled", {
+    get: function() {
+        return !!timbre._sys._.impl;
+    }
+});
+
 Object.defineProperty(timbre, "isOn", {
     get: function() {
-        return timbre._sys._ison;
+        return timbre._sys._.ison;
     }
 });
 Object.defineProperty(timbre, "isOff", {
     get: function() {
-        return !timbre._sys._ison;
+        return !timbre._sys._.ison;
     }
 });
 
 timbre.on = function() {
-    if (!timbre._sys._ison) {
+    if (!timbre._sys._.ison) {
         timbre._sys.on();
         timbre.fn.do_event(this, "on");
     }
@@ -169,7 +176,7 @@ timbre.on = function() {
 };
 
 timbre.off = function() {
-    if (timbre._sys._ison) {
+    if (timbre._sys._.ison) {
         timbre._sys.off();
         timbre.fn.do_event(this, "off");
     }
