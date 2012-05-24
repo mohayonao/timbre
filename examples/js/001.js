@@ -72,7 +72,7 @@ ex5 = (function() {
     c_env.onS = function() {
         c_env.bang();
     };
-    b_env.onS = function() {
+    b_env.onended = function() {
         b_env.bang();
     };
     
