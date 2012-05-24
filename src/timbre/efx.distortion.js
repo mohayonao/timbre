@@ -14,116 +14,120 @@ var EfxDistortion = (function() {
     Object.defineProperty($this, "pre", {
         set: function(value) {
             if (typeof value !== "object") {
-                this._preGain = timbre(value);
+                this._.preGain = timbre(value);
             } else {
-                this._preGain = value;
+                this._.preGain = value;
             }
         },
-        get: function() { return this._preGain; }
+        get: function() { return this._.preGain; }
                         
     });
     Object.defineProperty($this, "post", {
         set: function(value) {
             if (typeof value !== "object") {
-                this._postGain = timbre(value);
+                this._.postGain = timbre(value);
             } else {
-                this._postGain = value;
+                this._.postGain = value;
             }
         },
-        get: function() { return this._postGain; }
+        get: function() { return this._.postGain; }
                         
     });
     Object.defineProperty($this, "freq", {
         set: function(value) {
             if (typeof value !== "object") {
-                this._lpfFreq = timbre(value);
+                this._.lpfFreq = timbre(value);
             } else {
-                this._lpfFreq = value;
+                this._.lpfFreq = value;
             }
         },
-        get: function() { return this._lpfFreq; }
+        get: function() { return this._.lpfFreq; }
                         
     });
     Object.defineProperty($this, "slope", {
         set: function(value) {
             if (typeof value !== "object") {
-                this._lpfSlope = timbre(value);
+                this._.lpfSlope = timbre(value);
             } else {
-                this._lpfSlope = value;
+                this._.lpfSlope = value;
             }
         },
-        get: function() { return this._lpfSlope; }
+        get: function() { return this._.lpfSlope; }
     });
-    Object.defineProperty($this, "isEnabled", {
-        get: function() { return this._enabled; }
-                        
+    Object.defineProperty($this, "isOn", {
+        get: function() { return this._.enabled; }
+    });
+    Object.defineProperty($this, "isOff", {
+        get: function() { return !this._.enabled; }
     });
     
+    
     var initialize = function(_args) {
-        var i;
+        var i, _;
+        
+        this._ = _ = {};
         
         i = 0;
         if (typeof _args[i] === "object" && !_args[i]._ar) {
-            this._preGain = _args[i++];    
+            _.preGain = _args[i++];    
         } else if (typeof _args[i] === "number") {
-            this._preGain = timbre(_args[i++]);
+            _.preGain = timbre(_args[i++]);
         } else {
-            this._preGain = timbre(-60);
+            _.preGain = timbre(-60);
         }
         
         if (typeof _args[i] === "object" && !_args[i]._ar) {
-            this._postGain = _args[i++];    
+            _.postGain = _args[i++];    
         } else if (typeof _args[i] === "number") {
-            this._postGain = timbre(_args[i++]);
+            _.postGain = timbre(_args[i++]);
         } else {
-            this._postGain = timbre(18);
+            _.postGain = timbre(18);
         }
         
         if (typeof _args[i] === "object" && !_args[i]._ar) {
-            this._lpfFreq = _args[i++];    
+            _.lpfFreq = _args[i++];    
         } else if (typeof _args[i] === "number") {
-            this._lpfFreq = timbre(_args[i++]);
+            _.lpfFreq = timbre(_args[i++]);
         } else {
-            this._lpfFreq = timbre(2400);
+            _.lpfFreq = timbre(2400);
         }
         
         if (typeof _args[i] === "object" && !_args[i]._ar) {
-            this._lpfSlope = _args[i++];    
+            _.lpfSlope = _args[i++];    
         } else if (typeof _args[i] === "number") {
-            this._lpfSlope = timbre(_args[i++]);
+            _.lpfSlope = timbre(_args[i++]);
         } else {
-            this._lpfSlope = timbre(1);
+            _.lpfSlope = timbre(1);
         }
         
         if (typeof _args[i] === "number") {
-            this._mul = _args[i++];
+            _.mul = _args[i++];
         }
         if (typeof _args[i] === "number") {
-            this._add = _args[i++];
+            _.add = _args[i++];
         }
-
-        this._prev_preGain  = undefined;
-        this._prev_postGain = undefined;
-        this._prev_lpfFreq  = undefined;
-        this._prev_lpfSlope = undefined;
-        
-        this._in1 = this._in2 = this._out1 = this._out2 = 0;
-        this._a1  = this._a2  = 0;
-        this._b0  = this._b1  = this._b2 = 0;
-        
         this.args = timbre.fn.valist.call(this, _args.slice(i));
-        this._enabled = true;
+        
+        _.prev_preGain  = undefined;
+        _.prev_postGain = undefined;
+        _.prev_lpfFreq  = undefined;
+        _.prev_lpfSlope = undefined;
+        _.in1 = _.in2 = _.out1 = _.out2 = 0;
+        _.a1  = _.a2  = 0;
+        _.b0  = _.b1  = _.b2 = 0;
+        _.enabled = true;
     };
     timbre.fn.set_ar_only($this);
     
     var THRESHOLD = 0.0000152587890625;
     
-    $this._set_params = function(preGain, postGain, lpfFreq, lpfSlope) {
+    var set_params = function(preGain, postGain, lpfFreq, lpfSlope) {
+        var _ = this._;
         var postScale, omg, cos, sin, alp, n, ia0;
         
         postScale = Math.pow(2, -postGain / 6);
-        this._preScale = Math.pow(2, -preGain / 6) * postScale;
-        this._limit = postScale;
+        _.preScale = Math.pow(2, -preGain / 6) * postScale;
+        _.limit = postScale;
         
         if (lpfFreq) {
             omg = lpfFreq * 2 * Math.PI / timbre.samplerate;
@@ -132,26 +136,27 @@ var EfxDistortion = (function() {
             n = 0.34657359027997264 * lpfSlope * omg / sin;
             alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
             ia0 = 1 / (1 + alp);
-            this._a1 = -2 * cos  * ia0;
-            this._a2 = (1 - alp) * ia0;
-            this._b1 = (1 - cos) * ia0;
-            this._b2 = this._b0 = this._b1 * 0.5;
+            _.a1 = -2 * cos  * ia0;
+            _.a2 = (1 - alp) * ia0;
+            _.b1 = (1 - cos) * ia0;
+            _.b2 = _.b0 = _.b1 * 0.5;
         }
     };
 
     $this.on = function() {
-        this._enabled = true;
+        this._.enabled = true;
         timbre.fn.do_event(this, "on");
         return this;
     };
     
     $this.off = function() {
-        this._enabled = false;
+        this._.enabled = false;
         timbre.fn.do_event(this, "off");
         return this;
     };
     
     $this.seq = function(seq_id) {
+        var _ = this._;
         var cell, args;
         var tmp, i, imax, j, jmax;
         var preGain, postGain, lpfFreq, lpfSlope;
@@ -175,28 +180,28 @@ var EfxDistortion = (function() {
             }
             
             // filter
-            if (this._enabled) {
-                preGain  = this._preGain.seq(seq_id)[0];
-                postGain = this._postGain.seq(seq_id)[0];
-                lpfFreq  = this._lpfFreq.seq(seq_id)[0];
-                lpfSlope = this._lpfSlope.seq(seq_id)[0];
-                if (preGain  !== this._prev_preGain ||
-                    postGain !== this._prev_postGain ||
-                    lpfFreq  !== this._prev_lpfFreq  ||
-                    lpfSlope !== this._prev_lpfSlope) {
-                    this._set_params(preGain, postGain, lpfFreq, lpfSlope);    
+            if (_.enabled) {
+                preGain  = _.preGain.seq(seq_id)[0];
+                postGain = _.postGain.seq(seq_id)[0];
+                lpfFreq  = _.lpfFreq.seq(seq_id)[0];
+                lpfSlope = _.lpfSlope.seq(seq_id)[0];
+                if (preGain  !== _.prev_preGain ||
+                    postGain !== _.prev_postGain ||
+                    lpfFreq  !== _.prev_lpfFreq  ||
+                    lpfSlope !== _.prev_lpfSlope) {
+                    set_params.call(this, preGain, postGain, lpfFreq, lpfSlope);    
                 }
                 
-                preScale = this._preScale;
-                limit    = this._limit;
-                mul      = this._mul;
-                add      = this._add;
+                preScale = _.preScale;
+                limit    = _.limit;
+                mul      = _.mul;
+                add      = _.add;
                 
-                if (this._lpfFreq) {
-                    a1 = this._a1; a2 = this._a2;
-                    b0 = this._b0; b1 = this._b1; b2 = this._b2;
-                    in1  = this._in1;  in2  = this._in2;
-                    out1 = this._out1; out2 = this._out2;
+                if (_.lpfFreq) {
+                    a1 = _.a1; a2 = _.a2;
+                    b0 = _.b0; b1 = _.b1; b2 = _.b2;
+                    in1  = _.in1;  in2  = _.in2;
+                    out1 = _.out1; out2 = _.out2;
                     
                     if (out1 < THRESHOLD) out2 = out1 = 0;
                     
@@ -223,8 +228,8 @@ var EfxDistortion = (function() {
                         
                         cell[i] = output * mul + add;
                     }
-                    this._in1  = in1;  this._in2  = in2;
-                    this._out1 = out1; this._out2 = out2;
+                    _.in1  = in1;  _.in2  = in2;
+                    _.out1 = out1; _.out2 = out2;
                 } else {
                     for (i = 0, imax = cell.length; i < imax; ++i) {
                         input = cell[i] * preScale;
