@@ -14,92 +14,102 @@ var EfxDelay = (function() {
     Object.defineProperty($this, "time", {
         set: function(value) {
             if (typeof value === "number") {
-                this._delayTime = value;
+                this._.delayTime = value;
             }
         },
-        get: function() { return this._delayTime; }
+        get: function() { return this._.delayTime; }
     });
     Object.defineProperty($this, "fb", {
         set: function(value) {
             if (typeof value === "number") {
-                this._feedback = value;
+                this._.feedback = value;
             }
         },
-        get: function() { return this._feedback; }
+        get: function() { return this._.feedback; }
                         
     });
     Object.defineProperty($this, "wet", {
         set: function(value) {
             if (typeof value === "number") {
-                this._wet = value;
+                this._.wet = value;
             }
         },
-        get: function() { return this._wet; }
+        get: function() { return this._.wet; }
+    });
+    Object.defineProperty($this, "isOn", {
+        get: function() { return this._.enabled; }
+    });
+    Object.defineProperty($this, "isOff", {
+        get: function() { return !this._.enabled; }
     });
     
+    
     var initialize = function(_args) {
-        var i, bits;
+        var bits, i, _;
+        
+        this._ = _ = {};
         bits = Math.ceil(Math.log(timbre.samplerate * 1.5) * Math.LOG2E)
-
-        this._buffer = new Float32Array(1 << bits);
-        this._buffer_mask = (1 << bits) - 1;
-        this._pointerWrite = 0;
-        this._pointerRead  = 0;
-        this._delayTime = 250;
-        this._feedback = 0.25;
-        this._wet = 0.25;
+        
+        _.buffer = new Float32Array(1 << bits);
+        _.buffer_mask = (1 << bits) - 1;
+        _.pointerWrite = 0;
+        _.pointerRead  = 0;
+        _.delayTime = 250;
+        _.feedback = 0.25;
+        _.wet = 0.25;
         
         i = 0;
         if (typeof _args[i] === "number") {
-            this._delayTime = _args[i++];
+            _.delayTime = _args[i++];
         }    
         if (typeof _args[i] === "number") {
-            this._feedback = _args[i++];
+            _.feedback = _args[i++];
         }    
         if (typeof _args[i] === "number") {
-            this._wet = _args[i++];
-        }    
-        this._set_params(this._delayTime, this._feedback, this._wet);
+            _.wet = _args[i++];
+        }
+        _.enabled = true;
         
+        set_params.call(this, _.delayTime, _.feedback, _.wet);
         this.args = timbre.fn.valist.call(this, _args.slice(i));
-        this._enabled = true;
     };
     timbre.fn.set_ar_only($this);
-
-    $this._set_params = function(delayTime, feedback, wet) {
-        var offset;
+    
+    var set_params = function(delayTime, feedback, wet) {
+        var offset, _ = this._;
         offset = delayTime * timbre.samplerate / 1000;
         
-        this._pointerWrite = (this._pointerRead + offset) & this._buffer_mask;
+        _.pointerWrite = (_.pointerRead + offset) & _.buffer_mask;
         if (feedback >= 1.0) {
-            this._feedback = +0.9990234375;
+            _.feedback = +0.9990234375;
         } else if (feedback <= -1.0) {
-            this._feedback = -0.9990234375;
+            _.feedback = -0.9990234375;
         } else {
-            this._feedback = feedback;
+            _.feedback = feedback;
         }
         if (wet < 0) {
-            this._wet = 0;
+            _.wet = 0;
         } else if (wet > 1.0) {
-            this._wet = 1.0;
+            _.wet = 1.0;
         } else {
-            this._wet = wet;
+            _.wet = wet;
         }
     };
     
     $this.on = function() {
-        this._enabled = true;
+        this._.enabled = true;
         timbre.fn.do_event(this, "on");
         return this;
     };
     
     $this.off = function() {
-        this._enabled = false;
+        this._.enabled = false;
         timbre.fn.do_event(this, "off");
         return this;
     };
     
     $this.seq = function(seq_id) {
+        var _ = this._;
         var args, cell;
         var tmp, i, imax, j, jmax;
         var mul, add;
@@ -119,18 +129,18 @@ var EfxDelay = (function() {
                 }
             }
             
-            buffer = this._buffer;
-            buffer_mask = this._buffer_mask;
-            feedback = this._feedback;
-            wet = this._wet;
+            buffer = _.buffer;
+            buffer_mask = _.buffer_mask;
+            feedback = _.feedback;
+            wet = _.wet;
             dry = 1 - wet;
-            pointerRead  = this._pointerRead;
-            pointerWrite = this._pointerWrite;
-            mul = this._mul;
-            add = this._add;
+            pointerRead  = _.pointerRead;
+            pointerWrite = _.pointerWrite;
+            mul = _.mul;
+            add = _.add;
             
             // filter
-            if (this._enabled) {
+            if (_.enabled) {
                 for (i = 0, imax = cell.length; i < imax; ++i) {
                     x = buffer[pointerRead];
                     buffer[pointerWrite] = cell[i] - x * feedback;
@@ -149,8 +159,8 @@ var EfxDelay = (function() {
                     cell[i] = cell[i] * mul + add;
                 }
             }
-            this._pointerRead  = pointerRead;
-            this._pointerWrite = pointerWrite;
+            _.pointerRead  = pointerRead;
+            _.pointerWrite = pointerWrite;
             
             this.seq_id = seq_id;
         }
