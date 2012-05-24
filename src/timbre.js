@@ -20,9 +20,9 @@ timbre.amp        = 0.8;
 timbre.verbose    = true;
 timbre.dacs       = [];
 timbre.timers     = [];
-timbre._ev        = {};
 timbre._sys       = null;
 timbre._global    = {};
+timbre._ = { ev:{} };
 
 
 var SoundSystem = (function() {
@@ -183,9 +183,9 @@ timbre.addEventListener = function(name, func) {
             name = name.substr(1);
             func.rm = true;
         }
-        list = this._ev[name];
+        list = this._.ev[name];
         if (list === undefined) {
-            this._ev[name] = list = [];
+            this._.ev[name] = list = [];
         }
         if ((i = list.indexOf(func)) === -1) {
             list.push(func);
@@ -196,7 +196,7 @@ timbre.addEventListener = function(name, func) {
 timbre.removeEventListener = function(name, func) {
     var list, i;
     if (typeof name === "string" && name !== "") {
-        list = this._ev[name];
+        list = this._.ev[name];
         if (list !== undefined) {
             if ((i = list.indexOf(func)) !== -1) {
                 list.splice(i, 1);
@@ -207,7 +207,7 @@ timbre.removeEventListener = function(name, func) {
 };
 timbre.removeAllEventListeners = function(name) {
     if (typeof name === "string" && name !== "") {
-        delete this._ev[name];
+        delete this._.ev[name];
         delete this["on" + name];
     }
     return this;
@@ -274,22 +274,20 @@ timbre.fn = (function(timbre) {
                 instance = new UndefinedWrapper();
             }
         }
-
+        
         // init
+        instance.seq_id = -1;
         if (!instance.cell) {
             instance.cell = new Float32Array(timbre.cellsize);
         }
         if (!instance.args) {
             instance.args = [];
         }
-        
-        instance.seq_id = -1;
-        
         timbre.fn.init_set.call(instance.args, instance._raw_args);
         
-        if (!instance._ev) {
-            instance._ev = {};
-        }
+        if (instance._     !== "object") instance._    = {};
+        if (!instance._.ev !== "object") instance._.ev = {};
+        
         if (typeof instance._ar !== "boolean") {
             if (typeof instance.__proto__._ === "object") {
                 instance._ar = !!instance.__proto__._.ar;
@@ -549,7 +547,8 @@ timbre.fn = (function(timbre) {
         if (typeof func === "function") {
             func.apply(obj, args);
         }
-        list = obj._ev[name];
+
+        list = obj._.ev[name];
         if (list !== undefined) {
             for (i = list.length; i--; ) {
                 func = list[i];
