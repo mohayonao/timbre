@@ -86,9 +86,21 @@ var ADSREnvelope = (function() {
     $this.clone = function() {
         return new ADSREnvelope([this.a, this.d, this.s, this.r, this.mul, this.add]);
     };
-    
-    $this.bang = $this.keyOn = function() {
+
+    $this.on = function() {
         var _ = this._;
+        _.ison = true;
+        _.mode = 0;
+        _.samplesMax = (timbre.samplerate * (_.a / 1000))|0;
+        _.samples    = 0;
+        timbre.fn.do_event(this, "on");
+        timbre.fn.do_event(this, "A");
+        return this;
+    };
+    
+    $this.bang = function() {
+        var _ = this._;
+        _.ison = true;
         _.mode = 0;
         _.samplesMax = (timbre.samplerate * (_.a / 1000))|0;
         _.samples    = 0;
@@ -97,7 +109,7 @@ var ADSREnvelope = (function() {
         return this;
     };
     
-    $this.keyOff = function() {
+    $this.off = function() {
         var _ = this._;
         _.mode = 3;
         _.samples = 0;
@@ -152,6 +164,7 @@ var ADSREnvelope = (function() {
                     _.mode = 4;
                     _.samples    = 0;
                     _.samplesMax = Infinity;
+                    _.ison = false;
                     timbre.fn.do_event(this, "ended");
                     mode = _.mode;
                     samplesMax = _.samplesMax;
@@ -274,7 +287,7 @@ var Tween = (function() {
         _.phase     = 0;
         _.phaseStep = 0;
         _.value     = 0;
-        _.enabled   = false;
+        _.ison   = false;
         this.type = type;        
     };
     timbre.fn.set_kr_only($this);
@@ -287,10 +300,23 @@ var Tween = (function() {
         var _ = this._;
         var diff;
         diff = _.stop - _.start;
+        _.ison   = true;
         _.phase     = 0;
         _.phaseStep = timbre.cellsize / (_.d / 1000 * timbre.samplerate);
         _.value     = _.func(0) * diff + _.start;
-        _.enabled   = true;
+        timbre.fn.do_event(this, "on");
+        return this;
+    };
+    
+    $this.bang = function() {
+        var _ = this._;
+        var diff;
+        diff = _.stop - _.start;
+        _.ison   = true;
+        _.phase     = 0;
+        _.phaseStep = timbre.cellsize / (_.d / 1000 * timbre.samplerate);
+        _.value     = _.func(0) * diff + _.start;
+        timbre.fn.do_event(this, "bang");
         return this;
     };
     
@@ -302,11 +328,11 @@ var Tween = (function() {
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
-            if (_.enabled) {
+            if (_.ison) {
                 _.phase += _.phaseStep;
                 if (_.phase >= 1.0) {
                     _.phase = 1.0;
-                    _.enabled = false;
+                    _.ison = false;
                     ended = true;
                 } else {
                     ended = false;
@@ -512,8 +538,19 @@ var Percussive = (function() {
         return new Percussive([this.d, this.mul, this.add]);
     };
     
+    $this.on = function() {
+        var _ = this._;
+        _.ison = true;
+        _.samples = (timbre.samplerate * (_.d / 1000))|0;
+        _.dx = timbre.cellsize / _.samples;
+        _.x  = 1.0;
+        timbre.fn.do_event(this, "on");
+        return this;
+    };
+    
     $this.bang = function() {
         var _ = this._;
+        _.ison = true;
         _.samples = (timbre.samplerate * (_.d / 1000))|0;
         _.dx = timbre.cellsize / _.samples;
         _.x  = 1.0;
@@ -542,6 +579,7 @@ var Percussive = (function() {
                 samples -= imax;
                 if (samples <= 0) {
                     _.samples = 0;
+                    _.ison = false;
                     timbre.fn.do_event(this, "ended");
                     x  = _.x;
                     samples = _.samples;
