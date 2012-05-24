@@ -119,7 +119,7 @@ drumkit.play();
     $(function() {
         if (!timbre.isEnabled) $("#caution").show();
         
-        var viewer = new WaveViewer(timbre._sys, 60, "waveviewer", 512, 256);
+        var viewer = new WaveViewer(timbre.sys, 60, "waveviewer", 512, 256);
         
         timbre.addEventListener("on", function() {
             $("#title").css("color", "rgb(0, 136, 0)");
