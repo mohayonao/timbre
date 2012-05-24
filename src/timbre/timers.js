@@ -20,6 +20,14 @@ var Interval = (function() {
         },
         get: function() { return this._.interval; }
     });
+    Object.defineProperty($this, "count", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._.count = value;
+            }
+        },
+        get: function() { return this._.count; }
+    });
     
     var initialize = function(_args) {
         var i, _;
@@ -34,7 +42,8 @@ var Interval = (function() {
         
         _.ison = false;
         _.samples = 0;
-        _.interval_count = 0;
+        _.count = 0;
+        _.next_count  = 0;
     };
     timbre.fn.set_kr_only($this);
     $this._raw_args = true;
@@ -67,7 +76,7 @@ var Interval = (function() {
     $this.bang = function() {
         if (this._.ison) {
             this._.samples = 0;
-            this._.interval_count = 0;
+            this._.count = 0;
             timbre.fn.do_event(this, "bang");
         }
         return this;
@@ -81,7 +90,7 @@ var Interval = (function() {
                 samples = _.samples - timbre.cellsize;
                 if (samples <= 0) {
                     _.samples = samples + _.interval_samples;
-                    count = _.interval_count;
+                    count = _.count = _.next_count;
                     args = this.args;
                     for (i = 0, imax = args.length; i < imax; ++i) {
                         if (typeof args[i] === "function") {
@@ -90,7 +99,7 @@ var Interval = (function() {
                             args[i].bang();
                         }
                     }
-                    ++_.interval_count;
+                    ++_.next_count;
                     samples = _.samples;
                 }
                 _.samples = samples;
