@@ -162,7 +162,7 @@ var EfxDistortion = (function() {
         var input, output;
         
         cell = this.cell;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             args = this.args;
             for (j = jmax = cell.length; j--; ) {
                 cell[j] = 0.0;
@@ -237,6 +237,7 @@ var EfxDistortion = (function() {
                     }
                 }
             }
+            this.seq_id = seq_id;
         }
         return cell;
     };

@@ -87,7 +87,7 @@ var Dac = (function() {
         var tmp, i, j, jmax;
         
         cell = this.cell;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             args = this.args;
             L = this._L;
             R = this._R;
@@ -114,7 +114,7 @@ var Dac = (function() {
                     }
                 }
             }
-            this._seq_id = seq_id;
+            this.seq_id = seq_id;
         }
         return cell;
     };

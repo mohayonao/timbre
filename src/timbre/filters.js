@@ -144,7 +144,7 @@ var Filter = (function() {
         var input, output;
         
         cell = this.cell;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             args = this.args;
             for (j = jmax = cell.length; j--; ) {
                 cell[j] = 0.0;
@@ -200,7 +200,7 @@ var Filter = (function() {
                 this._in1  = in1;  this._in2  = in2;
                 this._out1 = out1; this._out2 = out2;
             }
-            this._seq_id = seq_id;
+            this.seq_id = seq_id;
         }
         
         return cell;
@@ -516,7 +516,7 @@ var ResonantFilter = (function() {
         var input, output;
         
         cell = this.cell;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             args = this.args;
             for (j = jmax = cell.length; j--; ) {
                 cell[j] = 0.0;
@@ -572,7 +572,7 @@ var ResonantFilter = (function() {
                     cell[i] = output * mul + add;
                 }
             }
-            this._seq_id = seq_id;
+            this.seq_id = seq_id;
         }
         
         return cell;

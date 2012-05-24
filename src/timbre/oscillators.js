@@ -114,7 +114,7 @@ var Oscillator = (function() {
         var index, delta, x0, x1, xx;
         var i, imax;
         cell = this.cell;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             freq = this._freq.seq(seq_id);
             mul  = this._mul;
             add  = this._add;
@@ -157,7 +157,7 @@ var Oscillator = (function() {
                 x += freq[0] * coeff * imax;
             }
             this._x = x;
-            this._seq_id = seq_id;
+            this.seq_id = seq_id;
         }
         return cell;
     }
@@ -296,7 +296,7 @@ var WhiteNoise = (function() {
         var mul, add, x, i;
         
         cell = this.cell;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             mul = this._mul;
             add = this._add;
             if (this._ar) {
@@ -309,7 +309,7 @@ var WhiteNoise = (function() {
                     cell[i] = x;
                 }
             }
-            this._seq_id = seq_id;
+            this.seq_id = seq_id;
         }
         return cell;
     };

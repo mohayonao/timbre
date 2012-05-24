@@ -82,7 +82,7 @@ var Interval = (function() {
     
     $this.seq = function(seq_id) {
         var samples, count, args, i, imax;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             if (this._interval_samples !== 0) {
                 samples = this._samples - timbre.cellsize;
                 if (samples <= 0) {
@@ -101,7 +101,7 @@ var Interval = (function() {
                 }
                 this._samples = samples;
             }
-            this._seq_id = seq_id;
+            this.seq_id = seq_id;
         }
         return this.cell;
     };
@@ -185,7 +185,7 @@ var Timeout = (function() {
     
     $this.seq = function(seq_id) {
         var samples, args, i, imax;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             if (this._timeout_samples !== 0) {
                 samples = this._samples - timbre.cellsize;
                 if (samples <= 0) {
@@ -203,7 +203,7 @@ var Timeout = (function() {
                 }
                 this._samples = samples;
             }
-            this._seq_id = seq_id;
+            this.seq_id = seq_id;
         }
         return this.cell;
     };
@@ -369,7 +369,7 @@ var Schedule = (function() {
     
     $this.seq = function(seq_id) {
         var tt, schedule, target;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             if (this._ison) {
                 tt = this._timetable;
                 while ((schedule = tt[this._index]) !== undefined) {
@@ -400,7 +400,7 @@ var Schedule = (function() {
                 }
                 this._currentTime += (timbre.cellsize / timbre.samplerate) * 1000;
             }
-            this._seq_id = seq_id;
+            this.seq_id = seq_id;
         }
         return this.cell;
     };

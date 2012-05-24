@@ -44,7 +44,7 @@ var SoundSystem = (function() {
         this._ison = false;
         this.cell = new Float32Array(timbre.cellsize);
         this._cellsize = timbre.cellsize;
-        this._seq_id = 0;
+        this.seq_id = 0;
     };
     
     $this.bind = function(PlayerKlass) {
@@ -76,7 +76,7 @@ var SoundSystem = (function() {
         R = this.R;
         amp = timbre.amp;
         
-        seq_id = this._seq_id;
+        seq_id = this.seq_id;
         
         imax = L.length;
         kmax = this._cellsize;
@@ -142,7 +142,7 @@ var SoundSystem = (function() {
             cell[k] = x;
         }
         
-        this._seq_id = seq_id;
+        this.seq_id = seq_id;
     };
     
     return SoundSystem;
@@ -283,7 +283,7 @@ timbre.fn = (function(timbre) {
             instance.args = [];
         }
         
-        instance._seq_id = -1;
+        instance.seq_id = -1;
         
         timbre.fn.init_set.call(instance.args, instance._raw_args);
         
@@ -730,7 +730,7 @@ var FunctionWrapper = (function() {
         var i, imax;
         
         cell = this.cell;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             x = this._x;
             value = this._func(x) * this._mul + this._add;
             for (i = cell.length; i--; ) {
@@ -739,7 +739,7 @@ var FunctionWrapper = (function() {
             x += this._freq.seq(seq_id)[0] * this._coeff;
             while (x >= 1.0) x -= 1.0;
             this._x = x;
-            this._seq_id = seq_id;
+            this.seq_id = seq_id;
         }
         return cell;
     };

@@ -193,7 +193,7 @@ var Wav = (function() {
         var index, delta, x0, x1;
         var i, imax;
         cell = this.cell;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             mul    = this._mul;
             add    = this._add;
             buffer = this._buffer;
@@ -218,7 +218,7 @@ var Wav = (function() {
                 }
             }
             this._phase = phase;
-            this._seq_id = seq_id;
+            this.seq_id = seq_id;
         }
         return cell;
     };

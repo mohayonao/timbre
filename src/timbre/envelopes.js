@@ -117,7 +117,7 @@ var ADSREnvelope = (function() {
         var s0, s1, x, i, imax;
         
         cell = this.cell;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             mode    = this._mode;
             samples = this._samples;
             samplesMax = this._samplesMax;
@@ -188,6 +188,7 @@ var ADSREnvelope = (function() {
             this._mode = mode;
             this._samples    = samples + imax;
             this._samplesMax = samplesMax;
+            this.seq_id = seq_id;
         }
         return cell;
     };
@@ -306,7 +307,7 @@ var Tween = (function() {
         var i, imax;
         
         cell = this.cell;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             if (this._enabled) {
                 this._phase += this._phaseStep;
                 if (this._phase >= 1.0) {
@@ -328,6 +329,7 @@ var Tween = (function() {
             }
             if (changed && this.onchanged) this.onchanged(this._value);
             if (ended) timbre.fn.do_event(this, "ended");
+            this.seq_id = seq_id;
         }
         return cell;
     };
@@ -530,7 +532,7 @@ var Percussive = (function() {
         var i, imax;
         
         cell = this.cell;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             x  = this._x;
             dx = this._dx;
             samples = this._samples;
@@ -552,6 +554,7 @@ var Percussive = (function() {
             
             this._x = x;
             this._samples = samples;
+            this.seq_id = seq_id;
         }
         return cell;
     };

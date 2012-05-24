@@ -19,7 +19,7 @@ var Add = (function() {
         var args, cell;
         var tmp, i, j, jmax;
         cell = this.cell;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             args = this.args;
             jmax = timbre.cellsize;
             for (j = jmax; j--; ) {
@@ -31,7 +31,7 @@ var Add = (function() {
                     cell[j] += tmp[j];
                 }
             }        
-            this._seq_id = seq_id;
+            this.seq_id = seq_id;
         }
         return cell;
     };
@@ -54,7 +54,7 @@ var Multiply = (function() {
         var args, cell;
         var tmp, i, j, jmax;
         cell = this.cell;
-        if (seq_id !== this._seq_id) {
+        if (seq_id !== this.seq_id) {
             args = this.args;
             jmax = timbre.cellsize;
             for (j = jmax; j--; ) {
@@ -66,7 +66,7 @@ var Multiply = (function() {
                     cell[j] *= tmp[j];
                 }
             }        
-            this._seq_id = seq_id;
+            this.seq_id = seq_id;
         }
         return cell;
     };
