@@ -297,15 +297,6 @@ timbre.fn = (function(timbre) {
             }
         }
         instance._.seq = instance.seq;
-
-        // TODO: delete
-        if (typeof instance._mul !== "number") {
-            instance._mul = 1.0;
-        }
-        if (typeof instance._add !== "number") {
-            instance._add = 0.0;
-        }
-        //
         
         if (typeof instance._.mul !== "number") {
             instance._.mul = 1.0;
@@ -419,15 +410,15 @@ timbre.fn = (function(timbre) {
     };
     defaults.properties.mul  = {
         set: function(value) {
-            if (typeof value === "number") { this._mul = value; }
+            if (typeof value === "number") { this._.mul = value; }
         },
-        get: function() { return this._mul; }
+        get: function() { return this._.mul; }
     };
     defaults.properties.add  = {
         set: function(value) {
-            if (typeof value === "number") { this._add = value; }
+            if (typeof value === "number") { this._.add = value; }
         },
-        get: function() { return this._add; }
+        get: function() { return this._.add; }
     };
     
     fn.set_ar_only = function(object) {
