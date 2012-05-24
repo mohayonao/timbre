@@ -32,12 +32,6 @@ var Dac = (function() {
         },
         get: function() { return this._.mul; }
     });
-    Object.defineProperty($this, "isOn", {
-        get: function() { return this._.ison; }
-    });
-    Object.defineProperty($this, "isOff", {
-        get: function() { return !this._.ison; }
-    });
     
     var initialize = function(_args) {
         var _ = this._ = {};

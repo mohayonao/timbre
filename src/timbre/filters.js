@@ -114,18 +114,6 @@ var Filter = (function() {
     };
     timbre.fn.set_ar_only($this);
     
-    $this.on = function() {
-        this._.ison = true;
-        timbre.fn.do_event(this, "on");
-        return this;
-    };
-    
-    $this.off = function() {
-        this._.ison = false;
-        timbre.fn.do_event(this, "off");
-        return this;
-    };
-    
     $this.seq = function(seq_id) {
         var _ = this._;
         var args, cell, mul, add;
@@ -491,18 +479,6 @@ var ResonantFilter = (function() {
         _.damp = Math.min(2 * (1 - Math.pow(Q, 0.25)),
                           Math.min(2, 2 / freq - freq * 0.5));
         _.freq = freq;
-    };
-    
-    $this.on = function() {
-        this._.ison = true;
-        timbre.fn.do_event(this, "on");
-        return this;
-    };
-    
-    $this.off = function() {
-        this._.ison = false;
-        timbre.fn.do_event(this, "off");
-        return this;
     };
     
     $this.seq = function(seq_id) {

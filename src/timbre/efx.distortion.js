@@ -54,13 +54,6 @@ var EfxDistortion = (function() {
         },
         get: function() { return this._.lpfSlope; }
     });
-    Object.defineProperty($this, "isOn", {
-        get: function() { return this._.enabled; }
-    });
-    Object.defineProperty($this, "isOff", {
-        get: function() { return !this._.enabled; }
-    });
-    
     
     var initialize = function(_args) {
         var i, _;
@@ -115,7 +108,7 @@ var EfxDistortion = (function() {
         _.in1 = _.in2 = _.out1 = _.out2 = 0;
         _.a1  = _.a2  = 0;
         _.b0  = _.b1  = _.b2 = 0;
-        _.enabled = true;
+        _.ison = true;
     };
     timbre.fn.set_ar_only($this);
     
@@ -141,18 +134,6 @@ var EfxDistortion = (function() {
             _.b1 = (1 - cos) * ia0;
             _.b2 = _.b0 = _.b1 * 0.5;
         }
-    };
-
-    $this.on = function() {
-        this._.enabled = true;
-        timbre.fn.do_event(this, "on");
-        return this;
-    };
-    
-    $this.off = function() {
-        this._.enabled = false;
-        timbre.fn.do_event(this, "off");
-        return this;
     };
     
     $this.seq = function(seq_id) {
@@ -180,7 +161,7 @@ var EfxDistortion = (function() {
             }
             
             // filter
-            if (_.enabled) {
+            if (_.ison) {
                 preGain  = _.preGain.seq(seq_id)[0];
                 postGain = _.postGain.seq(seq_id)[0];
                 lpfFreq  = _.lpfFreq.seq(seq_id)[0];

@@ -20,12 +20,6 @@ var Interval = (function() {
         },
         get: function() { return this._.interval; }
     });
-    Object.defineProperty($this, "isOn", {
-        get: function() { return this._.ison; }
-    });
-    Object.defineProperty($this, "isOff", {
-        get: function() { return !this._.ison; }
-    });
     
     var initialize = function(_args) {
         var i, _;
@@ -120,12 +114,6 @@ var Timeout = (function() {
         },
         get: function() { return this._.timeout; }
     });
-    Object.defineProperty($this, "isOn", {
-        get: function() { return this._.ison; }
-    });
-    Object.defineProperty($this, "isOff", {
-        get: function() { return !this._.ison; }
-    });
     
     var initialize = function(_args) {
         var i, _;
@@ -210,12 +198,6 @@ var Schedule = (function() {
     
     Object.defineProperty($this, "mode", {
         get: function() { return this._.mode; }
-    });
-    Object.defineProperty($this, "isOn", {
-        get: function() { return this._ison; }
-    });
-    Object.defineProperty($this, "isOff", {
-        get: function() { return !this._ison; }
     });
     
     var initialize = function(_args) {

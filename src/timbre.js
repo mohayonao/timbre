@@ -22,7 +22,7 @@ timbre.dacs       = [];
 timbre.timers     = [];
 timbre._sys       = null;
 timbre._global    = {};
-timbre._ = { ev:{} };
+timbre._ = { ev:{}, none: new Float32Array(timbre.cellsize) };
 
 
 var SoundSystem = (function() {
@@ -296,7 +296,6 @@ timbre.fn = (function(timbre) {
                 instance._.ar = false;
             }
         }
-        instance._.seq = instance.seq;
         
         if (typeof instance._.mul !== "number") {
             instance._.mul = 1.0;
@@ -311,12 +310,6 @@ timbre.fn = (function(timbre) {
         
         return instance;
     };
-    
-    var noneseq = (function() {
-        var nonecell = new Float32Array(timbre.cellsize);
-        return function() { return nonecell; };
-    }());
-    
 
     defaults.play = function() {
         if (this.dac.isOff) {
@@ -340,12 +333,12 @@ timbre.fn = (function(timbre) {
         return this.cell;
     };
     defaults.on = function() {
-        this.seq = this._.seq;
+        this._.ison = true;
         timbre.fn.do_event(this, "on");
         return this;
     };
     defaults.off = function() {
-        this.seq = noneseq;
+        this._.ison = true;
         timbre.fn.do_event(this, "off");
         return this;
     };
@@ -390,6 +383,9 @@ timbre.fn = (function(timbre) {
     
     defaults.properties.isAr = { get: function() { return !!this._.ar; } };
     defaults.properties.isKr = { get: function() { return  !this._.ar; } };
+    defaults.properties.isOn  = { get: function() { return !!this._.ison; } };
+    defaults.properties.isOff = { get: function() { return  !this._.ison; } };
+    
     defaults.properties.dac = {
         set: function(value) {
             if (this._.dac) {

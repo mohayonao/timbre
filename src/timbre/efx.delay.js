@@ -36,13 +36,6 @@ var EfxDelay = (function() {
         },
         get: function() { return this._.wet; }
     });
-    Object.defineProperty($this, "isOn", {
-        get: function() { return this._.enabled; }
-    });
-    Object.defineProperty($this, "isOff", {
-        get: function() { return !this._.enabled; }
-    });
-    
     
     var initialize = function(_args) {
         var bits, i, _;
@@ -68,7 +61,7 @@ var EfxDelay = (function() {
         if (typeof _args[i] === "number") {
             _.wet = _args[i++];
         }
-        _.enabled = true;
+        _.ison = true;
         
         set_params.call(this, _.delayTime, _.feedback, _.wet);
         this.args = timbre.fn.valist.call(this, _args.slice(i));
@@ -94,18 +87,6 @@ var EfxDelay = (function() {
         } else {
             _.wet = wet;
         }
-    };
-    
-    $this.on = function() {
-        this._.enabled = true;
-        timbre.fn.do_event(this, "on");
-        return this;
-    };
-    
-    $this.off = function() {
-        this._.enabled = false;
-        timbre.fn.do_event(this, "off");
-        return this;
     };
     
     $this.seq = function(seq_id) {
@@ -140,7 +121,7 @@ var EfxDelay = (function() {
             add = _.add;
             
             // filter
-            if (_.enabled) {
+            if (_.ison) {
                 for (i = 0, imax = cell.length; i < imax; ++i) {
                     x = buffer[pointerRead];
                     buffer[pointerWrite] = cell[i] - x * feedback;

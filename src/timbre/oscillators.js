@@ -110,8 +110,13 @@ var Oscillator = (function() {
         var x, dx, coeff;
         var index, delta, x0, x1, xx;
         var i, imax;
+        
+        if (!_.ison) return timbre.none;
+        
         cell = this.cell;
         if (seq_id !== this.seq_id) {
+            this.seq_id = seq_id;
+            
             freq = _.freq.seq(seq_id);
             mul  = _.mul;
             add  = _.add;
@@ -154,10 +159,10 @@ var Oscillator = (function() {
                 x += freq[0] * coeff * imax;
             }
             _.x = x;
-            this.seq_id = seq_id;
         }
+        
         return cell;
-    }
+    };
     
     return Oscillator;
 }());
