@@ -1,0 +1,264 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>timbre - load wav files and decode</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="css/examples.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="css/libs/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+    <style>
+      #p {
+        margin:5px;padding:5px;background:#ededed;
+        border:solid 1px gray;opacity:0.9;
+      }
+      #read { width:80px; position:absolute; right:15px; margin-top:3px; }
+      #caution2 { color:red;font-weight:bold; display:none; }
+      #list { display:none; font-family: 'Courier New', monospace; }
+      h3 { margin-bottom: 0px; }
+      ul { list-style:none; margin:0px; padding:5px; }
+      #list pre { margin:0px; font-family: 'Courier New', monospace; }
+    </style>
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <selction id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+      
+      <button id="play0">play</button><button id="pause0">pause</button>
+      <div id="p">
+        You can operate music with your WebConsole. <button id="read">read</button>
+        <div id="list">
+          <div id="caution2">
+            <h2>!! Caution !!</h2>
+            if you dump the `dist` or `delay`, <br/>
+            etc in Firefox WebConsole, presumably browser crashes!!
+            <br/><br/>
+            distc.off()<b>, 0</b>; &lt;= you must not forget to add <b>", 0"</b>
+          </div>
+          <h3>Rhythm</h3>
+          <ul>
+            <li><pre>beat  = [number] (default= 8)</pre></li>
+            <li><pre>piano = [number] (default= 4)</pre></li>
+            <li><pre>melo  = [number] (default=16)</pre></li>
+            
+          </ul>
+          <h3>Distortion</h3>
+          <ul>
+            <li><pre>dist.on() / dist.off()</pre></li>
+            <li><pre>dist.pre  = [number] : preGain (default= -30dB)</pre></li>
+            <li><pre>dist.post = [number] : postGain(default=  12dB)</li>
+            <li><pre>dist.freq = [number] : lpf.freq(default=4800Hz)</li>
+            <li><pre>dist.mul  = [number] : volume  (default=0.5)</li>
+          </ul>
+          <h3>Delay</h3>
+          <ul>
+            <li><pre>delay.on() / delay.off()</pre></li>
+            <li><pre>delay.time = [number] : delayTime(default=125msec)</pre></li>
+            <li><pre>delay.fb   = [number] : feedback (default=0.8 )</pre></li>
+            <li><pre>delay.wet  = [number] : wet      (default=0.25)</pre></li>
+            <li><pre>delay.mul  = [number] : volume   (default=0.5 )</pre></li>
+          </ul>
+        </div>
+      </div>
+      <pre id="code" class="prettyprint">
+// load wav files and decode
+
+timbre.workerpath = "../timbre.js";
+timbre.utils.exports("converter"); // use msec2Hz
+
+// dac
+var ex1 = T("dac");
+
+// metronome
+var metronome = T("interval", function(count) {
+    metronome.count %= 16;
+    if (metronome.count === 0) metronome.measure += 1;
+}); metronome.measure = 0;
+
+// amen (load a wav file and decode it)
+var amen = T("wav", "./audio/amen.wav", true).load(function(res) {
+    metronome.interval = (this.duration / 3) / 16;
+});
+dist = T("efx.dist", -30, 12, 4800, amen).set("mul", 0.5);
+dist.dac = ex1;
+
+var beat = 4, beattimer = (function() {
+    var tim = 0, cnt = 0, stay = 0;
+    return T("interval", function(i) {
+        if (cnt === 0) {
+            if (stay === 0) {
+                tim = ((Math.random() * beat)|0) * (amen.duration / beat);
+                amen.currentTime = tim;
+                cnt  = (((Math.random() * beat) / 24)|0) * 2;
+                stay = (((Math.random() * beat) /  6)|0);
+            } else {
+                stay -= 1;
+            }
+        } else {
+            amen.currentTime = tim;
+            cnt -= 1;
+        }
+    });
+}());
+
+
+// piano chord (load s wav file and decode it)
+var piano = 4, pianotimer = (function() {
+    var synth, _synth, prev_chord, chordtable = [
+        [1, 6, 8], [2, 5, 8], [1, 4, 8], [0, 2, 6],
+    ], amptable = [ 0.9, 0.5, 0.8, 0.6 ], pianotones = [];
+   
+    T("wav", "./audio/piano_cmaj.wav").load(function(res) {
+        var dx = this.duration / 9;
+        for (var i = 0; i < 9; i++) {
+            pianotones[i] = this.slice(dx * i, dx * i + dx);
+        }
+    });
+    
+    function play_chord(chord, amp) {
+        if (_synth) _synth.dac.remove(_synth);
+        _synth = synth;
+        
+        synth = T("+");
+        for (var i = 0; i < chord.length; i++) {
+            synth.append(pianotones[chord[i]].clone());
+        }
+        synth.mul = amp * 0.5;
+        synth.dac = ex1;
+    }
+    
+    return T("interval", function(count) {
+        var chord, amp;
+        chord = metronome.measure % 4;
+        if (chord !== prev_chord) {
+            amp = 1.0; prev_chord = chord;
+        } else amp = amptable[metronome.count % 4];
+        play_chord(chordtable[chord], amp);
+    });
+}());
+
+// melo
+var leadtone = timbre.utils.wavb(/* define wavetable */);
+
+var lead = T("rLPF", T("pulse", 0.462, 0, 800, 2000, 0.8).kr(),
+               0.8, 0.8,
+               T("*", T("+", T("osc", leadtone, 0, 0, 0.20),
+                             T("osc", leadtone, 0, 0, 0.15)),
+                      T("adsr", 20, 1500, 0.4)));
+delay = T("efx.delay", 125, 0.8, lead).set("mul", 0.5);
+delay.dac = ex1;
+
+var melo = 16, melotimer = (function() {
+    var tone1, tone2, env, phrase = [
+        0, 0, 0, 0,
+        atof("E4"), atof("E4"), atof("A4"),
+        atof("A4"), atof("G4"), atof("C5"), ];
+    
+    tone1 = lead.args[0].args[0].args[0];
+    tone2 = lead.args[0].args[0].args[1];
+    env   = lead.args[0].args[1];
+    
+    return T("interval", function(count) {
+        var freq = phrase[(Math.random() * phrase.length)|0];
+        if (freq !== 0) {
+            tone1.freq.value = freq;
+            tone2.freq.value = freq * 0.9928057204912689;
+            env.bang();
+        }
+    });
+}());
+
+
+ex1.onplay  = function() {
+    metronome.measure = -1;
+    metronome.on();
+    beattimer.interval  = (amen.duration / 3) / beat;
+    beattimer.on();
+    pianotimer.interval = (amen.duration / 3) / piano;
+    pianotimer.on();
+    melotimer.interval  = (amen.duration / 3) / melo;
+    melotimer.on();
+};
+ex1.onpause = function() {
+    melotimer.off();
+    pianotimer.off();
+    beattimer.off();
+    metronome.off();
+};
+       
+ex1.play();
+      </pre>
+      
+    </section>
+  </body>
+  <script type="text/javascript" src="js/libs/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="js/003.js"></script>    
+  <script type="text/javascript" src="js/waveviewer.js"></script>  
+  <script type="text/javascript" src="js/libs/jquery.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+        if (!timbre.isEnabled) $("#caution").show();
+    
+        var viewer = new WaveViewer(timbre.sys, 60, "waveviewer", 512, 256);
+        
+        timbre.addEventListener("on", function() {
+            $("#title").css("color", "rgb(0, 136, 0)");
+            viewer.start();
+        });
+        timbre.addEventListener("off", function() {
+            $("#title").css("color", "rgb(136, 136, 136)");
+            viewer.pause();
+        });
+
+        // UI
+        Object.defineProperty(this, "beat", {
+            set: function(value) {
+                ex1.bridge.set_beat(value);
+            },
+            get: function() { return ex1.bridge.get_beat(); }
+        });
+        Object.defineProperty(this, "piano", {
+            set: function(value) {
+                ex1.bridge.set_piano(value);
+            },
+            get: function() { return ex1.bridge.get_piano(); }
+        });
+        Object.defineProperty(this, "melo", {
+            set: function(value) {
+                ex1.bridge.set_melo(value);
+            },
+            get: function() { return ex1.bridge.get_melo(); }
+        });
+        
+        var list = [ ex1 ];
+        list.forEach(function(ex, i) {
+            var dac = ex.dac;
+            dac.addEventListener("on" , function() {timbre.on();});
+            dac.addEventListener("off", function() {
+                if (list.every(function(dac) {return ex.dac.isOff;})) timbre.off();
+            });
+            $("#play"  + i).on("click", function() { ex.play() ; });
+            $("#pause" + i).on("click", function() { ex.pause(); });
+        });
+    
+        if (timbre.env !== "webkit") $("#caution2").show();
+        var isOpen = false;
+        $("#read").on("click", function() {
+            if (isOpen) {
+                $(this).text("read");
+                $("#list").hide();
+            } else {
+                $(this).text("close");
+                $("#list").show();
+            }
+            isOpen = !isOpen;
+        });
+    });
+  </script>
+</html>

@@ -51,7 +51,7 @@ var WaveViewer = (function() {
                 context.fillRect(0, 0, width, height);
 
                 if (self.isPlaying) {
-                    wave = target._cell;
+                    wave = target.cell;
                     dx   = width / wave.length;
                     context.beginPath();
                     context.moveTo(0, half_h - (half_h * wave[0]));
