@@ -101,8 +101,8 @@ var SoundSystem = (function() {
             for (j = dacs.length; j--; ) {
                 if ((dac = dacs[j]) !== undefined) {
                     dac.seq(seq_id);
-                    tmpL = dac._L;
-                    tmpR = dac._R;
+                    tmpL = dac.L;
+                    tmpR = dac.R;
                     for (k = 0, i = saved_i; k < kmax; ++k, ++i) {
                         L[i] += tmpL[k];
                         R[i] += tmpR[k];
@@ -285,8 +285,8 @@ timbre.fn = (function(timbre) {
         }
         timbre.fn.init_set.call(instance.args, instance._raw_args);
         
-        if (instance._     !== "object") instance._    = {};
-        if (!instance._.ev !== "object") instance._.ev = {};
+        if (typeof instance._     !== "object") instance._    = {};
+        if (typeof !instance._.ev !== "object") instance._.ev = {};
         
         if (typeof instance._ar !== "boolean") {
             if (typeof instance.__proto__._ === "object") {
@@ -296,6 +296,22 @@ timbre.fn = (function(timbre) {
             }
         }
         instance._.seq = instance.seq;
+
+        // TODO: delete
+        if (typeof instance._mul !== "number") {
+            instance._mul = 1.0;
+        }
+        if (typeof instance._add !== "number") {
+            instance._add = 0.0;
+        }
+        //
+        
+        if (typeof instance._.mul !== "number") {
+            instance._.mul = 1.0;
+        }
+        if (typeof instance._.add !== "number") {
+            instance._.add = 0.0;
+        }
         
         if (instance._post_init) {
             instance._post_init();
@@ -384,16 +400,20 @@ timbre.fn = (function(timbre) {
     defaults.properties.isKr = { get: function() { return  !this._ar; } };
     defaults.properties.dac = {
         set: function(value) {
-            if (this._dac) {
-                this._dac.remove(this);
+            if (this._.dac) {
+                this._.dac.remove(this);
             }
-            this._dac = value.append(this);
+            if (value !== null) {
+                this._.dac = value.append(this);
+            } else {
+                this._.dac = null; // TODO: ???
+            }
         },
         get: function() {
-            if (!this._dac) {
-                this._dac = timbre("dac", this);
+            if (!this._.dac) {
+                this._.dac = timbre("dac", this);
             }
-            return this._dac;
+            return this._.dac;
         },
     };
     defaults.properties.mul  = {
@@ -454,9 +474,6 @@ timbre.fn = (function(timbre) {
             if (typeof p.ar !== "function") {
                 fn.set_kr_only(p);
             }
-            
-            p._mul = 1.0;
-            p._add = 0.0;
             
             if (typeof key === "string") {            
                 if (!func) {
