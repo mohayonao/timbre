@@ -343,7 +343,7 @@ timbre.fn = (function(timbre) {
         return this;
     };
     defaults.off = function() {
-        this._.ison = true;
+        this._.ison = false;
         timbre.fn.do_event(this, "off");
         return this;
     };
