@@ -83,7 +83,7 @@ var metronome = T("interval", function(count) {
 var amen = T("wav", "./audio/amen.wav", true).load(function(res) {
     metronome.interval = (this.duration / 3) / 16;
 });
-dist = T("efx.dist", -30, 12, 4800, amen).set("mul", 0.5);
+dist = T("efx.dist", 0, -18, 2400, amen).set("mul", 0.5);
 dist.dac = ex1;
 
 var beat = 8, beattimer = (function() {
