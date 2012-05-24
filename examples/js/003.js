@@ -61,7 +61,7 @@ ex1 = (function() {
     function playpiano(p) {
         var i, chord = T("+");
         for (i = 0; i < p.length; i++) {
-            chord.append(T(piano[p[i]]));
+            chord.append(piano[p[i]].clone());
         }
         chord.args[0].addEventListener("~ended", function() {
             chord.dac.remove(chord);
