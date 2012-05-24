@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>timbre - load a wav file and decode it</title>
+    <title>timbre - load wav files and decode</title>
     <link type="text/css" media="screen" rel="stylesheet" href="css/examples.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="css/libs/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -61,7 +61,7 @@
   <script type="text/javascript" src="js/libs/jquery.min.js"></script>
   <script type="text/javascript">
     $(function() {
-        if (!timbre._sys._impl) $("#caution").show();    
+        if (!timbre.isEnabled) $("#caution").show();
     
         var viewer = new WaveViewer(timbre._sys, 60, "waveviewer", 512, 256);
         

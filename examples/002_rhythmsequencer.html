@@ -117,8 +117,8 @@ drumkit.play();
   <script type="text/javascript" src="js/libs/jquery.min.js"></script>
   <script type="text/javascript">
     $(function() {
-        if (!timbre._sys._impl) $("#caution").show();    
-    
+        if (!timbre.isEnabled) $("#caution").show();
+        
         var viewer = new WaveViewer(timbre._sys, 60, "waveviewer", 512, 256);
         
         timbre.addEventListener("on", function() {
