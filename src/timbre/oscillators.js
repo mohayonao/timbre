@@ -14,7 +14,7 @@ var Oscillator = (function() {
     Object.defineProperty($this, "wavelet", {
         set: function(value) {
             var wavelet, i, j, k, x, dx;
-            wavelet = this._wavelet;
+            wavelet = this._.wavelet;
             if (typeof value === "function") {
                 for (i = 0; i < 1024; i++) {
                     wavelet[i] = value(i / 1024);
@@ -36,41 +36,37 @@ var Oscillator = (function() {
                 }
             }
         },
-        get: function() {
-            return this._wavelet;
-        }
+        get: function() { return this._.wavelet; }
     });
     Object.defineProperty($this, "freq", {
         set: function(value) {
             if (typeof value === "object") {
-                this._freq = value;
+                this._.freq = value;
             } else {
-                this._freq = timbre(value);
+                this._.freq = timbre(value);
             }
         },
-        get: function() {
-            return this._freq;
-        }
+        get: function() { return this._.freq; }
     });
     Object.defineProperty($this, "phase", {
         set: function(value) {
             if (typeof value === "number") {
                 while (value >= 1.0) value -= 1.0;
                 while (value <  0.0) value += 1.0;
-                this._phase = value;
-                this._x = 1024 * this._phase;
+                this._.phase = value;
+                this._.x = 1024 * this._.phase;
             }
         },
-        get: function() {
-            return this._phase;
-        }
+        get: function() { return this._.phase; }
     });
     
     var initialize = function(_args) {
-        var i;
-        
+        var i, _;
+
+        this._ = _ = {};
         i = 0;
-        this._wavelet = new Float32Array(1024);        
+        
+        _.wavelet = new Float32Array(1024);        
         
         if (typeof _args[i] === "function") {
             this.wavelet = _args[i++];
@@ -81,19 +77,19 @@ var Oscillator = (function() {
         }
         this.freq = _args[i++];
         if (typeof _args[i] === "number") {
-            this.phase = _args[i++];
+            _.phase = _args[i++];
         } else {
-            this.phase = 0.0;
+            _.phase = 0.0;
         }
         if (typeof _args[i] === "number") {
-            this.mul = _args[i++];    
+            _.mul = _args[i++];    
         }
         if (typeof _args[i] === "number") {
-            this.add = _args[i++];    
+            _.add = _args[i++];    
         }
         
-        this._x = 1024 * this._phase;
-        this._coeff = 1024 / timbre.samplerate;
+        _.x = 1024 * _.phase;
+        _.coeff = 1024 / timbre.samplerate;
     };
     timbre.fn.set_ar_kr($this);
     
@@ -102,12 +98,13 @@ var Oscillator = (function() {
     };
     
     $this.bang = function() {
-        this._x = 1024 * this._phase;
+        this._.x = 1024 * this._.phase;
         timbre.fn.do_event(this, "bang");
         return this;
     };
     
     $this.seq = function(seq_id) {
+        var _ = this._;
         var cell;
         var freq, mul, add, wavelet;
         var x, dx, coeff;
@@ -115,14 +112,14 @@ var Oscillator = (function() {
         var i, imax;
         cell = this.cell;
         if (seq_id !== this.seq_id) {
-            freq = this._freq.seq(seq_id);
-            mul  = this._mul;
-            add  = this._add;
-            wavelet = this._wavelet;
-            x = this._x;
-            coeff = this._coeff;
-            if (this._ar) {
-                if (this._freq._ar) {
+            freq = _.freq.seq(seq_id);
+            mul  = _.mul;
+            add  = _.add;
+            wavelet = _.wavelet;
+            x = _.x;
+            coeff = _.coeff;
+            if (true|| _.ar) {
+                if (true|| _.freq._ar) {
                     for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
                         index = x|0;
                         delta = x - index;
@@ -156,7 +153,7 @@ var Oscillator = (function() {
                 }
                 x += freq[0] * coeff * imax;
             }
-            this._x = x;
+            _.x = x;
             this.seq_id = seq_id;
         }
         return cell;
@@ -279,27 +276,30 @@ var WhiteNoise = (function() {
     }, $this = WhiteNoise.prototype;
     
     var initialize = function(_args) {
-        var i;
-
+        var i, _;
+        
+        this._ = _ = {};
+        
         i = 0;
         if (typeof _args[i] === "number") {
-            this.mul = _args[i++];
+            this._.mul = _args[i++];
         }
         if (typeof _args[i] === "number") {
-            this.add = _args[i++];
+            this._.add = _args[i++];
         }
     };
     timbre.fn.set_ar_kr($this);
     
     $this.seq = function(seq_id) {
+        var _ = this._;
         var cell;
         var mul, add, x, i;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
-            mul = this._mul;
-            add = this._add;
-            if (this._ar) {
+            mul = _.mul;
+            add = _.add;
+            if (true|| _.ar) {
                 for (i = cell.length; i--; ) {
                     cell[i] = (Math.random() * 2.0 - 1.0) * mul + add;
                 }
