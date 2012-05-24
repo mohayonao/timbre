@@ -285,7 +285,8 @@ timbre.fn = (function(timbre) {
         }
         timbre.fn.init_set.call(instance.args, instance._raw_args);
         
-        if (typeof instance._     !== "object") instance._    = {};
+        if (!instance.hasOwnProperty("_")) instance._ = {};
+        
         if (typeof !instance._.ev !== "object") instance._.ev = {};
         
         if (typeof instance._ar !== "boolean") {
