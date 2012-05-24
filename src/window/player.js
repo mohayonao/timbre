@@ -81,10 +81,10 @@ var MozPlayer = function(sys) {
 
 if (typeof webkitAudioContext === "function") {
     timbre.env = "webkit";
-    timbre._sys.bind(WebKitPlayer);
+    timbre.sys.bind(WebKitPlayer);
 } else if (typeof Audio === "function" && typeof (new Audio).mozSetup === "function") {
     timbre.env = "moz";
-    timbre._sys.bind(MozPlayer);
+    timbre.sys.bind(MozPlayer);
 }
 
 // __END__

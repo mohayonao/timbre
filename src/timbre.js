@@ -20,8 +20,8 @@ timbre.amp        = 0.8;
 timbre.verbose    = true;
 timbre.dacs       = [];
 timbre.timers     = [];
-timbre._sys       = null;
-timbre._global    = {};
+timbre.sys       = null;
+timbre.global    = {};
 timbre._ = { ev:{}, none: new Float32Array(timbre.cellsize) };
 
 
@@ -148,36 +148,36 @@ var SoundSystem = (function() {
     
     return SoundSystem;
 }());
-timbre._sys = new SoundSystem();
+timbre.sys = new SoundSystem();
 
 Object.defineProperty(timbre, "isEnabled", {
     get: function() {
-        return !!timbre._sys._.impl;
+        return !!timbre.sys._.impl;
     }
 });
 
 Object.defineProperty(timbre, "isOn", {
     get: function() {
-        return timbre._sys._.ison;
+        return timbre.sys._.ison;
     }
 });
 Object.defineProperty(timbre, "isOff", {
     get: function() {
-        return !timbre._sys._.ison;
+        return !timbre.sys._.ison;
     }
 });
 
 timbre.on = function() {
-    if (!timbre._sys._.ison) {
-        timbre._sys.on();
+    if (!timbre.sys._.ison) {
+        timbre.sys.on();
         timbre.fn.do_event(this, "on");
     }
     return timbre;
 };
 
 timbre.off = function() {
-    if (timbre._sys._.ison) {
-        timbre._sys.off();
+    if (timbre.sys._.ison) {
+        timbre.sys.off();
         timbre.fn.do_event(this, "off");
     }
     return timbre;

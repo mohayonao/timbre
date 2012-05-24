@@ -8,7 +8,7 @@ var window = {};
 // __BEGIN__
 
 timbre.platform = "web";
-timbre._global  = window;
+timbre.global  = window;
 
 window.T = timbre;
 

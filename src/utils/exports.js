@@ -12,7 +12,7 @@ utils.exports = function(name) {
     if ((list = utils.$exports[name]) !== undefined) {
         for (i = list.length; i--; ) {
             x = list[i];
-            timbre._global[x] = utils[x];
+            timbre.global[x] = utils[x];
             res.unshift(x);
         }
     }

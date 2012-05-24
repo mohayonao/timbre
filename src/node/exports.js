@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 timbre.platform = "node";
-timbre._global  = global;
+timbre.global  = global;
 
 module.exports = timbre;
 
