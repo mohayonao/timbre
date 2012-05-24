@@ -23,11 +23,15 @@ var Add = (function() {
     };
     
     $this.seq = function(seq_id) {
+        var _ = this._;
         var args, cell;
+        var mul, add;
         var tmp, i, j, jmax;
         cell = this.cell;
         if (seq_id !== this.seq_id) {
             args = this.args;
+            mul  = _.mul;
+            add  = _.add;
             jmax = timbre.cellsize;
             for (j = jmax; j--; ) {
                 cell[j] = 0;
@@ -37,7 +41,11 @@ var Add = (function() {
                 for (j = jmax; j--; ) {
                     cell[j] += tmp[j];
                 }
-            }        
+            }
+            
+            for (j = jmax; j--; ) {
+                cell[j] = cell[j] * mul + add;
+            }
             this.seq_id = seq_id;
         }
         return cell;
@@ -65,21 +73,30 @@ var Multiply = (function() {
     };
     
     $this.seq = function(seq_id) {
+        var _ = this._;
         var args, cell;
+        var mul, add;
         var tmp, i, j, jmax;
         cell = this.cell;
         if (seq_id !== this.seq_id) {
             args = this.args;
+            mul  = _.mul;
+            add  = _.add;
             jmax = timbre.cellsize;
             for (j = jmax; j--; ) {
-                cell[j] = 1;
+                cell[j] = mul;
             }
             for (i = args.length; i--; ) {
                 tmp = args[i].seq(seq_id);
                 for (j = jmax; j--; ) {
                     cell[j] *= tmp[j];
                 }
-            }        
+            }
+            if (add !== 0) {
+                for (j = jmax; j--; ) {
+                    cell[j] += add;
+                }
+            }
             this.seq_id = seq_id;
         }
         return cell;
