@@ -217,19 +217,19 @@ ex1.play();
         });
 
         // UI
-        Object.defineProperty(this, "beat", {
+        Object.defineProperty(window, "beat", {
             set: function(value) {
                 ex1.bridge.set_beat(value);
             },
             get: function() { return ex1.bridge.get_beat(); }
         });
-        Object.defineProperty(this, "piano", {
+        Object.defineProperty(window, "piano", {
             set: function(value) {
                 ex1.bridge.set_piano(value);
             },
             get: function() { return ex1.bridge.get_piano(); }
         });
-        Object.defineProperty(this, "melo", {
+        Object.defineProperty(window, "melo", {
             set: function(value) {
                 ex1.bridge.set_melo(value);
             },
