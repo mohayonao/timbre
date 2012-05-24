@@ -113,6 +113,23 @@ var Filter = (function() {
         _.in1 = _.in2 = _.out1 = _.out2 = 0;
     };
     timbre.fn.set_ar_only($this);
+
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        var args, i, imax;
+        newone = timbre("filter", _.type);
+        if (deep) {
+            newone.freq = _.freq.clone(deep);
+            newone.band = _.band.clone(deep);
+            newone.gain = _.gain.clone(deep);
+        } else {
+            newone.freq = _.freq;
+            newone.band = _.band;
+            newone.gain = _.gain;
+        }
+        timbre.fn.copy_for_clone(this, newone, deep);
+        return newone;
+    };
     
     $this.seq = function(seq_id) {
         var _ = this._;
@@ -473,6 +490,23 @@ var ResonantFilter = (function() {
     };
     timbre.fn.set_ar_only($this);
     
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        var args, i, imax;
+        newone = timbre("rfilter", _.type);
+        if (deep) {
+            newone.cutoff = _.cutoff.clone(deep);
+            newone.Q      = _.Q     .clone(deep);
+            newone.depth  = _.depth .clone(deep);
+        } else {
+            newone.cutoff = _.cutoff;
+            newone.Q      = _.Q;
+            newone.depth  = _.depth;
+        }
+        timbre.fn.copy_for_clone(this, newone, deep);
+        return newone;
+    };
+    
     var set_params = function(cutoff, Q) {
         var _ = this._;
         var freq = 2 * Math.sin(Math.PI * Math.min(0.25, cutoff / (timbre.samplerate * 2)));
@@ -554,6 +588,7 @@ var ResonantFilter = (function() {
     
     return ResonantFilter;
 }());
+timbre.fn.register("rfilter", ResonantFilter);
 timbre.fn.register("rLPF", ResonantFilter, function(_args) {
     return new ResonantFilter(["LPF"].concat(_args));
 });

@@ -51,6 +51,14 @@ var Dac = (function() {
         }
     };
     
+    $this.clone = function(deep) {
+        var newone;
+        newone = timbre("dac");
+        newone._.pan = (deep) ? this._.pan.clone(true) : this._.pan;
+        timbre.fn.copy_for_clone(this, newone, deep);
+        return newone;
+    };
+    
     $this.on = $this.play = function() {
         this._.ison = true;
         timbre.dacs.append(this);

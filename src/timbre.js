@@ -268,9 +268,7 @@ timbre.fn = (function(timbre) {
             instance = new FunctionWrapper(args);
             break;
         case "object":
-            if (key && typeof key.clone === "function") {
-                instance = key.clone();
-            }
+            instance = key;
             break;
         }
         
@@ -349,8 +347,8 @@ timbre.fn = (function(timbre) {
         timbre.fn.do_event(this, "off");
         return this;
     };
-    defaults.clone = function() {
-        return new this._klass(this.args);
+    defaults.clone = function(deep) {
+        return new this._klass();
     };
     defaults.append = function() {
         this.args.append.apply(this.args, arguments);
@@ -568,6 +566,28 @@ timbre.fn = (function(timbre) {
                 if (func.rm) obj.removeEventListener(name, func);
             }
         }
+    };
+    
+    fn.copy_for_clone = function(src, dst, deep) {
+        var args, i, imax;
+        
+        dst._.ar = src._.ar;
+        dst._.mul = src._.mul;
+        dst._.add = src._.add;
+        dst._.ison = src._.ison;
+        
+        args = src.args;
+        if (deep) {
+            for (i = 0, imax = args.length; i < imax; ++i) {
+                dst.args[i] = args[i].clone(true);
+            }
+        } else {
+            for (i = 0, imax = args.length; i < imax; ++i) {
+                dst.args[i] = args[i];
+            }
+        }
+        
+        return dst;
     };
     
     return fn;

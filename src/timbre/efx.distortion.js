@@ -111,6 +111,15 @@ var EfxDistortion = (function() {
         _.ison = true;
     };
     timbre.fn.set_ar_only($this);
+
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        var args, i, imax;
+        newone = timbre("efx.dist",
+                        _.preGain, _.postGain, _.lpfFreq, _.lpfSlope);
+        timbre.fn.copy_for_clone(this, newone, deep);
+        return newone;
+    };
     
     var THRESHOLD = 0.0000152587890625;
     

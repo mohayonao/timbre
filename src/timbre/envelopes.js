@@ -83,10 +83,15 @@ var ADSREnvelope = (function() {
     };
     timbre.fn.set_kr_only($this);
     
-    $this.clone = function() {
-        return new ADSREnvelope([this.a, this.d, this.s, this.r, this.mul, this.add]);
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        var args, i, imax;
+        newone = timbre("adsr", _.a, _.d, _.s, _.r);
+        newone._.mul = _.mul;
+        newone._.add = _.add;
+        return newone;
     };
-
+    
     $this.on = function() {
         var _ = this._;
         _.ison = true;
@@ -291,9 +296,14 @@ var Tween = (function() {
         this.type = type;        
     };
     timbre.fn.set_kr_only($this);
-    
-    $this.clone = function() {
-        return new Tween([this.type, this.d, this.start, this.stop, this.mul, this.add]);
+
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        var args, i, imax;
+        newone = timbre("tween", _.type, _.d, _.start, _.stop);
+        newone._.mul = _.mul;
+        newone._.add = _.add;
+        return newone;
     };
     
     $this.bang = function() {
@@ -534,8 +544,13 @@ var Percussive = (function() {
     };
     timbre.fn.set_kr_only($this);
     
-    $this.clone = function() {
-        return new Percussive([this.d, this.mul, this.add]);
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        var args, i, imax;
+        newone = timbre("perc", _.d);
+        newone._.mul = _.mul;
+        newone._.add = _.add;
+        return newone;
     };
     
     $this.on = function() {

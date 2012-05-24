@@ -140,9 +140,8 @@ var Wav = (function() {
         return this;
     };
 
-    $this.clone = function() {
-        var _ = this._;
-        var newone;
+    $this.clone = function(deep) {
+        var newone, _ = this._;
         newone = timbre("wav");
         newone._.src        = _.src;
         newone._.loop       = _.loop;
@@ -152,14 +151,12 @@ var Wav = (function() {
         newone._.duration   = _.duration;
         newone._.phaseStep  = _.phaseStep;
         newone._.phase = 0;
-        newone._.mul   = _.mul;
-        newone._.add   = _.add;
+        timbre.fn.copy_for_clone(this, newone, deep);
         return newone;
     };
     
     $this.slice = function(begin, end) {
-        var _ = this._;
-        var newone, tmp;
+        var newone, _ = this._, tmp;
         if (typeof begin === "number") {
             begin = (begin / 1000) * _.samplerate;
         } else begin = 0;
@@ -180,8 +177,7 @@ var Wav = (function() {
         newone._.duration   = (end - begin / _.samplerate) * 1000;
         newone._.phaseStep  = _.phaseStep;
         newone._.phase = 0;
-        newone._.mul   = _.mul;
-        newone._.add   = _.add;
+        timbre.fn.copy_for_clone(this, newone);
         return newone;
     };
     

@@ -37,8 +37,13 @@ var Interval = (function() {
         _.interval_count = 0;
     };
     timbre.fn.set_kr_only($this);
-    
     $this._raw_args = true;
+    
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        newone = timbre("interval", _.interval);
+        return newone;
+    };
     
     $this.on = function() {
         this._.ison = true;
@@ -130,8 +135,13 @@ var Timeout = (function() {
         _.samples = 0;
     };
     timbre.fn.set_kr_only($this);
-    
     $this._raw_args = true;
+
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        newone = timbre("timeout", _.timeout);
+        return newone;
+    };
     
     $this.on = function() {
         this._.ison = true;
@@ -235,8 +245,15 @@ var Schedule = (function() {
         delete _.init;
     };
     timbre.fn.set_kr_only($this);
-    
     $this._raw_args = true;
+    
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        newone = timbre("schedule");
+        newone._.mode = _.mode;
+        newone._.msec = _.msec;
+        return newone;
+    };
     
     var setMode = function(mode) {
         var m;

@@ -94,8 +94,17 @@ var Oscillator = (function() {
     };
     timbre.fn.set_ar_kr($this);
     
-    $this.clone = function() {
-        return new Oscillator([this.wavelet, this.freq, this.phase, this.mul, this.add]);
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        newone = timbre("osc", _.wavelet);
+        if (deep) {
+            newone._.freq = _.freq.clone(true);
+        } else {
+            newone._.freq = _.freq;
+        }
+        newone._.phase = _.phase;
+        timbre.fn.copy_for_clone(this, newone, deep);        
+        return newone;
     };
     
     $this.bang = function() {
@@ -296,6 +305,13 @@ var WhiteNoise = (function() {
         }
     };
     timbre.fn.set_ar_kr($this);
+    
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        newone = timbre("noise");
+        timbre.fn.copy_for_clone(this, newone, deep);
+        return newone;
+    };
     
     $this.seq = function(seq_id) {
         var _ = this._;

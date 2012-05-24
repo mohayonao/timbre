@@ -15,6 +15,13 @@ var Add = (function() {
     };
     timbre.fn.set_ar_kr($this);
     
+    $this.clone = function(deep) {
+        var newone;
+        newone = timbre("+");
+        timbre.fn.copy_for_clone(this, newone, deep);
+        return newone;
+    };
+    
     $this.seq = function(seq_id) {
         var args, cell;
         var tmp, i, j, jmax;
@@ -49,6 +56,13 @@ var Multiply = (function() {
         this.args = timbre.fn.valist.call(this, _args);
     };
     timbre.fn.set_ar_kr($this);
+    
+    $this.clone = function(deep) {
+        var newone;
+        newone = timbre("*");
+        timbre.fn.copy_for_clone(this, newone, deep);
+        return newone;
+    };
     
     $this.seq = function(seq_id) {
         var args, cell;
