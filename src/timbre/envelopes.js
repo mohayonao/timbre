@@ -87,6 +87,7 @@ var ADSREnvelope = (function() {
         this._samplesMax = (timbre.samplerate * (this._a / 1000))|0;
         this._samples    = 0;
     };
+    timbre.fn.set_kr_only($this);
     
     $this.clone = function() {
         return new ADSREnvelope([this.a, this.d, this.s, this.r, this.mul, this.add]);
@@ -283,7 +284,8 @@ var Tween = (function() {
         this._enabled   = false;
         this.type = type;        
     };
-
+    timbre.fn.set_kr_only($this);
+    
     $this.clone = function() {
         return new Tween([this.type, this.d, this.start, this.stop, this.mul, this.add]);
     };
@@ -508,7 +510,8 @@ var Percussive = (function() {
         this._dx = timbre.cellsize / this._samples;
         this._x  = 0;
     };
-
+    timbre.fn.set_kr_only($this);
+    
     $this.clone = function() {
         return new Percussive([this.d, this.mul, this.add]);
     };

@@ -94,9 +94,8 @@ var Oscillator = (function() {
         
         this._x = 1024 * this._phase;
         this._coeff = 1024 / timbre.samplerate;
-        
-        this._ar = true;
     };
+    timbre.fn.set_ar_kr($this);
     
     $this.clone = function() {
         return new Oscillator([this.wavelet, this.freq, this.phase, this.mul, this.add]);
@@ -289,18 +288,8 @@ var WhiteNoise = (function() {
         if (typeof _args[i] === "number") {
             this.add = _args[i++];
         }
-        this._ar = true;
     };
-    
-    $this.ar = function() {
-        this._ar = true;
-        return this;
-    };
-    
-    $this.kr = function() {
-        this._ar = false;
-        return this;
-    };
+    timbre.fn.set_ar_kr($this);
     
     $this.seq = function(seq_id) {
         var cell;

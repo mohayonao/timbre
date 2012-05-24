@@ -114,8 +114,7 @@ var EfxDistortion = (function() {
         this.args = timbre.fn.valist.call(this, _args.slice(i));
         this._enabled = true;
     };
-    
-    $this._ar = true;    
+    timbre.fn.set_ar_only($this);
     
     var THRESHOLD = 0.0000152587890625;
     

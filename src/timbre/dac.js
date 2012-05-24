@@ -55,8 +55,7 @@ var Dac = (function() {
         this._mul  = 1.0;
         this._ison = false;
     };
-    
-    $this._ar = true;
+    timbre.fn.set_ar_only($this);
     
     $this._post_init = function() {
         var i, args;

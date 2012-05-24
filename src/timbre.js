@@ -226,7 +226,7 @@ timbre.fn = (function(timbre) {
     };
 
     var defaults = { optional:{}, properties:{} };
-    
+
     defaults.optional.ar = function() {
         this._ar = true;
         return this;
@@ -235,10 +235,9 @@ timbre.fn = (function(timbre) {
         this._ar = false;
         return this;
     };
-    defaults.optional.fixArKr = function() {
+    defaults.optional.fixrate = function() {
         return this;
     };
-    
     
     fn.init = function() {
         var args, key, klass, instance;
@@ -291,21 +290,13 @@ timbre.fn = (function(timbre) {
             instance._ev = {};
         }
         if (typeof instance._ar !== "boolean") {
-            instance._ar = false;
+            if (typeof instance.__proto__._ === "object") {
+                instance._ar = !!instance.__proto__._.ar;
+            } else {
+                instance._ar = false;
+            }
         }
         instance._seq = instance.seq;
-        
-        if (typeof instance._ar === "boolean") {
-            if (typeof instance.ar !== "function") {
-                instance.ar = defaults.optional.ar;
-            }
-            if (typeof instance.kr !== "function") {
-                instance.kr = defaults.optional.kr;
-            }
-        } else {
-            instance.ar = instance.kr = defaults.optional.fixArKr;
-        }
-        instance._ar = !!instance._ar;
         
         if (instance._post_init) {
             instance._post_init();
@@ -419,6 +410,31 @@ timbre.fn = (function(timbre) {
         get: function() { return this._add; }
     };
     
+    fn.set_ar_only = function(object) {
+        object.ar = defaults.optional.fixrate;
+        object.kr = defaults.optional.fixrate;
+        if (!object._) object._ = {};
+        object._.ar = true;
+    };
+    fn.set_kr_only = function(object) {
+        object.ar = defaults.optional.fixrate;
+        object.kr = defaults.optional.fixrate;
+        if (!object._) object._ = {};
+        object._.ar = false;
+    };
+    fn.set_ar_kr = function(object) {
+        object.ar = defaults.optional.ar;
+        object.kr = defaults.optional.kr;
+        if (!object._) object._ = {};
+        object._.ar = true;
+    };
+    fn.set_kr_ar = function(object) {
+        object.ar = defaults.optional.ar;
+        object.kr = defaults.optional.kr;
+        if (!object._) object._ = {};
+        object._.ar = false;
+    };
+    
     fn.register = function(key, klass, func) {
         var name, p;
         
@@ -434,12 +450,14 @@ timbre.fn = (function(timbre) {
                     Object.defineProperty(p, name, defaults.properties[name]);
                 }
             }
+            if (typeof p._ !== "object") p._ = {};
+            
+            if (typeof p.ar !== "function") {
+                fn.set_kr_only(p);
+            }
+            
             p._mul = 1.0;
             p._add = 0.0;
-            
-            if (p._ar === true) {
-                p.ar = p.kr = defaults.optional.fixArKr;
-            }
             
             if (typeof key === "string") {            
                 if (!func) {

@@ -48,6 +48,7 @@ var Interval = (function() {
         this._samples = 0;
         this._interval_count = 0;
     };
+    timbre.fn.set_kr_only($this);
     
     $this._raw_args = true;
     
@@ -151,6 +152,7 @@ var Timeout = (function() {
         this._ison = false;
         this._samples = 0;
     };
+    timbre.fn.set_kr_only($this);
     
     $this._raw_args = true;
     
@@ -262,6 +264,7 @@ var Schedule = (function() {
         
         delete this._init;
     };
+    timbre.fn.set_kr_only($this);
     
     $this._raw_args = true;
     

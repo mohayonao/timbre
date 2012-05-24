@@ -64,6 +64,7 @@ var EfxDelay = (function() {
         this.args = timbre.fn.valist.call(this, _args.slice(i));
         this._enabled = true;
     };
+    timbre.fn.set_ar_only($this);
 
     $this._set_params = function(delayTime, feedback, wet) {
         var offset;

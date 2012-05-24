@@ -59,8 +59,7 @@ var Wav = (function() {
         this._phaseStep  = 0;
         this._phase = 0;
     };
-    
-    $this._ar = true;
+    timbre.fn.set_ar_only($this);
     
     var send = function(result, callback) {
         if (typeof callback === "function") {
