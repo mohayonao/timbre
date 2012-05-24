@@ -13,51 +13,53 @@ var Wav = (function() {
     
     Object.defineProperty($this, "src", {
         set: function(value) {
-            if (typeof value === "string") this._src = value;
+            if (typeof value === "string") this._.src = value;
         },
-        get: function() { return this._src; }
+        get: function() { return this._.src; }
     });
     Object.defineProperty($this, "loop", {
         set: function(value) {
-            if (typeof value === "boolean") this._loop = value;
+            if (typeof value === "boolean") this._.loop = value;
         },
-        get: function() { return this._loop; }
+        get: function() { return this._.loop; }
     });
     Object.defineProperty($this, "duration", {
-        get: function() { return this._duration; }
+        get: function() { return this._.duration; }
     });
     Object.defineProperty($this, "currentTime", {
         set: function(value) {
             if (typeof value === "number") {
-                if (0 <= value && value <= this._duration) {
-                    this._phase = (value / 1000) * this._samplerate;    
+                if (0 <= value && value <= this._.duration) {
+                    this._.phase = (value / 1000) * this._.samplerate;
                 }
             }
         },
-        get: function() { return (this._phase / this._samplerate) * 1000; }
+        get: function() { return (this._.phase / this._.samplerate) * 1000; }
     });
     
     var initialize = function(_args) {
-        var i;
-
+        var i, _;
+        
+        this._ = _ = {};
+        
         i = 0;
         if (typeof _args[i] === "string") {
-            this._src = _args[i++];
+            _.src = _args[i++];
         } else {
-            this._src = "";
+            _.src = "";
         }
         if (typeof _args[i] === "boolean") {
-            this._loop = _args[i++];
+            _.loop = _args[i++];
         } else {
-            this._loop = false;
+            _.loop = false;
         }
         
-        this._loaded_src = undefined;
-        this._buffer     = new Int16Array(0);
-        this._samplerate = 0;
-        this._duration   = 0;
-        this._phaseStep  = 0;
-        this._phase = 0;
+        _.loaded_src = undefined;
+        _.buffer     = new Int16Array(0);
+        _.samplerate = 0;
+        _.duration   = 0;
+        _.phaseStep  = 0;
+        _.phase = 0;
     };
     timbre.fn.set_ar_only($this);
     
@@ -77,14 +79,14 @@ var Wav = (function() {
     };
     
     $this.load = function(callback) {
-        var self = this;
+        var self = this, _ = this._;
         var worker, src, m, buffer, samplerate;        
-        if (this._loaded_src === this._src) {
-            send.call(this, {samplerate:this._samplerate, buffer:this._buffer}, callback);
-        } else if (this._src !== "") {
+        if (_.loaded_src === _.src) {
+            send.call(this, {samplerate:_.samplerate, buffer:_.buffer}, callback);
+        } else if (_.src !== "") {
             timbre.fn.do_event(this, "loading");
             if (timbre.platform === "web" && timbre.workerpath) {
-                src = this._src;
+                src = _.src;
                 if ((m = /^(?:\.)(.*)$/.exec(src)) !== null) {
                     src = location.pathname;
                     src = src.substr(0, src.lastIndexOf("/"));
@@ -102,12 +104,12 @@ var Wav = (function() {
                         buffer.set(data.array, data.offset);
                         break;
                     case "ended":
-                        self._loaded_src = self._src;
-                        self._buffer     = buffer;
-                        self._samplerate = samplerate;
-                        self._duration   = (buffer.length / samplerate) * 1000;
-                        self._phaseStep  = samplerate / timbre.samplerate;
-                        self._phase = 0;
+                        _.loaded_src = _.src;
+                        _.buffer     = buffer;
+                        _.samplerate = samplerate;
+                        _.duration   = (buffer.length / samplerate) * 1000;
+                        _.phaseStep  = samplerate / timbre.samplerate;
+                        _.phase = 0;
                         send.call(self, {samplerate:samplerate, buffer:buffer}, callback);
                         break;
                     default:
@@ -117,15 +119,15 @@ var Wav = (function() {
                 };
                 worker.postMessage({action:"wav.decode", src:src});
             } else {
-                timbre.utils.binary.load(this._src, function(binary) {
+                timbre.utils.binary.load(_.src, function(binary) {
                     timbre.utils.wav.decode(binary, function(res) {
                         if (res) {
-                            self._loaded_src = self._src;
-                            self._buffer     = res.buffer;
-                            self._samplerate = res.samplerate;
-                            self._duration   = (res.buffer.length / res.samplerate) * 1000;
-                            self._phaseStep  = res.samplerate / timbre.samplerate;
-                            self._phase = 0;
+                            _.loaded_src = _.src;
+                            _.buffer     = res.buffer;
+                            _.samplerate = res.samplerate;
+                            _.duration   = (res.buffer.length / res.samplerate) * 1000;
+                            _.phaseStep  = res.samplerate / timbre.samplerate;
+                            _.phase = 0;
                             send.call(self, { samplerate:res.samplerate,
                                               buffer:res.buffer }, callback);
                         }
@@ -139,66 +141,69 @@ var Wav = (function() {
     };
 
     $this.clone = function() {
+        var _ = this._;
         var newOne;
         newOne = timbre("wav");
-        newOne._src        = this._src;
-        newOne._loop       = this._loop;
-        newOne._loaded_src = this._loaded_src;
-        newOne._buffer     = this._buffer;
-        newOne._samplerate = this._samplerate;
-        newOne._duration   = this._duration;
-        newOne._phaseStep  = this._phaseStep;
-        newOne._phase = 0;
-        newOne._mul   = this._mul;
-        newOne._add   = this._add;
+        newOne._.src        = _.src;
+        newOne._.loop       = _.loop;
+        newOne._.loaded_src = _.loaded_src;
+        newOne._.buffer     = _.buffer;
+        newOne._.samplerate = _.samplerate;
+        newOne._.duration   = _.duration;
+        newOne._.phaseStep  = _.phaseStep;
+        newOne._.phase = 0;
+        newOne._.mul   = _.mul;
+        newOne._.add   = _.add;
         return newOne;
     };
     
     $this.slice = function(begin, end) {
+        var _ = this._;
         var newOne, tmp;
         if (typeof begin === "number") {
-            begin = (begin / 1000) * this._samplerate;
+            begin = (begin / 1000) * _.samplerate;
         } else begin = 0;
         if (typeof end   === "number") {
-            end   = (end   / 1000) * this._samplerate;
-        } else end = this._buffer.length;
+            end   = (end   / 1000) * _.samplerate;
+        } else end = _.buffer.length;
         if (begin > end) {
             tmp   = begin;
             begin = end;
             end   = tmp;
         }
         newOne = timbre("wav");
-        newOne._src        = this._src;
-        newOne._loop       = this._loop;
-        newOne._loaded_src = this._loaded_src;
-        newOne._buffer     = this._buffer.subarray(begin, end);
-        newOne._samplerate = this._samplerate;
-        newOne._duration   = (end - begin / this._samplerate) * 1000;
-        newOne._phaseStep  = this._phaseStep;
-        newOne._phase = 0;
-        newOne._mul   = this._mul;
-        newOne._add   = this._add;
+        newOne._.src        = _.src;
+        newOne._.loop       = _.loop;
+        newOne._.loaded_src = _.loaded_src;
+        newOne._.buffer     = _.buffer.subarray(begin, end);
+        newOne._.samplerate = _.samplerate;
+        newOne._.duration   = (end - begin / _.samplerate) * 1000;
+        newOne._.phaseStep  = _.phaseStep;
+        newOne._.phase = 0;
+        newOne._.mul   = _.mul;
+        newOne._.add   = _.add;
         return newOne;
     };
     
     $this.bang = function() {
-        this._phase = 0;
+        this._.phase = 0;
         timbre.fn.do_event(this, "bang");
         return this;
     };
     
     $this.seq = function(seq_id) {
+        var _ = this._;
         var cell, mul, add;
         var buffer, phase, phaseStep;
         var index, delta, x0, x1;
         var i, imax;
         cell = this.cell;
         if (seq_id !== this.seq_id) {
-            mul    = this._mul;
-            add    = this._add;
-            buffer = this._buffer;
-            phase  = this._phase;
-            phaseStep = this._phaseStep;
+            mul    = _.mul;
+            add    = _.add;
+            buffer = _.buffer;
+            phase  = _.phase;
+            phaseStep = _.phaseStep;
             for (i = 0, imax = cell.length; i < imax; ++i) {
                 index = phase|0;
                 delta = phase - index;
@@ -209,7 +214,7 @@ var Wav = (function() {
                 
                 phase += phaseStep;
                 if (buffer.length <= phase) {
-                    if (this._loop) {
+                    if (_.loop) {
                         phase = 0;
                         timbre.fn.do_event(this, "looped");
                     } else {
@@ -217,7 +222,7 @@ var Wav = (function() {
                     }
                 }
             }
-            this._phase = phase;
+            _.phase = phase;
             this.seq_id = seq_id;
         }
         return cell;
