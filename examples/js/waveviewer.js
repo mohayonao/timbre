@@ -12,13 +12,12 @@ var WaveViewer = (function() {
             setTimeout(f, 1000/60)
         };
     
-    var initialize = function(target, fps, canvas, width, height) {
+    var initialize = function(target, interval, canvas, width, height) {
         if (typeof canvas === "string") {
             canvas = document.getElementById(canvas);
         }
-        this.target = target;
-        this.fps    = fps;
-        this.wave = null;
+        this.target   = target;
+        this.interval = interval;
         this.isUpdated = false;
         this.isPlaying = false;
         this.context = canvas.getContext("2d");
@@ -31,27 +30,27 @@ var WaveViewer = (function() {
     
     $this.start = function() {
         var self = this;
-        var target, fps, context, width, height, half_h;
+        var target, interval, context, width, height, half_h;
         var prev, stop_delay = 10;
         
-        target  = this.target;
-        fps     = this.fps;
-        context = this.context;
-        width   = this.width;
-        height  = this.height;
-        half_h  = height >> 1;
+        target   = this.target;
+        interval = this.interval;
+        context  = this.context;
+        width    = this.width;
+        height   = this.height;
+        half_h   = height >> 1;
         prev = 0;
         
         var animate = function() {
             var now, wave, dx, i, imax;
             now = +new Date();
-            if (now - prev >= fps) {
+            if (now - prev >= interval) {
                 prev = now;
                 
                 context.fillRect(0, 0, width, height);
 
                 if (self.isPlaying) {
-                    wave = target.cell;
+                    wave = target;
                     dx   = width / wave.length;
                     context.beginPath();
                     context.moveTo(0, half_h - (half_h * wave[0]));
@@ -60,7 +59,7 @@ var WaveViewer = (function() {
                     }
                     context.stroke();
                 } else {
-                    fps = 10;
+                    interval = 10;
                     --stop_delay;
                 }
             }

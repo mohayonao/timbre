@@ -1,5 +1,3 @@
-var dist, delay;
-
 ex1 = (function() {
     "use strict";
     
@@ -21,7 +19,7 @@ ex1 = (function() {
         metronome.interval = (this.duration / 3) / 16;
         ex1.ready += 1;
     });
-    dist = T("efx.dist", 0, -18, 2400, amen).set("mul", 0.5);
+    var dist = T("efx.dist", 0, -18, 2400, amen).set("mul", 0.5);
     dist.dac = ex1;
     
     var beat = 8, beattimer = (function() {
@@ -29,10 +27,10 @@ ex1 = (function() {
         return T("interval", function(count) {
             if (cnt === 0) {
                 if (stay === 0) {
-                    tim = ((Math.random() * beat)|0) * (amen.duration / beat);
-                    amen.currentTime = tim;
-                    cnt  = (((Math.random() * beat) / 24)|0) * 2;
+                    tim  = ((Math.random() * beat)|0) * (amen.duration / beat);
+                    cnt  = (((Math.random() * beat) / 16)|0) * 2;
                     stay = (((Math.random() * beat) /  6)|0);
+                    amen.currentTime = tim;                    
                 } else {
                     stay -= 1;
                 }
@@ -88,7 +86,7 @@ ex1 = (function() {
                    T("*", T("+", T("osc", leadtone, 0, 0, 0.20),
                                  T("osc", leadtone, 0, 0, 0.15)),
                           T("adsr", 20, 1500, 0.4)));
-    delay = T("efx.delay", 125, 0.8, lead).set("mul", 0.5);
+    var delay = T("efx.delay", 125, 0.8, lead).set("mul", 0.5);
     delay.dac = ex1;
     
     var melo = 16, melotimer = (function() {
@@ -150,6 +148,12 @@ ex1 = (function() {
         },
         get_melo: function() {
             return melo;
+        },
+        get_dist: function() {
+            return dist;
+        },
+        get_delay: function() {
+            return delay;
         },
     };
     
