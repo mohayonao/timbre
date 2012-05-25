@@ -26,6 +26,7 @@ UTILS_SOURCES = [
 WINDOW_SOURCES = [
     "window/mutekitimer"
     "window/player"
+    "window/utils"
     "window/exports"
 ]
 
