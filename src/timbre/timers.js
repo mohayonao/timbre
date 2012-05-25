@@ -46,7 +46,6 @@ var Interval = (function() {
         _.next_count  = 0;
     };
     timbre.fn.set_kr_only($this);
-    $this._raw_args = true;
     
     $this.clone = function(deep) {
         var newone, _ = this._;
@@ -144,8 +143,7 @@ var Timeout = (function() {
         _.samples = 0;
     };
     timbre.fn.set_kr_only($this);
-    $this._raw_args = true;
-
+    
     $this.clone = function(deep) {
         var newone, _ = this._;
         newone = timbre("timeout", _.timeout);
@@ -254,7 +252,6 @@ var Schedule = (function() {
         delete _.init;
     };
     timbre.fn.set_kr_only($this);
-    $this._raw_args = true;
     
     $this.clone = function(deep) {
         var newone, _ = this._;

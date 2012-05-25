@@ -300,7 +300,7 @@ timbre.fn = (function(timbre) {
         if (!instance.args) {
             instance.args = [];
         }
-        timbre.fn.init_set.call(instance.args, instance._raw_args);
+        timbre.fn.init_set.call(instance.args);
         
         if (!instance.hasOwnProperty("_")) instance._ = {};
         
@@ -533,16 +533,6 @@ timbre.fn = (function(timbre) {
             }
             return this;
         };
-        var append_raw = function() {
-            var args, i;
-            args = arguments;
-            for (i = args.length; i--; ) {
-                if (this.indexOf(args[i]) === -1) {
-                    this.push(args[i]);
-                }
-            }
-            return this;
-        };
         var remove = function() {
             var i, j;
             for (i = arguments.length; i--; ) {
@@ -556,8 +546,8 @@ timbre.fn = (function(timbre) {
             this.append.apply(this, list);
             return this;
         };
-        return function(raw_args) {
-            this.append = (raw_args) ? append_raw : append;
+        return function() {
+            this.append = append;
             this.remove = remove;
             this.update = update;
             return this;
