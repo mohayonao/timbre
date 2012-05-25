@@ -120,6 +120,7 @@ var ADSREnvelope = (function() {
         _.samples = 0;
         _.samplesMax = (timbre.samplerate * (_.r / 1000))|0;
         timbre.fn.do_event(this, "R");
+        timbre.fn.do_event(this, "off");
         return this;
     };
     
