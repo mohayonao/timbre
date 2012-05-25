@@ -162,3 +162,7 @@ var EfxDelay = (function() {
 timbre.fn.register("efx.delay", EfxDelay);
 
 // __END__
+
+describe("efx.delay", function() {
+    // object_test(EfxDelay, "efx.delay");
+});

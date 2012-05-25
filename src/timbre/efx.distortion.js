@@ -226,3 +226,7 @@ var EfxDistortion = (function() {
 timbre.fn.register("efx.dist", EfxDistortion);
 
 // __END__
+
+describe("efx.dist", function() {
+    object_test(EfxDistortion, "efx.dist");
+});

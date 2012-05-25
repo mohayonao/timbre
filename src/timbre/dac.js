@@ -122,6 +122,5 @@ timbre.fn.register("pandac", Dac, function(_args) {
 // __END__
 
 describe("dac", function() {
-    var instance = timbre("dac", 10, false, null);
-    object_test(Dac, instance);
+    object_test(Dac, "dac");
 });

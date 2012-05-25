@@ -479,32 +479,11 @@ timbre.fn.register("func", FuncOscillator);
 // __END__
 
 describe("osc", function() {
-    var instance = timbre("osc", "sin", 0, 0.5, 2, 100);
-    object_test(Oscillator, instance);
-    describe("#wavelet", function() {
-        it("should be an instance of Float32Array(1024)", function() {
-            instance.wavelet.should.be.an.instanceOf(Float32Array);
-            instance.wavelet.length.should.equal(1024);
-        });
-    });
-    describe("#freq", function() {
-        it("should be an instance of Object", function() {
-            object_test(Object.getPrototypeOf(timbre(0))._.klass, instance.freq);
-        });
-    });
-    describe("#phase", function() {
-        it("should equal 0.5", function() {
-            instance.phase.should.equal(0.5);
-        });
-    });
-    describe("#mul", function() {
-        it("should equal 2", function() {
-            instance.mul.should.equal(2);
-        });
-    });
-    describe("#add", function() {
-        it("should equal 100", function() {
-            instance.add.should.equal(100);
-        });
-    });
+    object_test(Oscillator, "osc");
+});
+describe("noise", function() {
+    object_test(WhiteNoise, "noise");
+});
+describe("func", function() {
+    object_test(FuncOscillator, "func");
 });

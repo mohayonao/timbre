@@ -230,3 +230,6 @@ timbre.fn.register("wav", Wav);
 
 // __END__
 
+describe("wav", function() {
+    object_test(Wav, "wav");
+});

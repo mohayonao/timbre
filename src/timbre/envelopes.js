@@ -616,10 +616,11 @@ timbre.fn.register("perc", Percussive);
 // __END__
 
 describe("adsr", function() {
-    var instance = timbre("adsr", 1000, 1000, 0.2, 200);
-    object_test(ADSREnvelope, instance);
+    object_test(ADSREnvelope, "adsr");
+});
+describe("tween", function() {
+    object_test(Tween, "tween");
 });
 describe("perc", function() {
-    var instance = timbre("perc", 1000);
-    object_test(Percussive, instance);
+    object_test(Percussive, "perc");
 });

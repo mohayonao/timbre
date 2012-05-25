@@ -344,6 +344,7 @@ Filter.types.highboost = {
         _.b2 =      ((A + 1) - (A - 1) * cos - alpsA2) * A * ia0;
     }
 };
+timbre.fn.register("filter", Filter);
 timbre.fn.register("LPF", Filter, function(_args) {
     return new Filter(["LPF"].concat(_args));
 });
@@ -583,7 +584,9 @@ timbre.fn.register("rBRF", ResonantFilter, function(_args) {
 
 // __END__
 
-// describe("filter", function() {
-//     var instance = timbre("lpf");
-//     object_test(LowPassFilter, fps);
-// });
+describe("filter", function() {
+    object_test(Filter, "filter");
+});
+describe("rfilter", function() {
+    object_test(ResonantFilter, "rfilter");
+});

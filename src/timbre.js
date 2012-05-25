@@ -851,36 +851,33 @@ timbre.fn.register("null", NullWrapper);
 global.T = global.timbre = timbre;
 module.exports = timbre;
 
-global.NumberWrapper    = NumberWrapper;
-global.BooleanWrapper   = BooleanWrapper;
-global.FunctionWrapper  = FunctionWrapper;
-global.ArrayWrapper     = ArrayWrapper;
-global.ObjectWrapper    = ObjectWrapper;
-global.UndefinedWrapper = UndefinedWrapper;
-global.NullWrapper      = NullWrapper;
-
 var should = require("should");
-global.object_test = function(klass, instance) {
-    describe("timbre(...)", function() {
+global.object_test = function(klass) {
+    var klassname = klass.prototype._.klassname;
+    var args = Array.prototype.slice.call(arguments, 1);
+    describe("timbre(" + klassname + ")", function() {
         it("should return new instance", function() {
+            var instance = timbre.apply(null, args);
             should.exist(instance);
             instance.should.be.an.instanceOf(klass);
         });
     });
     describe("#args", function() {
         it("should be an instance of Array", function() {
+            var instance = timbre.apply(null, args);
             instance.args.should.be.an.instanceOf(Array);
         });
     });
     describe("#cell", function() {
         it("should be an Float32Array(timbre.cellsize)", function() {
+            var instance = timbre.apply(null, args);
             instance.cell.should.be.an.instanceOf(Float32Array);
             instance.cell.should.have.length(timbre.cellsize);
         });
     });
     describe("#seq()", function() {
         it("should return Float32Array(timbre.cellsize)", function() {
-            var _;
+            var instance = timbre.apply(null, args), _;
             instance.seq.should.be.an.instanceOf(Function);
             _ = instance.seq(0);
             _.should.be.an.instanceOf(Float32Array);
@@ -889,11 +886,12 @@ global.object_test = function(klass, instance) {
     });
     describe("#on()", function() {
         it("should return self", function() {
+            var instance = timbre.apply(null, args);
             instance.on.should.be.an.instanceOf(Function);
             instance.on().should.equal(instance);
         });
         it("should call 'on' event", function() {
-            var _ = false;
+            var instance = timbre.apply(null, args), _ = false;
             instance.addEventListener("on", function() { _ = true; });
             instance.on();
             _.should.equal(true);
@@ -901,85 +899,103 @@ global.object_test = function(klass, instance) {
     });
     describe("#off()", function() {
         it("should return self", function() {
+            var instance = timbre.apply(null, args);
             instance.off.should.be.an.instanceOf(Function);
             instance.off().should.equal(instance);
         });
         it("should call 'off' event", function() {
-            var _ = false;
+            var instance = timbre.apply(null, args), _ = false;
             instance.addEventListener("off", function() { _ = true; });
             instance.off();
             _.should.equal(true);
         });
     });
-    describe("#set()", function() {
+    describe("#play()", function() {
         it("should return self", function() {
-            instance.set.should.be.an.instanceOf(Function);
-            instance.set().should.equal(instance);
+            var instance = timbre.apply(null, args);
+            instance.play.should.be.an.instanceOf(Function);
+            instance.play().should.equal(instance);
+        });
+        it("should call 'off' event", function() {
+            var instance = timbre.apply(null, args), _ = false;
+            instance.addEventListener("play", function() { _ = true; });
+            instance.play();
+            _.should.equal(true);
         });
     });
-    describe("#get()", function() {
+    describe("#pause()", function() {
         it("should return self", function() {
-            instance.get.should.be.an.instanceOf(Function);
-            should.equal(instance.get(), undefined);
+            var instance = timbre.apply(null, args);
+            instance.pause.should.be.an.instanceOf(Function);
+            instance.pause().should.equal(instance);
+        });
+        it("should call 'pause' event", function() {
+            var instance = timbre.apply(null, args), _ = false;
+            instance.addEventListener("pause", function() { _ = true; });
+            instance.play().pause();
+            _.should.equal(true);
         });
     });
     describe("#bang()", function() {
         it("should return self", function() {
+            var instance = timbre.apply(null, args);
             instance.bang.should.be.an.instanceOf(Function);
             instance.bang().should.equal(instance);
         });
         it("should call 'bang' event", function() {
-            var _ = false;
-            if (instance.isOff) instance.on();
+            var instance = timbre.apply(null, args), _ = false;
             instance.addEventListener("bang", function() { _ = true; });
-            instance.bang();
+            instance.on().bang();
             _.should.equal(true);
         });
     });
     describe("#clone()", function() {
         it("should return an instance of a same class", function() {
-            var _;
+            var instance = timbre.apply(null, args), _;
             instance.clone.should.be.an.instanceOf(Function);
             _ = instance.clone();
-            Object.getPrototypeOf(_)._.klass.should.equal(
-                Object.getPrototypeOf(instance)._.klass);
+            instance.should.be.an.instanceOf(klass);
         });
     });
 };
 
 if (module.parent && !module.parent.parent) {
     describe("NumberWrapper", function() {
-        var instance = timbre(100);
-        object_test(NumberWrapper, instance);
+        object_test(NumberWrapper, 100);
         describe("#value", function() {
             it("should equal 100", function() {
+                var instance = timbre(100);
                 instance.value.should.equal(100);
             });
 
             it("should changed", function() {
+                var instance = timbre(100);
                 instance.value = 10;
                 instance.value.should.equal(10);
                 instance.cell[0].should.equal(10);
             });
             it("should not changed with no number", function() {
+                var instance = timbre(100);
                 instance.value = "1";
-                instance.value.should.equal(10);
+                instance.value.should.equal(100);
             });
         });
         describe("#clone()", function() {
             it("should have same values", function() {
+                var instance = timbre(100);
                 timbre(instance).value.should.equal(instance.value);
             });
         });
     });
     describe("BooleanWrapper", function() {
-        var instance = timbre(true);
-        object_test(BooleanWrapper, instance);
+        object_test(BooleanWrapper, true);
         describe("#value", function() {
             it("should equal true", function() {
+                var instance = timbre(true);
                 instance.value.should.equal(true);
             });
             it("should changed", function() {
+                var instance = timbre(true);
                 instance.value = false;
                 instance.value.should.equal(false);
                 instance.cell[0].should.equal(0);
@@ -995,26 +1011,27 @@ if (module.parent && !module.parent.parent) {
         });
         describe("#clone()", function() {
             it("should have same values", function() {
+                var instance = timbre(true);
                 timbre(instance).value.should.equal(instance.value);
             });
         });
     });
     describe("FunctionWrapper", function() {
-        var y = 0;
-        var instance = timbre(function(x) { y = x;}, [100] );
-        object_test(FunctionWrapper, instance);
+        var y, func = function(x) { y = x * 2; };
+        object_test(FunctionWrapper, func);
         describe("#bang()", function() {
-            instance.bang();
-            y.should.equal(100);
-            instance.args = [ 200 ];
+            var instance = timbre(func, [ 100 ]);
             instance.bang();
             y.should.equal(200);
+            instance.args = [ 50 ];
+            instance.bang();
+            y.should.equal(100);
         });
     });
     describe("NullWrapper", function() {
-        object_test(NullWrapper, timbre(null));
+        object_test(NullWrapper, null);
     });
     describe("UndefinedWrapper", function() {
-        object_test(UndefinedWrapper, timbre(undefined));
+        object_test(UndefinedWrapper, undefined);
     });
 }

@@ -68,7 +68,13 @@ var Interval = (function() {
         return this;
     };
     
-    $this.play = $this.pause = function() {
+    $this.play = function() {
+        timbre.fn.do_event(this, "play");
+        return this;
+    };
+    
+    $this.pause = function() {
+        timbre.fn.do_event(this, "pause");
         return this;
     };
     
@@ -165,7 +171,13 @@ var Timeout = (function() {
         return this;
     };
     
-    $this.play = $this.pause = function() {
+    $this.play = function() {
+        timbre.fn.do_event(this, "play");
+        return this;
+    };
+    
+    $this.pause = function() {
+        timbre.fn.do_event(this, "pause");
         return this;
     };
     
@@ -411,10 +423,11 @@ timbre.fn.register("schedule", Schedule);
 // __END__
 
 describe("interval", function() {
-    var instance = timbre("interval", 100);
-    object_test(Interval, instance);
+    object_test(Interval, "interval");
 });
 describe("timeout", function() {
-    var instance = timbre("timeout", 100);
-    object_test(Timeout, instance);
+    object_test(Timeout, "timeout");
+});
+describe("schedule", function() {
+    object_test(Schedule, "schedule");
 });
