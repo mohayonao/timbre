@@ -67,7 +67,7 @@ var EfxDelay = (function() {
         this.args = timbre.fn.valist.call(this, _args.slice(i));
     };
     timbre.fn.set_ar_only($this);
-
+    
     $this.clone = function(deep) {
         var newone, _ = this._;
         var args, i, imax;
@@ -164,5 +164,5 @@ timbre.fn.register("efx.delay", EfxDelay);
 // __END__
 
 describe("efx.delay", function() {
-    // object_test(EfxDelay, "efx.delay");
+    object_test(EfxDelay, "efx.delay", 0);
 });

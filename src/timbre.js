@@ -855,6 +855,9 @@ var should = require("should");
 global.object_test = function(klass) {
     var klassname = klass.prototype._.klassname;
     var args = Array.prototype.slice.call(arguments, 1);
+    timbre.samplerate = 1000;
+    timbre.streamsize =   32;
+    timbre.cellsize   =    8;
     describe("timbre(" + klassname + ")", function() {
         it("should return new instance", function() {
             var instance = timbre.apply(null, args);
