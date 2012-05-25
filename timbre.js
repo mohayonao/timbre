@@ -1,6 +1,6 @@
 /**
  * timbre 0.0.0 / JavaScript Library for Objective Sound Programming
- * build: Fri May 25 2012 17:56:36 GMT+0900 (JST)
+ * build: Fri May 25 2012 20:55:10 GMT+0900 (JST)
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,7 +10,7 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.0.0";
-    timbre.BUILD      = "Fri May 25 2012 17:56:36 GMT+0900 (JST)";
+    timbre.BUILD      = "Fri May 25 2012 20:55:10 GMT+0900 (JST)";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.workerpath = "";
@@ -303,8 +303,7 @@ var timbre = (function(context, timbre) {
                 
                 if (typeof instance._.ar !== "boolean") {
                     proto = Object.getPrototypeOf(instance);
-                    console.log(proto);
-                    if (proto && proto._ === "object") {
+                    if (proto && typeof proto._ === "object") {
                         instance._.ar = !!proto._.ar;
                     } else {
                         instance._.ar = false;
