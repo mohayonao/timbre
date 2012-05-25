@@ -301,7 +301,7 @@ timbre.fn = (function(timbre) {
             
             if (typeof instance._.ar !== "boolean") {
                 proto = Object.getPrototypeOf(instance);
-                if (proto && proto._ === "object") {
+                if (proto && typeof proto._ === "object") {
                     instance._.ar = !!proto._.ar;
                 } else {
                     instance._.ar = false;
