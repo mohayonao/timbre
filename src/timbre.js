@@ -24,6 +24,7 @@ timbre.sys       = null;
 timbre.global    = {};
 timbre._ = { ev:{}, none: new Float32Array(timbre.cellsize) };
 
+var TimbreObject = function() {};
 
 var SoundSystem = (function() {
     var SoundSystem = function() {
@@ -268,7 +269,18 @@ timbre.fn = (function(timbre) {
             instance = new FunctionWrapper(args);
             break;
         case "object":
-            instance = key;
+            if (typeof key.__proto__._ === "Object") {
+                if (key.__proto__._._ instanceof TimbreObject) {
+                    instance = key;
+                }
+            }
+            if (instance === undefined) {
+                if (key instanceof Array || key.buffer instanceof ArrayBuffer) {
+                    instance = new ArrayWrapper([key]);
+                } else {
+                    instance = new ObjectWrapper([key]);
+                }
+            }
             break;
         }
         
@@ -348,7 +360,7 @@ timbre.fn = (function(timbre) {
         return this;
     };
     defaults.clone = function(deep) {
-        return new this._klass();
+        return timbre(this._.klassname);
     };
     defaults.append = function() {
         this.args.append.apply(this.args, arguments);
@@ -452,6 +464,7 @@ timbre.fn = (function(timbre) {
         
         if (typeof klass === "function") {
             p = klass.prototype;
+            
             for (name in defaults) {
                 if (typeof defaults[name] === "function") {
                     if (!p[name]) p[name] = defaults[name];
@@ -470,9 +483,9 @@ timbre.fn = (function(timbre) {
             
             if (typeof key === "string") {            
                 if (!func) {
-                    p._klass = klass;
-                    p._name  = key;
-                    klasses[key] = klass;
+                    p._._ = new TimbreObject();
+                    p._.klassname = key;
+                    klasses[key]  = klass;
                 } else {
                     klasses[key] = func;
                 }
@@ -740,6 +753,104 @@ var FunctionWrapper = (function() {
 }());
 timbre.fn.register("function", FunctionWrapper);
 
+var ArrayWrapper = (function() {
+    var ArrayWrapper = function() {
+        initialize.apply(this, arguments);
+    }, $this = ArrayWrapper.prototype;
+
+    Object.defineProperty($this, "value", {
+        set: function(value) {
+            if (typeof value === "object" && 
+                (value instanceof Array ||
+                 value.buffer instanceof ArrayBuffer)) {
+                this._.value = value;
+            }
+        },
+        get: function() { return this._.value; }
+    });
+    
+    var initialize = function(_args) {
+        var value, i, _;
+        
+        this._ = _ = {};
+        
+        i = 0;
+        if (typeof _args[i] === "object") {
+            if (_args[i] instanceof Array ||
+                _args[i].buffer instanceof ArrayBuffer) {
+                value = _args[i++];
+            }
+        }
+        _.value = (value !== undefined) ? value : new Float32Array(0);
+        if (typeof _args[i] === "number") {
+            _.mul = _args[i++];    
+        }
+        if (typeof _args[i] === "number") {
+            _.add = _args[i++];    
+        }
+        _.index = 0;
+    };
+    
+    $this.clone = function(deep) {
+        return timbre("array", this._.value, this._.mul, this._.add);
+    };
+    
+    $this.bang = function() {
+        this._.index = 0;
+        timbre.fn.do_event(this, "bang");
+        return this;
+    };
+
+    $this.seq = function(seq_id) {
+        var _ = this._;
+        var cell, value, i;
+        cell = this.cell;
+        if (this.seq_id !== seq_id) {
+            this.seq_id = seq_id;
+            value = _.value[_.index] * _.mul + _.add;
+            for (i = cell.length; i--; ) {
+                cell[i] = value;
+            }
+            if ((++_.index) === _.value.length) _.index = 0;
+        }
+        return cell;
+    };
+    
+    return ArrayWrapper;
+}());
+timbre.fn.register("array", ArrayWrapper);
+
+var ObjectWrapper = (function() {
+    var ObjectWrapper = function() {
+        initialize.apply(this, arguments);
+    }, $this = ObjectWrapper.prototype;
+    
+    Object.defineProperty($this, "value", {
+        set: function(value) {
+            if (typeof value === "object") {
+                this._.value = value;
+            }
+        },
+        get: function() { return this._.value; }
+    });
+    
+    var initialize = function(_args) {
+        this._ = {};
+        if (typeof _args[0] === "object") {
+            this._.value = _args[0];
+        } else{
+            this._.value = {};
+        }
+    };
+    
+    $this.clone = function(deep) {
+        return timbre("object", this._.value);
+    };
+    
+    return ObjectWrapper;
+}());
+timbre.fn.register("object", ObjectWrapper);
+
 var UndefinedWrapper = function() {};
 timbre.fn.register("undefined", UndefinedWrapper);
 
@@ -838,7 +949,7 @@ global.object_test = function(klass, instance) {
             var _;
             instance.clone.should.be.an.instanceOf(Function);
             _ = instance.clone();
-            _.should.be.an.instanceOf(instance._klass);
+            _.should.be.an.instanceOf(instance._.klass);
         });
     });
 };
