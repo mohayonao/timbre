@@ -15,7 +15,7 @@ worker.actions["wav.decode"] = function(data) {
             timbre.utils.wav.decode(binary, function(res) {
                 var buf, i, array;
                 if (res.err) {
-                    worker.postMessage({result:undefined, err:err});
+                    worker.postMessage({result:undefined, err:res.err});
                 } else {
                     buf = res.buffer;
                     worker.postMessage({result:"metadata", samplerate:res.samplerate,

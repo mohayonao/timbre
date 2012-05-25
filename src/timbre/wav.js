@@ -121,15 +121,24 @@ var Wav = (function() {
             } else {
                 timbre.utils.binary.load(_.src, function(binary) {
                     timbre.utils.wav.decode(binary, function(res) {
-                        if (res) {
+                        if (res.err) {
+                            _.loaded_src = undefined;
+                            _.buffer     = new Int16Array(0);
+                            _.samplerate = 0;
+                            _.duration   = 0;
+                            _.phaseStep  = 0;
+                            _.phase = 0;
+                            send.call(self, { samplerate:_.samplerate,
+                                              buffer:_.buffer }, callback);
+                        } else {
                             _.loaded_src = _.src;
                             _.buffer     = res.buffer;
                             _.samplerate = res.samplerate;
                             _.duration   = (res.buffer.length / res.samplerate) * 1000;
                             _.phaseStep  = res.samplerate / timbre.samplerate;
                             _.phase = 0;
-                            send.call(self, { samplerate:res.samplerate,
-                                              buffer:res.buffer }, callback);
+                            send.call(self, { samplerate:_.samplerate,
+                                              buffer:_.buffer }, callback);
                         }
                     });
                 });
