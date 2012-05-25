@@ -248,7 +248,7 @@ timbre.fn = (function(timbre) {
     };
     
     fn.init = function() {
-        var args, key, klass, instance, isCloned, proto;
+        var args, key, klass, instance, isCopied, proto;
         args = Array.prototype.slice.call(arguments);
         key  = args[0];
         
@@ -272,8 +272,8 @@ timbre.fn = (function(timbre) {
             if (key == null) {
                 instance = new NullWrapper();
             }  else if (Object.getPrototypeOf(key)._ instanceof TimbreObject) {
-                instance = key.clone();
-                isCloned = true;
+                instance = key;
+                isCopied = true;
             }
             if (instance === undefined) {
                 if (key instanceof Array || key.buffer instanceof ArrayBuffer) {
@@ -287,7 +287,7 @@ timbre.fn = (function(timbre) {
         if (instance === undefined) instance = new UndefinedWrapper();
         
         // init
-        if (!isCloned) {
+        if (!isCopied) {
             instance.seq_id = -1;
             if (!instance.cell) {
                 instance.cell = new Float32Array(timbre.cellsize);
