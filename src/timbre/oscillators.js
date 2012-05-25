@@ -497,7 +497,7 @@ describe("osc", function() {
     });
     describe("#freq", function() {
         it("should be an instance of Object", function() {
-            object_test(timbre(0)._klass, instance.freq);
+            object_test(Object.getPrototypeOf(timbre(0))._.klass, instance.freq);
         });
     });
     describe("#phase", function() {

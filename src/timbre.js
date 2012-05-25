@@ -930,6 +930,7 @@ global.object_test = function(klass, instance) {
         });
         it("should call 'bang' event", function() {
             var _ = false;
+            if (instance.isOff) instance.on();
             instance.addEventListener("bang", function() { _ = true; });
             instance.bang();
             _.should.equal(true);
