@@ -248,7 +248,7 @@ timbre.fn = (function(timbre) {
     };
     
     fn.init = function() {
-        var args, key, klass, instance, isCloned;
+        var args, key, klass, instance, isCloned, proto;
         args = Array.prototype.slice.call(arguments);
         key  = args[0];
         
@@ -269,7 +269,9 @@ timbre.fn = (function(timbre) {
             instance = new FunctionWrapper(args);
             break;
         case "object":
-            if (key.__proto__._ instanceof TimbreObject) {
+            if (key == null) {
+                instance = new NullWrapper();
+            }  else if (Object.getPrototypeOf(key)._ instanceof TimbreObject) {
                 instance = key.clone();
                 isCloned = true;
             }
@@ -282,14 +284,7 @@ timbre.fn = (function(timbre) {
             }
             break;
         }
-        
-        if (instance === undefined) {
-            if (key === null) {
-                instance = new NullWrapper();
-            } else {
-                instance = new UndefinedWrapper();
-            }
-        }
+        if (instance === undefined) instance = new UndefinedWrapper();
         
         // init
         if (! isCloned) {
@@ -305,8 +300,9 @@ timbre.fn = (function(timbre) {
             if (typeof !instance._.ev !== "object") instance._.ev = {};
             
             if (typeof instance._.ar !== "boolean") {
-                if (typeof instance.__proto__._ === "object") {
-                    instance._.ar = !!instance.__proto__._.ar;
+                proto = Object.getPrototypeOf(instance);
+                if (proto && proto._ === "object") {
+                    instance._.ar = !!proto._.ar;
                 } else {
                     instance._.ar = false;
                 }
@@ -523,9 +519,9 @@ timbre.fn = (function(timbre) {
     
     fn.init_set = (function() {
         var append = function() {
-            var args, i;
+            var args, i, imax;
             args = fn.valist(arguments);
-            for (i = args.length; i--; ) {
+            for (i = 0, imax = args.length; i < imax; ++i) {
                 if (this.indexOf(args[i]) === -1) {
                     this.push(args[i]);
                 }
@@ -554,7 +550,7 @@ timbre.fn = (function(timbre) {
     }());
     
     fn.do_event = function(obj, name, args) {
-        var func, list, i;
+        var func, list, i, imax;
         func = obj["on" + name];
         if (typeof func === "function") {
             func.apply(obj, args);
@@ -562,7 +558,7 @@ timbre.fn = (function(timbre) {
 
         list = obj._.ev[name];
         if (list !== undefined) {
-            for (i = list.length; i--; ) {
+            for (i = 0, imax = list.length; i < imax; ++i) {
                 func = list[i];
                 func.apply(obj, args);
                 if (func.rm) obj.removeEventListener(name, func);
@@ -797,6 +793,7 @@ var ArrayWrapper = (function() {
         if (this.seq_id !== seq_id) {
             this.seq_id = seq_id;
             value = _.value[_.index] * _.mul + _.add;
+            if (isNaN(value)) value = 0;
             for (i = cell.length; i--; ) {
                 cell[i] = value;
             }
@@ -854,6 +851,8 @@ module.exports = timbre;
 global.NumberWrapper    = NumberWrapper;
 global.BooleanWrapper   = BooleanWrapper;
 global.FunctionWrapper  = FunctionWrapper;
+global.ArrayWrapper     = ArrayWrapper;
+global.ObjectWrapper    = ObjectWrapper;
 global.UndefinedWrapper = UndefinedWrapper;
 global.NullWrapper      = NullWrapper;
 
