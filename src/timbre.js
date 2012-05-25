@@ -455,11 +455,16 @@ timbre.fn = (function(timbre) {
     };
     
     fn.register = function(key, klass, func) {
-        var name, p;
+        var name, p, _, i;
         
         if (typeof klass === "function") {
             p = klass.prototype;
-            p._ = new TimbreObject();
+            
+            _ = new TimbreObject();
+            if (typeof p._ === "object") {
+                for (i in p._) _[i] = p._[i];
+            }
+            p._ = _;
             
             for (name in defaults) {
                 if (typeof defaults[name] === "function") {
