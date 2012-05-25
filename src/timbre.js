@@ -248,7 +248,7 @@ timbre.fn = (function(timbre) {
     };
     
     fn.init = function() {
-        var args, key, klass, instance;
+        var args, key, klass, instance, isCloned;
         args = Array.prototype.slice.call(arguments);
         key  = args[0];
         
@@ -269,10 +269,9 @@ timbre.fn = (function(timbre) {
             instance = new FunctionWrapper(args);
             break;
         case "object":
-            if (typeof key.__proto__._ === "Object") {
-                if (key.__proto__._._ instanceof TimbreObject) {
-                    instance = key;
-                }
+            if (key.__proto__._ instanceof TimbreObject) {
+                instance = key.clone();
+                isCloned = true;
             }
             if (instance === undefined) {
                 if (key instanceof Array || key.buffer instanceof ArrayBuffer) {
@@ -293,37 +292,33 @@ timbre.fn = (function(timbre) {
         }
         
         // init
-        instance.seq_id = -1;
-        if (!instance.cell) {
-            instance.cell = new Float32Array(timbre.cellsize);
-        }
-        if (!instance.args) {
-            instance.args = [];
-        }
-        timbre.fn.init_set.call(instance.args);
-        
-        if (!instance.hasOwnProperty("_")) instance._ = {};
-        
-        if (typeof !instance._.ev !== "object") instance._.ev = {};
-        
-        if (typeof instance._.ar !== "boolean") {
-            if (typeof instance.__proto__._ === "object") {
-                instance._.ar = !!instance.__proto__._.ar;
-            } else {
-                instance._.ar = false;
+        if (! isCloned) {
+            instance.seq_id = -1;
+            if (!instance.cell) {
+                instance.cell = new Float32Array(timbre.cellsize);
+            }
+            if (!instance.args) instance.args = [];
+            timbre.fn.init_set.call(instance.args);
+            
+            if (!instance.hasOwnProperty("_")) instance._ = {};
+            
+            if (typeof !instance._.ev !== "object") instance._.ev = {};
+            
+            if (typeof instance._.ar !== "boolean") {
+                if (typeof instance.__proto__._ === "object") {
+                    instance._.ar = !!instance.__proto__._.ar;
+                } else {
+                    instance._.ar = false;
+                }
+            }
+            if (typeof instance._.mul !== "number") {
+                instance._.mul = 1.0;
+            }
+            if (typeof instance._.add !== "number") {
+                instance._.add = 0.0;
             }
         }
-        
-        if (typeof instance._.mul !== "number") {
-            instance._.mul = 1.0;
-        }
-        if (typeof instance._.add !== "number") {
-            instance._.add = 0.0;
-        }
-        
-        if (instance._post_init) {
-            instance._post_init();
-        }
+        if (instance._post_init) instance._post_init();
         
         return instance;
     };
@@ -464,6 +459,7 @@ timbre.fn = (function(timbre) {
         
         if (typeof klass === "function") {
             p = klass.prototype;
+            p._ = new TimbreObject();
             
             for (name in defaults) {
                 if (typeof defaults[name] === "function") {
@@ -475,7 +471,6 @@ timbre.fn = (function(timbre) {
                     Object.defineProperty(p, name, defaults.properties[name]);
                 }
             }
-            if (typeof p._ !== "object") p._ = {};
             
             if (typeof p.ar !== "function") {
                 fn.set_kr_only(p);
@@ -483,7 +478,6 @@ timbre.fn = (function(timbre) {
             
             if (typeof key === "string") {            
                 if (!func) {
-                    p._._ = new TimbreObject();
                     p._.klassname = key;
                     klasses[key]  = klass;
                 } else {
