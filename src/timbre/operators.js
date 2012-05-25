@@ -26,7 +26,7 @@ var Add = (function() {
         var _ = this._;
         var args, cell;
         var mul, add;
-        var tmp, i, j, jmax;
+        var tmp, i, imax, j, jmax;
         cell = this.cell;
         if (seq_id !== this.seq_id) {
             args = this.args;
@@ -36,7 +36,7 @@ var Add = (function() {
             for (j = jmax; j--; ) {
                 cell[j] = 0;
             }
-            for (i = args.length; i--; ) {
+            for (i = 0, imax = args.length; i < imax; ++i) {
                 tmp = args[i].seq(seq_id);
                 for (j = jmax; j--; ) {
                     cell[j] += tmp[j];
@@ -76,7 +76,7 @@ var Multiply = (function() {
         var _ = this._;
         var args, cell;
         var mul, add;
-        var tmp, i, j, jmax;
+        var tmp, i, imax, j, jmax;
         cell = this.cell;
         if (seq_id !== this.seq_id) {
             args = this.args;
@@ -86,7 +86,7 @@ var Multiply = (function() {
             for (j = jmax; j--; ) {
                 cell[j] = mul;
             }
-            for (i = args.length; i--; ) {
+            for (i = 0, imax = args.length; i < imax; ++i) {
                 tmp = args[i].seq(seq_id);
                 for (j = jmax; j--; ) {
                     cell[j] *= tmp[j];

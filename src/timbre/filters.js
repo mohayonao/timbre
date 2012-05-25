@@ -147,7 +147,7 @@ var Filter = (function() {
             for (j = jmax = cell.length; j--; ) {
                 cell[j] = 0.0;
             }
-            for (i = args.length; i--; ) {
+            for (i = 0, imax = args.length; i < imax; ++i) {
                 tmp = args[i].seq(seq_id);
                 for (j = jmax; j--; ) {
                     cell[j] += tmp[j];
@@ -529,7 +529,7 @@ var ResonantFilter = (function() {
             for (j = jmax = cell.length; j--; ) {
                 cell[j] = 0.0;
             }
-            for (i = args.length; i--; ) {
+            for (i = 0, imax = args.length; i < imax; ++i) {
                 tmp = args[i].seq(seq_id);
                 for (j = jmax; j--; ) {
                     cell[j] += tmp[j];

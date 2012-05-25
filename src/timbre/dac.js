@@ -79,7 +79,7 @@ var Dac = (function() {
         var _ = this._;
         var args, cell, L, R;
         var mul, pan, panL, panR;
-        var tmp, i, j, jmax;
+        var tmp, i, imax, j, jmax;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
@@ -99,7 +99,7 @@ var Dac = (function() {
             for (j = jmax; j--; ) {
                 cell[j] = L[j] = R[j] = 0;
             }
-            for (i = args.length; i--; ) {
+            for (i = 0, imax = args.length; i < imax; ++i) {
                 if ((tmp = args[i]) !== undefined) {
                     tmp = tmp.seq(seq_id);
                     for (j = jmax; j--; ) {
