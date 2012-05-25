@@ -52,8 +52,7 @@ var Dac = (function() {
     };
     
     $this.clone = function(deep) {
-        var newone;
-        newone = timbre("dac");
+        var newone = timbre("dac");
         newone._.pan = (deep) ? this._.pan.clone(true) : this._.pan;
         timbre.fn.copy_for_clone(this, newone, deep);
         return newone;
@@ -129,9 +128,4 @@ timbre.fn.register("pandac", Dac, function(_args) {
 describe("dac", function() {
     var instance = timbre("dac", 10, false, null);
     object_test(Dac, instance);
-    describe("#clone()", function() {
-        it("should have same values", function() {
-            timbre(instance).args.should.eql(instance.args);
-        });
-    });
 });

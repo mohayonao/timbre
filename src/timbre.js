@@ -287,7 +287,7 @@ timbre.fn = (function(timbre) {
         if (instance === undefined) instance = new UndefinedWrapper();
         
         // init
-        if (! isCloned) {
+        if (!isCloned) {
             instance.seq_id = -1;
             if (!instance.cell) {
                 instance.cell = new Float32Array(timbre.cellsize);
@@ -351,7 +351,9 @@ timbre.fn = (function(timbre) {
         return this;
     };
     defaults.clone = function(deep) {
-        return timbre(this._.klassname);
+        var newone = timbre(Object.getPrototypeOf(this)._.klassname);
+        timbre.fn.copy_for_clone(this, newone, deep);
+        return newone;
     };
     defaults.append = function() {
         this.args.append.apply(this.args, arguments);
@@ -480,6 +482,7 @@ timbre.fn = (function(timbre) {
             if (typeof key === "string") {            
                 if (!func) {
                     p._.klassname = key;
+                    p._.klass     = klass;
                     klasses[key]  = klass;
                 } else {
                     klasses[key] = func;
@@ -567,21 +570,21 @@ timbre.fn = (function(timbre) {
     };
     
     fn.copy_for_clone = function(src, dst, deep) {
-        var args, i, imax;
+        var src_args, i, imax;
         
         dst._.ar = src._.ar;
         dst._.mul = src._.mul;
         dst._.add = src._.add;
         dst._.ison = src._.ison;
         
-        args = src.args;
+        src_args = src.args;
         if (deep) {
-            for (i = 0, imax = args.length; i < imax; ++i) {
-                dst.args[i] = args[i].clone(true);
+            for (i = 0, imax = src_args.length; i < imax; ++i) {
+                dst.args[i] = src_args[i].clone(true);
             }
         } else {
-            for (i = 0, imax = args.length; i < imax; ++i) {
-                dst.args[i] = args[i];
+            for (i = 0, imax = src_args.length; i < imax; ++i) {
+                dst.args[i] = src_args[i];
             }
         }
         
@@ -603,7 +606,7 @@ var NumberWrapper = (function() {
     Object.defineProperty($this, "value", {
         set: function(value) {
             var cell, i;
-            if (typeof value === "number") {
+            if (typeof value === "Number") {
                 this._.value = value;
                 cell = this.cell;
                 for (i = cell.length; i--; ) {
@@ -937,7 +940,8 @@ global.object_test = function(klass, instance) {
             var _;
             instance.clone.should.be.an.instanceOf(Function);
             _ = instance.clone();
-            _.should.be.an.instanceOf(instance._.klass);
+            Object.getPrototypeOf(_)._.klass.should.equal(
+                Object.getPrototypeOf(instance)._.klass);
         });
     });
 };
