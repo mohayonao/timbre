@@ -13,44 +13,28 @@ var EfxDistortion = (function() {
     
     Object.defineProperty($this, "pre", {
         set: function(value) {
-            if (typeof value !== "object") {
-                this._.preGain = timbre(value);
-            } else {
-                this._.preGain = value;
-            }
+            this._.preGain = timbre(value);
         },
         get: function() { return this._.preGain; }
                         
     });
     Object.defineProperty($this, "post", {
         set: function(value) {
-            if (typeof value !== "object") {
-                this._.postGain = timbre(value);
-            } else {
-                this._.postGain = value;
-            }
+            this._.postGain = timbre(value);
         },
         get: function() { return this._.postGain; }
                         
     });
     Object.defineProperty($this, "freq", {
         set: function(value) {
-            if (typeof value !== "object") {
-                this._.lpfFreq = timbre(value);
-            } else {
-                this._.lpfFreq = value;
-            }
+            this._.lpfFreq = timbre(value);
         },
         get: function() { return this._.lpfFreq; }
                         
     });
     Object.defineProperty($this, "slope", {
         set: function(value) {
-            if (typeof value !== "object") {
-                this._.lpfSlope = timbre(value);
-            } else {
-                this._.lpfSlope = value;
-            }
+            this._.lpfSlope = timbre(value);
         },
         get: function() { return this._.lpfSlope; }
     });

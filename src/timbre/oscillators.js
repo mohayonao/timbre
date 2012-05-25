@@ -40,11 +40,7 @@ var Oscillator = (function() {
     });
     Object.defineProperty($this, "freq", {
         set: function(value) {
-            if (typeof value === "object") {
-                this._.freq = value;
-            } else {
-                this._.freq = timbre(value);
-            }
+            this._.freq = timbre(value);
         },
         get: function() { return this._.freq; }
     });
@@ -366,11 +362,7 @@ var FuncOscillator = (function() {
     });
     Object.defineProperty($this, "freq", {
         set: function(value) {
-            if (typeof value === "object") {
-                this._.freq = value;
-            } else {
-                this._.freq = timbre(value);
-            }
+            this._.freq = timbre(value);
         },
         get: function() { return this._.freq; }
     });

@@ -16,11 +16,7 @@ var Dac = (function() {
     });
     Object.defineProperty($this, "pan", {
         set: function(value) {
-            if (typeof value !== "object") {
-                this._.pan = timbre(value);
-            } else {
-                this._.pan = value;
-            }
+            this._.pan = timbre(value);
         },
         get: function() { return this._.pan; }
     });

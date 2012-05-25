@@ -25,31 +25,19 @@ var Filter = (function() {
     });
     Object.defineProperty($this, "freq", {
         set: function(value) {
-            if (typeof value !== "object") {
-                this._.freq = timbre(value);
-            } else {
-                this._.freq = value;
-            }
+            this._.freq = timbre(value);
         },
         get: function() { return this._.freq; }
     });
     Object.defineProperty($this, "band", {
         set: function(value) {
-            if (typeof value !== "object") {
-                this._.band = timbre(value);
-            } else {
-                this._.band = value;
-            }
+            this._.band = timbre(value);
         },
         get: function() { return this._.band; }
     });
     Object.defineProperty($this, "gain", {
         set: function(value) {
-            if (typeof value !== "object") {
-                this._.gain = timbre(value);
-            } else {
-                this._.gain = value;
-            }
+            this._.gain = timbre(value);
         },
         get: function() { return this._.gain; }
     });
@@ -404,31 +392,19 @@ var ResonantFilter = (function() {
     
     Object.defineProperty($this, "cutoff", {
         set: function(value) {
-            if (typeof value !== "object") {
-                this._.cutoff = timbre(value);
-            } else {
-                this._.cutoff = value;
-            }
+            this._.cutoff = timbre(value);
         },
         get: function() { return this._.cutoff; }
     });
     Object.defineProperty($this, "Q", {
         set: function(value) {
-            if (typeof value !== "object") {
-                this._.Q = timbre(value);
-            } else {
-                this._.Q = value;
-            }
+            this._.Q = timbre(value);
         },
         get: function() { return this._.Q; }
     });
     Object.defineProperty($this, "depth", {
         set: function(value) {
-            if (typeof value !== "object") {
-                this._.depth = timbre(value);
-            } else {
-                this._.depth = value;
-            }
+            this._.depth = timbre(value);
         },
         get: function() { return this._.depth; }
     });
