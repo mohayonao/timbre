@@ -606,7 +606,7 @@ var NumberWrapper = (function() {
     Object.defineProperty($this, "value", {
         set: function(value) {
             var cell, i;
-            if (typeof value === "Number") {
+            if (typeof value === "number") {
                 this._.value = value;
                 cell = this.cell;
                 for (i = cell.length; i--; ) {
@@ -648,7 +648,7 @@ var BooleanWrapper = (function() {
     Object.defineProperty($this, "value", {
         set: function(value) {
             var cell, i, x;
-            this._value = !!value;
+            this._.value = !!value;
             cell = this.cell;
             x = this._.value ? 1 : 0;
             for (i = cell.length; i--; ) {
@@ -954,6 +954,7 @@ if (module.parent && !module.parent.parent) {
             it("should equal 100", function() {
                 instance.value.should.equal(100);
             });
+
             it("should changed", function() {
                 instance.value = 10;
                 instance.value.should.equal(10);
@@ -998,59 +999,15 @@ if (module.parent && !module.parent.parent) {
         });
     });
     describe("FunctionWrapper", function() {
-        var instance = timbre(function(x) { return 1.0-x; }, 0, 0.5, 2, 100);
+        var y = 0;
+        var instance = timbre(function(x) { y = x;}, [100] );
         object_test(FunctionWrapper, instance);
-        describe("#func", function() {
-            it("should be an instance of Function", function() {
-                instance.func.should.be.an.instanceOf(Function);
-            });
-        });
-        describe("#freq", function() {
-            it("should be an instance of Object", function() {
-                object_test(NumberWrapper, instance.freq);
-            });
-        });
-        describe("#phase", function() {
-            it("should equal 0.5", function() {
-                instance.phase.should.equal(0.5);
-            });
-        });
-        describe("#mul", function() {
-            it("should equal 2", function() {
-                instance.mul.should.equal(2);
-            });
-        });
-        describe("#add", function() {
-            it("should equal 100", function() {
-                instance.add.should.equal(100);
-            });
-        });
-        describe("#seq()", function() {
-            it("should return signal ((1-0.5)*2+100)", function() {
-
-                instance.phase = 0.5;
-                instance.freq  = 0;
-                instance.mul   = 2;
-                instance.add   = 100;
-                instance.on().seq(1).should.eql(timbre( (1-0.5)*2+100 ).seq(0));
-            });
-            it("should return signal not ((1-0.5)*2+100)", function() {
-                instance.phase = 0.5;
-                instance.freq  = 800;
-                instance.mul   = 2;
-                instance.add   = 100;
-                instance.on().seq(2).should.not.eql(timbre( (1-0.5)*2+100 ).seq(0));
-            });
-        });
-        describe("#clone()", function() {
-            it("should have same values", function() {
-                var _ = timbre(instance);
-                _.func.should.equal(instance.func);
-                _.freq.should.equal(instance.freq);
-                _.phase.should.equal(instance.phase);
-                _.mul.should.equal(instance.mul);
-                _.add.should.equal(instance.add);
-            });
+        describe("#bang()", function() {
+            instance.bang();
+            y.should.equal(100);
+            instance.args = [ 200 ];
+            instance.bang();
+            y.should.equal(200);
         });
     });
     describe("NullWrapper", function() {
