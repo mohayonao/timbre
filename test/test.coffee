@@ -45,7 +45,7 @@ EJS_VIEW = """
       timbre.amp = 0.5;
 
       tests.forEach(function(x) {
-          var synth, src;
+          var synth, src, pre;
           var viewer = new WaveViewer(timbre.sys.cell, 60, "waveviewer", 512, 256);
 
           timbre.addEventListener("on", function() {
@@ -58,9 +58,11 @@ EJS_VIEW = """
           synth = x.call(null);
 
           synth.dac.addEventListener("play" , function() {
+              pre.css("background", "rgba(255,224,224,0.75)");
               timbre.on();
           });
           synth.dac.addEventListener("pause", function() {
+              pre.css("background", "rgba(255,255,255,0.75)");
               if (synth_list.every(function(ex) { return ex.dac.isOff; })) timbre.off();
           });
 
@@ -71,6 +73,8 @@ EJS_VIEW = """
           src[src.length-1] = src[src.length-1].replace(/^return /, "");
           src = src.join("\\n");
 
+          pre = $("<pre>").text(src).addClass("prettyprint");
+
           $("<div>")
             .append($("<h3>").text(x.desc||""))
             .append($("<button>").text("play").on("click", function() {
@@ -79,7 +83,7 @@ EJS_VIEW = """
             .append($("<button>").text("pause").on("click", function() {
               synth.pause();
             }))
-            .append($("<pre>").text(src).addClass("prettyprint"))
+            .append(pre)
             .appendTo("#tests");
 
           synth_list.push(synth);
