@@ -10,7 +10,7 @@
         margin:5px;padding:5px;background:#ededed;
         border:solid 1px gray;opacity:0.9;
       }
-      #read { text-align:right; float:right; color:#000099; }
+      #read { text-align:right; float:right; }
       #caution2 { color:red;font-weight:bold; display:none; }
       #list { display:none; font-family: 'Courier New', monospace; }
       h3 { margin-bottom: 0px; }
@@ -27,44 +27,44 @@
       </header>
       
       <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
-      
-      <button id="play0">play</button><button id="pause0">pause</button>
-      <div id="p">
-        You can operate music with your WebConsole. <a href="#" id="read">read</a>
-        <div id="list">
-          <div id="caution2">
-            <h2>!! Caution !!</h2>
-            if you dump the `dist` or `delay`, <br/>
-            etc in Firefox WebConsole, presumably browser crashes!!
-            <br/><br/>
-            distc.off()<b>, 0</b>; &lt;= you must not forget to add <b>", 0"</b>
+
+      <div id="contents">
+        <button id="play0">play</button><button id="pause0">pause</button>
+        <div id="p">
+          You can operate music with your WebConsole. <a href="javascript:void(0)" id="read">read</a>
+          <div id="list">
+            <div id="caution2">
+              <h2>!! Caution !!</h2>
+              if you dump the `dist` or `delay`, <br/>
+              etc in Firefox WebConsole, presumably browser crashes!!
+              <br/><br/>
+              distc.off()<b>, 0</b>; &lt;= you must not forget to add <b>", 0"</b>
+            </div>
+            <h3>Rhythm</h3>
+            <ul>
+              <li><pre>beat  = [number] (default= 8)</pre></li>
+              <li><pre>piano = [number] (default= 4)</pre></li>
+              <li><pre>melo  = [number] (default=16)</pre></li>
+            </ul>
+            <h3>Distortion</h3>
+            <ul>
+              <li><pre>dist.on() / dist.off()</pre></li>
+              <li><pre>dist.pre  = [number] : preGain (default=  0dB)</pre></li>
+              <li><pre>dist.post = [number] : postGain(default=-18dB)</li>
+              <li><pre>dist.freq = [number] : lpf.freq(default=2400Hz)</li>
+              <li><pre>dist.mul  = [number] : volume  (default=0.5)</li>
+            </ul>
+            <h3>Delay</h3>
+            <ul>
+              <li><pre>delay.on() / delay.off()</pre></li>
+              <li><pre>delay.time = [number] : delayTime(default=125msec)</pre></li>
+              <li><pre>delay.fb   = [number] : feedback (default=0.8 )</pre></li>
+              <li><pre>delay.wet  = [number] : wet      (default=0.25)</pre></li>
+              <li><pre>delay.mul  = [number] : volume   (default=0.5 )</pre></li>
+            </ul>
           </div>
-          <h3>Rhythm</h3>
-          <ul>
-            <li><pre>beat  = [number] (default= 8)</pre></li>
-            <li><pre>piano = [number] (default= 4)</pre></li>
-            <li><pre>melo  = [number] (default=16)</pre></li>
-            
-          </ul>
-          <h3>Distortion</h3>
-          <ul>
-            <li><pre>dist.on() / dist.off()</pre></li>
-            <li><pre>dist.pre  = [number] : preGain (default=  0dB)</pre></li>
-            <li><pre>dist.post = [number] : postGain(default=-18dB)</li>
-            <li><pre>dist.freq = [number] : lpf.freq(default=2400Hz)</li>
-            <li><pre>dist.mul  = [number] : volume  (default=0.5)</li>
-          </ul>
-          <h3>Delay</h3>
-          <ul>
-            <li><pre>delay.on() / delay.off()</pre></li>
-            <li><pre>delay.time = [number] : delayTime(default=125msec)</pre></li>
-            <li><pre>delay.fb   = [number] : feedback (default=0.8 )</pre></li>
-            <li><pre>delay.wet  = [number] : wet      (default=0.25)</pre></li>
-            <li><pre>delay.mul  = [number] : volume   (default=0.5 )</pre></li>
-          </ul>
         </div>
-      </div>
-      <pre id="code" class="prettyprint">
+        <pre id="code" class="prettyprint">
 // load wav files and decode
 
 timbre.workerpath = "../timbre.js";
@@ -191,8 +191,8 @@ ex1.onpause = function() {
 };
        
 ex1.play();
-      </pre>
-      
+        </pre>
+      </div>
     </section>
   </body>
   <script type="text/javascript" src="js/libs/prettify.js"></script>
@@ -254,10 +254,10 @@ ex1.play();
         $("#read").on("click", function() {
             if (isOpen) {
                 $(this).text("read");
-                $("#list").hide();
+                $("#list").hide(100);
             } else {
                 $(this).text("close");
-                $("#list").show();
+                $("#list").show(100);
             }
             isOpen = !isOpen;
         });
