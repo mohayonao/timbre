@@ -11,6 +11,8 @@ var Dac = (function() {
         initialize.apply(this, arguments);
     }, $this = Dac.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "ar-only");
+    
     Object.defineProperty($this, "dac", {
         get: function() { return this; }
     });
@@ -37,7 +39,6 @@ var Dac = (function() {
         this.R = new Float32Array(timbre.cellsize);
         _.prev_pan = undefined;
     };
-    timbre.fn.set_ar_only($this);
     
     $this._post_init = function() {
         var i, args;

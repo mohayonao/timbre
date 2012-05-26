@@ -11,6 +11,8 @@ var EfxDelay = (function() {
         initialize.apply(this, arguments);
     }, $this = EfxDelay.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "ar-only");
+    
     Object.defineProperty($this, "time", {
         set: function(value) {
             if (typeof value === "number") {
@@ -66,7 +68,6 @@ var EfxDelay = (function() {
         set_params.call(this, _.delayTime, _.feedback, _.wet);
         this.args = timbre.fn.valist.call(this, _args.slice(i));
     };
-    timbre.fn.set_ar_only($this);
     
     $this.clone = function(deep) {
         var newone, _ = this._;

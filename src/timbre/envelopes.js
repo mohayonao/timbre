@@ -11,6 +11,8 @@ var ADSREnvelope = (function() {
         initialize.apply(this, arguments);
     }, $this = ADSREnvelope.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
     Object.defineProperty($this, "a", {
         set: function(value) {
             if (typeof value === "number") {
@@ -81,7 +83,6 @@ var ADSREnvelope = (function() {
         _.samplesMax = (timbre.samplerate * (_.a / 1000))|0;
         _.samples    = 0;
     };
-    timbre.fn.set_kr_only($this);
     
     $this.clone = function(deep) {
         var newone, _ = this._;
@@ -219,6 +220,8 @@ var Tween = (function() {
         initialize.apply(this, arguments);
     }, $this = Tween.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
     Object.defineProperty($this, "type", {
         set: function(value) {
             var f;
@@ -296,8 +299,7 @@ var Tween = (function() {
         _.ison   = false;
         this.type = type;        
     };
-    timbre.fn.set_kr_only($this);
-
+    
     $this.clone = function(deep) {
         var newone, _ = this._;
         var args, i, imax;
@@ -509,6 +511,8 @@ var Percussive = (function() {
         initialize.apply(this, arguments);
     }, $this = Percussive.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
     Object.defineProperty($this, "d", {
         set: function(value) {
             if (typeof value === "number") {
@@ -543,7 +547,6 @@ var Percussive = (function() {
         _.dx = timbre.cellsize / _.samples;
         _.x  = 0;
     };
-    timbre.fn.set_kr_only($this);
     
     $this.clone = function(deep) {
         var newone, _ = this._;

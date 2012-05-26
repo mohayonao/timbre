@@ -11,6 +11,8 @@ var Interval = (function() {
         initialize.apply(this, arguments);
     }, $this = Interval.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
     Object.defineProperty($this, "interval", {
         set: function(value) {
             if (typeof value === "number") {
@@ -45,7 +47,6 @@ var Interval = (function() {
         _.count = 0;
         _.next_count  = 0;
     };
-    timbre.fn.set_kr_only($this);
     
     $this.clone = function(deep) {
         var newone, _ = this._;
@@ -124,6 +125,8 @@ var Timeout = (function() {
         initialize.apply(this, arguments);
     }, $this = Timeout.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
     Object.defineProperty($this, "timeout", {
         set: function(value) {
             if (typeof value === "number") {
@@ -148,7 +151,6 @@ var Timeout = (function() {
         _.ison = false;
         _.samples = 0;
     };
-    timbre.fn.set_kr_only($this);
     
     $this.clone = function(deep) {
         var newone, _ = this._;
@@ -225,6 +227,8 @@ var Schedule = (function() {
         initialize.apply(this, arguments);
     }, $this = Schedule.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
     Object.defineProperty($this, "mode", {
         get: function() { return this._.mode; }
     });
@@ -263,7 +267,6 @@ var Schedule = (function() {
         
         delete _.init;
     };
-    timbre.fn.set_kr_only($this);
     
     $this.clone = function(deep) {
         var newone, _ = this._;

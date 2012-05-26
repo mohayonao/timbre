@@ -10,10 +10,11 @@ var Add = (function() {
         initialize.apply(this, arguments);
     }, $this = Add.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "ar-kr");
+    
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);
     };
-    timbre.fn.set_ar_kr($this);
     
     $this.clone = function(deep) {
         var newone;
@@ -60,10 +61,11 @@ var Multiply = (function() {
         initialize.apply(this, arguments);
     }, $this = Multiply.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "ar-kr");
+    
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);
     };
-    timbre.fn.set_ar_kr($this);
     
     $this.clone = function(deep) {
         var newone;

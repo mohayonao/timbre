@@ -11,6 +11,8 @@ var Filter = (function() {
         initialize.apply(this, arguments);
     }, $this = Filter.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "ar-only");
+    
     Object.defineProperty($this, "type", {
         set: function(value) {
             var f;
@@ -100,8 +102,7 @@ var Filter = (function() {
         _.ison = true;
         _.in1 = _.in2 = _.out1 = _.out2 = 0;
     };
-    timbre.fn.set_ar_only($this);
-
+    
     $this.clone = function(deep) {
         var newone, _ = this._;
         var args, i, imax;
@@ -376,6 +377,8 @@ var ResonantFilter = (function() {
         initialize.apply(this, arguments);
     }, $this = ResonantFilter.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "ar-only");
+    
     ResonantFilter.types = { LPF:0, HPF:1, BPF:2, BRF:3 };
     
     Object.defineProperty($this, "type", {
@@ -465,7 +468,6 @@ var ResonantFilter = (function() {
         _.damp = 0;
         _.freq = 0;
     };
-    timbre.fn.set_ar_only($this);
     
     $this.clone = function(deep) {
         var newone, _ = this._;

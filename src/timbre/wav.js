@@ -11,6 +11,8 @@ var Wav = (function() {
         initialize.apply(this, arguments);
     }, $this = Wav.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "ar-only");
+    
     Object.defineProperty($this, "src", {
         set: function(value) {
             if (typeof value === "string") this._.src = value;
@@ -61,7 +63,6 @@ var Wav = (function() {
         _.phaseStep  = 0;
         _.phase = 0;
     };
-    timbre.fn.set_ar_only($this);
     
     var send = function(result, callback) {
         if (typeof callback === "function") {

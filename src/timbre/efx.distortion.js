@@ -11,6 +11,8 @@ var EfxDistortion = (function() {
         initialize.apply(this, arguments);
     }, $this = EfxDistortion.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "ar-only");
+    
     Object.defineProperty($this, "pre", {
         set: function(value) {
             this._.preGain = timbre(value);
@@ -94,8 +96,7 @@ var EfxDistortion = (function() {
         _.b0  = _.b1  = _.b2 = 0;
         _.ison = true;
     };
-    timbre.fn.set_ar_only($this);
-
+    
     $this.clone = function(deep) {
         var newone, _ = this._;
         var args, i, imax;

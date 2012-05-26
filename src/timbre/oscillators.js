@@ -11,6 +11,8 @@ var Oscillator = (function() {
         initialize.apply(this, arguments);
     }, $this = Oscillator.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "ar-kr");
+    
     Object.defineProperty($this, "wavelet", {
         set: function(value) {
             var wavelet, i, j, k, x, dx;
@@ -84,7 +86,6 @@ var Oscillator = (function() {
         _.coeff = 1024 / timbre.samplerate;
         _.ison = true;
     };
-    timbre.fn.set_ar_kr($this);
     
     $this.clone = function(deep) {
         var newone, _ = this._;
@@ -283,6 +284,8 @@ var WhiteNoise = (function() {
         initialize.apply(this, arguments);
     }, $this = WhiteNoise.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "ar-kr");
+    
     var initialize = function(_args) {
         var i, _;
         
@@ -296,7 +299,6 @@ var WhiteNoise = (function() {
             this._.add = _args[i++];
         }
     };
-    timbre.fn.set_ar_kr($this);
     
     $this.clone = function(deep) {
         var newone, _ = this._;
@@ -338,6 +340,8 @@ var FuncOscillator = (function() {
     var FuncOscillator = function() {
         initialize.apply(this, arguments);
     }, $this = FuncOscillator.prototype;
+    
+    timbre.fn.setPrototypeOf.call($this, "ar-kr");
     
     Object.defineProperty($this, "func", {
         set: function(value) {
@@ -403,8 +407,7 @@ var FuncOscillator = (function() {
         _.phase = _.x = 0;
         _.coeff = 1 / timbre.samplerate;
     };
-    timbre.fn.set_ar_kr($this);
-
+    
     $this.clone = function(deep) {
         var newone, _ = this._;
         newone = timbre("func", _.func, null, _.numOfSamples);

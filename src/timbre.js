@@ -435,31 +435,6 @@ timbre.fn = (function(timbre) {
         get: function() { return this._.add; }
     };
     
-    fn.set_ar_only = function(object) {
-        object.ar = defaults.optional.fixrate;
-        object.kr = defaults.optional.fixrate;
-        if (!object._) object._ = {};
-        object._.ar = true;
-    };
-    fn.set_kr_only = function(object) {
-        object.ar = defaults.optional.fixrate;
-        object.kr = defaults.optional.fixrate;
-        if (!object._) object._ = {};
-        object._.ar = false;
-    };
-    fn.set_ar_kr = function(object) {
-        object.ar = defaults.optional.ar;
-        object.kr = defaults.optional.kr;
-        if (!object._) object._ = {};
-        object._.ar = true;
-    };
-    fn.set_kr_ar = function(object) {
-        object.ar = defaults.optional.ar;
-        object.kr = defaults.optional.kr;
-        if (!object._) object._ = {};
-        object._.ar = false;
-    };
-    
     fn.register = function(key, klass, func) {
         var name, p, _, i;
         
@@ -484,7 +459,7 @@ timbre.fn = (function(timbre) {
             }
             
             if (typeof p.ar !== "function") {
-                fn.set_kr_only(p);
+                fn.newPrototypeOf("kr-only", p);
             }
             
             if (typeof key === "string") {            
@@ -496,6 +471,35 @@ timbre.fn = (function(timbre) {
                     klasses[key] = func;
                 }
             }
+        }
+    };
+    
+    fn.setPrototypeOf = function(type) {
+        switch (type) {
+        case "ar-only":
+            this.ar = defaults.optional.fixrate;
+            this.kr = defaults.optional.fixrate;
+            if (!this._) this._ = {};
+            this._.ar = true;
+            break;
+        case "kr-only":
+            this.ar = defaults.optional.fixrate;
+            this.kr = defaults.optional.fixrate;
+            if (!this._) this._ = {};
+            this._.ar = false;
+            break;
+        case "kr-ar":
+            this.ar = defaults.optional.ar;
+            this.kr = defaults.optional.kr;
+            if (!this._) this._ = {};
+            this._.ar = false;
+            break;
+        case "ar-kr":
+            this.ar = defaults.optional.ar;
+            this.kr = defaults.optional.kr;
+            if (!this._) this._ = {};
+            this._.ar = true;
+            break;
         }
     };
     
@@ -611,6 +615,8 @@ var NumberWrapper = (function() {
         initialize.apply(this, arguments);
     }, $this = NumberWrapper.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
     Object.defineProperty($this, "value", {
         set: function(value) {
             var cell, i;
@@ -653,6 +659,8 @@ var BooleanWrapper = (function() {
         initialize.apply(this, arguments);
     }, $this = BooleanWrapper.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
     Object.defineProperty($this, "value", {
         set: function(value) {
             var cell, i, x;
@@ -693,6 +701,8 @@ var FunctionWrapper = (function() {
     var FunctionWrapper = function() {
         initialize.apply(this, arguments);
     }, $this = FunctionWrapper.prototype;
+    
+    timbre.fn.setPrototypeOf.call($this, "kr-only");
     
     Object.defineProperty($this, "value", {
         set: function(value) {
@@ -753,6 +763,8 @@ var ArrayWrapper = (function() {
     var ArrayWrapper = function() {
         initialize.apply(this, arguments);
     }, $this = ArrayWrapper.prototype;
+    
+    timbre.fn.setPrototypeOf.call($this, "kr-only");
     
     Object.defineProperty($this, "value", {
         set: function(value) {
@@ -848,6 +860,8 @@ var ObjectWrapper = (function() {
         initialize.apply(this, arguments);
     }, $this = ObjectWrapper.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
     Object.defineProperty($this, "value", {
         set: function(value) {
             if (typeof value === "object") {
@@ -875,9 +889,11 @@ var ObjectWrapper = (function() {
 timbre.fn.register("object", ObjectWrapper);
 
 var UndefinedWrapper = function() {};
+timbre.fn.setPrototypeOf.call(UndefinedWrapper.prototype, "kr-only");
 timbre.fn.register("undefined", UndefinedWrapper);
 
 var NullWrapper = function() {};
+timbre.fn.setPrototypeOf.call(NullWrapper.prototype, "kr-only");
 timbre.fn.register("null", NullWrapper);
 
 
