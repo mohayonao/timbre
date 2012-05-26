@@ -314,7 +314,7 @@ var WhiteNoise = (function() {
         if (seq_id !== this.seq_id) {
             mul = _.mul;
             add = _.add;
-            if (true|| _.ar) {
+            if (_.ar) {
                 for (i = cell.length; i--; ) {
                     cell[i] = (Math.random() * 2.0 - 1.0) * mul + add;
                 }
