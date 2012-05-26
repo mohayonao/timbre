@@ -39,12 +39,12 @@ EJS_VIEW = """
   <script type="text/javascript" src="/js/jquery.min.js"></script>
 
   <script type="text/javascript">
+  var s = [];
   $(function() {
       "use strict";
-      var synth_list = [];
-      timbre.amp = 0.5;
 
-      tests.forEach(function(x) {
+      timbre.amp = 0.5;
+      tests.forEach(function(x, i) {
           var synth, src, pre;
           var viewer = new WaveViewer(timbre.sys.cell, 60, "waveviewer", 512, 256);
 
@@ -56,14 +56,13 @@ EJS_VIEW = """
           });
 
           synth = x.call(null);
-
           synth.dac.addEventListener("play" , function() {
               pre.css("background", "rgba(255,224,224,0.75)");
               timbre.on();
           });
           synth.dac.addEventListener("pause", function() {
               pre.css("background", "rgba(255,255,255,0.75)");
-              if (synth_list.every(function(ex) { return ex.dac.isOff; })) timbre.off();
+              if (s.every(function(synth) {return synth.dac.isOff;})) timbre.off();
           });
 
           src = x.toString().split("\\n");
@@ -76,17 +75,17 @@ EJS_VIEW = """
           pre = $("<pre>").text(src).addClass("prettyprint");
 
           $("<div>")
-            .append($("<h3>").text(x.desc||""))
+            .append($("<h3>").text("s[" + i + "]: " + x.desc||""))
             .append($("<button>").text("play").on("click", function() {
-              synth.play();
+                synth.play();
             }))
             .append($("<button>").text("pause").on("click", function() {
-              synth.pause();
+                synth.pause();
             }))
             .append(pre)
             .appendTo("#tests");
 
-          synth_list.push(synth);
+          s.push(synth);
       });
       prettyPrint();
   });
