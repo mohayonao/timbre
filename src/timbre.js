@@ -877,6 +877,7 @@ timbre.fn.register("null", NullWrapper);
 global.T = global.timbre = timbre;
 module.exports = timbre;
 
+// setting for tests
 timbre.samplerate = 1000;
 timbre.streamsize =   32;
 timbre.cellsize   =    8;
@@ -1078,5 +1079,13 @@ if (module.parent && !module.parent.parent) {
     describe("Through out", function() {
         var instance = timbre();
         instance.should.equal(timbre(instance));
+    });
+    describe("EventListener", function() {
+        it("Once Time", function(done) {
+            var instance = timbre();
+            instance.addEventListener("~bang", done);
+            instance.bang();
+            instance.bang();
+        });
     });
 }
