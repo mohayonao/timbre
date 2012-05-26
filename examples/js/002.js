@@ -21,7 +21,7 @@ ex1 = (function() {
     // sequence(1)
     s1 = function(freq) {
         var s1, env;
-        s1 = T("*", T("fami", freq, 0, 0.6),
+        s1 = T("*", T("fami", freq, 0.6),
                     T("*", T("pulse", 12), env = T("perc", 120))).play();
         env.addEventListener("~ended", function() {
             s1.pause();
@@ -33,7 +33,7 @@ ex1 = (function() {
     // sequence(2)
     s2 = function() {
         var s2, env;
-        s2 = T("*", T("saw", T("tween", "cubic.out", 300, 880*4, 220).bang(), 0, 0.4),
+        s2 = T("*", T("saw", T("tween", "cubic.out", 300, 880*4, 220).bang(), 0.4),
                     env = T("perc", 300)).play();
         env.addEventListener("~ended", function() {
             s2.pause();
@@ -52,7 +52,7 @@ ex1 = (function() {
     sd.i = 3;
 
     // bass drum
-    bd = T("*", T("rLPF", 40, 0.5, T("pulse", 40, 0, 2)),
+    bd = T("*", T("rLPF", 40, 0.5, T("pulse", 40, 2)),
                 bd_env = T("perc", 60));
     bd.i = 4;
     

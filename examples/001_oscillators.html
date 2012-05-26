@@ -28,14 +28,14 @@ T("sin", 1320).play();
 // 880Hz pulse with tremolo(10Hz)
           
 T("*", T("pulse", 880),
-       T("tri", 10, 0, 0.6, 0.8).kr()).play();
+       T("tri", 10, 0.6, 0.8).kr()).play();
       </pre>
       <button id="play2">play</button><button id="pause2">pause</button>
       
       <pre id="code" class="prettyprint">
 // 660Hz triangle with vibrato(5Hz)
 
-T("tri", T("sin", 5, 0, 6, 660).kr()).play();
+T("tri", T("sin", 5, 20, 660).kr()).play();
       </pre>
       <button id="play3">play</button><button id="pause3">pause</button>
       <pre id="code" class="prettyprint">

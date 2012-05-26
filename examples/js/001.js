@@ -7,13 +7,13 @@ ex1 = (function() {
 // 880Hz pulse with tremolo(10Hz)
 ex2 = (function() {
     return T("*", T("pulse", 880),
-                  T("tri", 10, 0, 0.6, 0.8).kr());
+                  T("tri", 10, 0.6, 0.8).kr());
 }());
 
 
 // 660Hz triangle with vibrato(5Hz)
 ex3 = (function() {
-    return T("tri", T("sin", 5, 0, 6, 660).kr());
+    return T("tri", T("sin", 5, 20, 660).kr());
 }());
 
 
