@@ -321,7 +321,7 @@ timbre.fn = (function(timbre) {
 
     defaults.play = function() {
         var _ = this._;
-        if (_.dac.args.indexOf(this) === -1) {
+        if (this.dac.args.indexOf(this) === -1) {
             _.dac.append(this);
             timbre.fn.do_event(this, "play");
         }
@@ -330,7 +330,7 @@ timbre.fn = (function(timbre) {
     };
     defaults.pause = function() {
         var _ = this._;
-        if (_.dac.args.indexOf(this) !== -1) {
+        if (this.dac.args.indexOf(this) !== -1) {
             _.dac.remove(this);
             timbre.fn.do_event(this, "pause");
         }
