@@ -1,6 +1,6 @@
 /**
  * timbre 0.0.0 / JavaScript Library for Objective Sound Programming
- * build: Fri May 25 2012 20:55:10 GMT+0900 (JST)
+ * build: Sat May 26 2012 08:57:37 GMT+0900 (JST)
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,7 +10,7 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.0.0";
-    timbre.BUILD      = "Fri May 25 2012 20:55:10 GMT+0900 (JST)";
+    timbre.BUILD      = "Sat May 26 2012 08:57:37 GMT+0900 (JST)";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.workerpath = "";
@@ -3592,12 +3592,7 @@ var timbre = (function(context, timbre) {
             } else if (_.src !== "") {
                 timbre.fn.do_event(this, "loading");
                 if (timbre.platform === "web" && timbre.workerpath) {
-                    src = _.src;
-                    if ((m = /^(?:\.)(.*)$/.exec(src)) !== null) {
-                        src = location.pathname;
-                        src = src.substr(0, src.lastIndexOf("/"));
-                        src += m[1];
-                    }
+                    src = timbre.utils.relpath2rootpath(_.src);
                     worker = new Worker(timbre.workerpath);
                     worker.onmessage = function(e) {
                         var data = e.data;
@@ -3627,15 +3622,24 @@ var timbre = (function(context, timbre) {
                 } else {
                     timbre.utils.binary.load(_.src, function(binary) {
                         timbre.utils.wav.decode(binary, function(res) {
-                            if (res) {
+                            if (res.err) {
+                                _.loaded_src = undefined;
+                                _.buffer     = new Int16Array(0);
+                                _.samplerate = 0;
+                                _.duration   = 0;
+                                _.phaseStep  = 0;
+                                _.phase = 0;
+                                send.call(self, { samplerate:_.samplerate,
+                                                  buffer:_.buffer }, callback);
+                            } else {
                                 _.loaded_src = _.src;
                                 _.buffer     = res.buffer;
                                 _.samplerate = res.samplerate;
                                 _.duration   = (res.buffer.length / res.samplerate) * 1000;
                                 _.phaseStep  = res.samplerate / timbre.samplerate;
                                 _.phase = 0;
-                                send.call(self, { samplerate:res.samplerate,
-                                                  buffer:res.buffer }, callback);
+                                send.call(self, { samplerate:_.samplerate,
+                                                  buffer:_.buffer }, callback);
                             }
                         });
                     });
@@ -3736,32 +3740,10 @@ var timbre = (function(context, timbre) {
 
     timbre.utils = (function(timbre) {
         var utils = { $exports:{} };
-        utils._1st = 1;
-        utils._2nd = Math.pow(2, 2/12);
-        utils._3rd  = Math.pow(2, 4/12);
-        utils._4th  = Math.pow(2, 5/12);
-        utils._5th  = Math.pow(2, 7/12);
-        utils._6th  = Math.pow(2, 9/12);
-        utils._7th  = Math.pow(2,11/12);
-        utils._1oct = 2;
-        utils._9th  = Math.pow(2,14/12);
-        utils._11th = Math.pow(2,17/12);
-        utils._13th = Math.pow(2,21/12);
-        
-        utils.$exports["tension"] = [
-            "_1st", "_2nd" , "_3rd", "_4th" , "_5th" , "_6th",
-            "_7th", "_1oct", "_9th", "_11th", "_13th",
-        ];
-        
-        
-        /**
-         * Convert a MIDI note number to frequency
-         */
         utils.mtof = (function() {
             var freq_table = (function() {
-                var result, i;
-                result = new Float32Array(128);
-                for (i = 0; i < 128; i++) {
+                var result = new Float32Array(128);
+                for (var i = 0; i < 128; i++) {
                     result[i] = 440 * Math.pow(Math.pow(2, (1/12)), i - 69);
                 }
                 return result;
@@ -3775,42 +3757,28 @@ var timbre = (function(context, timbre) {
             };
         }());
         
-        /**
-         * Convert frequency to a MIDI note number
-         */
         utils.ftom = function(f) {
             return Math.round((Math.log(f / 440) * Math.LOG2E) * 12 + 69);
         };
         
-        /**
-         * Convert a MIDI note number to a letter notation
-         */
         utils.mtoa = (function() {
             var tone_table = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
             return function(a) {
-                var i, j;
-                i = (a|0) % 12;
-                j = (a|0) / 12;
+                var i = (a|0) % 12;
+                var j = (a|0) / 12;
                 return tone_table[i] + ((j|0)-2);
             };
         }());
         
-        /**
-         * Convert frequency to a letter notation
-         */
         utils.ftoa = function(f) {
             return mtoa(ftom(f));
         };
         
-        /**
-         * Convert a letter notation to a MIDI note number
-         */
         utils.atom = (function() {
             var re = /^([CDEFGAB])([-+#b]?)([0-9]?)$/;
             var map = {C:0,D:2,E:4,F:5,G:7,A:9,B:11};
             return function(a) {
-                var m, result;
-                result = 0;
+                var m, result = 0;
                 if ((m = a.match(re)) !== null) {
                     result = map[m[1]];
                     switch (m[2]) {
@@ -3827,46 +3795,44 @@ var timbre = (function(context, timbre) {
             };
         }());
         
-        /**
-         * Convert a letter notation to frequency
-         */
         utils.atof = function(a) {
             return mtof(atom(a));
         };
         
-        /**
-         * Convert bpm with tone-length to msec
-         */
         utils.bpm2msec = function(bpm, len) {
             if (typeof len === "undefined") len = 4;
             return (60 / bpm) * (4 / len) * 1000;
         };
         
-        /**
-         * Convert msec with tone-length to bpm
-         */
         utils.msec2bpm = function(msec, len) {
             if (typeof len === "undefined") len = 4;
             return 60 / (msec / 1000) * (4 / len);
         };
         
-        /**
-         * Convert msec to Hz
-         */
-        utils.msec2Hz = function(msec) {
+        utils.msec2hz = function(msec) {
             return 1000 / msec;
         };
         
-        /**
-         * Convert Hz to msec
-         */
-        utils.msec2Hz = function(Hz) {
+        utils.hz2msec = function(Hz) {
             return 1000 / Hz;
         };
         
-        /**
-         * Convert string to Float32Array
-         */
+        utils.bpm2hz = function(bpm, len) {
+            if (typeof len === "undefined") len = 4;
+            return 1000 / ((60 / bpm) * (4 / len) * 1000);
+        };
+        
+        utils.hz2bpm = function(hz, len) {
+            if (typeof len === "undefined") len = 4;
+            return 60 / (1000 / msec / 1000) * (4 / len);
+        };
+        
+        utils.$exports["converter"] = [
+            "mtof", "ftom", "mtoa", "ftoa", "atom", "atof",
+            "bpm2msec", "msec2bpm", "msec2hz", "msec2hz", "bpm2hz", "hz2bpm",
+        ];
+        
+        
         utils.wavb = function(src) {
             var lis, i, imax, j, k, x;
             lis = new Float32Array(1024);
@@ -3879,13 +3845,6 @@ var timbre = (function(context, timbre) {
             }
             return lis;
         };
-        
-        
-        utils.$exports["converter"] = [
-            "mtof", "ftom", "mtoa", "ftoa", "atom", "atof",
-            "bpm2msec", "msec2bpm", "msec2Hz", "msec2Hz",
-            "wavb"
-        ];
         
         
         (function(binary) {
@@ -4214,6 +4173,28 @@ var timbre = (function(context, timbre) {
         }
         
         
+        timbre.utils.relpath2rootpath = function(relpath) {
+            if (/^https?:\/\//.test(relpath)) {
+                return relpath;
+            } else {
+                var rootpath = window.location.pathname;
+                rootpath = rootpath.substr(0, rootpath.lastIndexOf("/"));
+                rootpath = rootpath.split("/").filter(function(x) {
+                    return x !== "";
+                });
+                relpath = relpath.split("/");
+                for (var i = 0; i < relpath.length; ++i) {
+                    if (relpath[i] === "..") {
+                        rootpath.pop();
+                    } else if (relpath[i] !== ".") {
+                        rootpath.push(relpath[i]);
+                    }
+                }
+                return "/" + rootpath.join("/");
+            }
+        };
+        
+        
         timbre.platform = "web";
         timbre.global  = window;
         
@@ -4230,7 +4211,7 @@ var timbre = (function(context, timbre) {
                     timbre.utils.wav.decode(binary, function(res) {
                         var buf, i, array;
                         if (res.err) {
-                            worker.postMessage({result:undefined, err:err});
+                            worker.postMessage({result:undefined, err:res.err});
                         } else {
                             buf = res.buffer;
                             worker.postMessage({result:"metadata", samplerate:res.samplerate,
