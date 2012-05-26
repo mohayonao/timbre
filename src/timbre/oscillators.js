@@ -73,17 +73,13 @@ var Oscillator = (function() {
         }
         this.freq = _args[i++];
         if (typeof _args[i] === "number") {
-            _.phase = _args[i++];
-        } else {
-            _.phase = 0.0;
-        }
-        if (typeof _args[i] === "number") {
             _.mul = _args[i++];    
         }
         if (typeof _args[i] === "number") {
             _.add = _args[i++];    
         }
         
+        _.phase = 0;
         _.x = 1024 * _.phase;
         _.coeff = 1024 / timbre.samplerate;
         _.ison = true;
