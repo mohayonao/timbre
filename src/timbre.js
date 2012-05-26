@@ -320,17 +320,21 @@ timbre.fn = (function(timbre) {
     };
 
     defaults.play = function() {
-        if (this.dac.isOff) {
-            this.dac.on();
+        var _ = this._;
+        if (_.dac.args.indexOf(this) === -1) {
+            _.dac.append(this);
             timbre.fn.do_event(this, "play");
         }
+        if (_.dac.isOff) _.dac.on();
         return this;
     };
     defaults.pause = function() {
-        if (this.dac.isOn) {
-            this.dac.off();
+        var _ = this._;
+        if (_.dac.args.indexOf(this) !== -1) {
+            _.dac.remove(this);
             timbre.fn.do_event(this, "pause");
         }
+        if (_.dac.isOn && _.dac.args.length === 0) _.dac.off();
         return this;
     };
     defaults.bang = function() {
@@ -401,6 +405,7 @@ timbre.fn = (function(timbre) {
             if (value !== this._.dac) {
                 if (this._.dac) {
                     this._.dac.remove(this);
+                    this._.dac_autobinded = false;
                 }
                 if (value !== null) {
                     this._.dac = value.append(this);
@@ -410,7 +415,10 @@ timbre.fn = (function(timbre) {
             }
         },
         get: function() {
-            if (!this._.dac) this._.dac = timbre("dac", this);
+            if (!this._.dac) {
+                this._.dac = timbre("dac", this);
+                this._.dac_autobinded = true;
+            }
             return this._.dac;
         },
     };
