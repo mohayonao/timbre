@@ -38,7 +38,7 @@ utils.mtoa = (function() {
 }());
 
 utils.ftoa = function(f) {
-    return mtoa(ftom(f));
+    return utils.mtoa(utils.ftom(f));
 };
 
 utils.atom = (function() {
@@ -63,7 +63,7 @@ utils.atom = (function() {
 }());
 
 utils.atof = function(a) {
-    return mtof(atom(a));
+    return utils.mtof(utils.atom(a));
 };
 
 utils.bpm2msec = function(bpm, len) {
