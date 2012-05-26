@@ -57,6 +57,13 @@ tests = (function() {
         };
         return T("func", func, 880);
     }; tests[i++].desc = "FuncOscillator";
+    
+    tests[i] = function() {
+        var func = function(x) {
+            return [ (x * x * x), -(x * x), x ];
+        };
+        return T("func", func, 3, 660);
+    }; tests[i++].desc = "FuncOscillator";
 
     return tests;
 }());
