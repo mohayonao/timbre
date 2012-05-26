@@ -24,10 +24,18 @@
           (under developing)
         </div>
         
+        <h3>System Requirement</h3>
+        <div>
+          <ul>
+            <li>Google Chrome 14.0- (Web Audio API)</li>
+            <li>Mozilla Firefox 4.0- (Audio Data API)</li>
+          </ul>
+        </div>
+        
         <h3>Overview</h3>
         <div>
           <p>
-            timbre is so easy, useful.
+            timbre is so easy, useful and powerful.
           </p>
           <button id="play0">play</button><button id="pause0">pause</button>
           <pre class="prettyprint">
@@ -36,22 +44,69 @@ T("*", T("sin", 880),
        T("adsr", 500, 1500)).play();
           </pre>
 
+          <p>
+            Looks a bit like SuperCollider??
+          </p>
           <button id="play1">play</button><button id="pause1">pause</button>
           <pre class="prettyprint">
-function synth(freq) {
+var delay = T("efx.delay", 125, 0.8, 0.75);
 
+function synth(freq) {
+    var s, env;
+    s = T("*", T("fami", freq, 0.25),
+               env = T("perc", 1000).bang());
+    s.dac = delay;
+    env.onended = function() {
+        delay.remove(s);
+    };
+}
+
+var list  = [ "C5", "D5", "E5", "G5", "C6", "D6", 
+              "E6", "D6", "C6", "G5", "E5", "D5" ];
+var index = 0;
+
+// [play].on "click"
+delay.onbang = function() {
+    synth(timbre.utils.atof(list[index++]));
+    if (index >= list.length) index = 0;
+};
+
+delay.play();
+          </pre>
+
+          <p>
+            Fun!!!
+          </p>
+          <button id="play2">play</button><button id="pause2">pause</button>
+          <pre class="prettyprint">
+/**
+ * Open your WebConsole and input below
+ * > c, e , g [enter]
+ * > f, ab, c [enter] 'ab' is A flat
+ * > g, d , e [enter]
+ * > c, e , g [enter]
+ */
+var pianotones = [], synth = [];
+var dac = T("dac");
+
+T("wav", "./examples/audio/piano_cmaj.wav").load(function(res) {
+    var dx = this.duration / 9;
+    this.mul = 0.25;
+    for (var i = 0; i < 9; i++) {
+        pianotones[i] = this.slice(dx * i, dx * i + dx);
+    }
+});
+
+function playpiano(id) {
+    if (synth[0]) synth[0].dac.remove(synth[0]);
+    synth[0] = synth[1];
+    synth[1] = synth[2];
+    synth[2] = pianotones[id].clone();
+    synth[2].dac = dac;
 }
           </pre>
         </div>
         
-        <h3>System Requirement</h3>
-        <div>
-          <ul>
-            <li>Google Chrome 14.0- (Web Audio API)</li>
-            <li>Mozilla Firefox 4.0- (Audio Data API)</li>
-          </ul>
-        </div>
-
         <h3>Examples</h3>
         <div>
           <ul>
@@ -70,7 +125,7 @@ function synth(freq) {
         <div>
           <a href="https://twitter.com/#!/mohayonao" target="twitter">@mohayonao</a>
         </div>
-
+        
         <footer>
           2012 timbre - JavaScript Library for Objective Sound Programming
         </footer>
@@ -95,9 +150,33 @@ function synth(freq) {
             $("#title").css("color", "rgb(136, 136, 136)");
             viewer.pause();
         });
+
+        Object.defineProperty(window, "c", {
+            get: function() { return ex2.bridge(6); }
+        });
+        Object.defineProperty(window, "d", { get: function() {
+            return ex2.bridge(7); }
+        });
+        Object.defineProperty(window, "e", { get: function() {
+            return ex2.bridge(0); }
+        });
+        Object.defineProperty(window, "f", { get: function() {
+            return ex2.bridge(1); }
+        });
+        Object.defineProperty(window, "g", { get: function() {
+            return ex2.bridge(2); }
+        });
+        Object.defineProperty(window, "ab", { get: function() {
+            return ex2.bridge(3); }
+        });
+        Object.defineProperty(window, "a", { get: function() {
+            return ex2.bridge(4); }
+        });
+        Object.defineProperty(window, "b", { get: function() {
+            return ex2.bridge(5); }
+        });
         
-        
-        var list = [ ex1, ex2 ];
+        var list = [ ex0, ex1, ex2 ];
         list.forEach(function(ex, i) {
             var dac = ex.dac;
             dac.addEventListener("on" , function() { timbre.on();});
