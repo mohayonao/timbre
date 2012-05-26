@@ -248,7 +248,7 @@ timbre.fn = (function(timbre) {
     };
     
     fn.init = function() {
-        var args, key, klass, instance, isCopied, proto;
+        var args, key, klass, instance, isThrougOut, proto;
         args = Array.prototype.slice.call(arguments);
         key  = args[0];
         
@@ -273,7 +273,7 @@ timbre.fn = (function(timbre) {
                 instance = new NullWrapper();
             }  else if (Object.getPrototypeOf(key)._ instanceof TimbreObject) {
                 instance = key;
-                isCopied = true;
+                isThrougOut = true;
             }
             if (instance === undefined) {
                 if (key instanceof Array || key.buffer instanceof ArrayBuffer) {
@@ -287,7 +287,7 @@ timbre.fn = (function(timbre) {
         if (instance === undefined) instance = new UndefinedWrapper();
         
         // init
-        if (!isCopied) {
+        if (!isThrougOut) {
             instance.seq_id = -1;
             if (!instance.cell) {
                 instance.cell = new Float32Array(timbre.cellsize);
@@ -398,19 +398,19 @@ timbre.fn = (function(timbre) {
     
     defaults.properties.dac = {
         set: function(value) {
-            if (this._.dac) {
-                this._.dac.remove(this);
-            }
-            if (value !== null) {
-                this._.dac = value.append(this);
-            } else {
-                this._.dac = null; // TODO: ???
+            if (value !== this._.dac) {
+                if (this._.dac) {
+                    this._.dac.remove(this);
+                }
+                if (value !== null) {
+                    this._.dac = value.append(this);
+                } else {
+                    this._.dac = null; // TODO: ???
+                }
             }
         },
         get: function() {
-            if (!this._.dac) {
-                this._.dac = timbre("dac", this);
-            }
+            if (!this._.dac) this._.dac = timbre("dac", this);
             return this._.dac;
         },
     };
@@ -745,7 +745,7 @@ var ArrayWrapper = (function() {
     var ArrayWrapper = function() {
         initialize.apply(this, arguments);
     }, $this = ArrayWrapper.prototype;
-
+    
     Object.defineProperty($this, "value", {
         set: function(value) {
             if (typeof value === "object" && 
@@ -755,6 +755,27 @@ var ArrayWrapper = (function() {
             }
         },
         get: function() { return this._.value; }
+    });
+    Object.defineProperty($this, "index", {
+        set: function(value) {
+            var _ = this._;
+            var cell, x, i, imax;
+            if (typeof value === "number") {
+                value = value|0;
+                if (value < 0) {
+                    value = _.value.length + value;
+                }
+                if (0 <= value && value < _.value.length) {
+                    _.index = value|0;
+                    cell = this.cell;
+                    x = _.value[_.index];
+                    for (i = cell.length; i--; ) {
+                        cell[i] = x;
+                    }
+                }
+            }
+        },
+        get: function() { return this._.index; }
     });
     
     var initialize = function(_args) {
@@ -779,16 +800,21 @@ var ArrayWrapper = (function() {
         _.index = 0;
     };
     
+    $this._post_init = function() {
+        this.index = 0;
+    };
+    
     $this.clone = function(deep) {
         return timbre("array", this._.value, this._.mul, this._.add);
     };
     
     $this.bang = function() {
-        this._.index = 0;
+        var _ = this._;
+        this.index = (_.index + 1) % _.value.length;
         timbre.fn.do_event(this, "bang");
         return this;
     };
-
+    
     $this.seq = function(seq_id) {
         var _ = this._;
         var cell, value, i;
@@ -851,13 +877,14 @@ timbre.fn.register("null", NullWrapper);
 global.T = global.timbre = timbre;
 module.exports = timbre;
 
+timbre.samplerate = 1000;
+timbre.streamsize =   32;
+timbre.cellsize   =    8;
+
 var should = require("should");
 global.object_test = function(klass) {
     var klassname = klass.prototype._.klassname;
     var args = Array.prototype.slice.call(arguments, 1);
-    timbre.samplerate = 1000;
-    timbre.streamsize =   32;
-    timbre.cellsize   =    8;
     describe("timbre(" + klassname + ")", function() {
         it("should return new instance", function() {
             var instance = timbre.apply(null, args);
@@ -893,11 +920,10 @@ global.object_test = function(klass) {
             instance.on.should.be.an.instanceOf(Function);
             instance.on().should.equal(instance);
         });
-        it("should call 'on' event", function() {
-            var instance = timbre.apply(null, args), _ = false;
-            instance.addEventListener("on", function() { _ = true; });
+        it("should call 'on' event", function(done) {
+            var instance = timbre.apply(null, args);
+            instance.addEventListener("on", done);
             instance.on();
-            _.should.equal(true);
         });
     });
     describe("#off()", function() {
@@ -906,11 +932,10 @@ global.object_test = function(klass) {
             instance.off.should.be.an.instanceOf(Function);
             instance.off().should.equal(instance);
         });
-        it("should call 'off' event", function() {
-            var instance = timbre.apply(null, args), _ = false;
-            instance.addEventListener("off", function() { _ = true; });
+        it("should call 'off' event", function(done) {
+            var instance = timbre.apply(null, args);
+            instance.addEventListener("off", done);
             instance.off();
-            _.should.equal(true);
         });
     });
     describe("#play()", function() {
@@ -919,11 +944,10 @@ global.object_test = function(klass) {
             instance.play.should.be.an.instanceOf(Function);
             instance.play().should.equal(instance);
         });
-        it("should call 'off' event", function() {
-            var instance = timbre.apply(null, args), _ = false;
-            instance.addEventListener("play", function() { _ = true; });
-            instance.play();
-            _.should.equal(true);
+        it("should call 'play' event", function(done) {
+            var instance = timbre.apply(null, args);
+            instance.addEventListener("play", done);
+            instance.off().play();
         });
     });
     describe("#pause()", function() {
@@ -932,11 +956,10 @@ global.object_test = function(klass) {
             instance.pause.should.be.an.instanceOf(Function);
             instance.pause().should.equal(instance);
         });
-        it("should call 'pause' event", function() {
-            var instance = timbre.apply(null, args), _ = false;
-            instance.addEventListener("pause", function() { _ = true; });
+        it("should call 'pause' event", function(done) {
+            var instance = timbre.apply(null, args);
+            instance.addEventListener("pause", done);
             instance.play().pause();
-            _.should.equal(true);
         });
     });
     describe("#bang()", function() {
@@ -945,11 +968,10 @@ global.object_test = function(klass) {
             instance.bang.should.be.an.instanceOf(Function);
             instance.bang().should.equal(instance);
         });
-        it("should call 'bang' event", function() {
-            var instance = timbre.apply(null, args), _ = false;
-            instance.addEventListener("bang", function() { _ = true; });
+        it("should call 'bang' event", function(done) {
+            var instance = timbre.apply(null, args);
+            instance.addEventListener("bang", done);
             instance.on().bang();
-            _.should.equal(true);
         });
     });
     describe("#clone()", function() {
@@ -1031,10 +1053,30 @@ if (module.parent && !module.parent.parent) {
             y.should.equal(100);
         });
     });
+    describe("ArrayWrapper", function() {
+        object_test(ArrayWrapper, [2, 3, 5, 7, 11, 13]);
+        describe("#bang()", function() {
+            var instance = timbre([2, 3, 5, 7, 11, 13]);
+            instance.cell[0].should.equal(2);
+            instance.bang();
+            instance.cell[0].should.equal(3);
+            instance.index = 3;
+            instance.cell[0].should.equal(7);
+            instance.index = -1;
+            instance.cell[0].should.equal(13);
+        });
+    });
+    describe("ObjectWrapper", function() {
+        object_test(ObjectWrapper, {});
+    });
     describe("NullWrapper", function() {
         object_test(NullWrapper, null);
     });
     describe("UndefinedWrapper", function() {
         object_test(UndefinedWrapper, undefined);
+    });
+    describe("Through out", function() {
+        var instance = timbre();
+        instance.should.equal(timbre(instance));
     });
 }
