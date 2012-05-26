@@ -39,8 +39,8 @@
           </p>
           <button id="play0">play</button><button id="pause0">pause</button>
           <pre class="prettyprint">
-T("*", T("sin", 880),
-       T("tri", 8, 0.4).kr(),
+T("*", T("sin", 1340),
+       T("tri", 8, 0.4, 0.2).kr(),
        T("adsr", 500, 1500)).play();
           </pre>
 
@@ -79,16 +79,13 @@ delay.play();
           </p>
           <button id="play2">play</button><button id="pause2">pause</button>
           <pre class="prettyprint">
-/**
- * Open your WebConsole and input below
- * > c, e , g [enter]
- * > f, ab, c [enter] 'ab' is A flat
- * > g, d , e [enter]
- * > c, e , g [enter]
- */
+// Open your WebConsole and input below
+//   > c, e , g [enter]
+//   > f, gg, c [enter] 'gg' is G#
 var pianotones = [], synth = [];
 var dac = T("dac");
 
+// load wav file and slice
 T("wav", "./examples/audio/piano_cmaj.wav").load(function(res) {
     var dx = this.duration / 9;
     this.mul = 0.25;
@@ -104,6 +101,11 @@ function playpiano(id) {
     synth[2] = pianotones[id].clone();
     synth[2].dac = dac;
 }
+
+Object.defineProperty(window, "c", function() {
+    get: function() { playpiano(3); }
+});
+// ...                        
           </pre>
         </div>
         
@@ -166,7 +168,7 @@ function playpiano(id) {
         Object.defineProperty(window, "g", { get: function() {
             return ex2.bridge(2); }
         });
-        Object.defineProperty(window, "ab", { get: function() {
+        Object.defineProperty(window, "gg", { get: function() {
             return ex2.bridge(3); }
         });
         Object.defineProperty(window, "a", { get: function() {

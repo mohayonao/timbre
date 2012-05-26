@@ -1,7 +1,7 @@
 ex0 = (function() {
     var synth, env 
-    synth = T("*", T("sin", 880),
-                   T("tri", 8, 0.4).kr(),
+    synth = T("*", T("sin", 1340),
+                   T("tri", 8, 0.4, 0.2).kr(),
                    env = T("adsr", 500, 1500));
     synth.onplay = function() {
         synth.dac.append(synth);
