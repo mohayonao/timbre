@@ -78,7 +78,7 @@ var Dac = (function() {
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
-            args = this.args;
+            args = this.args.slice(0);
             L = this.L;
             R = this.R;
             pan = _.pan.seq(seq_id)[0];

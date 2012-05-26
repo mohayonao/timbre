@@ -142,7 +142,7 @@ var EfxDistortion = (function() {
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
-            args = this.args;
+            args = this.args.slice(0);
             for (j = jmax = cell.length; j--; ) {
                 cell[j] = 0.0;
             }

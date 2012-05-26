@@ -29,7 +29,7 @@ var Add = (function() {
         var tmp, i, imax, j, jmax;
         cell = this.cell;
         if (seq_id !== this.seq_id) {
-            args = this.args;
+            args = this.args.slice(0);
             mul  = _.mul;
             add  = _.add;
             jmax = timbre.cellsize;
@@ -79,7 +79,7 @@ var Multiply = (function() {
         var tmp, i, imax, j, jmax;
         cell = this.cell;
         if (seq_id !== this.seq_id) {
-            args = this.args;
+            args = this.args.slice(0);
             mul  = _.mul;
             add  = _.add;
             jmax = timbre.cellsize;
