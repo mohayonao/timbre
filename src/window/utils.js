@@ -4,7 +4,7 @@
 "use strict";
 
 var timbre = require("../timbre");
-var window = {};
+var window = timbre.utils = {};
 // __BEGIN__
 
 timbre.utils.relpath2rootpath = function(relpath) {
