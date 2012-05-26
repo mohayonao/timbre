@@ -386,12 +386,12 @@ var FuncOscillator = (function() {
         } else {
             _.func = DEFAULT_FUNCTION;    
         }
-        this.freq = _args[i++];
         if (typeof _args[i] === "number" && _args[i] > 0) {
             _.numOfSamples = _args[i++]|0;
         } else {
             _.numOfSamples = 0;
         }
+        this.freq = _args[i++];
         if (typeof _args[i] === "number") {
             _.mul = _args[i++];    
         }
