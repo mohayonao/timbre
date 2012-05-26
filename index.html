@@ -1,67 +1,112 @@
-<!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>timbre : JavaScript Library for Objective Sound Programming</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <meta charset="utf-8" />
+    <title>timbre - JavaScript Library for Objective Sound Programming</title>
+    <link type="text/css" rel="stylesheet" href="css/index.css" />
+    <link type="text/css" rel="stylesheet" href="css/libs/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>timbre</h1>
-        <p>JavaScript Library for Objective Sound Programming</p>
-        <p class="view"><a href="https://github.com/mohayonao/timbre">View the Project on GitHub <small>mohayonao/timbre</small></a></p>
-        <ul>
-          <li><a href="https://github.com/mohayonao/timbre/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/mohayonao/timbre/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/mohayonao/timbre">View On <strong>GitHub</strong></a></li>
-        </ul>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
       </header>
-      <section>
-
-        <h1>Note</h1>
-        <p>
-          timbre is under developing yet.
-        </p>
+      
+      <section id="description">
         
-        <h1>What is</h1>
-        <p>
-          timbre is a JavaScript for Objective Sound Programming.
-        </p>
-        
-        
-        <h1>Examples</h1>
-
-<p><a href="./examples/001_oscillators.html">001. oscillators</a></p>
-<p><a href="./examples/002_rhythmsequencer.html">002. rhythmsequencer</a></p>
-<p><a href="./examples/003_loadwavfiles.html">003. load wav files and decode</a></p>
-
       </section>
-    </div>
-    <footer>
-      <p>Project maintained by <a href="https://github.com/mohayonao">mohayonao</a></p>
-      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
-    </footer>
-    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
-              <script type="text/javascript">
-            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-          </script>
-          <script type="text/javascript">
-            try {
-              var pageTracker = _gat._getTracker("UA-21613416-5");
-            pageTracker._trackPageview();
-            } catch(err) {}
-          </script>
+      
+      <section id="contents">
+        <h3>Latest Version</h3>
+        <div>
+          (under developing)
+        </div>
+        
+        <h3>Overview</h3>
+        <div>
+          <p>
+            timbre is so easy, useful.
+          </p>
+          <button id="play0">play</button><button id="pause0">pause</button>
+          <pre class="prettyprint">
+T("*", T("sin", 880),
+       T("tri", 8, 0.4).kr(),
+       T("adsr", 500, 1500)).play();
+          </pre>
 
+          <button id="play1">play</button><button id="pause1">pause</button>
+          <pre class="prettyprint">
+function synth(freq) {
+
+}
+          </pre>
+        </div>
+        
+        <h3>System Requirement</h3>
+        <div>
+          <ul>
+            <li>Google Chrome 14.0- (Web Audio API)</li>
+            <li>Mozilla Firefox 4.0- (Audio Data API)</li>
+          </ul>
+        </div>
+
+        <h3>Examples</h3>
+        <div>
+          <ul>
+            <li><a href="/examples/001_oscillators.html">001. Oscillators</a></li>
+            <li><a href="/examples/002_rhythmsequencer.html">002. Rhythm Sequencer</a></li>
+            <li><a href="/examples/003_loadwavfiles.html">003. Load wav files and decode</a></li>
+          </ul>
+        </div>
+        
+        <h3>References</h3>
+        <div>
+          Working
+        </div>
+        
+        <h3>Author</h3>
+        <div>
+          <a href="https://twitter.com/#!/mohayonao" target="twitter">@mohayonao</a>
+        </div>
+
+        <footer>
+          2012 timbre - JavaScript Library for Objective Sound Programming
+        </footer>
+      </section>
+    </section>
   </body>
+  <script type="text/javascript" src="js/libs/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="timbre.js"></script>
+  <script type="text/javascript" src="js/index.js"></script>
+  <script type="text/javascript" src="js/waveviewer.js"></script>  
+  <script type="text/javascript" src="js/libs/jquery.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+        var viewer = new WaveViewer(timbre.sys.cell, 60, "waveviewer", 512, 256);
+        
+        timbre.addEventListener("on", function() {
+            $("#title").css("color", "rgb(0, 136, 0)");
+            viewer.start();
+        });
+        timbre.addEventListener("off", function() {
+            $("#title").css("color", "rgb(136, 136, 136)");
+            viewer.pause();
+        });
+        
+        
+        var list = [ ex1, ex2 ];
+        list.forEach(function(ex, i) {
+            var dac = ex.dac;
+            dac.addEventListener("on" , function() { timbre.on();});
+            dac.addEventListener("off", function() {
+                if (list.every(function(ex) {return ex.dac.isOff;})) timbre.off();
+            });
+            $("#play"  + i).on("click", function() { ex.bang(); ex.play() ; });
+            $("#pause" + i).on("click", function() { ex.pause(); });
+        });
+    });
+  </script>
 </html>

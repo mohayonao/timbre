@@ -81,10 +81,10 @@ ex1 = (function() {
     // melo
     var leadtone = timbre.utils.wavb("8084888C90989CA4ACB8C0CCE0002C50707C7C78746858483C3024181004F8E0E4E0F804101824303C48586874787C7C70502C00E0CCC0B8ACA49C98908C8884");
     
-    var lead = T("rLPF", T("pulse", 0.462, 0, 800, 2000, 0.8).kr(),
+    var lead = T("rLPF", T("pulse", 0.462, 800, 2000, 0.8).kr(),
                    0.8, 0.8,
-                   T("*", T("+", T("osc", leadtone, 0, 0, 0.20),
-                                 T("osc", leadtone, 0, 0, 0.15)),
+                   T("*", T("+", T("osc", leadtone, 0, 0.20),
+                                 T("osc", leadtone, 0, 0.15)),
                           T("adsr", 20, 1500, 0.4)));
     var delay = T("efx.delay", 125, 0.8, lead).set("mul", 0.5);
     delay.dac = ex1;
