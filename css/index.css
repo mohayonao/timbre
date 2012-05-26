@@ -5,6 +5,7 @@
     margin:0px;
     letter-spacing: 2.5px;
     text-shadow: 0px 3px 0px #ddd;
+    font-size: 36px;
 }
 #title a {
     color: inherit;
