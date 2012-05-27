@@ -54,19 +54,28 @@ var Dac = (function() {
         timbre.fn.copy_for_clone(this, newone, deep);
         return newone;
     };
-    
-    $this.on = $this.play = function() {
+
+    $this.on = function() {
         this._.ison = true;
         timbre.dacs.append(this);
-        timbre.fn.do_event(this, "play");        
         timbre.fn.do_event(this, "on");
         return this;
     };
-    
-    $this.off = $this.pause = function() {
+    $this.off = function() {
         this._.ison = false;
         timbre.dacs.remove(this);
         timbre.fn.do_event(this, "off");
+        return this;
+    };
+    $this.play = function() {
+        this._.ison = true;
+        timbre.dacs.append(this);
+        timbre.fn.do_event(this, "play");        
+        return this;
+    };
+    $this.pause = function() {
+        this._.ison = false;
+        timbre.dacs.remove(this);
         timbre.fn.do_event(this, "pause");        
         return this;
     };

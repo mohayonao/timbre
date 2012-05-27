@@ -318,23 +318,27 @@ timbre.fn = (function(timbre) {
         
         return instance;
     };
-
+    
     defaults.play = function() {
         var _ = this._;
-        if (this.dac.args.indexOf(this) === -1) {
-            _.dac.append(this);
-            timbre.fn.do_event(this, "play");
+        if (_.ar) {
+            if (!_.dac && this.dac) {
+                timbre.fn.do_event(this, "play");
+            } else if (this.dac.args.indexOf(this) === -1) {
+                _.dac.append(this);
+                timbre.fn.do_event(this, "play");
+            }
+            if (_.dac.isOff) _.dac.on();
         }
-        if (_.dac.isOff) _.dac.on();
         return this;
     };
     defaults.pause = function() {
         var _ = this._;
-        if (this.dac.args.indexOf(this) !== -1) {
+        if (_.dac && _.dac.args.indexOf(this) !== -1) {
             _.dac.remove(this);
             timbre.fn.do_event(this, "pause");
+            if (_.dac.isOn && _.dac.args.length === 0) _.dac.off();
         }
-        if (_.dac.isOn && _.dac.args.length === 0) _.dac.off();
         return this;
     };
     defaults.bang = function() {
