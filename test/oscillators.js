@@ -62,8 +62,15 @@ tests = (function() {
         var func = function(x) {
             return [ (x * x * x), -(x * x), x ];
         };
-        return T("func", func, 3, 660);
+        return T("func", 3, func, 660);
     }; tests[i++].desc = "FuncOscillator";
+    
+    tests[i] = function() {
+        var func = function(x) {
+            return [ (x * x * x), -(x * x), x ];
+        };
+        return T("func", 3, func, 440).kr();
+    }; tests[i++].desc = "control-rate FuncOscillator";
 
     return tests;
 }());
