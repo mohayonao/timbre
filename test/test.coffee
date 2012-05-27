@@ -43,18 +43,18 @@ EJS_VIEW = """
   $(function() {
       "use strict";
 
-       var viewer = new WaveViewer(timbre.sys.cell, 60, "waveviewer", 512, 256);
+      var viewer = new WaveViewer(timbre.sys.cell, 60, "waveviewer", 512, 256);
+
+      timbre.addEventListener("on", function() {
+          viewer.start();
+      });
+      timbre.addEventListener("off", function() {
+          viewer.pause();
+      });
 
       timbre.amp = 0.5;
       tests.forEach(function(x, i) {
           var synth, src, pre;
-
-          timbre.addEventListener("on", function() {
-              viewer.start();
-          });
-          timbre.addEventListener("off", function() {
-              viewer.pause();
-          });
 
           synth = x.call(null);
 
@@ -64,6 +64,16 @@ EJS_VIEW = """
 
           synth.addEventListener("play" , function() {
               pre.css("background", "rgba(255,224,224,0.75)");
+              if (synth.listener) {
+                  synth.listener.bang();
+                  viewer.target = synth.listener.buffer;
+                  viewer.step =  100;
+                  viewer.stay = true;
+              } else {
+                  viewer.target = timbre.sys.cell;
+                  viewer.step =  1;
+                  viewer.stay = false;
+              }
               timbre.on();
           });
           synth.addEventListener("pause", function() {
