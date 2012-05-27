@@ -70,7 +70,7 @@ EJS_VIEW = """
               pre.css("background", "rgba(255,255,255,0.75)");
               synth.dac.off();
               if (s.every(function(synth) {
-                  return !synth._.dac || synth.dac.isOff;
+                  return !synth.dac || synth.dac.isOff;
               })) timbre.off();
           });
 
@@ -90,6 +90,15 @@ EJS_VIEW = """
             }))
             .append($("<button>").text("pause").on("click", function() {
                 synth.pause();
+            }))
+            .append($("<button>").text("on").on("click", function() {
+                synth.on();
+            }))
+            .append($("<button>").text("off").on("click", function() {
+                synth.off();
+            }))
+            .append($("<button>").text("bang").on("click", function() {
+                synth.bang();
             }))
             .append(pre)
             .appendTo("#tests");

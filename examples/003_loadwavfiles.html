@@ -246,7 +246,7 @@ ex1.play();
             ex.addEventListener("pause", function() {
                 ex.dac.off();
                 if (list.every(function(ex) {
-                    return !ex._.dac || ex.dac.isOff;
+                    return !ex.dac || ex.dac.isOff;
                 })) timbre.off();
             });
             $("#play"  + i).on("click", function() { if (ex.ready === 2) ex.play() ; });
