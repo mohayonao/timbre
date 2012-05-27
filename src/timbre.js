@@ -20,6 +20,7 @@ timbre.amp        = 0.8;
 timbre.verbose    = true;
 timbre.dacs       = [];
 timbre.timers     = [];
+timbre.listeners  = [];
 timbre.sys       = null;
 timbre.global    = {};
 timbre._ = { ev:{}, none: new Float32Array(timbre.cellsize) };
@@ -69,7 +70,7 @@ var SoundSystem = (function() {
     
     $this.process = function() {
         var cell, L, R;
-        var seq_id, dacs, dac, timers, timer;
+        var seq_id, dacs, dac, timers, timer, listeners, listener;
         var i, imax, j, jmax, k, kmax, n, nmax;
         var saved_i, tmpL, tmpR, amp, x;
         
@@ -112,6 +113,12 @@ var SoundSystem = (function() {
                 }
             }
             saved_i = i;
+            listeners = timbre.listeners.slice(0);
+            for (j = 0, jmax = listeners.length; j < jmax; ++j) {
+                if ((listener = listeners[j]) !== undefined) {
+                    listener.seq(seq_id);
+                }
+            }
         }
         
         // clip
@@ -375,6 +382,20 @@ timbre.fn = (function(timbre) {
         this.args.remove.apply(this.args, arguments);
         return this;
     };
+    defaults.listen = function(target) {
+        if (target === null) {
+            this.args = this._.args;
+            timbre.listeners.remove(this);
+        } else {
+            if (Object.getPrototypeOf(target)._ instanceof TimbreObject) {
+                this._.args = this.args;
+                this.args.removeAll();
+                this.args.append(target);
+                timbre.listeners.append(this);
+            }
+        }
+        return this;
+    };
     defaults.set = function(key, value) {
         var self;
         self = this;
@@ -553,14 +574,19 @@ timbre.fn = (function(timbre) {
             }
             return this;
         };
+        var removeAll = function() {
+            while (this.length > 0) this.pop();
+            return this;
+        };
         var update = function() {
             this.append.apply(this, list);
             return this;
         };
         return function() {
-            this.append = append;
-            this.remove = remove;
-            this.update = update;
+            this.append    = append;
+            this.remove    = remove;
+            this.removeAll = removeAll;
+            this.update    = update;
             return this;
         };
     }());
@@ -608,6 +634,7 @@ timbre.fn = (function(timbre) {
 }(timbre));
 timbre.fn.init_set.call(timbre.dacs);
 timbre.fn.init_set.call(timbre.timers);
+timbre.fn.init_set.call(timbre.listeners);
 
 
 // built-in-types
