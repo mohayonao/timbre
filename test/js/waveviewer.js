@@ -34,9 +34,9 @@ var WaveViewer = (function() {
         var target, interval, step, context, width, height, half_h;
         var prev, stop_delay = 10;
         
-        target     = this.target;
-        interval   = this.interval;
-        step       = this.step;
+        target   = this.target;
+        interval = this.interval;
+        step     = this.step;
         context  = this.context;
         width    = this.width;
         height   = this.height;
@@ -58,7 +58,7 @@ var WaveViewer = (function() {
                 }
                 
                 if (self.isPlaying) {
-                    wave = target;
+                    wave = self.target;
                     dx   = width / wave.length;
                     context.beginPath();
                     context.moveTo(0, half_h - (half_h * wave[0]));
