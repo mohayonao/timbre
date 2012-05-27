@@ -21,9 +21,10 @@ var Oscillator = (function() {
                 for (i = 0; i < 1024; i++) {
                     wavelet[i] = value(i / 1024);
                 }
-            } else if (typeof value === "object" && value instanceof Float32Array) {
+            } else if (typeof value === "object" &&
+                       (value instanceof Array || value.buffer instanceof ArrayBuffer)) {
                 if (value.length === 1024) {
-                    wavelet.set(value, 0, 1024);
+                    this._.wavelet = value;
                 } else {
                     dx = value.length / 1024;
                     for (i = 0; i < 1024; i++) {
@@ -32,9 +33,7 @@ var Oscillator = (function() {
                 }
             } else if (typeof value === "string") {
                 if ((dx = Oscillator.wavelets[value]) !== undefined) {
-                    for (i = 0; i < 1024; i++) {
-                        wavelet[i] = dx[i];
-                    }
+                    this._.wavelet = dx;
                 }
             }
         },
@@ -388,15 +387,15 @@ var FuncOscillator = (function() {
         this._ = _ = {};
         
         i = 0;
-        if (typeof _args[i] === "function") {
-            _.func = _args[i++];
-        } else {
-            _.func = DEFAULT_FUNCTION;    
-        }
         if (typeof _args[i] === "number" && _args[i] > 0) {
             _.numOfSamples = _args[i++]|0;
         } else {
             _.numOfSamples = 0;
+        }
+        if (typeof _args[i] === "function") {
+            _.func = _args[i++];
+        } else {
+            _.func = DEFAULT_FUNCTION;    
         }
         this.freq = _args[i++];
         if (typeof _args[i] === "number") {
@@ -485,6 +484,32 @@ timbre.fn.register("func", FuncOscillator);
 
 describe("osc", function() {
     object_test(Oscillator, "osc");
+    describe("#wavelet", function() {
+        it("should convert string to wavelet", function() {
+            var instance = timbre("osc");
+            instance.wavelet = "cos";
+            instance.wavelet.should.equal(Oscillator.wavelets.cos);
+        });
+        it("should convert function to wavelet", function() {
+            var instance = timbre("osc");
+            instance.wavelet = function(x) { return x < 0.5 ? -1 : +1; };
+            instance.wavelet.should.eql(Oscillator.wavelets.pulse);
+        });
+        it("should convert array to wavelet", function() {
+            var instance = timbre("osc");
+            instance.wavelet = [ +0.000, +0.125, +0.250, +0.375, +0.500, +0.625, +0.750, +0.875,
+                                 +0.875, +0.750, +0.625, +0.500, +0.375, +0.250, +0.125, +0.000,
+                                 -0.125, -0.250, -0.375, -0.500, -0.625, -0.750, -0.875, -1.000,
+                                 -1.000, -0.875, -0.750, -0.625, -0.500, -0.375, -0.250, -0.125 ];
+            instance.wavelet.should.eql(Oscillator.wavelets.fami);
+        });
+        it("should ref Float32Array(1024) to wavelet", function() {
+            var instance = timbre("osc");
+            var list = new Float32Array(1024);
+            instance.wavelet = list;
+            instance.wavelet.should.equal(list);
+        });
+    });
 });
 describe("noise", function() {
     object_test(WhiteNoise, "noise");
