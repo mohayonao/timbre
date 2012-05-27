@@ -40,7 +40,7 @@
           <button id="play0">play</button><button id="pause0">pause</button>
           <pre class="prettyprint">
 T("*", T("sin", 1340),
-       T("tri", 8, 0.4, 0.2).kr(),
+       T("tri", 8, 0.8, 0.4).kr(),
        T("adsr", 500, 1500)).play();
           </pre>
 
@@ -53,7 +53,7 @@ var delay = T("efx.delay", 125, 0.8, 0.75);
 
 function synth(freq) {
     var s, env;
-    s = T("*", T("fami", freq, 0.25),
+    s = T("*", T("fami", freq, 0.6),
                env = T("perc", 1000).bang());
     s.dac = delay;
     env.onended = function() {
@@ -180,10 +180,14 @@ Object.defineProperty(window, "c", function() {
         
         var list = [ ex0, ex1, ex2 ];
         list.forEach(function(ex, i) {
-            var dac = ex.dac;
-            dac.addEventListener("on" , function() { timbre.on();});
-            dac.addEventListener("off", function() {
-                if (list.every(function(ex) {return ex.dac.isOff;})) timbre.off();
+            ex.addEventListener("play" , function() {
+                timbre.on();
+            });
+            ex.addEventListener("pause", function() {
+                ex.dac.off();
+                if (list.every(function(ex) {
+                    return !ex._.dac || ex.dac.isOff;
+                })) timbre.off();
             });
             $("#play"  + i).on("click", function() { ex.bang(); ex.play() ; });
             $("#pause" + i).on("click", function() { ex.pause(); });

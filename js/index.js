@@ -1,15 +1,14 @@
 ex0 = (function() {
     var synth, env 
     synth = T("*", T("sin", 1340),
-                   T("tri", 8, 0.4, 0.2).kr(),
+                   T("tri", 8, 0.8, 0.4).kr(),
                    env = T("adsr", 500, 1500));
     synth.onplay = function() {
         synth.dac.append(synth);
         env.bang();
     };
     env.onended = function() {
-        synth.dac.remove(synth);
-        synth.dac.off();
+        synth.pause();
     };
     return synth;
 }());
@@ -19,7 +18,7 @@ ex1 = (function() {
     
     function synth(freq) {
         var s, env;
-        s = T("*", T("fami", freq, 0.25),
+        s = T("*", T("fami", freq, 0.6),
                    env = T("perc", 1000).bang());
         s.dac = delay;
         env.onended = function() {
@@ -36,7 +35,7 @@ ex1 = (function() {
         if (index >= list.length) index = 0;
         clearTimeout(timeout);
         timeout = setTimeout(function() {
-            delay.dac.off();
+            delay.pause();
         }, 2250);
     };
     
