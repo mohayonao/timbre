@@ -24,10 +24,11 @@
       </header>
       
       <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
-      
-      <button id="play0">play</button><button id="pause0">pause</button>
-      <div id="p"></div>
-      <pre id="code" class="prettyprint">
+
+      <div id="contents">
+        <button id="play0">play</button><button id="pause0">pause</button>
+        <div id="p"></div>
+        <pre id="code" class="prettyprint">
 // rhythm sequencer
 
 // extern p = [ /* ui.checkbox */ ];
@@ -105,8 +106,8 @@ drumkit.onpause = function() {
 };
 
 drumkit.play();
-      </pre>
-      
+        </pre>
+      </div>
     </section>
   </body>
   <script type="text/javascript" src="js/libs/prettify.js"></script>
@@ -159,10 +160,14 @@ drumkit.play();
         
         var list = [ ex1 ];
         list.forEach(function(ex, i) {
-            var dac = ex.dac;
-            dac.addEventListener("on" , function() {timbre.on();});
-            dac.addEventListener("off", function() {
-                if (list.every(function(dac) {return ex.dac.isOff;})) timbre.off();
+            ex.addEventListener("play" , function() {
+                timbre.on();
+            });
+            ex.addEventListener("pause", function() {
+                ex.dac.off();
+                if (list.every(function(ex) {
+                    return !ex._.dac || ex.dac.isOff;
+                })) timbre.off();
             });
             $("#play"  + i).on("click", function() { ex.play() ; });
             $("#pause" + i).on("click", function() { ex.pause(); });
