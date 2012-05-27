@@ -970,22 +970,12 @@ global.object_test = function(klass) {
             instance.play.should.be.an.instanceOf(Function);
             instance.play().should.equal(instance);
         });
-        it("should call 'play' event", function(done) {
-            var instance = timbre.apply(null, args);
-            instance.addEventListener("play", done);
-            instance.off().play();
-        });
     });
     describe("#pause()", function() {
         it("should return self", function() {
             var instance = timbre.apply(null, args);
             instance.pause.should.be.an.instanceOf(Function);
             instance.pause().should.equal(instance);
-        });
-        it("should call 'pause' event", function(done) {
-            var instance = timbre.apply(null, args);
-            instance.addEventListener("pause", done);
-            instance.play().pause();
         });
     });
     describe("#bang()", function() {
