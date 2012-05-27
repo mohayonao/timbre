@@ -1,6 +1,6 @@
 /**
  * timbre 0.0.0 / JavaScript Library for Objective Sound Programming
- * build: Sat May 26 2012 23:07:14 GMT+0900 (JST)
+ * build: Sun May 27 2012 09:18:52 GMT+0900 (JST)
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,7 +10,7 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.0.0";
-    timbre.BUILD      = "Sat May 26 2012 23:07:14 GMT+0900 (JST)";
+    timbre.BUILD      = "Sun May 27 2012 09:18:52 GMT+0900 (JST)";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.workerpath = "";
@@ -320,23 +320,27 @@ var timbre = (function(context, timbre) {
             
             return instance;
         };
-    
+        
         defaults.play = function() {
             var _ = this._;
-            if (this.dac.args.indexOf(this) === -1) {
-                _.dac.append(this);
-                timbre.fn.do_event(this, "play");
+            if (_.ar) {
+                if (!_.dac && this.dac) {
+                    timbre.fn.do_event(this, "play");
+                } else if (this.dac.args.indexOf(this) === -1) {
+                    _.dac.append(this);
+                    timbre.fn.do_event(this, "play");
+                }
+                if (_.dac.isOff) _.dac.on();
             }
-            if (_.dac.isOff) _.dac.on();
             return this;
         };
         defaults.pause = function() {
             var _ = this._;
-            if (this.dac.args.indexOf(this) !== -1) {
+            if (_.dac && _.dac.args.indexOf(this) !== -1) {
                 _.dac.remove(this);
                 timbre.fn.do_event(this, "pause");
+                if (_.dac.isOn && _.dac.args.length === 0) _.dac.off();
             }
-            if (_.dac.isOn && _.dac.args.length === 0) _.dac.off();
             return this;
         };
         defaults.bang = function() {
@@ -437,31 +441,6 @@ var timbre = (function(context, timbre) {
             get: function() { return this._.add; }
         };
         
-        fn.set_ar_only = function(object) {
-            object.ar = defaults.optional.fixrate;
-            object.kr = defaults.optional.fixrate;
-            if (!object._) object._ = {};
-            object._.ar = true;
-        };
-        fn.set_kr_only = function(object) {
-            object.ar = defaults.optional.fixrate;
-            object.kr = defaults.optional.fixrate;
-            if (!object._) object._ = {};
-            object._.ar = false;
-        };
-        fn.set_ar_kr = function(object) {
-            object.ar = defaults.optional.ar;
-            object.kr = defaults.optional.kr;
-            if (!object._) object._ = {};
-            object._.ar = true;
-        };
-        fn.set_kr_ar = function(object) {
-            object.ar = defaults.optional.ar;
-            object.kr = defaults.optional.kr;
-            if (!object._) object._ = {};
-            object._.ar = false;
-        };
-        
         fn.register = function(key, klass, func) {
             var name, p, _, i;
             
@@ -486,7 +465,7 @@ var timbre = (function(context, timbre) {
                 }
                 
                 if (typeof p.ar !== "function") {
-                    fn.set_kr_only(p);
+                    fn.newPrototypeOf("kr-only", p);
                 }
                 
                 if (typeof key === "string") {            
@@ -498,6 +477,35 @@ var timbre = (function(context, timbre) {
                         klasses[key] = func;
                     }
                 }
+            }
+        };
+        
+        fn.setPrototypeOf = function(type) {
+            switch (type) {
+            case "ar-only":
+                this.ar = defaults.optional.fixrate;
+                this.kr = defaults.optional.fixrate;
+                if (!this._) this._ = {};
+                this._.ar = true;
+                break;
+            case "kr-only":
+                this.ar = defaults.optional.fixrate;
+                this.kr = defaults.optional.fixrate;
+                if (!this._) this._ = {};
+                this._.ar = false;
+                break;
+            case "kr-ar":
+                this.ar = defaults.optional.ar;
+                this.kr = defaults.optional.kr;
+                if (!this._) this._ = {};
+                this._.ar = false;
+                break;
+            case "ar-kr":
+                this.ar = defaults.optional.ar;
+                this.kr = defaults.optional.kr;
+                if (!this._) this._ = {};
+                this._.ar = true;
+                break;
             }
         };
         
@@ -613,6 +621,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = NumberWrapper.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "kr-only");
+        
         Object.defineProperty($this, "value", {
             set: function(value) {
                 var cell, i;
@@ -655,6 +665,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = BooleanWrapper.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "kr-only");
+        
         Object.defineProperty($this, "value", {
             set: function(value) {
                 var cell, i, x;
@@ -695,6 +707,8 @@ var timbre = (function(context, timbre) {
         var FunctionWrapper = function() {
             initialize.apply(this, arguments);
         }, $this = FunctionWrapper.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "kr-only");
         
         Object.defineProperty($this, "value", {
             set: function(value) {
@@ -755,6 +769,8 @@ var timbre = (function(context, timbre) {
         var ArrayWrapper = function() {
             initialize.apply(this, arguments);
         }, $this = ArrayWrapper.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "kr-only");
         
         Object.defineProperty($this, "value", {
             set: function(value) {
@@ -850,6 +866,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = ObjectWrapper.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "kr-only");
+        
         Object.defineProperty($this, "value", {
             set: function(value) {
                 if (typeof value === "object") {
@@ -877,9 +895,11 @@ var timbre = (function(context, timbre) {
     timbre.fn.register("object", ObjectWrapper);
     
     var UndefinedWrapper = function() {};
+    timbre.fn.setPrototypeOf.call(UndefinedWrapper.prototype, "kr-only");
     timbre.fn.register("undefined", UndefinedWrapper);
     
     var NullWrapper = function() {};
+    timbre.fn.setPrototypeOf.call(NullWrapper.prototype, "kr-only");
     timbre.fn.register("null", NullWrapper);
     
     
@@ -888,6 +908,8 @@ var timbre = (function(context, timbre) {
         var Dac = function() {
             initialize.apply(this, arguments);
         }, $this = Dac.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "ar-only");
         
         Object.defineProperty($this, "dac", {
             get: function() { return this; }
@@ -915,7 +937,6 @@ var timbre = (function(context, timbre) {
             this.R = new Float32Array(timbre.cellsize);
             _.prev_pan = undefined;
         };
-        timbre.fn.set_ar_only($this);
         
         $this._post_init = function() {
             var i, args;
@@ -931,19 +952,28 @@ var timbre = (function(context, timbre) {
             timbre.fn.copy_for_clone(this, newone, deep);
             return newone;
         };
-        
-        $this.on = $this.play = function() {
+    
+        $this.on = function() {
             this._.ison = true;
             timbre.dacs.append(this);
-            timbre.fn.do_event(this, "play");        
             timbre.fn.do_event(this, "on");
             return this;
         };
-        
-        $this.off = $this.pause = function() {
+        $this.off = function() {
             this._.ison = false;
             timbre.dacs.remove(this);
             timbre.fn.do_event(this, "off");
+            return this;
+        };
+        $this.play = function() {
+            this._.ison = true;
+            timbre.dacs.append(this);
+            timbre.fn.do_event(this, "play");        
+            return this;
+        };
+        $this.pause = function() {
+            this._.ison = false;
+            timbre.dacs.remove(this);
             timbre.fn.do_event(this, "pause");        
             return this;
         };
@@ -1002,10 +1032,11 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = Add.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "ar-kr");
+        
         var initialize = function(_args) {
             this.args = timbre.fn.valist.call(this, _args);
         };
-        timbre.fn.set_ar_kr($this);
         
         $this.clone = function(deep) {
             var newone;
@@ -1052,10 +1083,11 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = Multiply.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "ar-kr");
+        
         var initialize = function(_args) {
             this.args = timbre.fn.valist.call(this, _args);
         };
-        timbre.fn.set_ar_kr($this);
         
         $this.clone = function(deep) {
             var newone;
@@ -1103,6 +1135,8 @@ var timbre = (function(context, timbre) {
         var Oscillator = function() {
             initialize.apply(this, arguments);
         }, $this = Oscillator.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "ar-kr");
         
         Object.defineProperty($this, "wavelet", {
             set: function(value) {
@@ -1177,7 +1211,6 @@ var timbre = (function(context, timbre) {
             _.coeff = 1024 / timbre.samplerate;
             _.ison = true;
         };
-        timbre.fn.set_ar_kr($this);
         
         $this.clone = function(deep) {
             var newone, _ = this._;
@@ -1376,6 +1409,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = WhiteNoise.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "ar-kr");
+        
         var initialize = function(_args) {
             var i, _;
             
@@ -1389,7 +1424,6 @@ var timbre = (function(context, timbre) {
                 this._.add = _args[i++];
             }
         };
-        timbre.fn.set_ar_kr($this);
         
         $this.clone = function(deep) {
             var newone, _ = this._;
@@ -1431,6 +1465,8 @@ var timbre = (function(context, timbre) {
         var FuncOscillator = function() {
             initialize.apply(this, arguments);
         }, $this = FuncOscillator.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "ar-kr");
         
         Object.defineProperty($this, "func", {
             set: function(value) {
@@ -1496,8 +1532,7 @@ var timbre = (function(context, timbre) {
             _.phase = _.x = 0;
             _.coeff = 1 / timbre.samplerate;
         };
-        timbre.fn.set_ar_kr($this);
-    
+        
         $this.clone = function(deep) {
             var newone, _ = this._;
             newone = timbre("func", _.func, null, _.numOfSamples);
@@ -1571,6 +1606,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = ADSREnvelope.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "kr-only");
+        
         Object.defineProperty($this, "a", {
             set: function(value) {
                 if (typeof value === "number") {
@@ -1641,7 +1678,6 @@ var timbre = (function(context, timbre) {
             _.samplesMax = (timbre.samplerate * (_.a / 1000))|0;
             _.samples    = 0;
         };
-        timbre.fn.set_kr_only($this);
         
         $this.clone = function(deep) {
             var newone, _ = this._;
@@ -1779,6 +1815,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = Tween.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "kr-only");
+        
         Object.defineProperty($this, "type", {
             set: function(value) {
                 var f;
@@ -1856,8 +1894,7 @@ var timbre = (function(context, timbre) {
             _.ison   = false;
             this.type = type;        
         };
-        timbre.fn.set_kr_only($this);
-    
+        
         $this.clone = function(deep) {
             var newone, _ = this._;
             var args, i, imax;
@@ -2069,6 +2106,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = Percussive.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "kr-only");
+        
         Object.defineProperty($this, "d", {
             set: function(value) {
                 if (typeof value === "number") {
@@ -2103,7 +2142,6 @@ var timbre = (function(context, timbre) {
             _.dx = timbre.cellsize / _.samples;
             _.x  = 0;
         };
-        timbre.fn.set_kr_only($this);
         
         $this.clone = function(deep) {
             var newone, _ = this._;
@@ -2178,6 +2216,8 @@ var timbre = (function(context, timbre) {
         var Filter = function() {
             initialize.apply(this, arguments);
         }, $this = Filter.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "ar-only");
         
         Object.defineProperty($this, "type", {
             set: function(value) {
@@ -2268,8 +2308,7 @@ var timbre = (function(context, timbre) {
             _.ison = true;
             _.in1 = _.in2 = _.out1 = _.out2 = 0;
         };
-        timbre.fn.set_ar_only($this);
-    
+        
         $this.clone = function(deep) {
             var newone, _ = this._;
             var args, i, imax;
@@ -2544,6 +2583,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = ResonantFilter.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "ar-only");
+        
         ResonantFilter.types = { LPF:0, HPF:1, BPF:2, BRF:3 };
         
         Object.defineProperty($this, "type", {
@@ -2633,7 +2674,6 @@ var timbre = (function(context, timbre) {
             _.damp = 0;
             _.freq = 0;
         };
-        timbre.fn.set_ar_only($this);
         
         $this.clone = function(deep) {
             var newone, _ = this._;
@@ -2756,6 +2796,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = EfxDistortion.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "ar-only");
+        
         Object.defineProperty($this, "pre", {
             set: function(value) {
                 this._.preGain = timbre(value);
@@ -2839,8 +2881,7 @@ var timbre = (function(context, timbre) {
             _.b0  = _.b1  = _.b2 = 0;
             _.ison = true;
         };
-        timbre.fn.set_ar_only($this);
-    
+        
         $this.clone = function(deep) {
             var newone, _ = this._;
             var args, i, imax;
@@ -2976,6 +3017,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = EfxDelay.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "ar-only");
+        
         Object.defineProperty($this, "time", {
             set: function(value) {
                 if (typeof value === "number") {
@@ -3031,7 +3074,6 @@ var timbre = (function(context, timbre) {
             set_params.call(this, _.delayTime, _.feedback, _.wet);
             this.args = timbre.fn.valist.call(this, _args.slice(i));
         };
-        timbre.fn.set_ar_only($this);
         
         $this.clone = function(deep) {
             var newone, _ = this._;
@@ -3132,6 +3174,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = Interval.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "kr-only");
+        
         Object.defineProperty($this, "interval", {
             set: function(value) {
                 if (typeof value === "number") {
@@ -3166,7 +3210,6 @@ var timbre = (function(context, timbre) {
             _.count = 0;
             _.next_count  = 0;
         };
-        timbre.fn.set_kr_only($this);
         
         $this.clone = function(deep) {
             var newone, _ = this._;
@@ -3245,6 +3288,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = Timeout.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "kr-only");
+        
         Object.defineProperty($this, "timeout", {
             set: function(value) {
                 if (typeof value === "number") {
@@ -3269,7 +3314,6 @@ var timbre = (function(context, timbre) {
             _.ison = false;
             _.samples = 0;
         };
-        timbre.fn.set_kr_only($this);
         
         $this.clone = function(deep) {
             var newone, _ = this._;
@@ -3346,6 +3390,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = Schedule.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "kr-only");
+        
         Object.defineProperty($this, "mode", {
             get: function() { return this._.mode; }
         });
@@ -3384,7 +3430,6 @@ var timbre = (function(context, timbre) {
             
             delete _.init;
         };
-        timbre.fn.set_kr_only($this);
         
         $this.clone = function(deep) {
             var newone, _ = this._;
@@ -3547,6 +3592,8 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = Wav.prototype;
         
+        timbre.fn.setPrototypeOf.call($this, "ar-only");
+        
         Object.defineProperty($this, "src", {
             set: function(value) {
                 if (typeof value === "string") this._.src = value;
@@ -3597,7 +3644,6 @@ var timbre = (function(context, timbre) {
             _.phaseStep  = 0;
             _.phase = 0;
         };
-        timbre.fn.set_ar_only($this);
         
         var send = function(result, callback) {
             if (typeof callback === "function") {
