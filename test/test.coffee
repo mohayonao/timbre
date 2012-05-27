@@ -43,10 +43,11 @@ EJS_VIEW = """
   $(function() {
       "use strict";
 
+       var viewer = new WaveViewer(timbre.sys.cell, 60, "waveviewer", 512, 256);
+
       timbre.amp = 0.5;
       tests.forEach(function(x, i) {
           var synth, src, pre;
-          var viewer = new WaveViewer(timbre.sys.cell, 60, "waveviewer", 512, 256);
 
           timbre.addEventListener("on", function() {
               viewer.start();
@@ -56,13 +57,21 @@ EJS_VIEW = """
           });
 
           synth = x.call(null);
-          synth.dac.addEventListener("play" , function() {
+
+          if (synth.isKr) {
+              synth = T("+", synth);
+          }
+
+          synth.addEventListener("play" , function() {
               pre.css("background", "rgba(255,224,224,0.75)");
               timbre.on();
           });
-          synth.dac.addEventListener("pause", function() {
+          synth.addEventListener("pause", function() {
               pre.css("background", "rgba(255,255,255,0.75)");
-              if (s.every(function(synth) {return synth.dac.isOff;})) timbre.off();
+              synth.dac.off();
+              if (s.every(function(synth) {
+                  return !synth._.dac || synth.dac.isOff;
+              })) timbre.off();
           });
 
           src = x.toString().split("\\n");
