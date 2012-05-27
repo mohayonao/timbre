@@ -120,10 +120,14 @@ b_env.onS = function() {
         
         var list = [ ex1, ex2, ex3, ex4, ex5 ];
         list.forEach(function(ex, i) {
-            var dac = ex.dac;
-            dac.addEventListener("on" , function() {timbre.on();});
-            dac.addEventListener("off", function() {
-                if (list.every(function(ex) {return ex.dac.isOff;})) timbre.off();
+            ex.addEventListener("play" , function() {
+                timbre.on();
+            });
+            ex.addEventListener("pause", function() {
+                ex.dac.off();
+                if (list.every(function(ex) {
+                    return !ex._.dac || ex.dac.isOff;
+                })) timbre.off();
             });
             $("#play"  + i).on("click", function() { ex.play() ; });
             $("#pause" + i).on("click", function() { ex.pause(); });
