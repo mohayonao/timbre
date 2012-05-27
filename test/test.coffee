@@ -59,7 +59,7 @@ EJS_VIEW = """
           synth = x.call(null);
 
           if (synth.isKr) {
-              synth = T("+", synth);
+              synth = T("ar", synth);
           }
 
           synth.addEventListener("play" , function() {
