@@ -298,6 +298,7 @@ var WhiteNoise = (function() {
         if (typeof _args[i] === "number") {
             this._.add = _args[i++];
         }
+        _.ison = true;
     };
     
     $this.clone = function(deep) {
@@ -311,6 +312,8 @@ var WhiteNoise = (function() {
         var _ = this._;
         var cell;
         var mul, add, x, i;
+        
+        if (!_.ison) return timbre._.none;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
@@ -330,7 +333,7 @@ var WhiteNoise = (function() {
         }
         return cell;
     };
-
+    
     return WhiteNoise;
 }());
 timbre.fn.register("noise", WhiteNoise);
@@ -406,6 +409,7 @@ var FuncOscillator = (function() {
         _.index = 0;
         _.phase = _.x = 0;
         _.coeff = 1 / timbre.samplerate;
+        _.ison = true;
     };
     
     $this.clone = function(deep) {
@@ -433,6 +437,8 @@ var FuncOscillator = (function() {
         var func, freq, x, coeff;
         var mul, add, saved, index;
         var tmp, i, imax, j, jmax, k;
+        
+        if (!_.ison) return timbre._.none;
         
         cell = this.cell;
         if (this.seq_id !== seq_id) {
