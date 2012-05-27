@@ -21,7 +21,7 @@ var Record = (function() {
             var _ = this._;
             if (typeof value === "number" && value > 0) {
                 _.recTime = value;
-                _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
+                // _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
             }
         },
         get: function() { return this._.recTime; }
@@ -67,10 +67,11 @@ var Record = (function() {
         return this;
     };
     $this.bang = function() {
-        var i, _ = this._;
+        var buffer, i, _ = this._;
         _.index = _.currentTime = 0;
+        buffer = _.buffer;
         for (i = _.buffer.length; i--; ) {
-            _.buffer[i] = 0.0;
+            buffer[i] = 0.0;
         }
         timbre.fn.do_event(this, "bang");
         return this;
