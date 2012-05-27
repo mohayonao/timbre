@@ -313,6 +313,9 @@ timbre.fn = (function(timbre) {
             if (typeof instance._.add !== "number") {
                 instance._.add = 0.0;
             }
+            if (typeof instance._.dac !== "object") {
+                instance._.dac = null;
+            }
         }
         if (instance._post_init) instance._post_init();
         
@@ -322,7 +325,8 @@ timbre.fn = (function(timbre) {
     defaults.play = function() {
         var _ = this._;
         if (_.ar) {
-            if (!_.dac && this.dac) {
+            if (_.dac === null) {
+                _.dac = timbre("dac", this);
                 timbre.fn.do_event(this, "play");
             } else if (this.dac.args.indexOf(this) === -1) {
                 _.dac.append(this);
@@ -409,22 +413,15 @@ timbre.fn = (function(timbre) {
             if (value !== this._.dac) {
                 if (this._.dac) {
                     this._.dac.remove(this);
-                    this._.dac_autobinded = false;
                 }
                 if (value !== null) {
                     this._.dac = value.append(this);
                 } else {
-                    this._.dac = null; // TODO: ???
+                    this._.dac = null;
                 }
             }
         },
-        get: function() {
-            if (!this._.dac) {
-                this._.dac = timbre("dac", this);
-                this._.dac_autobinded = true;
-            }
-            return this._.dac;
-        },
+        get: function() { return this._.dac; },
     };
     defaults.properties.mul  = {
         set: function(value) {
