@@ -54,7 +54,7 @@ var Filter = (function() {
             (Filter.types[_args[i]]) !== undefined) {
             this.type = _args[i++];
         } else {
-            this.type = "LPF";
+            this.type = "lpf";
         }
         type = this._.type;
         
@@ -196,7 +196,7 @@ var Filter = (function() {
 }());
 
 Filter.types = {};
-Filter.types.LPF = {
+Filter.types.lpf = {
     default_freq: 800, default_band: 1,
     set_params: function(freq, band) {
         var _ = this._;
@@ -214,7 +214,7 @@ Filter.types.LPF = {
         _.b2 = _.b0 = _.b1 * 0.5;
     }
 };
-Filter.types.HPF = {
+Filter.types.hpf = {
     default_freq: 5500, default_band: 1,
     set_params: function(freq, band) {
         var _ = this._;
@@ -232,7 +232,7 @@ Filter.types.HPF = {
         _.b2 = _.b0 = - _.b1 * 0.5;
     }
 };
-Filter.types.BPF = {
+Filter.types.bpf = {
     default_freq: 3000, default_band: 1,
     set_params: function(freq, band) {
         var _ = this._;
@@ -250,7 +250,7 @@ Filter.types.BPF = {
         _.b2 = -_.b0;
     }
 };
-Filter.types.BRF = {
+Filter.types.brf = {
     default_freq: 3000, default_band: 1,
     set_params: function(freq, band) {
         var _ = this._;
@@ -346,17 +346,17 @@ Filter.types.highboost = {
     }
 };
 timbre.fn.register("filter", Filter);
-timbre.fn.register("LPF", Filter, function(_args) {
-    return new Filter(["LPF"].concat(_args));
+timbre.fn.register("lpf", Filter, function(_args) {
+    return new Filter(["lpf"].concat(_args));
 });
-timbre.fn.register("HPF", Filter, function(_args) {
-    return new Filter(["HPF"].concat(_args));
+timbre.fn.register("hpf", Filter, function(_args) {
+    return new Filter(["hpf"].concat(_args));
 });
-timbre.fn.register("BPF", Filter, function(_args) {
-    return new Filter(["BPF"].concat(_args));
+timbre.fn.register("bpf", Filter, function(_args) {
+    return new Filter(["bpf"].concat(_args));
 });
-timbre.fn.register("BRF", Filter, function(_args) {
-    return new Filter(["BRF"].concat(_args));
+timbre.fn.register("brf", Filter, function(_args) {
+    return new Filter(["brf"].concat(_args));
 });
 timbre.fn.register("allpass", Filter, function(_args) {
     return new Filter(["allpass"].concat(_args));
@@ -379,7 +379,7 @@ var ResonantFilter = (function() {
     
     timbre.fn.setPrototypeOf.call($this, "ar-only");
     
-    ResonantFilter.types = { LPF:0, HPF:1, BPF:2, BRF:3 };
+    ResonantFilter.types = { lpf:0, hpf:1, bpf:2, brf:3 };
     
     Object.defineProperty($this, "type", {
         set: function(value) {
@@ -423,7 +423,7 @@ var ResonantFilter = (function() {
             (ResonantFilter.types[_args[i]]) !== undefined) {
             this.type = _args[i++];
         } else {
-            this.type = "LPF";
+            this.type = "lpf";
         }
         
         if (typeof _args[i] === "object" && _args[i].isKr) {
@@ -568,17 +568,17 @@ var ResonantFilter = (function() {
     return ResonantFilter;
 }());
 timbre.fn.register("rfilter", ResonantFilter);
-timbre.fn.register("rLPF", ResonantFilter, function(_args) {
-    return new ResonantFilter(["LPF"].concat(_args));
+timbre.fn.register("rlpf", ResonantFilter, function(_args) {
+    return new ResonantFilter(["lpf"].concat(_args));
 });
-timbre.fn.register("rHPF", ResonantFilter, function(_args) {
-    return new ResonantFilter(["HPF"].concat(_args));
+timbre.fn.register("rhpf", ResonantFilter, function(_args) {
+    return new ResonantFilter(["hpf"].concat(_args));
 });
-timbre.fn.register("rBPF", ResonantFilter, function(_args) {
-    return new ResonantFilter(["BPF"].concat(_args));
+timbre.fn.register("rbpf", ResonantFilter, function(_args) {
+    return new ResonantFilter(["bpf"].concat(_args));
 });
-timbre.fn.register("rBRF", ResonantFilter, function(_args) {
-    return new ResonantFilter(["BRF"].concat(_args));
+timbre.fn.register("rbrf", ResonantFilter, function(_args) {
+    return new ResonantFilter(["brf"].concat(_args));
 });
 
 
