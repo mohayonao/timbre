@@ -143,6 +143,9 @@ var Filter = (function() {
                 }
             }
             
+            mul = _.mul;
+            add = _.add;
+            
             // filter
             if (_.ison) {
                 type = _.type;
@@ -159,8 +162,6 @@ var Filter = (function() {
                     _.prev_band = band;
                     _.prev_gain = gain;
                 }
-                mul = _.mul;
-                add = _.add;
                 a1 = _.a1; a2 = _.a2;
                 b0 = _.b0; b1 = _.b1; b2 = _.b2;
                 in1  = _.in1;  in2  = _.in2;
@@ -540,6 +541,9 @@ var ResonantFilter = (function() {
                     cell[j] += tmp[j];
                 }
             }
+
+            mul = _.mul;
+            add = _.add;
             
             // filter
             if (_.ison) {
@@ -556,8 +560,6 @@ var ResonantFilter = (function() {
                     _.depth0 = Math.cos(0.5 * Math.PI * depth);
                     _.depth1 = Math.sin(0.5 * Math.PI * depth);
                 }
-                mul = _.mul;
-                add = _.add;
                 f   = _.f;
                 damp = _.damp;
                 freq = _.freq;
@@ -587,6 +589,10 @@ var ResonantFilter = (function() {
                 
                 for (i = imax; i--; ) {
                     cell[i] = cell[i] * mul + add;
+                }
+            } else {
+                for (j = jmax; j--; ) {
+                    cell[j] = cell[j] * mul + add;
                 }
             }
             this.seq_id = seq_id;
