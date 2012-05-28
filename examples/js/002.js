@@ -33,7 +33,7 @@ ex1 = (function() {
     // sequence(2)
     s2 = function() {
         var s2, env;
-        s2 = T("*", T("saw", T("tween", "cubic.out", 300, 880*4, 220).bang(), 0.4),
+        s2 = T("*", T("saw", T("ease", "cubic.out", 300, 880*4, 220).bang(), 0.4),
                     env = T("perc", 300)).play();
         env.addEventListener("~ended", function() {
             s2.pause();
@@ -42,17 +42,17 @@ ex1 = (function() {
     s2.i = 1;
     
     // hihat
-    hh = T("*", T("HPF", 8000, T("noise")),
+    hh = T("*", T("hpf", 8000, T("noise")),
                 hh_env = T("perc", 30));
     hh.i = 2;
     
     // snare
-    sd = T("*", T("rLPF", 5000, 0.4, T("noise")),
+    sd = T("*", T("rlpf", 5000, 0.4, T("noise")),
                 sd_env = T("perc", 120));
     sd.i = 3;
 
     // bass drum
-    bd = T("*", T("rLPF", 40, 0.5, T("pulse", 40, 2)),
+    bd = T("*", T("rlpf", 40, 0.5, T("pulse", 40, 2)),
                 bd_env = T("perc", 60));
     bd.i = 4;
     
