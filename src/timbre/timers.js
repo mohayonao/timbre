@@ -47,9 +47,7 @@ var Interval = (function() {
     };
     
     $this.clone = function(deep) {
-        var newone, _ = this._;
-        newone = timbre("interval", _.interval);
-        return newone;
+        return timbre("interval", this._.interval);
     };
     
     $this.on = function() {
@@ -151,9 +149,7 @@ var Timeout = (function() {
     };
     
     $this.clone = function(deep) {
-        var newone, _ = this._;
-        newone = timbre("timeout", _.timeout);
-        return newone;
+        return timbre("timeout", this._.timeout);
     };
     
     $this.on = function() {
