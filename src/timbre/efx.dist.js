@@ -1,5 +1,5 @@
 /**
- * timbre/efx.distortion
+ * timbre/efx.dist
  */
 "use strict";
 
