@@ -221,7 +221,15 @@ var PercussiveEnvelope = (function() {
     }, $this = PercussiveEnvelope.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "kr-only");
-    
+
+    Object.defineProperty($this, "delayTime", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._.delayTime = value;
+            }
+        },
+        get: function() { return this._.delayTime; }
+    });
     Object.defineProperty($this, "duration", {
         set: function(value) {
             if (typeof value === "number") {
@@ -280,10 +288,12 @@ var PercussiveEnvelope = (function() {
         }
         
         _.ison = true;
+        _.delayTime = 0;
         _.reversed = false;
-
+        
+        _.status  = -1;        
         _.samples = Infinity;
-        _.x = 0; _.dx = 0;
+        _.x0 = 0; _.dx = 0;
         _.count  = 0;
         _.volume = 1;
         _.currentTime = 0;
@@ -296,12 +306,14 @@ var PercussiveEnvelope = (function() {
     
     $this.bang = function() {
         var _ = this._;
-        _.samples = (timbre.samplerate * (_.duration / 1000))|0;
-        _.dx = timbre.cellsize / _.samples;
-        _.x = 1;
+
+        _.status  = 0;
+        _.samples = (timbre.samplerate * (_.delayTime / 1000))|0;
+        _.x0 = 0; _.dx = 0;
         _.count  = _.iteration;
         _.volume = 1;
         _.currentTime = 0;
+        
         timbre.fn.do_event(this, "bang");
         return this;
     };
@@ -315,26 +327,39 @@ var PercussiveEnvelope = (function() {
         cell = this.cell;
         if (seq_id !== this.seq_id) {
             while (_.samples <= 0) {
-                if (--_.count <= 0) {
-                    _.samples = Infinity;
-                    _.x = 0;
-                    timbre.fn.do_event(this, "ended");
-                } else {
-                    _.volume *= (1 - _.decayRate);
-                    _.x = _.volume;
-                    _.samples = (timbre.samplerate * (_.duration * _.x / 1000))|0;
-                    _.dx = (timbre.cellsize * _.x) / _.samples;
+                if (_.status === 0) {
+                    _.status = 1;
+                    _.samples = (timbre.samplerate * (_.duration / 1000))|0;
+                    _.x0 = 1;
+                    _.dx = timbre.cellsize / _.samples;
+                    continue;
                 }
+                
+                if (_.status === 1) {
+                    if (--_.count <= 0) {
+                        _.status  = -1;
+                        _.samples = Infinity;
+                        _.x0 = 0; _.dx = 0;
+                        timbre.fn.do_event(this, "ended");
+                    } else {
+                        _.volume *= (1 - _.decayRate);
+                        _.x0 = _.volume;
+                        _.samples += (timbre.samplerate * (_.duration * _.x0 / 1000))|0;
+                        _.dx = (timbre.cellsize * _.x0) / _.samples;
+                    }
+                    continue;
+                }
+
             }
             if (_.reversed) {
-                x = (1 - _.x) * _.mul + _.add;
+                x = (1 - _.x0) * _.mul + _.add;
             } else {
-                x = _.x * _.mul + _.add;
+                x = _.x0 * _.mul + _.add;
             }
             for (i = 0, imax = cell.length; i < imax; ++i) {
                 cell[i] = x;
             }
-            _.x -= _.dx;
+            _.x0 -= _.dx;
             _.samples -= imax;
             _.currentTime += imax * 1000 / timbre.samplerate;;
             
