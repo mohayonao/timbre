@@ -65,7 +65,7 @@ EJS_VIEW = """
           synth.addEventListener("play" , function() {
               pre.css("background", "rgba(255,224,224,0.75)");
               if (synth.listener) {
-                  synth.listener.bang();
+                  synth.listener.on().bang();
                   viewer.target = synth.listener.buffer;
                   viewer.step =  100;
                   viewer.stay = true;

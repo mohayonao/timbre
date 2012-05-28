@@ -16,7 +16,7 @@ tests = (function() {
         env.onR     = function() { tri.freq =  440; };
         env.onended = function() { synth.pause(); };
         
-        synth.listener = T("rec", 1500).listen(env);
+        synth.listener = T("rec", 1500).listen(env).off();
         
         return synth;
     }; tests[i++].desc = "adsr: a->d->end";
@@ -34,7 +34,7 @@ tests = (function() {
         env.onR     = function() { tri.freq =  440; };
         env.onended = function() { synth.pause(); };
         
-        synth.listener = T("rec", 3000).listen(env);
+        synth.listener = T("rec", 3000).listen(env).off();
         
         return synth;
     }; tests[i++].desc = "adsr: a->d->end";
@@ -52,7 +52,7 @@ tests = (function() {
         env.onR     = function() { tri.freq =  440; };
         env.onended = function() { synth.pause(); };
         
-        synth.listener = T("rec", 3000).listen(env);
+        synth.listener = T("rec", 3000).listen(env).off();
         
         return synth;
     }; tests[i++].desc = "adsr: a->d->end";
