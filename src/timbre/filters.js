@@ -196,6 +196,27 @@ var Filter = (function() {
         
         return cell;
     };
+
+    $this.getFilter = function(name) {
+        return Filter.types[name];
+    };
+    
+    $this.setFilter = function(name, params) {
+        if (typeof params === "object") {
+            if (typeof params.set_params === "function") {
+                if (typeof params.default_freq !== "number") {
+                    params.default_freq = 2000;
+                }
+                if (typeof params.default_band !== "number") {
+                    params.default_freq = 1;
+                }
+                if (typeof params.default_gain !== "number") {
+                    params.default_freq = 6;
+                }
+                Filter.types[name] = params;
+            }
+        }
+    };
     
     return Filter;
 }());
