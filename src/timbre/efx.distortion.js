@@ -154,6 +154,9 @@ var EfxDistortion = (function() {
                 }
             }
             
+            mul = _.mul;
+            add = _.add;
+            
             // filter
             if (_.ison) {
                 preGain  = _.preGain.seq(seq_id)[0];
@@ -169,8 +172,6 @@ var EfxDistortion = (function() {
                 
                 preScale = _.preScale;
                 limit    = _.limit;
-                mul      = _.mul;
-                add      = _.add;
                 
                 if (_.lpfFreq) {
                     a1 = _.a1; a2 = _.a2;
@@ -215,6 +216,10 @@ var EfxDistortion = (function() {
                         }
                         cell[i] = input * mul + add;
                     }
+                }
+            } else {
+                for (j = jmax; j--; ) {
+                    cell[j] = cell[j] * mul + add;
                 }
             }
             this.seq_id = seq_id;
