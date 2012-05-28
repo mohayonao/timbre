@@ -181,11 +181,16 @@ var Filter = (function() {
                     out2 = out1;
                     out1 = output;
                     
-                    cell[i] = output * mul + add;
+                    cell[i] = output;
                 }
                 _.in1  = in1;  _.in2  = in2;
                 _.out1 = out1; _.out2 = out2;
             }
+            
+            for (j = jmax; j--; ) {
+                cell[j] = cell[j] * mul + add;
+            }
+            
             this.seq_id = seq_id;
         }
         
@@ -556,7 +561,11 @@ var ResonantFilter = (function() {
                     
                     output = (input * depth0) + (output * depth1);
                     
-                    cell[i] = output * mul + add;
+                    cell[i] = output;
+                }
+                
+                for (i = imax; i--; ) {
+                    cell[i] = cell[i] * mul + add;
                 }
             }
             this.seq_id = seq_id;
@@ -580,9 +589,6 @@ timbre.fn.register("rbpf", ResonantFilter, function(_args) {
 timbre.fn.register("rbrf", ResonantFilter, function(_args) {
     return new ResonantFilter(["brf"].concat(_args));
 });
-
-
-
 
 // __END__
 
