@@ -9,8 +9,8 @@ ex1 = (function() {
     ex1.ready = 0;
     
     // metronome
-    var metronome = T("interval", function(count) {
-        metronome.beat = count % 16;
+    var metronome = T("interval", function() {
+        metronome.beat = metronome.count % 16;
         if (metronome.beat === 0) metronome.measure += 1;
     }); metronome.measure = 0; metronome.beat = 0;
     
@@ -24,7 +24,7 @@ ex1 = (function() {
     
     var beat = 8, beattimer = (function() {
         var tim = 0, cnt = 0, stay = 0;
-        return T("interval", function(count) {
+        return T("interval", function() {
             if (cnt === 0) {
                 if (stay === 0) {
                     tim  = ((Math.random() * beat)|0) * (amen.duration / beat);
@@ -68,7 +68,7 @@ ex1 = (function() {
             synth.dac = ex1;
         }
         
-        return T("interval", function(count) {
+        return T("interval", function() {
             var chord, amp;
             chord = metronome.measure % 4;
             if (chord !== prev_chord) {
@@ -99,7 +99,7 @@ ex1 = (function() {
         tone2 = lead.args[0].args[0].args[1];
         env   = lead.args[0].args[1];
         
-        return T("interval", function(count) {
+        return T("interval", function() {
             var freq = phrase[(Math.random() * phrase.length)|0];
             if (freq !== 0) {
                 tone1.freq.value = freq;
