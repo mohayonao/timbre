@@ -300,7 +300,7 @@ timbre.fn = (function(timbre) {
                 instance.cell = new Float32Array(timbre.cellsize);
             }
             if (!instance.args) instance.args = [];
-            timbre.fn.init_set.call(instance.args);
+            timbre.fn.arrayset(instance.args);
             
             if (!instance.hasOwnProperty("_")) instance._ = {};
             
@@ -554,7 +554,7 @@ timbre.fn = (function(timbre) {
         return args;
     };
     
-    fn.init_set = (function() {
+    fn.arrayset = (function() {
         var append = function() {
             var args, i, imax;
             args = fn.valist(arguments);
@@ -582,12 +582,20 @@ timbre.fn = (function(timbre) {
             this.append.apply(this, list);
             return this;
         };
-        return function() {
-            this.append    = append;
-            this.remove    = remove;
-            this.removeAll = removeAll;
-            this.update    = update;
-            return this;
+        return function(self) {
+            var i, imax, find, remindexes = [];
+            for (i = 1, imax = self.length; i < imax; ++i) {
+                find = self.indexOf(self[i]);
+                if (find !== -1 && find < i) remindexes.push(i);
+            }
+            while (remindexes.length) {
+                self.splice(remindexes.pop(), 1);
+            }
+            self.append    = append;
+            self.remove    = remove;
+            self.removeAll = removeAll;
+            self.update    = update;
+            return self;
         };
     }());
     
@@ -632,9 +640,9 @@ timbre.fn = (function(timbre) {
     
     return fn;
 }(timbre));
-timbre.fn.init_set.call(timbre.dacs);
-timbre.fn.init_set.call(timbre.timers);
-timbre.fn.init_set.call(timbre.listeners);
+timbre.fn.arrayset(timbre.dacs);
+timbre.fn.arrayset(timbre.timers);
+timbre.fn.arrayset(timbre.listeners);
 
 
 // built-in-types
