@@ -132,6 +132,9 @@ var Timeout = (function() {
         },
         get: function() { return this._.timeout; }
     });
+    Object.defineProperty($this, "currentTime", {
+        get: function() { return this._.currentTime; }
+    });
     
     var initialize = function(_args) {
         var i, _;
@@ -146,6 +149,7 @@ var Timeout = (function() {
         
         _.ison = false;
         _.samples = 0;
+        _.currentTime = 0;
     };
     
     $this.clone = function(deep) {
@@ -153,8 +157,10 @@ var Timeout = (function() {
     };
     
     $this.on = function() {
-        this._.ison = true;
-        this._.samples = this._timeout_samples;
+        var _ = this._;
+        
+        _.ison = true;
+        _.samples = _.timeout_samples;
         timbre.timers.append(this);
         timbre.fn.do_event(this, "on");
         return this;
@@ -178,34 +184,35 @@ var Timeout = (function() {
     };
     
     $this.bang = function() {
-        if (this._.ison) {
-            this._.samples = this._.timeout_samples;
-            timbre.fn.do_event(this, "bang");
-        }
+        var _ = this._;
+        
+        _.samples = _.timeout_samples;
+        _.currentTime = 0;
+        timbre.fn.do_event(this, "bang");
+        
         return this;
     };
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var samples, args, i, imax;
+        var args, i, imax;
         if (seq_id !== this.seq_id) {
             if (_.timeout_samples !== 0) {
-                samples = _.samples - timbre.cellsize;
-                if (samples <= 0) {
+                _.samples -= timbre.cellsize;
+                if (_.samples <= 0) {
                     _.samples = 0;
                     args = this.args;
                     for (i = 0, imax = args.length; i < imax; ++i) {
                         if (typeof args[i] === "function") {
-                            args[i]();
+                            args[i].call(this);
                         } else if (args[i].bang === "function") {
                             args[i].bang();
                         }
                     }
-                    samples = _.samples;
-                    if (samples <= 0) this.off();
+                    if (_.samples <= 0) this.off();
                 }
-                _.samples = samples;
             }
+            _.currentTime += timbre.cellsize * 1000 / timbre.samplerate;
             this.seq_id = seq_id;
         }
         return this.cell;
