@@ -118,7 +118,6 @@ var Easeing = (function() {
     
     $this.bang = function() {
         var _ = this._;
-        var diff = _.stop - _.start;
         
         _.status  = 0;
         _.samples = (timbre.samplerate * (_.delayTime / 1000))|0;
