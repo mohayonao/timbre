@@ -75,9 +75,9 @@ var ex1 = T("dac");
 
 // metronome
 var metronome = T("interval", function(count) {
-    metronome.count %= 16;
-    if (metronome.count === 0) metronome.measure += 1;
-}); metronome.measure = 0;
+    metronome.beat = count % 16;
+    if (metronome.beat === 0) metronome.measure += 1;
+}); metronome.measure = 0; metronome.beat = 0;
 
 // amen (load a wav file and decode it)
 var amen = T("wav", "./audio/amen.wav", true).load(function(res) {
@@ -136,7 +136,7 @@ var piano = 4, pianotimer = (function() {
         chord = metronome.measure % 4;
         if (chord !== prev_chord) {
             amp = 1.0; prev_chord = chord;
-        } else amp = amptable[metronome.count % 4];
+        } else amp = amptable[metronome.beat % 4];
         play_chord(chordtable[chord], amp);
     });
 }());
