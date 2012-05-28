@@ -1,5 +1,6 @@
 /**
  * timbre/tween
+ * It refered to https://github.com/sole/tween.js
  */
 "use strict";
 
@@ -22,17 +23,28 @@ var Tween = (function() {
                     this._.type = value;
                     this._.func = f;
                 }
+            } else if (typeof value === "function") {
+                this._.type = "function";
+                this._.func = value;
             }
         },
         get: function() { return this._.type; }
     });
-    Object.defineProperty($this, "d", {
+    Object.defineProperty($this, "delayTime", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.d = value;
+                this._.delayTime = value;
             }
         },
-        get: function() { return this._.d; }
+        get: function() { return this._.delayTime; }
+    });
+    Object.defineProperty($this, "duration", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._.duration = value;
+            }
+        },
+        get: function() { return this._.duration; }
     });
     Object.defineProperty($this, "start", {
         set: function(value) {
@@ -50,52 +62,56 @@ var Tween = (function() {
         },
         get: function() { return this._.stop; }
     });
+    Object.defineProperty($this, "currentTime", {
+        get: function() { return this._.currentTime; }
+    });
     
     var initialize = function(_args) {
-        var type, i, _;
+        var i, _;
         
         this._ = _ = {};
         
         i = 0;
         if (typeof _args[i] === "string" &&
             (Tween.functions[_args[i]]) !== undefined) {
-            type = _args[i++];
+            this.type = _args[i++];
+        } else if (typeof _args[i] === "function") {
+            this.type = _args[i++];
         } else {
-            type = "linear";
+            this.type = "linear";
         }
-        if (typeof _args[i] === "number") {
-            _.d = _args[i++];
-        } else {
-            _.d = 1000;
-        }
-        if (typeof _args[i] === "number") {
-            _.start = _args[i++];
-        } else {
-            _.start = 0;
-        }
-        if (typeof _args[i] === "number") {
-            _.stop = _args[i++];
-        } else {
-            _.stop = 1;
-        }
+        _.duration = (typeof _args[i] === "number") ? _args[i++] : 1000;
+        _.start    = (typeof _args[i] === "number") ? _args[i++] : 0;
+        _.stop     = (typeof _args[i] === "number") ? _args[i++] : 1;
+        
         if (typeof _args[i] === "number") {
             _.mul = _args[i++];
         }
         if (typeof _args[i] === "number") {
             _.add = _args[i++];
         }
+        if (typeof _args[i] === "function") {
+            this.onchanged = _args[i++];
+        }
         
-        _.phase     = 0;
-        _.phaseStep = 0;
-        _.value     = 0;
-        _.ison   = false;
-        this.type = type;        
+        _.ison = true;
+        _.delayTime = 0;
+        
+        _.status  = -1;
+        _.samples = Infinity;
+        _.x0 = 0;
+        _.dx = 0;
+        _.currentTime = 0;
     };
     
     $this.clone = function(deep) {
         var newone, _ = this._;
-        var args, i, imax;
-        newone = timbre("tween", _.type, _.d, _.start, _.stop);
+        newone = timbre("tween");
+        newone._.type = _.type;
+        newone._.func = _.func;
+        newone._.duration = _.duration;
+        newone._.start = _.start;
+        newone._.stop  = _.stop;
         newone._.mul = _.mul;
         newone._.add = _.add;
         return newone;
@@ -103,60 +119,68 @@ var Tween = (function() {
     
     $this.bang = function() {
         var _ = this._;
-        var diff;
-        diff = _.stop - _.start;
-        _.ison   = true;
-        _.phase     = 0;
-        _.phaseStep = timbre.cellsize / (_.d / 1000 * timbre.samplerate);
-        _.value     = _.func(0) * diff + _.start;
-        timbre.fn.do_event(this, "on");
-        return this;
-    };
-    
-    $this.bang = function() {
-        var _ = this._;
-        var diff;
-        diff = _.stop - _.start;
-        _.ison   = true;
-        _.phase     = 0;
-        _.phaseStep = timbre.cellsize / (_.d / 1000 * timbre.samplerate);
-        _.value     = _.func(0) * diff + _.start;
+        var diff = _.stop - _.start;
+        
+        _.status  = 0;
+        _.samples = (timbre.samplerate * (_.delayTime / 1000))|0;
+        _.x0 = 0; _.dx = 0;
+        _.currentTime = 0;
+        
         timbre.fn.do_event(this, "bang");
         return this;
     };
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell;
-        var value, diff, changed, ended;
-        var i, imax;
+        var cell, x, value, i, imax;
+        
+        if (!_.ison) return timbre._.none;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
-            if (_.ison) {
-                _.phase += _.phaseStep;
-                if (_.phase >= 1.0) {
-                    _.phase = 1.0;
-                    _.ison = false;
-                    ended = true;
-                } else {
-                    ended = false;
+            while (_.samples <= 0) {
+                if (_.status === 0) {
+                    _.status = 1;
+                    _.samples = (timbre.samplerate * (_.duration / 1000))|0;
+                    _.x0 = 0;
+                    _.dx = timbre.cellsize / _.samples;
+                    continue;
                 }
-                diff = _.stop - _.start;
-                _.value = _.func(_.phase) * diff + _.start;
-                changed = true;
-            } else {
-                changed = false;
+                if (_.status === 1) {
+                    _.status = -1;
+                    _.samples = Infinity;
+                    _.x0 = 1;
+                    _.dx = 0;
+                    timbre.fn.do_event(this, "ended");
+                    continue;
+                }
             }
-            value = _.value * _.mul + _.add;
+            x = (_.status !== 0) ? _.func(_.x0) : 0;
+            
+            value = (x * (_.stop - _.start) + _.start) * _.mul + _.add;
             for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
                 cell[i] = value;
             }
-            if (changed && this.onchanged) this.onchanged(_.value);
-            if (ended) timbre.fn.do_event(this, "ended");
+            if (_.status === 1) {
+                timbre.fn.do_event(this, "changed", [value]);
+            }
+            _.value = value;
+            _.x0 += _.dx;
+            _.samples -= imax;
+            _.currentTime += imax * 1000 / timbre.samplerate;
             this.seq_id = seq_id;
         }
         return cell;
+    };
+    
+    $this.getFunction = function(name) {
+        return Tween.functions[name];
+    };
+    
+    $this.setFunction = function(name, func) {
+        if (typeof func === "function") {
+            Tween.functions[name] = func;
+        }
     };
     
     return Tween;
