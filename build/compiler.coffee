@@ -13,6 +13,7 @@ TIMBRE_SOURCES = [
     "timbre/efx.delay"
     "timbre/timers"
     "timbre/wav"
+    "timbre/audio"
     "timbre/easing"
     "timbre/record"
 ]
