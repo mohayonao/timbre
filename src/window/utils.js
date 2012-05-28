@@ -10,6 +10,8 @@ var window = timbre.utils = {};
 timbre.utils.relpath2rootpath = function(relpath) {
     if (/^https?:\/\//.test(relpath)) {
         return relpath;
+    } else if (relpath[0] === "/") {
+        return relpath;
     } else {
         var rootpath = window.location.pathname;
         rootpath = rootpath.substr(0, rootpath.lastIndexOf("/"));
