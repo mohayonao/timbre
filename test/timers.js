@@ -6,8 +6,8 @@ tests = (function() {
     tests[i] = function() {
         var t, synth, env;
 
-        t = T("interval", 1000, function(count) {
-            console.log(this.count, this.currentTime);
+        t = T("interval", 1000, function() {
+            console.log(t.count, t.currentTime);
             env.bang();
         });
         
@@ -26,12 +26,14 @@ tests = (function() {
         var t, synth, env;
         
         t = T("timeout", 2000, function() {
-            console.log(this.currentTime);
+            console.log(t.currentTime);
             env.bang();
-            if (this.timeout >= 100) {
-                this.timeout *= 0.75;
+            if (t.timeout > 100) {
+                t.timeout *= 0.75;
+            } else {
+                t.timeout = 100;
             }
-            this.bang();
+            t.bang();
         });
         
         synth = T("*", T("tri" , 1340, 0.5),
