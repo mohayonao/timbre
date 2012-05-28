@@ -23,12 +23,10 @@ var Interval = (function() {
         get: function() { return this._.interval; }
     });
     Object.defineProperty($this, "count", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.count = value;
-            }
-        },
         get: function() { return this._.count; }
+    });
+    Object.defineProperty($this, "currentTime", {
+        get: function() { return this._.currentTime; }
     });
     
     var initialize = function(_args) {
@@ -45,7 +43,7 @@ var Interval = (function() {
         _.ison = false;
         _.samples = 0;
         _.count = 0;
-        _.next_count  = 0;
+        _.currentTime = 0;
     };
     
     $this.clone = function(deep) {
@@ -56,7 +54,6 @@ var Interval = (function() {
     
     $this.on = function() {
         this._.ison = true;
-        this._.samples = 0;
         timbre.timers.append(this);
         timbre.fn.do_event(this, "on");
         return this;
@@ -80,36 +77,37 @@ var Interval = (function() {
     };
     
     $this.bang = function() {
-        if (this._.ison) {
-            this._.samples = 0;
-            this._.count = 0;
-            timbre.fn.do_event(this, "bang");
-        }
+        var _ = this._;
+        
+        _.samples = 0;
+        _.count =  0;
+        _.currentTime = 0;
+        timbre.fn.do_event(this, "bang");
+        
         return this;
     };
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var samples, count, args, i, imax;
+        var saved, args, i, imax;
+        
         if (seq_id !== this.seq_id) {
             if (_.interval_samples !== 0) {
-                samples = _.samples - timbre.cellsize;
-                if (samples <= 0) {
-                    _.samples = samples + _.interval_samples;
-                    count = _.count = _.next_count;
+                _.samples -= timbre.cellsize;
+                if (_.samples <= 0) {
+                    _.samples += _.interval_samples;
                     args = this.args;
                     for (i = 0, imax = args.length; i < imax; ++i) {
                         if (typeof args[i] === "function") {
-                            args[i](count);
+                            args[i].call(this, _.count);
                         } else if (args[i].bang === "function") {
                             args[i].bang();
                         }
                     }
-                    ++_.next_count;
-                    samples = _.samples;
+                    ++_.count;
                 }
-                _.samples = samples;
             }
+            _.currentTime += timbre.cellsize * 1000 / timbre.samplerate;
             this.seq_id = seq_id;
         }
         return this.cell;
