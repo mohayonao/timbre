@@ -497,20 +497,44 @@ Tween.functions = {
 
 
 
-var Percussive = (function() {
-    var Percussive = function() {
+var PercussiveEnvelope = (function() {
+    var PercussiveEnvelope = function() {
         initialize.apply(this, arguments);
-    }, $this = Percussive.prototype;
+    }, $this = PercussiveEnvelope.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "kr-only");
     
-    Object.defineProperty($this, "d", {
+    Object.defineProperty($this, "duration", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.d = value;
+                this._.duration = value;
             }
         },
-        get: function() { return this._.d; }
+        get: function() { return this._.duration; }
+    });
+    Object.defineProperty($this, "iteration", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._.iteration = value;
+            }
+        },
+        get: function() { return this._.iteration; }
+    });
+    Object.defineProperty($this, "decayRate", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._.decayRate = value;
+            }
+        },
+        get: function() { return this._.decayRate; }
+    });
+    Object.defineProperty($this, "reversed", {
+        set: function(value) {
+            if (typeof value === "boolean") {
+                this._.reversed = value;
+            }
+        },
+        get: function() { return this._.reversed; }
     });
     
     var initialize = function(_args) {
@@ -519,11 +543,11 @@ var Percussive = (function() {
         this._ = _ = {};
         
         i = 0;
-        if (typeof _args[i] === "number") {
-            _.d = _args[i++];
-        } else {
-            _.d = 100.0;
-        }
+        
+        _.duration  = (typeof _args[i] === "number") ? _args[i++] : 0;
+        _.iteration = (typeof _args[i] === "number") ? _args[i++] : 0;
+        _.decayRate = (typeof _args[i] === "number") ? _args[i++] : 0.2;
+        
         if (typeof _args[i] === "number") {
             _.mul = _args[i++];
         }
@@ -534,78 +558,70 @@ var Percussive = (function() {
             this.onended = _args[i++];
         }
         
-        _.samples = 0;
-        _.dx = timbre.cellsize / _.samples;
-        _.x  = 0;
+        _.ison = true;
+        _.reversed = false;
+
+        _.samples = Infinity;
+        _.x = 0; _.dx = 0;
+        _.count  = 0;
+        _.volume = 1;
     };
     
     $this.clone = function(deep) {
-        var newone, _ = this._;
-        var args, i, imax;
-        newone = timbre("perc", _.d);
-        newone._.mul = _.mul;
-        newone._.add = _.add;
-        return newone;
-    };
-    
-    $this.on = function() {
-        var _ = this._;
-        _.ison = true;
-        _.samples = (timbre.samplerate * (_.d / 1000))|0;
-        _.dx = timbre.cellsize / _.samples;
-        _.x  = 1.0;
-        timbre.fn.do_event(this, "on");
-        return this;
+        return timbre("perc", _.duration, _.iteration, _.decayRate,
+                      _.mul, _.add, this.onended);
     };
     
     $this.bang = function() {
         var _ = this._;
-        _.ison = true;
-        _.samples = (timbre.samplerate * (_.d / 1000))|0;
+        _.samples = (timbre.samplerate * (_.duration / 1000))|0;
         _.dx = timbre.cellsize / _.samples;
-        _.x  = 1.0;
+        _.x = 1;
+        _.count  = _.iteration;
+        _.volume = 1;
         timbre.fn.do_event(this, "bang");
         return this;
     };
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell, val;
-        var x, dx, samples;
-        var i, imax;
+        var cell, x, i, imax;
+        
+        if (!_.ison) return timbre._.none;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
-            x  = _.x;
-            dx = _.dx;
-            samples = _.samples;
-            val = x * _.mul + _.add;
-            for (i = 0, imax = cell.length; i < imax; ++i) {
-                cell[i] = val;
-            }
-            x -= dx;
-            if (x < 0.0) x = 0.0;
-            if (samples > 0) {
-                samples -= imax;
-                if (samples <= 0) {
-                    _.samples = 0;
-                    _.ison = false;
+            while (_.samples <= 0) {
+                if (--_.count <= 0) {
+                    _.samples = Infinity;
+                    _.x = 0;
                     timbre.fn.do_event(this, "ended");
-                    x  = _.x;
-                    samples = _.samples;
+                } else {
+                    _.volume *= (1 - _.decayRate);
+                    _.x = _.volume;
+                    _.samples = (timbre.samplerate * (_.duration * _.x / 1000))|0;
+                    _.dx = (timbre.cellsize * _.x) / _.samples;
                 }
             }
+            if (_.reversed) {
+                x = (1 - _.x) * _.mul + _.add;
+            } else {
+                x = _.x * _.mul + _.add;
+            }
+            for (i = 0, imax = cell.length; i < imax; ++i) {
+                cell[i] = x;
+            }
+            _.x -= _.dx;
+            _.samples -= imax;
             
-            _.x = x;
-            _.samples = samples;
             this.seq_id = seq_id;
         }
         return cell;
     };
     
-    return Percussive;
+    return PercussiveEnvelope;
 }());
-timbre.fn.register("perc", Percussive);
+timbre.fn.register("perc", PercussiveEnvelope);
 
 // __END__
 
@@ -616,5 +632,5 @@ describe("tween", function() {
     object_test(Tween, "tween");
 });
 describe("perc", function() {
-    object_test(Percussive, "perc");
+    object_test(PercussiveEnvelope, "perc");
 });
