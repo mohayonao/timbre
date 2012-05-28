@@ -6,56 +6,65 @@ tests = (function() {
     tests[i] = function() {
         var synth, tri, env;
         synth = T("*", tri = T("tri" , 1340, 0.5),
-                       env = T("adsr", 500, 1000));
+                       env = T("adsr", 500, 500));
         
-        synth.onplay = synth.onbang = function() { env.bang(); };
-        synth.onoff = function() { env.off(); };
+        synth.onplay = function() { env.bang(); };
+        synth.onbang = function() {
+            env.status === "s" ? env.keyoff() : env.bang();
+        };
         env.onA     = function() { tri.freq = 1340; };
         env.onD     = function() { tri.freq =  880; };
         env.onS     = function() { tri.freq =  660; };
         env.onR     = function() { tri.freq =  440; };
         env.onended = function() { synth.pause(); };
-        
-        synth.listener = T("rec", 1500).listen(env).off();
-        
-        return synth;
-    }; tests[i++].desc = "adsr: a->d->end";
-    
-    tests[i] = function() {
-        var synth, tri, env;
-        synth = T("*", tri = T("tri" , 1340, 0.5),
-                  env = T("adsr", 500, 1000, 0.5, 0));
-        
-        synth.onplay = synth.onbang = function() { env.bang(); };
-        synth.onoff = function() { env.off(); };
-        env.onA     = function() { tri.freq = 1340; };
-        env.onD     = function() { tri.freq =  880; };
-        env.onS     = function() { tri.freq =  660; };
-        env.onR     = function() { tri.freq =  440; };
-        env.onended = function() { synth.pause(); };
+        env.delay = 100;
         
         synth.listener = T("rec", 3000).listen(env).off();
         
         return synth;
-    }; tests[i++].desc = "adsr: a->d->end";
+    }; tests[i++].desc = "adsr: delay->a->d->end";
     
     tests[i] = function() {
         var synth, tri, env;
         synth = T("*", tri = T("tri" , 1340, 0.5),
-                  env = T("adsr", 500, 1000, 0.5, 1500));
+                       env = T("adsr", 500, 500, 0.25, 500));
         
-        synth.onplay = synth.onbang = function() { env.bang(); };
-        synth.onoff = function() { env.off(); };
+        synth.onplay = function() { env.bang(); };
+        synth.onbang = function() {
+            env.status === "s" ? env.keyoff() : env.bang();
+        };
         env.onA     = function() { tri.freq = 1340; };
         env.onD     = function() { tri.freq =  880; };
         env.onS     = function() { tri.freq =  660; };
         env.onR     = function() { tri.freq =  440; };
         env.onended = function() { synth.pause(); };
         
-        synth.listener = T("rec", 3000).listen(env).off();
+        synth.listener = T("rec", 5000).listen(env).off();
         
         return synth;
-    }; tests[i++].desc = "adsr: a->d->end";
+    }; tests[i++].desc = "adsr: a->d->s->r";
+
+    tests[i] = function() {
+        var synth, tri, env;
+        synth = T("*", tri = T("tri" , 1340, 0.5),
+                       env = T("adsr", 500, 500, 0.5, 500));
+        
+        synth.onplay = function() { env.bang(); };
+        synth.onbang = function() {
+            env.status === "s" ? env.keyoff() : env.bang();
+        };
+        env.onA     = function() { tri.freq = 1340; };
+        env.onD     = function() { tri.freq =  880; };
+        env.onS     = function() { tri.freq =  660; };
+        env.onR     = function() { tri.freq =  440; };
+        env.onended = function() { synth.pause(); };
+        env.sr = 3000;
+        env.reversed = true;
+        
+        synth.listener = T("rec", 5000).listen(env).off();
+        
+        return synth;
+    }; tests[i++].desc = "adsr: sustain-rate & reversed";
     
     return tests;
 }());
