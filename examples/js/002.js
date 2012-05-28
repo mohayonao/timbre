@@ -14,9 +14,9 @@ var p = [
 ex1 = (function() {
     "use strict";
     
-    var bpm = 132, msec = (60 / bpm) * (4 / 16) * 1000;
+    var bpm = 132;
     var s1, s2, hh, hh_env, sd, sd_env, bd, bd_env;
-    var interval, drumkit;
+    var metro, drumkit;
     
     // sequence(1)
     s1 = function(freq) {
@@ -56,9 +56,9 @@ ex1 = (function() {
                 bd_env = T("perc", 60));
     bd.i = 4;
     
-    // interval    
-    interval = T("interval", msec, function() {
-        var i = interval.count % p[0].length;
+    // metro    
+    metro = T("metro", bpm, 16, function() {
+        var i = metro.beat + (metro.measure % 2) * 16;
         
         if (p[s1.i][i]) s1(s1.freqs[i & 7]);
         if (p[s2.i][i]) s2();
@@ -81,10 +81,10 @@ ex1 = (function() {
     drumkit = T("dac", hh, sd, bd);
     
     drumkit.onplay = function() {
-        interval.on();
+        metro.on();
     };
     drumkit.onpause = function() {
-        interval.off();
+        metro.off();
     };
     
     return drumkit;
