@@ -18,53 +18,53 @@ var ADSREnvelope = (function() {
     Object.defineProperty($this, "status", {
         get: function() { return STATUSES[this._.status+1]; }
     });
-    Object.defineProperty($this, "delay", {
+    Object.defineProperty($this, "delayTime", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.delay = value;
+                this._.delayTime = value;
             }
         },
-        get: function() { return this._.a; }
+        get: function() { return this._.delayTime; }
     });
-    Object.defineProperty($this, "a", {
+    Object.defineProperty($this, "attackTime", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.a = value;
+                this._.attackTime = value;
             }
         },
-        get: function() { return this._.a; }
+        get: function() { return this._.attackTime; }
     });
-    Object.defineProperty($this, "d", {
+    Object.defineProperty($this, "decayTime", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.d = value;
+                this._.decayTime = value;
             }
         },
-        get: function() { return this._.d; }
+        get: function() { return this._.decayTime; }
     });
-    Object.defineProperty($this, "s", {
+    Object.defineProperty($this, "sustainLevel", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.s = value;
+                this._.sustainLevel = value;
             }
         },
-        get: function() { return this._.s; }
+        get: function() { return this._.sustainLevel; }
     });
-    Object.defineProperty($this, "r", {
+    Object.defineProperty($this, "releaseTime", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.r = value;
+                this._.releaseTime = value;
             }
         },
-        get: function() { return this._.r; }
+        get: function() { return this._.releaseTime; }
     });
-    Object.defineProperty($this, "sr", {
+    Object.defineProperty($this, "sustainTime", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.sr = value;
+                this._.sustainTime = value;
             }
         },
-        get: function() { return this._.sr; }
+        get: function() { return this._.sustainTime; }
     });
     Object.defineProperty($this, "reversed", {
         set: function(value) {
@@ -74,6 +74,9 @@ var ADSREnvelope = (function() {
         },
         get: function() { return this._.reversed; }
     });
+    Object.defineProperty($this, "currentTime", {
+        get: function() { return this._.currentTime; }
+    });
     
     var initialize = function(_args) {
         var i, _;
@@ -81,10 +84,10 @@ var ADSREnvelope = (function() {
         _ = this._ = {};
         
         i = 0;
-        _.a = (typeof _args[i] === "number") ? _args[i++] : 0;
-        _.d = (typeof _args[i] === "number") ? _args[i++] : 0;
-        _.s = (typeof _args[i] === "number") ? _args[i++] : 0;
-        _.r = (typeof _args[i] === "number") ? _args[i++] : 0;
+        _.attackTime   = (typeof _args[i] === "number") ? _args[i++] : 0;
+        _.decayTime    = (typeof _args[i] === "number") ? _args[i++] : 0;
+        _.sustainLevel = (typeof _args[i] === "number") ? _args[i++] : 0;
+        _.releaseTime  = (typeof _args[i] === "number") ? _args[i++] : 0;
         
         if (typeof _args[i] === "number") {
             _.mul = _args[i++];
@@ -94,22 +97,25 @@ var ADSREnvelope = (function() {
         }
         
         _.ison = true;
-        _.delay  = 0;
-        _.sr = Infinity;
+        _.delayTime   = 0;
+        _.sustainTime = Infinity;
         _.reversed = false;
         
         _.status = -1;
         _.samples = Infinity;
         _.x0 = 0; _.x1 = 0; _.dx = 0;
+        _.currentTime = 0;
     };
     
     $this.clone = function(deep) {
         var newone, _ = this._;
         var args, i, imax;
-        newone = timbre("adsr", _.a, _.d, _.s, _.r, _.mul, _.add);
-        newone._.delay = _.delay;
-        newone._.sr    = _.sr;
-        newone._.reversed = _.reversed;
+        newone = timbre("adsr",
+                        _.attackTime, _.decayTime, _.sustainLevel, _.releaseTime,
+                        _.mul, _.add);
+        newone._.delayTime   = _.delayTime;
+        newone._.sustainTime = _.sustainTime;
+        newone._.reversed    = _.reversed;
         return newone;
     };
     
@@ -117,9 +123,10 @@ var ADSREnvelope = (function() {
         var _ = this._;
         
         // off -> delay
-        _.status = 0;
-        _.samples = (timbre.samplerate * (_.delay / 1000))|0;
+        _.status  = 0;
+        _.samples = (timbre.samplerate * (_.delayTime / 1000))|0;
         _.x0 = 0; _.x1 = 1; _.dx = 0;
+        _.currentTime = 0;
         
         timbre.fn.do_event(this, "bang");
         return this;
@@ -131,7 +138,7 @@ var ADSREnvelope = (function() {
         if (_.status <= 3) {
             // (delay, A, D, S) -> R
             _.status  = 4;
-            _.samples = (timbre.samplerate * (_.r / 1000))|0;
+            _.samples = (timbre.samplerate * (_.releaseTime / 1000))|0;
             _.x1 = _.x0; _.x0 = 1; _.dx = -timbre.cellsize / _.samples;
             timbre.fn.do_event(this, "R");
         }
@@ -148,31 +155,32 @@ var ADSREnvelope = (function() {
             while (_.samples <= 0) {
                 if (_.status === 0) { // delay -> A
                     _.status = 1;
-                    _.samples = (timbre.samplerate * (_.a / 1000))|0;
+                    _.samples = (timbre.samplerate * (_.attackTime / 1000))|0;
                     _.dx = timbre.cellsize / _.samples;
                     timbre.fn.do_event(this, "A");
                     continue;
                 }
                 if (_.status === 1) { // A -> D
                     _.status = 2;
-                    _.samples += (timbre.samplerate * (_.d / 1000))|0;
-                    _.x0 = 1; _.dx = -timbre.cellsize * (1 - _.s) / _.samples;
+                    _.samples += (timbre.samplerate * (_.decayTime / 1000))|0;
+                    _.x0 = 1;
+                    _.dx = -timbre.cellsize * (1 - _.sustainLevel) / _.samples;
                     timbre.fn.do_event(this, "D");
                     continue;
                 }
                 if (_.status === 2) { // D -> S
-                    if (_.s === 0) {
+                    if (_.sustainLevel === 0) {
                         _.status = 4;
                         continue;
                     }
                     _.status = 3;
-                    _.x0 = _.s;
-                    if (_.sr === Infinity) {
+                    _.x0 = _.sustainLevel;
+                    if (_.sustainTime === Infinity) {
                         _.samples = Infinity;
                         _.dx = 0;
                     } else {
-                        _.samples += (timbre.samplerate * (_.sr / 1000))|0;
-                        _.dx = -timbre.cellsize * _.s / _.samples;
+                        _.samples += (timbre.samplerate * (_.sustainTime / 1000))|0;
+                        _.dx = -timbre.cellsize * _.sustainLevel / _.samples;
                     }
                     timbre.fn.do_event(this, "S");
                     continue;
@@ -196,6 +204,7 @@ var ADSREnvelope = (function() {
             }
             _.x0 += _.dx;
             _.samples -= imax;
+            _.currentTime += imax * 1000 / timbre.samplerate;
             this.seq_id = seq_id;
         }
         return cell;
@@ -536,6 +545,9 @@ var PercussiveEnvelope = (function() {
         },
         get: function() { return this._.reversed; }
     });
+    Object.defineProperty($this, "currentTime", {
+        get: function() { return this._.currentTime; }
+    });
     
     var initialize = function(_args) {
         var i, _;
@@ -565,6 +577,7 @@ var PercussiveEnvelope = (function() {
         _.x = 0; _.dx = 0;
         _.count  = 0;
         _.volume = 1;
+        _.currentTime = 0;
     };
     
     $this.clone = function(deep) {
@@ -579,6 +592,7 @@ var PercussiveEnvelope = (function() {
         _.x = 1;
         _.count  = _.iteration;
         _.volume = 1;
+        _.currentTime = 0;
         timbre.fn.do_event(this, "bang");
         return this;
     };
@@ -613,6 +627,7 @@ var PercussiveEnvelope = (function() {
             }
             _.x -= _.dx;
             _.samples -= imax;
+            _.currentTime += imax * 1000 / timbre.samplerate;;
             
             this.seq_id = seq_id;
         }
