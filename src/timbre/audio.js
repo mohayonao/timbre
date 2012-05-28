@@ -23,18 +23,26 @@ var AudioBasis = {
             _.add = _args[i++];
         }
         if (typeof _args[i] === "function") {
-            this.onended = _args[i++];
+            if (_.loop) {
+                this.onlooped = _args[i++];
+            } else {
+                this.onended  = _args[i++];
+            }
         }
         
-        this._.buffer = new Float32Array(0);
-        this._.phase  = 0;
+        _.buffer   = new Float32Array(0);
+        _.phase    = 0;
+        _.isLoaded = false;
     },
     setPrototype: function() {
         Object.defineProperty(this, "src", {
             set: function(value) {
                 if (typeof value === "string") {
-                    this._.src = value;
-                }            
+                    if (this._.src !== value) {
+                        this._.src = value;
+                        this._.isLoaded = false;
+                    }
+                }
             },
             get: function() { return this._.src; }
         });
@@ -46,6 +54,18 @@ var AudioBasis = {
             },
             get: function() { return this._.loop; }
         });
+        Object.defineProperty(this, "isLoaded", {
+            get: function() { return this._.isLoaded; }
+        });
+        
+        this.clone = function(deep) {
+            var klassname, newone, _ = this._;
+            klassname = Object.getPrototypeOf(this)._.klassname;
+            newone = timbre(klassname, _.src, _.loop, _.mul, _.add);
+            newone._.isLoaded = _.isLoaded;
+            newone._.buffer   = _.buffer;
+            return newone;
+        };
         
         this.bang = function() {
             this._.phase = 0;
@@ -66,8 +86,12 @@ var AudioBasis = {
                 for (i = 0, imax = cell.length; i < imax; ++i) {
                     cell[i] = (buffer[_.phase++]||0) * mul + add;
                     if (buffer.length === _.phase) {
-                        timbre.fn.do_event(this, "ended");
-                        if (_.loop) _.phase = 0;
+                        if (_.loop) {
+                            _.phase = 0;
+                            timbre.fn.do_event(this, "looped");
+                        } else {
+                            timbre.fn.do_event(this, "ended");
+                        }
                     }
                 }
                 this.seq_id = seq_id;
@@ -101,6 +125,7 @@ var WebKitAudio = (function() {
             xhr.onload = function() {
                 _.buffer = ctx.createBuffer(xhr.response, true).getChannelData(0);
                 opts.buffer = _.buffer;
+                _.isLoaded = true;
                 timbre.fn.do_event(self, "loadedmetadata", [opts]);
                 timbre.fn.do_event(self, "loadeddata", [opts]);
             };
@@ -109,8 +134,9 @@ var WebKitAudio = (function() {
             opts.success = false;
             timbre.fn.do_event(self, "loadedmetadata", [opts]);
         }
-        _.buffer = new Float32Array(0);
-        _.phase  = 0;
+        _.isLoaded = false;
+        _.buffer   = new Float32Array(0);
+        _.phase    = 0;
         return this;
     };
     
@@ -158,12 +184,14 @@ var MozAudio = (function() {
                 }
             }, false);
             audio.addEventListener("ended", function(e) {
+                _.isLoaded = true;
                 timbre.fn.do_event(self, "loadedata", [opts]);
             }, false);
             audio.load();
         }
-        _.buffer = new Float32Array(0);
-        _.phase  = 0;
+        _.isLoaded = false;
+        _.buffer   = new Float32Array(0);
+        _.phase    = 0;
         return this;
     };
     
