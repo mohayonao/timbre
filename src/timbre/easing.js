@@ -1,5 +1,5 @@
 /**
- * timbre/tween
+ * timbre/easing
  * It refered to https://github.com/sole/tween.js
  */
 "use strict";
@@ -7,11 +7,10 @@
 var timbre = require("../timbre");
 // __BEGIN__
 
-
-var Tween = (function() {
-    var Tween = function() {
+var Easeing = (function() {
+    var Easeing = function() {
         initialize.apply(this, arguments);
-    }, $this = Tween.prototype;
+    }, $this = Easeing.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "kr-only");
     
@@ -19,7 +18,7 @@ var Tween = (function() {
         set: function(value) {
             var f;
             if (typeof value === "string") {
-                if ((f = Tween.functions[value]) !== undefined) {
+                if ((f = Easeing.functions[value]) !== undefined) {
                     this._.type = value;
                     this._.func = f;
                 }
@@ -73,7 +72,7 @@ var Tween = (function() {
         
         i = 0;
         if (typeof _args[i] === "string" &&
-            (Tween.functions[_args[i]]) !== undefined) {
+            (Easeing.functions[_args[i]]) !== undefined) {
             this.type = _args[i++];
         } else if (typeof _args[i] === "function") {
             this.type = _args[i++];
@@ -106,7 +105,7 @@ var Tween = (function() {
     
     $this.clone = function(deep) {
         var newone, _ = this._;
-        newone = timbre("tween");
+        newone = timbre("ease");
         newone._.type = _.type;
         newone._.func = _.func;
         newone._.duration = _.duration;
@@ -174,20 +173,20 @@ var Tween = (function() {
     };
     
     $this.getFunction = function(name) {
-        return Tween.functions[name];
+        return Easeing.functions[name];
     };
     
     $this.setFunction = function(name, func) {
         if (typeof func === "function") {
-            Tween.functions[name] = func;
+            Easeing.functions[name] = func;
         }
     };
     
-    return Tween;
+    return Easeing;
 }());
-timbre.fn.register("tween", Tween);
+timbre.fn.register("ease", Easeing);
 
-Tween.functions = {
+Easeing.functions = {
     "linear": function(k) {
         return k;
     },
@@ -301,7 +300,7 @@ Tween.functions = {
 		return 0.5 * ( ( k -= 2 ) * k * ( ( s + 1 ) * k + s ) + 2 );
     },
     "bounce.in": function(k) {
-		return 1 - Tween.functions["bounce.out"]( 1 - k );
+		return 1 - Easeing.functions["bounce.out"]( 1 - k );
     },
     "bounce.out": function(k) {
 		if ( k < ( 1 / 2.75 ) ) {
@@ -315,12 +314,12 @@ Tween.functions = {
 		}
     },
     "bounce.inout": function(k) {
-		if ( k < 0.5 ) return Tween.functions["bounce.in"]( k * 2 ) * 0.5;
-		return Tween.functions["bounce.out"]( k * 2 - 1 ) * 0.5 + 0.5;
+		if ( k < 0.5 ) return Easeing.functions["bounce.in"]( k * 2 ) * 0.5;
+		return Easeing.functions["bounce.out"]( k * 2 - 1 ) * 0.5 + 0.5;
     },
 };
 
 // __END__
-describe("tween", function() {
-    object_test(Tween, "tween");
+describe("ease", function() {
+    object_test(Easeing, "ease");
 });
