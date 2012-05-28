@@ -38,7 +38,7 @@ var Interval = (function() {
         if (typeof _args[i] === "number") {
             this.interval = _args[i++];
         }
-        this.args = _args.slice(i);
+        this.args = timbre.fn.valist.call(this, _args.slice(i));
         
         _.ison = false;
         _.samples = 0;
@@ -96,11 +96,7 @@ var Interval = (function() {
                     _.samples += _.interval_samples;
                     args = this.args;
                     for (i = 0, imax = args.length; i < imax; ++i) {
-                        if (typeof args[i] === "function") {
-                            args[i].call(this, _.count);
-                        } else if (args[i].bang === "function") {
-                            args[i].bang();
-                        }
+                        args[i].bang();
                     }
                     ++_.count;
                 }
@@ -145,7 +141,7 @@ var Timeout = (function() {
         if (typeof _args[i] === "number") {
             this.timeout = _args[i++];
         }
-        this.args = _args.slice(i);
+        this.args = timbre.fn.valist.call(this, _args.slice(i));
         
         _.ison = false;
         _.samples = 0;
@@ -203,11 +199,7 @@ var Timeout = (function() {
                     _.samples = 0;
                     args = this.args;
                     for (i = 0, imax = args.length; i < imax; ++i) {
-                        if (typeof args[i] === "function") {
-                            args[i].call(this);
-                        } else if (args[i].bang === "function") {
-                            args[i].bang();
-                        }
+                        args[i].bang();
                     }
                     if (_.samples <= 0) this.off();
                 }
