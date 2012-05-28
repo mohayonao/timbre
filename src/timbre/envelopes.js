@@ -13,6 +13,19 @@ var ADSREnvelope = (function() {
     
     timbre.fn.setPrototypeOf.call($this, "kr-only");
     
+    var STATUSES = ["off","delay","a","d","s","r"];
+    
+    Object.defineProperty($this, "status", {
+        get: function() { return STATUSES[this._.status+1]; }
+    });
+    Object.defineProperty($this, "delay", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._.delay = value;
+            }
+        },
+        get: function() { return this._.a; }
+    });
     Object.defineProperty($this, "a", {
         set: function(value) {
             if (typeof value === "number") {
@@ -45,6 +58,22 @@ var ADSREnvelope = (function() {
         },
         get: function() { return this._.r; }
     });
+    Object.defineProperty($this, "sr", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._.sr = value;
+            }
+        },
+        get: function() { return this._.sr; }
+    });
+    Object.defineProperty($this, "reversed", {
+        set: function(value) {
+            if (typeof value === "boolean") {
+                this._.reversed = value;
+            }
+        },
+        get: function() { return this._.reversed; }
+    });
     
     var initialize = function(_args) {
         var i, _;
@@ -52,26 +81,11 @@ var ADSREnvelope = (function() {
         _ = this._ = {};
         
         i = 0;
-        if (typeof _args[i] === "number") {
-            _.a = _args[i++];
-        } else {
-            _.a = 0.0;
-        }
-        if (typeof _args[i] === "number") {
-            _.d = _args[i++];
-        } else {
-            _.d = 0.0;
-        }
-        if (typeof _args[i] === "number") {
-            _.s = _args[i++];
-        } else {
-            _.s = 0.0;
-        }
-        if (typeof _args[i] === "number") {
-            _.r = _args[i++];
-        } else {
-            _.r = 0.0;
-        }
+        _.a = (typeof _args[i] === "number") ? _args[i++] : 0;
+        _.d = (typeof _args[i] === "number") ? _args[i++] : 0;
+        _.s = (typeof _args[i] === "number") ? _args[i++] : 0;
+        _.r = (typeof _args[i] === "number") ? _args[i++] : 0;
+        
         if (typeof _args[i] === "number") {
             _.mul = _args[i++];
         }
@@ -79,132 +93,109 @@ var ADSREnvelope = (function() {
             _.add = _args[i++];
         }
         
-        _.mode = 0;
-        _.samplesMax = (timbre.samplerate * (_.a / 1000))|0;
-        _.samples    = 0;
+        _.ison = true;
+        _.delay  = 0;
+        _.sr = Infinity;
+        _.reversed = false;
+        
+        _.status = -1;
+        _.samples = Infinity;
+        _.x0 = 0; _.x1 = 0; _.dx = 0;
     };
     
     $this.clone = function(deep) {
         var newone, _ = this._;
         var args, i, imax;
-        newone = timbre("adsr", _.a, _.d, _.s, _.r);
-        newone._.mul = _.mul;
-        newone._.add = _.add;
+        newone = timbre("adsr", _.a, _.d, _.s, _.r, _.mul, _.add);
+        newone._.delay = _.delay;
+        newone._.sr    = _.sr;
+        newone._.reversed = _.reversed;
         return newone;
     };
     
-    $this.on = function() {
+    $this.bang = function(mode) {
         var _ = this._;
-        _.ison = true;
-        _.mode = 0;
-        _.samplesMax = (timbre.samplerate * (_.a / 1000))|0;
-        _.samples    = 0;
-        timbre.fn.do_event(this, "on");
-        timbre.fn.do_event(this, "A");
-        return this;
-    };
-    
-    $this.bang = function() {
-        var _ = this._;
-        _.ison = true;
-        _.mode = 0;
-        _.samplesMax = (timbre.samplerate * (_.a / 1000))|0;
-        _.samples    = 0;
+        
+        // off -> delay
+        _.status = 0;
+        _.samples = (timbre.samplerate * (_.delay / 1000))|0;
+        _.x0 = 0; _.x1 = 1; _.dx = 0;
+        
         timbre.fn.do_event(this, "bang");
-        timbre.fn.do_event(this, "A");
         return this;
     };
-    
-    $this.off = function() {
+
+    $this.keyoff = function() {
         var _ = this._;
-        _.mode = 3;
-        _.samples = 0;
-        _.samplesMax = (timbre.samplerate * (_.r / 1000))|0;
-        timbre.fn.do_event(this, "R");
-        timbre.fn.do_event(this, "off");
-        return this;
+        
+        if (_.status <= 3) {
+            // (delay, A, D, S) -> R
+            _.status  = 4;
+            _.samples = (timbre.samplerate * (_.r / 1000))|0;
+            _.x1 = _.x0; _.x0 = 1; _.dx = -timbre.cellsize / _.samples;
+            timbre.fn.do_event(this, "R");
+        }
     };
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell;
-        var mode, samples, samplesMax;
-        var mul, add;
-        var s0, s1, x, i, imax;
+        var cell, x, i, imax;
+        
+        if (!_.ison) return timbre._.none;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
-            mode    = _.mode;
-            samples = _.samples;
-            samplesMax = _.samplesMax;
-            mul = _.mul;
-            add = _.add;
-            s0 = _.s;
-            s1 = 1.0 - s0;
-            
-            while (samples >= samplesMax) {
-                if (mode === 0) { // A -> D
-                    _.mode = 1;
-                    _.samples   -= samplesMax;
-                    _.samplesMax = (timbre.samplerate * (_.d / 1000))|0;
-                    timbre.fn.do_event(this, "D");
-                    mode = _.mode;
-                    samplesMax = _.samplesMax;
-                    samples    = _.samples;
+            while (_.samples <= 0) {
+                if (_.status === 0) { // delay -> A
+                    _.status = 1;
+                    _.samples = (timbre.samplerate * (_.a / 1000))|0;
+                    _.dx = timbre.cellsize / _.samples;
+                    timbre.fn.do_event(this, "A");
                     continue;
                 }
-                if (mode === 1) { // D -> S
-                    if (s0 === 0) {
-                        mode = 3;
+                if (_.status === 1) { // A -> D
+                    _.status = 2;
+                    _.samples += (timbre.samplerate * (_.d / 1000))|0;
+                    _.x0 = 1; _.dx = -timbre.cellsize * (1 - _.s) / _.samples;
+                    timbre.fn.do_event(this, "D");
+                    continue;
+                }
+                if (_.status === 2) { // D -> S
+                    if (_.s === 0) {
+                        _.status = 4;
                         continue;
                     }
-                    _.mode = 2;
-                    _.samples    = 0;
-                    _.samplesMax = Infinity;
+                    _.status = 3;
+                    _.x0 = _.s;
+                    if (_.sr === Infinity) {
+                        _.samples = Infinity;
+                        _.dx = 0;
+                    } else {
+                        _.samples += (timbre.samplerate * (_.sr / 1000))|0;
+                        _.dx = -timbre.cellsize * _.s / _.samples;
+                    }
                     timbre.fn.do_event(this, "S");
-                    mode = _.mode;
-                    samplesMax = _.samplesMax;
-                    samples    = _.samples;
                     continue;
                 }
-                if (mode === 3) { // S -> end
-                    _.mode = 4;
-                    _.samples    = 0;
-                    _.samplesMax = Infinity;
-                    _.ison = false;
+                if (_.status <= 4) { // (S, R) -> end
+                    _.status  = -1;
+                    _.samples = Infinity;
+                    _.x0 = _.x1 = _.dx = 0;
                     timbre.fn.do_event(this, "ended");
-                    mode = _.mode;
-                    samplesMax = _.samplesMax;
-                    samples    = _.samples;
                     continue;
                 }
             }
-            switch (mode) {
-            case 0:
-                x = samples / samplesMax;
-                break;
-            case 1:
-                x = samples / samplesMax;
-                x = (1.0 - x) * s1 + s0;
-                break;
-            case 2:
-                x = s0;
-                break;
-            case 3:
-                x = samples / samplesMax;
-                x = (1.0 - x) * s0;
-                break;
-            default:
-                x = 0;
-                break;
+            
+            if (_.reversed) {
+                x = (1.0 - (_.x0 * _.x1)) * _.mul + _.add;
+            } else {
+                x = (_.x0 * _.x1) * _.mul + _.add;
             }
-            x = x * mul + add;
             for (i = 0, imax = cell.length; i < imax; ++i) {
                 cell[i] = x;
             }
-            _.mode = mode;
-            _.samples    = samples + imax;
-            _.samplesMax = samplesMax;
+            _.x0 += _.dx;
+            _.samples -= imax;
             this.seq_id = seq_id;
         }
         return cell;
