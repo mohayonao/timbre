@@ -238,8 +238,12 @@ timbre.fn = (function(timbre) {
         if (typeof klasses[key] === "function") {
             return klasses[key];
         }
+        key = "-" + timbre.env + "-" + key;    
+        if (typeof klasses[key] === "function") {
+            return klasses[key];
+        }
     };
-
+    
     var defaults = { optional:{}, properties:{} };
 
     defaults.optional.ar = function() {
