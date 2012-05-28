@@ -85,6 +85,8 @@ var WebKitAudio = (function() {
         AudioBasis.initialize.apply(this, arguments);
     }, $this = AudioBasis.setPrototype.call(WebKitAudio.prototype);
     
+    timbre.fn.setPrototypeOf.call($this, "ar-only");
+    
     $this.load = function() {
         var self = this, _ = this._;
         var ctx, xhr, opts;
@@ -121,6 +123,8 @@ var MozAudio = (function() {
     var MozAudio = function() {
         AudioBasis.initialize.apply(this, arguments);
     }, $this = AudioBasis.setPrototype.call(MozAudio.prototype);
+    
+    timbre.fn.setPrototypeOf.call($this, "ar-only");
     
     $this.load = function(callback) {
         var self = this, _ = this._;
