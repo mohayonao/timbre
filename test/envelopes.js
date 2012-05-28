@@ -17,7 +17,7 @@ tests = (function() {
         env.onS     = function() { tri.freq =  660; };
         env.onR     = function() { tri.freq =  440; };
         env.onended = function() { synth.pause(); };
-        env.delay = 100;
+        env.delayTime = 100;
         
         synth.listener = T("rec", 3000).listen(env).off();
         
@@ -58,13 +58,29 @@ tests = (function() {
         env.onS     = function() { tri.freq =  660; };
         env.onR     = function() { tri.freq =  440; };
         env.onended = function() { synth.pause(); };
-        env.sr = 3000;
+        env.sustainTime = 3000;
         env.reversed = true;
         
         synth.listener = T("rec", 5000).listen(env).off();
         
         return synth;
     }; tests[i++].desc = "adsr: sustain-rate & reversed";
+
+    tests[i] = function() {
+        var synth, tri, env;
+        synth = T("*", tri = T("tri" , 1340, 0.5),
+                       env = T("perc", 500));
+        
+        synth.onplay = function() { env.bang(); };
+        synth.onbang = function() { env.bang(); };
+        env.onended = function() { synth.pause(); console.log(env.currentTime); };
+        env.iteration = 30;
+        env.decayRate = 0.45;
+        
+        synth.listener = T("rec", 3000).listen(env).off();
+        
+        return synth;
+    }; tests[i++].desc = "perc:";
     
     return tests;
 }());
