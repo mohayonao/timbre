@@ -15,7 +15,7 @@ app.get "/timbre.js", (req, res)->
      {"Content-Type":"text/javascript"}
 
 app.get "/test/:test", (req, res)->
-    res.send( ejs.render EJS_VIEW, {js:"#{req.params.test}.js"} )
+    res.send( ejs.render EJS_VIEW, {js:"#{req.params.test}"} )
 
 app.listen process.env.PORT or 3000
 
@@ -86,8 +86,9 @@ EJS_VIEW = """
 
           src = x.toString().split("\\n");
           src = src.slice(1, src.length-1).map(function(x) {
-              return x.substr(8);
+              return (timbre.env === "webkit") ? x.substr(8) : x.substr(4);
           });
+          if (src[0] === '"use strict";') src.shift();
           src[src.length-1] = src[src.length-1].replace(/^return /, "");
           src = src.join("\\n");
 
