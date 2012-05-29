@@ -34,18 +34,37 @@ var Add = (function() {
             mul  = _.mul;
             add  = _.add;
             jmax = timbre.cellsize;
-            for (j = jmax; j--; ) {
-                cell[j] = 0;
-            }
-            for (i = 0, imax = args.length; i < imax; ++i) {
-                tmp = args[i].seq(seq_id);
+            if (_.ar) {
                 for (j = jmax; j--; ) {
-                    cell[j] += tmp[j];
+                    cell[j] = 0;
                 }
-            }
-            
-            for (j = jmax; j--; ) {
-                cell[j] = cell[j] * mul + add;
+                for (i = 0, imax = args.length; i < imax; ++i) {
+                    if (args[i].seq_id !== seq_id) {
+                        tmp = args[i].seq(seq_id);
+                    } else {
+                        tmp = args[i].cell;
+                    }
+                    for (j = jmax; j--; ) {
+                        cell[j] += tmp[j];
+                    }
+                }
+                
+                for (j = jmax; j--; ) {
+                    cell[j] = cell[j] * mul + add;
+                }
+            } else {
+                tmp = 0;
+                for (i = 0, imax = args.length; i < imax; ++i) {
+                    if (args[i].seq_id !== seq_id) {
+                        tmp += args[i].seq(seq_id)[0];
+                    } else {
+                        tmp += args[i].cell[0];
+                    }
+                }
+                tmp = tmp * mul + add;
+                for (j = jmax; j--; ) {
+                    cell[j] = tmp;
+                }
             }
             this.seq_id = seq_id;
         }
@@ -85,18 +104,37 @@ var Multiply = (function() {
             mul  = _.mul;
             add  = _.add;
             jmax = timbre.cellsize;
-            for (j = jmax; j--; ) {
-                cell[j] = mul;
-            }
-            for (i = 0, imax = args.length; i < imax; ++i) {
-                tmp = args[i].seq(seq_id);
+            if (_.ar) {
                 for (j = jmax; j--; ) {
-                    cell[j] *= tmp[j];
+                    cell[j] = mul;
                 }
-            }
-            if (add !== 0) {
+                for (i = 0, imax = args.length; i < imax; ++i) {
+                    if (args[i].seq_id !== seq_id) {
+                        tmp = args[i].seq(seq_id);
+                    } else {
+                        tmp = args[i].cell;
+                    }
+                    for (j = jmax; j--; ) {
+                        cell[j] *= tmp[j];
+                    }
+                }
+                if (add !== 0) {
+                    for (j = jmax; j--; ) {
+                        cell[j] += add;
+                    }
+                }
+            } else {
+                tmp = mul;
+                for (i = 0, imax = args.length; i < imax; ++i) {
+                    if (args[i].seq_id !== seq_id) {
+                        tmp *= args[i].seq(seq_id)[0];
+                    } else {
+                        tmp *= args[i].cell[0];
+                    }
+                }
+                tmp += add;
                 for (j = jmax; j--; ) {
-                    cell[j] += add;
+                    cell[j] = tmp;
                 }
             }
             this.seq_id = seq_id;
