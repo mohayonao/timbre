@@ -11,6 +11,7 @@ TIMBRE_SOURCES = [
     "timbre/filters"
     "timbre/efx.delay"
     "timbre/efx.dist"
+    "timbre/efx.chorus"
     "timbre/timers"
     "timbre/wav"
     "timbre/audio"
