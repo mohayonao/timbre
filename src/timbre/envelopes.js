@@ -18,53 +18,53 @@ var ADSREnvelope = (function() {
     Object.defineProperty($this, "status", {
         get: function() { return STATUSES[this._.status+1]; }
     });
-    Object.defineProperty($this, "delayTime", {
+    Object.defineProperty($this, "delay", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.delayTime = value;
+                this._.delay = value;
             }
         },
-        get: function() { return this._.delayTime; }
+        get: function() { return this._.delay; }
     });
-    Object.defineProperty($this, "attackTime", {
+    Object.defineProperty($this, "a", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.attackTime = value;
+                this._.a = value;
             }
         },
-        get: function() { return this._.attackTime; }
+        get: function() { return this._.a; }
     });
-    Object.defineProperty($this, "decayTime", {
+    Object.defineProperty($this, "d", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.decayTime = value;
+                this._.d = value;
             }
         },
-        get: function() { return this._.decayTime; }
+        get: function() { return this._.d; }
     });
-    Object.defineProperty($this, "sustainLevel", {
+    Object.defineProperty($this, "s", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.sustainLevel = value;
+                this._.s = value;
             }
         },
-        get: function() { return this._.sustainLevel; }
+        get: function() { return this._.s; }
     });
-    Object.defineProperty($this, "releaseTime", {
+    Object.defineProperty($this, "r", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.releaseTime = value;
+                this._.r = value;
             }
         },
-        get: function() { return this._.releaseTime; }
+        get: function() { return this._.r; }
     });
-    Object.defineProperty($this, "sustainTime", {
+    Object.defineProperty($this, "sl", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.sustainTime = value;
+                this._.sl = value;
             }
         },
-        get: function() { return this._.sustainTime; }
+        get: function() { return this._.sl; }
     });
     Object.defineProperty($this, "reversed", {
         set: function(value) {
@@ -84,10 +84,10 @@ var ADSREnvelope = (function() {
         _ = this._ = {};
         
         i = 0;
-        _.attackTime   = (typeof _args[i] === "number") ? _args[i++] : 0;
-        _.decayTime    = (typeof _args[i] === "number") ? _args[i++] : 0;
-        _.sustainLevel = (typeof _args[i] === "number") ? _args[i++] : 0;
-        _.releaseTime  = (typeof _args[i] === "number") ? _args[i++] : 0;
+        _.a  = (typeof _args[i] === "number") ? _args[i++] : 0;
+        _.d  = (typeof _args[i] === "number") ? _args[i++] : 0;
+        _.sl = (typeof _args[i] === "number") ? _args[i++] : 0;                
+        _.r  = (typeof _args[i] === "number") ? _args[i++] : 0;
         
         if (typeof _args[i] === "number") {
             _.mul = _args[i++];
@@ -97,8 +97,8 @@ var ADSREnvelope = (function() {
         }
         
         _.ison = true;
-        _.delayTime   = 0;
-        _.sustainTime = Infinity;
+        _.delay   = 0;
+        _.s = Infinity;
         _.reversed = false;
         
         _.status = -1;
@@ -110,12 +110,10 @@ var ADSREnvelope = (function() {
     $this.clone = function(deep) {
         var newone, _ = this._;
         var args, i, imax;
-        newone = timbre("adsr",
-                        _.attackTime, _.decayTime, _.sustainLevel, _.releaseTime,
-                        _.mul, _.add);
-        newone._.delayTime   = _.delayTime;
-        newone._.sustainTime = _.sustainTime;
-        newone._.reversed    = _.reversed;
+        newone = timbre("adsr", _.a, _.d, _.sl, _.r, _.mul, _.add);
+        newone._.delay = _.delay;
+        newone._.s = _.s;
+        newone._.reversed = _.reversed;
         return newone;
     };
     
@@ -124,7 +122,7 @@ var ADSREnvelope = (function() {
         
         // off -> delay
         _.status  = 0;
-        _.samples = (timbre.samplerate * (_.delayTime / 1000))|0;
+        _.samples = (timbre.samplerate * (_.delay / 1000))|0;
         _.x0 = 0; _.x1 = 1; _.dx = 0;
         _.currentTime = 0;
         
@@ -138,7 +136,7 @@ var ADSREnvelope = (function() {
         if (_.status <= 3) {
             // (delay, A, D, S) -> R
             _.status  = 4;
-            _.samples = (timbre.samplerate * (_.releaseTime / 1000))|0;
+            _.samples = (timbre.samplerate * (_.r / 1000))|0;
             _.x1 = _.x0; _.x0 = 1; _.dx = -timbre.cellsize / _.samples;
             timbre.fn.do_event(this, "R");
         }
@@ -155,32 +153,32 @@ var ADSREnvelope = (function() {
             while (_.samples <= 0) {
                 if (_.status === 0) { // delay -> A
                     _.status = 1;
-                    _.samples = (timbre.samplerate * (_.attackTime / 1000))|0;
+                    _.samples = (timbre.samplerate * (_.a / 1000))|0;
                     _.dx = timbre.cellsize / _.samples;
                     timbre.fn.do_event(this, "A");
                     continue;
                 }
                 if (_.status === 1) { // A -> D
                     _.status = 2;
-                    _.samples += (timbre.samplerate * (_.decayTime / 1000))|0;
+                    _.samples += (timbre.samplerate * (_.d / 1000))|0;
                     _.x0 = 1;
-                    _.dx = -timbre.cellsize * (1 - _.sustainLevel) / _.samples;
+                    _.dx = -timbre.cellsize * (1 - _.sl) / _.samples;
                     timbre.fn.do_event(this, "D");
                     continue;
                 }
                 if (_.status === 2) { // D -> S
-                    if (_.sustainLevel === 0) {
+                    if (_.sl === 0) {
                         _.status = 4;
                         continue;
                     }
                     _.status = 3;
-                    _.x0 = _.sustainLevel;
-                    if (_.sustainTime === Infinity) {
+                    _.x0 = _.sl;
+                    if (_.s === Infinity) {
                         _.samples = Infinity;
                         _.dx = 0;
                     } else {
-                        _.samples += (timbre.samplerate * (_.sustainTime / 1000))|0;
-                        _.dx = -timbre.cellsize * _.sustainLevel / _.samples;
+                        _.samples += (timbre.samplerate * (_.s / 1000))|0;
+                        _.dx = -timbre.cellsize * _.sl / _.samples;
                     }
                     timbre.fn.do_event(this, "S");
                     continue;
