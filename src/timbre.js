@@ -485,7 +485,7 @@ timbre.fn = (function(timbre) {
             }
             
             if (typeof p.ar !== "function") {
-                fn.setPrototypeOf.call(p, "kr-only");
+                fn.setPrototypeOf.call(p, "ar-kr");
             }
             
             if (typeof key === "string") {            
