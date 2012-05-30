@@ -163,7 +163,6 @@ Object.defineProperty(timbre, "isEnabled", {
         return !!timbre.sys._.impl;
     }
 });
-
 Object.defineProperty(timbre, "isOn", {
     get: function() {
         return timbre.sys._.ison;
@@ -657,9 +656,11 @@ var NumberWrapper = (function() {
     
     Object.defineProperty($this, "value", {
         set: function(value) {
+            var _ = this._;
             var cell, i;
             if (typeof value === "number") {
-                this._.value = value;
+                _.value = value;
+                value = _.value * _.mul + _.add;
                 cell = this.cell;
                 for (i = cell.length; i--; ) {
                     cell[i] = value;
@@ -668,6 +669,40 @@ var NumberWrapper = (function() {
         },
         get: function() {
             return this._.value;
+        }
+    });
+    Object.defineProperty($this, "mul", {
+        set: function(value) {
+            var _ = this._;
+            var cell, i;
+            if (typeof value === "number") {
+                _.mul = value;
+                value = _.value * _.mul + _.add;
+                cell = this.cell;
+                for (i = cell.length; i--; ) {
+                    cell[i] = value;
+                }
+            }
+        },
+        get: function() {
+            return this._.mul;
+        }
+    });
+    Object.defineProperty($this, "add", {
+        set: function(value) {
+            var _ = this._;
+            var cell, i;
+            if (typeof value === "number") {
+                _.add = value;
+                value = _.value * _.mul + _.add;
+                cell = this.cell;
+                for (i = cell.length; i--; ) {
+                    cell[i] = value;
+                }
+            }
+        },
+        get: function() {
+            return this._.add;
         }
     });
     
@@ -701,16 +736,51 @@ var BooleanWrapper = (function() {
     
     Object.defineProperty($this, "value", {
         set: function(value) {
-            var cell, i, x;
+            var _ = this._;
+            var cell, i;
             this._.value = !!value;
             cell = this.cell;
-            x = this._.value ? 1 : 0;
+            value = (_.value ? 1 : 0) * _.mul + _.add;
             for (i = cell.length; i--; ) {
-                cell[i] = x;
+                cell[i] = value;
             }
         },
         get: function() {
             return this._.value;
+        }
+    });
+    Object.defineProperty($this, "mul", {
+        set: function(value) {
+            var _ = this._;
+            var cell, i;
+            if (typeof value === "number") {
+                _.mul = value;
+                value = (_.value ? 1 : 0) * _.mul + _.add;
+                cell = this.cell;
+                for (i = cell.length; i--; ) {
+                    cell[i] = value;
+                }
+            }
+        },
+        get: function() {
+            return this._.mul;
+        }
+    });
+    Object.defineProperty($this, "add", {
+        set: function(value) {
+            var _ = this._;
+            var cell, i;
+            if (typeof value === "number") {
+                _.add = value;
+                value = (_.value ? 1 : 0) * _.mul + _.add;
+                cell = this.cell;
+                for (i = cell.length; i--; ) {
+                    cell[i] = value;
+                }
+            }
+        },
+        get: function() {
+            return this._.add;
         }
     });
     
@@ -817,7 +887,7 @@ var ArrayWrapper = (function() {
     Object.defineProperty($this, "index", {
         set: function(value) {
             var _ = this._;
-            var cell, x, i, imax;
+            var cell, i, imax;
             if (typeof value === "number") {
                 value = value|0;
                 if (value < 0) {
@@ -826,14 +896,48 @@ var ArrayWrapper = (function() {
                 if (0 <= value && value < _.value.length) {
                     _.index = value|0;
                     cell = this.cell;
-                    x = _.value[_.index];
+                    value = _.value[_.index] * _.mul + _.add;
                     for (i = cell.length; i--; ) {
-                        cell[i] = x;
+                        cell[i] = value;
                     }
                 }
             }
         },
         get: function() { return this._.index; }
+    });
+    Object.defineProperty($this, "mul", {
+        set: function(value) {
+            var _ = this._;
+            var cell, i;
+            if (typeof value === "number") {
+                _.mul = value;
+                value = _.value[_.index] * _.mul + _.add;
+                cell = this.cell;
+                for (i = cell.length; i--; ) {
+                    cell[i] = value;
+                }
+            }
+        },
+        get: function() {
+            return this._.mul;
+        }
+    });
+    Object.defineProperty($this, "add", {
+        set: function(value) {
+            var _ = this._;
+            var cell, i;
+            if (typeof value === "number") {
+                _.add = value;
+                value = _.value[_.index] * _.mul + _.add;
+                cell = this.cell;
+                for (i = cell.length; i--; ) {
+                    cell[i] = value;
+                }
+            }
+        },
+        get: function() {
+            return this._.add;
+        }
     });
     
     var initialize = function(_args) {
@@ -1004,7 +1108,6 @@ if (module.parent && !module.parent.parent) {
                 var instance = timbre(100);
                 instance.value.should.equal(100);
             });
-
             it("should changed", function() {
                 var instance = timbre(100);
                 instance.value = 10;
@@ -1015,6 +1118,23 @@ if (module.parent && !module.parent.parent) {
                 var instance = timbre(100);
                 instance.value = "1";
                 instance.value.should.equal(100);
+            });
+            it("should multiply", function() {
+                var instance = timbre(100);
+                instance.mul = 2;
+                instance.cell.should.eql(timbre(200).cell);
+            });
+            it("should add", function() {
+                var instance = timbre(100);
+                instance.add = 3;
+                instance.cell.should.eql(timbre(103).cell);
+            });
+            it("should multiply and add", function() {
+                var instance = timbre(100);
+                instance.mul = 2;
+                instance.add = 3;
+                instance.value = 10;
+                instance.cell.should.eql(timbre(23).cell);
             });
         });
         describe("#clone()", function() {
@@ -1044,6 +1164,23 @@ if (module.parent && !module.parent.parent) {
                 instance.value = false;
                 instance.value = 1000;
                 instance.value.should.equal(true);
+            });
+            it("should multiply", function() {
+                var instance = timbre(true);
+                instance.mul = 2;
+                instance.cell.should.eql(timbre(2).cell);
+            });
+            it("should add", function() {
+                var instance = timbre(false);
+                instance.add = 3;
+                instance.cell.should.eql(timbre(3).cell);
+            });
+            it("should multiply and add", function() {
+                var instance = timbre(false);
+                instance.mul = 2;
+                instance.add = 3;
+                instance.value = 10;
+                instance.cell.should.eql(timbre(5).cell);
             });
         });
         describe("#clone()", function() {
@@ -1076,6 +1213,28 @@ if (module.parent && !module.parent.parent) {
             instance.cell[0].should.equal(7);
             instance.index = -1;
             instance.cell[0].should.equal(13);
+        });
+        describe("#value", function() {
+            it("should multiply", function() {
+                var instance = timbre([2, 3, 5, 7, 11, 13]);
+                instance.mul = 2;
+                instance.cell.should.eql(timbre(4).cell);
+            });
+            it("should add", function() {
+                var instance = timbre([2, 3, 5, 7, 11, 13]);
+                instance.bang();
+                instance.add = 3;
+                instance.cell.should.eql(timbre(6).cell);
+            });
+            it("should multiply and add", function() {
+                var instance = timbre([2, 3, 5, 7, 11, 13]);
+                instance.bang();
+                instance.mul = 2;
+                instance.bang();
+                instance.add = 3;
+                instance.bang();
+                instance.cell.should.eql(timbre(17).cell);
+            });
         });
     });
     describe("Through out", function() {
