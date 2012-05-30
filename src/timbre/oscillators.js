@@ -6,6 +6,11 @@
 var timbre = require("../timbre");
 // __BEGIN__
 
+/**
+ * Oscillator: 0.1.0
+ * Table lookup oscillator
+ * [ar-kr]
+ */
 var Oscillator = (function() {
     var Oscillator = function() {
         initialize.apply(this, arguments);
@@ -120,7 +125,11 @@ var Oscillator = (function() {
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
             
-            freq = _.freq.seq(seq_id);
+            if (_.freq.seq_id === seq_id) {
+                freq = _.freq.cell;
+            } else {
+                freq = _.freq.seq(seq_id);
+            }
             mul  = _.mul;
             add  = _.add;
             wave = _.wave;
@@ -310,6 +319,11 @@ timbre.fn.register("konami", Oscillator, function(_args) {
 });
 
 
+/**
+ * WhiteNoise: 0.1.0
+ * White noise generator
+ * [ar-kr]
+ */
 var WhiteNoise = (function() {
     var WhiteNoise = function() {
         initialize.apply(this, arguments);
@@ -348,6 +362,7 @@ var WhiteNoise = (function() {
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
+            this.seq_id = seq_id;
             mul = _.mul;
             add = _.add;
             if (_.ar) {
@@ -360,7 +375,6 @@ var WhiteNoise = (function() {
                     cell[i] = x;
                 }
             }
-            this.seq_id = seq_id;
         }
         return cell;
     };
@@ -370,6 +384,11 @@ var WhiteNoise = (function() {
 timbre.fn.register("noise", WhiteNoise);
 
 
+/**
+ * FuncOscillator: 0.1.0
+ * Signal generator
+ * [ar-kr] TODO: kr
+ */
 var FuncOscillator = (function() {
     var FuncOscillator = function() {
         initialize.apply(this, arguments);
@@ -476,7 +495,11 @@ var FuncOscillator = (function() {
             this.seq_id = seq_id;
             
             func  = _.func;
-            freq  = _.freq.seq(seq_id);
+            if (_.freq.seq_id === seq_id) {
+                freq  = _.freq.cell;
+            } else {
+                freq  = _.freq.seq(seq_id);
+            }
             x     = _.x;
             coeff = _.coeff;
             mul   = _.mul;

@@ -6,6 +6,10 @@
 var timbre = require("../timbre");
 // __BEGIN__
 
+/**
+ * Filter: 0.1.0
+ * [ar-only]
+ */
 var Filter = (function() {
     var Filter = function() {
         initialize.apply(this, arguments);
@@ -132,12 +136,17 @@ var Filter = (function() {
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
+            this.seq_id = seq_id;
             args = this.args.slice(0);
             for (j = jmax = cell.length; j--; ) {
                 cell[j] = 0.0;
             }
             for (i = 0, imax = args.length; i < imax; ++i) {
-                tmp = args[i].seq(seq_id);
+                if (args[i].seq_id === seq_id) {
+                    tmp = args[i].cell;
+                } else {
+                    tmp = args[i].seq(seq_id);
+                }
                 for (j = jmax; j--; ) {
                     cell[j] += tmp[j];
                 }
@@ -191,8 +200,6 @@ var Filter = (function() {
             for (j = jmax; j--; ) {
                 cell[j] = cell[j] * mul + add;
             }
-            
-            this.seq_id = seq_id;
         }
         
         return cell;
@@ -399,6 +406,10 @@ timbre.fn.register("highboost", Filter, function(_args) {
 });
 
 
+/**
+ * ResonantFilter: 0.1.0
+ * [ar-only]
+ */
 var ResonantFilter = (function() {
     var ResonantFilter = function() {
         initialize.apply(this, arguments);
@@ -536,7 +547,11 @@ var ResonantFilter = (function() {
                 cell[j] = 0.0;
             }
             for (i = 0, imax = args.length; i < imax; ++i) {
-                tmp = args[i].seq(seq_id);
+                if (args[i].seq_id === seq_id) {
+                    tmp = args[i].cell;
+                } else {
+                    tmp = args[i].seq(seq_id);
+                }
                 for (j = jmax; j--; ) {
                     cell[j] += tmp[j];
                 }

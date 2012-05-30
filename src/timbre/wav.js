@@ -6,12 +6,12 @@
 var timbre = require("../timbre");
 // __BEGIN__
 
+/**
+ * Wav: 0.1.0
+ * Decode wav file
+ * [ar-only]
+ */
 var Wav = (function() {
-    /**
-     * Wav: 0.1.0
-     * Decode wav file
-     * [ar-only]
-     */
     var Wav = function() {
         initialize.apply(this, arguments);
     }, $this = Wav.prototype;
@@ -43,6 +43,7 @@ var Wav = (function() {
         },
         get: function() { return (this._.phase / this._.samplerate) * 1000; }
     });
+    // TODO: isLoop, isReversed
     
     var initialize = function(_args) {
         var i, _;

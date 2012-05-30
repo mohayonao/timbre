@@ -6,6 +6,11 @@
 var timbre = require("../timbre");
 // __BEGIN__
 
+/**
+ * Audio: <draft>
+ * Store audio samples
+ * [ar-only]
+ */
 var AudioBasis = {
     initialize: function(_args) {
         var i, _;
@@ -46,6 +51,7 @@ var AudioBasis = {
             },
             get: function() { return this._.src; }
         });
+        // TODO: isLoop
         Object.defineProperty(this, "loop", {
             set: function(value) {
                 if (typeof value === "boolean") {
@@ -104,6 +110,11 @@ var AudioBasis = {
 };
 
 
+/**
+ * WebKitAudio: <draft>
+ * Store audio samples (Web Audio API)
+ * [ar-only]
+ */
 var WebKitAudio = (function() {
     var WebKitAudio = function() {
         AudioBasis.initialize.apply(this, arguments);
@@ -145,6 +156,11 @@ var WebKitAudio = (function() {
 timbre.fn.register("-webkit-audio", WebKitAudio);
 
 
+/**
+ * MozAudio: <draft>
+ * Store audio samples (Audio Data API)
+ * [ar-only]
+ */
 var MozAudio = (function() {
     var MozAudio = function() {
         AudioBasis.initialize.apply(this, arguments);

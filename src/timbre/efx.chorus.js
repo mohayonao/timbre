@@ -92,6 +92,7 @@ var EfxChorus = (function() {
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
+            this.seq_id = seq_id;
             args = this.args.slice(0);
             for (j = jmax = cell.length; j--; ) {
                 cell[j] = 0.0;
@@ -107,10 +108,10 @@ var EfxChorus = (function() {
             
             pointerWrite = _.pointerWrite;
             for (i = 0, imax = args.length; i < imax; ++i) {
-                if (args[i].seq_id !== seq_id) {
-                    tmp = args[i].seq(seq_id);
+                if (args[i].seq_id === seq_id) {
+                    tmp = args[i].cell;
                 } else {
-                    tmp = args[i].cell;;
+                    tmp = args[i].seq(seq_id);
                 }
                 for (j = 0; j < jmax; ++j) {
                     buffer[pointerWrite] += tmp[j];
@@ -152,8 +153,6 @@ var EfxChorus = (function() {
             }
             _.pointerRead  = pointerRead0;
             _.pointerWrite = pointerWrite;
-            
-            this.seq_id = seq_id;
         }
         return cell;
     };

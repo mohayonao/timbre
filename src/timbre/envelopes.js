@@ -6,6 +6,11 @@
 var timbre = require("../timbre");
 // __BEGIN__
 
+/**
+ * ADSREnvelope: 0.1.0
+ * ADSR envelope generator
+ * [kr-only]
+ */
 var ADSREnvelope = (function() {
     var ADSREnvelope = function() {
         initialize.apply(this, arguments);
@@ -243,6 +248,11 @@ var ADSREnvelope = (function() {
 timbre.fn.register("adsr", ADSREnvelope);
 
 
+/**
+ * PercussiveEnvelope: 0.1.0
+ * Percussive envelope generator
+ * [kr-only]
+ */
 var PercussiveEnvelope = (function() {
     var PercussiveEnvelope = function() {
         initialize.apply(this, arguments);

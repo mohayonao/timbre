@@ -6,12 +6,12 @@
 var timbre = require("../timbre");
 // __BEGIN__
 
+/**
+ * Interval: 0.1.0
+ * Calls a bang() repeatedly at regular intervals
+ * [kr-only]
+ */
 var Interval = (function() {
-    /**
-     * Interval: 0.1.0
-     * Calls a bang() repeatedly at regular intervals
-     * [kr-only]
-     */
     var Interval = function() {
         initialize.apply(this, arguments);
     }, $this = Interval.prototype;
@@ -118,12 +118,12 @@ var Interval = (function() {
 timbre.fn.register("interval", Interval);
 
 
+/**
+ * Timeout: 0.1.0
+ * Calls a bang() after specified delay
+ * [kr-only]
+ */
 var Timeout = (function() {
-    /**
-     * Timeout: 0.1.0
-     * Calls a bang() after specified delay
-     * [kr-only]
-     */
     var Timeout = function() {
         initialize.apply(this, arguments);
     }, $this = Timeout.prototype;
@@ -226,12 +226,12 @@ var Timeout = (function() {
 timbre.fn.register("timeout", Timeout);
 
 
+/**
+ * Metronome: <draft>
+ * Calls a bang() at a metronomic bpm
+ * [kr-only]
+ */
 var Mertonome = (function() {
-    /**
-     * Metronome: <draft>
-     * Calls a bang() at a metronomic bpm
-     * [kr-only]
-     */
     var Mertonome = function() {
         initialize.apply(this, arguments);
     }, $this = Mertonome.prototype;
@@ -368,11 +368,11 @@ var Mertonome = (function() {
 timbre.fn.register("metro", Mertonome);
 
 
+/**
+ * Scheulde: <draft>
+ * [kr-only]
+ */
 var Schedule = (function() {
-    /**
-     * Scheulde: <draft>
-     * [kr-only]
-     */
     var Schedule = function() {
         initialize.apply(this, arguments);
     }, $this = Schedule.prototype;

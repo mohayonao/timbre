@@ -7,6 +7,10 @@
 var timbre = require("../timbre");
 // __BEGIN__
 
+/**
+ * Easing: 0.1.0
+ * [kr-only]
+ */
 var Easing = (function() {
     var Easing = function() {
         initialize.apply(this, arguments);
@@ -141,6 +145,7 @@ var Easing = (function() {
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
+            this.seq_id = seq_id;
             while (_.samples <= 0) {
                 if (_.status === 0) {
                     _.status = 1;
@@ -171,7 +176,6 @@ var Easing = (function() {
             _.x0 += _.dx;
             _.samples -= imax;
             _.currentTime += imax * 1000 / timbre.samplerate;
-            this.seq_id = seq_id;
         }
         return cell;
     };
@@ -324,6 +328,10 @@ Easing.functions = {
 };
 
 
+/**
+ * Glide: 0.1.0
+ * [kr-only]
+ */
 var Glide = (function() {
     var Glide = function() {
         initialize.apply(this, arguments);
@@ -453,6 +461,7 @@ var Glide = (function() {
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
+            this.seq_id = seq_id;
             while (_.samples <= 0) {
                 if (_.status === 0) {
                     _.status = 1;
@@ -483,7 +492,6 @@ var Glide = (function() {
             _.x0 += _.dx;
             _.samples -= imax;
             _.currentTime += imax * 1000 / timbre.samplerate;
-            this.seq_id = seq_id;
         }
         return cell;
     };

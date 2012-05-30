@@ -5,6 +5,12 @@
 
 var timbre = require("../timbre");
 // __BEGIN__
+
+/**
+ * Add: 0.1.0
+ * Add signals
+ * [ar-kr]
+ */
 var Add = (function() {
     var Add = function() {
         initialize.apply(this, arguments);
@@ -30,6 +36,7 @@ var Add = (function() {
         var tmp, i, imax, j, jmax;
         cell = this.cell;
         if (seq_id !== this.seq_id) {
+            this.seq_id = seq_id;
             args = this.args.slice(0);
             mul  = _.mul;
             add  = _.add;
@@ -39,10 +46,10 @@ var Add = (function() {
                     cell[j] = 0;
                 }
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id !== seq_id) {
-                        tmp = args[i].seq(seq_id);
-                    } else {
+                    if (args[i].seq_id === seq_id) {
                         tmp = args[i].cell;
+                    } else {
+                        tmp = args[i].seq(seq_id);
                     }
                     for (j = jmax; j--; ) {
                         cell[j] += tmp[j];
@@ -55,10 +62,10 @@ var Add = (function() {
             } else {
                 tmp = 0;
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id !== seq_id) {
-                        tmp += args[i].seq(seq_id)[0];
-                    } else {
+                    if (args[i].seq_id === seq_id) {
                         tmp += args[i].cell[0];
+                    } else {
+                        tmp += args[i].seq(seq_id)[0];
                     }
                 }
                 tmp = tmp * mul + add;
@@ -66,7 +73,7 @@ var Add = (function() {
                     cell[j] = tmp;
                 }
             }
-            this.seq_id = seq_id;
+            
         }
         return cell;
     };
@@ -75,6 +82,11 @@ var Add = (function() {
 }());
 timbre.fn.register("+", Add);
 
+/**
+ * Multiply: 0.1.0
+ * Multiply signals
+ * [ar-kr]
+ */
 var Multiply = (function() {
     var Multiply = function() {
         initialize.apply(this, arguments);
@@ -100,6 +112,7 @@ var Multiply = (function() {
         var tmp, i, imax, j, jmax;
         cell = this.cell;
         if (seq_id !== this.seq_id) {
+            this.seq_id = seq_id;
             args = this.args.slice(0);
             mul  = _.mul;
             add  = _.add;
@@ -109,10 +122,10 @@ var Multiply = (function() {
                     cell[j] = mul;
                 }
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id !== seq_id) {
-                        tmp = args[i].seq(seq_id);
-                    } else {
+                    if (args[i].seq_id === seq_id) {
                         tmp = args[i].cell;
+                    } else {
+                        tmp = args[i].seq(seq_id);
                     }
                     for (j = jmax; j--; ) {
                         cell[j] *= tmp[j];
@@ -126,10 +139,10 @@ var Multiply = (function() {
             } else {
                 tmp = mul;
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id !== seq_id) {
-                        tmp *= args[i].seq(seq_id)[0];
-                    } else {
+                    if (args[i].seq_id === seq_id) {
                         tmp *= args[i].cell[0];
+                    } else {
+                        tmp *= args[i].seq(seq_id)[0];
                     }
                 }
                 tmp += add;
@@ -137,7 +150,6 @@ var Multiply = (function() {
                     cell[j] = tmp;
                 }
             }
-            this.seq_id = seq_id;
         }
         return cell;
     };

@@ -1,17 +1,17 @@
 /**
- * timbre/sys
+ * timbre/system
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
+/**
+ * Dac: 0.1.0
+ * Audio output
+ * [ar-only]
+ */
 var Dac = (function() {
-    /**
-     * Dac: 0.1.0
-     * Audio output
-     * [ar-only]
-     */
     var Dac = function() {
         initialize.apply(this, arguments);
     }, $this = Dac.prototype;
@@ -135,12 +135,12 @@ timbre.fn.register("pandac", Dac, function(_args) {
 });
 
 
+/**
+ * AR: 0.1.0
+ * Convert audiorate
+ * [ar-only]
+ */
 var AR = (function() {
-    /**
-     * AR: 0.1.0
-     * Convert audiorate
-     * [ar-only]
-     */
     var AR = function() {
         initialize.apply(this, arguments);
     }, $this = AR.prototype;
@@ -229,12 +229,13 @@ var AR = (function() {
 }());
 timbre.fn.register("ar", AR);
 
+
+/**
+ * KR: 0.1.0
+ * Convert controlrate
+ * [kr-only]
+ */
 var KR = (function() {
-    /**
-     * KR: 0.1.0
-     * Convert controlrate
-     * [kr-only]
-     */
     var KR = function() {
         initialize.apply(this, arguments);
     }, $this = KR.prototype;

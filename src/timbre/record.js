@@ -6,12 +6,12 @@
 var timbre = require("../timbre");
 // __BEGIN__
 
+/**
+ * Record: <draft>
+ * Record sound into a buffer
+ * [ar-only]
+ */
 var Record = (function() {
-    /**
-     * Record: <draft>
-     * Record sound into a buffer
-     * [ar-only]
-     */
     var Record = function() {
         initialize.apply(this, arguments);
     }, $this = Record.prototype;
@@ -34,6 +34,7 @@ var Record = (function() {
     Object.defineProperty($this, "currentTime", {
         get: function() { return this._.index / timbre.samplerate * 1000; }
     });
+    // TODO: isRecording (status?)
     
     var initialize = function(_args) {
         var i, _;

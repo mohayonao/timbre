@@ -647,6 +647,11 @@ timbre.fn.arrayset(timbre.listeners);
 
 
 // built-in-types
+/**
+ * NumberWrapper: 0.1.0
+ * Constant signal of a number
+ * [kr-only]
+ */
 var NumberWrapper = (function() {
     var NumberWrapper = function() {
         initialize.apply(this, arguments);
@@ -727,6 +732,11 @@ var NumberWrapper = (function() {
 }());
 timbre.fn.register("number", NumberWrapper);
 
+/**
+ * BooleanWrapper: 0.1.0
+ * Constant signal of a 0 or 1
+ * [kr-only]
+ */
 var BooleanWrapper = (function() {
     var BooleanWrapper = function() {
         initialize.apply(this, arguments);
@@ -736,14 +746,8 @@ var BooleanWrapper = (function() {
     
     Object.defineProperty($this, "value", {
         set: function(value) {
-            var _ = this._;
-            var cell, i;
             this._.value = !!value;
-            cell = this.cell;
-            value = (_.value ? 1 : 0) * _.mul + _.add;
-            for (i = cell.length; i--; ) {
-                cell[i] = value;
-            }
+            changeTheValue.call(this);
         },
         get: function() {
             return this._.value;
@@ -751,15 +755,9 @@ var BooleanWrapper = (function() {
     });
     Object.defineProperty($this, "mul", {
         set: function(value) {
-            var _ = this._;
-            var cell, i;
             if (typeof value === "number") {
-                _.mul = value;
-                value = (_.value ? 1 : 0) * _.mul + _.add;
-                cell = this.cell;
-                for (i = cell.length; i--; ) {
-                    cell[i] = value;
-                }
+                this._.mul = value;
+                changeTheValue.call(this);
             }
         },
         get: function() {
@@ -768,15 +766,9 @@ var BooleanWrapper = (function() {
     });
     Object.defineProperty($this, "add", {
         set: function(value) {
-            var _ = this._;
-            var cell, i;
             if (typeof value === "number") {
-                _.add = value;
-                value = (_.value ? 1 : 0) * _.mul + _.add;
-                cell = this.cell;
-                for (i = cell.length; i--; ) {
-                    cell[i] = value;
-                }
+                this._.add = value;
+                changeTheValue.call(this);
             }
         },
         get: function() {
@@ -793,6 +785,15 @@ var BooleanWrapper = (function() {
         }
     };
     
+    var changeTheValue = function() {
+        var x, cell, i, _ = this._;
+        x = (_.value ? 1 : 0) * _.mul + _.add;
+        cell = this.cell;
+        for (i = cell.length; i--; ) {
+            cell[i] = x;
+        }
+    };
+    
     $this._post_init = function() {
         this.value = this._.value;
     };
@@ -800,73 +801,23 @@ var BooleanWrapper = (function() {
     $this.clone = function() {
         return timbre(!!this._.value);
     };
+
+    $this.bang = function() {
+        this._.value = !this._.value;
+        changeTheValue.call(this);
+        timbre.fn.do_event(this, "bang");
+        return this;
+    };
     
     return BooleanWrapper;
 }());
 timbre.fn.register("boolean", BooleanWrapper);
 
-var FunctionWrapper = (function() {
-    var FunctionWrapper = function() {
-        initialize.apply(this, arguments);
-    }, $this = FunctionWrapper.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
-    
-    Object.defineProperty($this, "value", {
-        set: function(value) {
-            if (typeof value === "function") {
-                this._.value = value;
-            }
-        },
-        get: function() {
-            return this._.value;
-        }
-    });
-    Object.defineProperty($this, "args", {
-        set: function(value) {
-            if (typeof value === "object" && value instanceof Array) {
-                this._.args = value;
-            }
-        },
-        get: function() {
-            return this._.args;
-        }
-    });
-    
-    var initialize = function(_args) {
-        var i, _;
-        this._ = _ = {};
 
-        i = 0;
-        if (typeof _args[i] === "function") {
-            _.value = _args[i++];
-        } else {
-            _.value = null;
-        }
-        if (typeof _args[i] === "object" && _args[i] instanceof Array) {
-            _.args = _args[i++];
-        } else {
-            _.args = [];
-        }
-    };
-    
-    $this.clone = function(deep) {
-        return timbre("function", this._.value, this._.args);
-    };
-    
-    $this.bang = function() {
-        var _ = this._;
-        if (_.value !== null) {
-            _.value.apply(this, _.args);
-        }
-        timbre.fn.do_event(this, "bang");
-        return this;
-    };
-    
-    return FunctionWrapper;
-}());
-timbre.fn.register("function", FunctionWrapper);
-
+/**
+ * ArrayWrapper: 0.1.0
+ * [kr-only]
+ */
 var ArrayWrapper = (function() {
     var ArrayWrapper = function() {
         initialize.apply(this, arguments);
@@ -997,6 +948,72 @@ var ArrayWrapper = (function() {
 }());
 timbre.fn.register("array", ArrayWrapper);
 
+
+/**
+ * FunctionWrapper: 0.1.0
+ * [kr-only]
+ */
+var FunctionWrapper = (function() {
+    var FunctionWrapper = function() {
+        initialize.apply(this, arguments);
+    }, $this = FunctionWrapper.prototype;
+    
+    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
+    Object.defineProperty($this, "value", {
+        set: function(value) {
+            if (typeof value === "function") {
+                this._.value = value;
+            }
+        },
+        get: function() {
+            return this._.value;
+        }
+    });
+    Object.defineProperty($this, "args", {
+        set: function(value) {
+            if (typeof value === "object" && value instanceof Array) {
+                this._.args = value;
+            }
+        },
+        get: function() {
+            return this._.args;
+        }
+    });
+    
+    var initialize = function(_args) {
+        var i, _;
+        this._ = _ = {};
+
+        i = 0;
+        if (typeof _args[i] === "function") {
+            _.value = _args[i++];
+        } else {
+            _.value = null;
+        }
+        if (typeof _args[i] === "object" && _args[i] instanceof Array) {
+            _.args = _args[i++];
+        } else {
+            _.args = [];
+        }
+    };
+    
+    $this.clone = function(deep) {
+        return timbre("function", this._.value, this._.args);
+    };
+    
+    $this.bang = function() {
+        var _ = this._;
+        if (_.value !== null) {
+            _.value.apply(this, _.args);
+        }
+        timbre.fn.do_event(this, "bang");
+        return this;
+    };
+    
+    return FunctionWrapper;
+}());
+timbre.fn.register("function", FunctionWrapper);
 
 // __END__
 global.T = global.timbre = timbre;
@@ -1181,6 +1198,16 @@ if (module.parent && !module.parent.parent) {
                 instance.add = 3;
                 instance.value = 10;
                 instance.cell.should.eql(timbre(5).cell);
+            });
+        });
+        describe("#bang()", function() {
+            it("should toggle values", function() {
+                var instance = timbre(true);
+                instance.cell.should.eql(timbre(1).cell);
+                instance.bang();
+                instance.cell.should.eql(timbre(0).cell);
+                instance.bang();
+                instance.cell.should.eql(timbre(1).cell);
             });
         });
         describe("#clone()", function() {
