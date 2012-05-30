@@ -57,8 +57,8 @@ ex1 = (function() {
     bd.i = 4;
     
     // metro    
-    metro = T("metro", bpm, 16, function() {
-        var i = metro.beat + (metro.measure % 2) * 16;
+    metro = T("interval", timbre.utils.bpm2msec(bpm, 16), function() {
+        var i = metro.count % p[0].length;
         
         if (p[s1.i][i]) s1(s1.freqs[i & 7]);
         if (p[s2.i][i]) s2();
