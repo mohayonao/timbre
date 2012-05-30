@@ -33,6 +33,7 @@ var Oscillator = (function() {
                 }
             } else if (typeof value === "string") {
                 if ((dx = Oscillator.waves[value]) !== undefined) {
+                    if (typeof dx === "function") dx = dx();
                     this._.wave = dx;
                 }
             }
@@ -175,31 +176,31 @@ var Oscillator = (function() {
 timbre.fn.register("osc", Oscillator);
 
 Oscillator.waves = {};
-Oscillator.waves.sin = (function() {
+Oscillator.waves.sin = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
         l[i] = Math.sin(2 * Math.PI * (i/1024));
     }
     return l;
-}());
-Oscillator.waves.cos = (function() {
+};
+Oscillator.waves.cos = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
         l[i] = Math.cos(2 * Math.PI * (i/1024));
     }
     return l;
-}());
-Oscillator.waves.pulse = (function() {
+};
+Oscillator.waves.pulse = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
         l[i] = i < 512 ? -1 : +1;
     }
     return l;
-}());
-Oscillator.waves.tri = (function() {
+};
+Oscillator.waves.tri = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -207,8 +208,8 @@ Oscillator.waves.tri = (function() {
         l[i] = 1.0 - 4.0 * Math.abs(Math.round(x) - x);
     }
     return l;
-}());
-Oscillator.waves.sawup = (function() {
+};
+Oscillator.waves.sawup = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -216,9 +217,9 @@ Oscillator.waves.sawup = (function() {
         l[i] = +2.0 * (x - Math.round(x));
     }
     return l;
-}());
+};
 Oscillator.waves.saw = Oscillator.waves.sawup;
-Oscillator.waves.sawdown = (function() {
+Oscillator.waves.sawdown = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -226,8 +227,8 @@ Oscillator.waves.sawdown = (function() {
         l[i] = -2.0 * (x - Math.round(x));
     }
     return l;
-}());
-Oscillator.waves.fami = (function() {
+};
+Oscillator.waves.fami = function() {
     var l, d, x, i, j;
     d = [ +0.000, +0.125, +0.250, +0.375, +0.500, +0.625, +0.750, +0.875,
           +0.875, +0.750, +0.625, +0.500, +0.375, +0.250, +0.125, +0.000,
@@ -238,8 +239,8 @@ Oscillator.waves.fami = (function() {
         l[i] = d[((i / 1024) * d.length)|0];
     }
     return l;
-}());
-Oscillator.waves.konami = (function() {
+};
+Oscillator.waves.konami = function() {
     var l, d, x, i, j;
         d = [-0.625, -0.875, -0.125, +0.750, + 0.500, +0.125, +0.500, +0.750,
              +0.250, -0.125, +0.500, +0.875, + 0.625, +0.000, +0.250, +0.375,
@@ -250,7 +251,7 @@ Oscillator.waves.konami = (function() {
         l[i] = d[((i / 1024) * d.length)|0];
     }
     return l;
-}());
+};
 
 
 timbre.fn.register("sin", Oscillator, function(_args) {
