@@ -1,5 +1,5 @@
 /**
- * timbre/osillators
+ * timbre/oscillators
  */
 "use strict";
 
