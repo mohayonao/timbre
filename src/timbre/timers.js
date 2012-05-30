@@ -7,6 +7,11 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 var Interval = (function() {
+    /**
+     * Interval: 0.1.0
+     * Calls a bang() repeatedly at regular intervals
+     * [kr-only]
+     */
     var Interval = function() {
         initialize.apply(this, arguments);
     }, $this = Interval.prototype;
@@ -24,6 +29,7 @@ var Interval = (function() {
     });
     Object.defineProperty($this, "count", {
         get: function() { return this._.count; }
+        // TODO: implement 'set'
     });
     Object.defineProperty($this, "currentTime", {
         get: function() { return this._.currentTime; }
@@ -113,6 +119,11 @@ timbre.fn.register("interval", Interval);
 
 
 var Timeout = (function() {
+    /**
+     * Timeout: 0.1.0
+     * Calls a bang() after specified delay
+     * [kr-only]
+     */
     var Timeout = function() {
         initialize.apply(this, arguments);
     }, $this = Timeout.prototype;
@@ -216,6 +227,11 @@ timbre.fn.register("timeout", Timeout);
 
 
 var Mertonome = (function() {
+    /**
+     * Metronome: <draft>
+     * Calls a bang() at a metronomic bpm
+     * [kr-only]
+     */
     var Mertonome = function() {
         initialize.apply(this, arguments);
     }, $this = Mertonome.prototype;
@@ -353,6 +369,10 @@ timbre.fn.register("metro", Mertonome);
 
 
 var Schedule = (function() {
+    /**
+     * Scheulde: <draft>
+     * [kr-only]
+     */
     var Schedule = function() {
         initialize.apply(this, arguments);
     }, $this = Schedule.prototype;
@@ -417,9 +437,6 @@ var Schedule = (function() {
     $this.on = function() {
         var _ = this._;
         _.ison = true;
-        _.index = 0;
-        _.currentTime = 0;
-        _.loopcount   = 0;
         timbre.timers.append(this);
         timbre.fn.do_event(this, "on");
         return this;
@@ -428,9 +445,6 @@ var Schedule = (function() {
     $this.off = function() {
         var _ = this._;
         _.ison = false;
-        _.index = 0;
-        _.currentTime = 0;
-        _.loopcount   = 0;
         timbre.timers.remove(this);
         timbre.fn.do_event(this, "off");
         return this;
@@ -450,12 +464,10 @@ var Schedule = (function() {
     
     $this.bang = function() {
         var _ = this._;
-        if (_.ison) {
-            _.index = 0;
-            _.currentTime = 0;
-            _.loopcount   = 0;
-            timbre.fn.do_event(this, "bang");
-        }
+        _.index = 0;
+        _.currentTime = 0;
+        _.loopcount   = 0;
+        timbre.fn.do_event(this, "bang");
         return this;
     };
     
