@@ -7,6 +7,11 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 var Record = (function() {
+    /**
+     * Record: <draft>
+     * Record sound into a buffer
+     * [ar-only]
+     */
     var Record = function() {
         initialize.apply(this, arguments);
     }, $this = Record.prototype;
@@ -41,6 +46,7 @@ var Record = (function() {
         } else {
             _.recTime = 1000;
         }
+        // TODO: wait interval
         if (typeof _args[i] === "function") {
             _.onrecorded = _args[i++];
         }
@@ -93,7 +99,7 @@ var Record = (function() {
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
-            args = this.args.slice(0);
+            this.seq_id = seq_id;
             buffer = _.buffer;
             index  = _.index;
             mul  = _.mul;
@@ -102,6 +108,7 @@ var Record = (function() {
             for (j = jmax; j--; ) {
                 cell[j] = 0;
             }
+            args = this.args.slice(0);
             for (i = 0, imax = args.length; i < imax; ++i) {
                 if (args[i].seq_id === seq_id) {
                     tmp = args[i].cell;
@@ -128,7 +135,6 @@ var Record = (function() {
                     cell[j] = cell[j] * mul + add;
                 }
             }
-            this.seq_id = seq_id;
         }
         return cell;
     };
