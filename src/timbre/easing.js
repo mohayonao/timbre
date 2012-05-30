@@ -29,13 +29,13 @@ var Easeing = (function() {
         },
         get: function() { return this._.type; }
     });
-    Object.defineProperty($this, "delayTime", {
+    Object.defineProperty($this, "delay", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.delayTime = value;
+                this._.delay = value;
             }
         },
-        get: function() { return this._.delayTime; }
+        get: function() { return this._.delay; }
     });
     Object.defineProperty($this, "duration", {
         set: function(value) {
@@ -60,6 +60,9 @@ var Easeing = (function() {
             }
         },
         get: function() { return this._.stop; }
+    });
+    Object.defineProperty($this, "value", {
+        get: function() { return this._.value; }
     });
     Object.defineProperty($this, "currentTime", {
         get: function() { return this._.currentTime; }
@@ -94,9 +97,10 @@ var Easeing = (function() {
         }
         
         _.ison = true;
-        _.delayTime = 0;
+        _.delay = 0;
         
         _.status  = -1;
+        _.value   =  0;
         _.samples = Infinity;
         _.x0 = 0;
         _.dx = 0;
@@ -119,8 +123,9 @@ var Easeing = (function() {
     $this.bang = function() {
         var _ = this._;
         
-        _.status  = 0;
-        _.samples = (timbre.samplerate * (_.delayTime / 1000))|0;
+        _.status = 0;
+        _.value  = 0;
+        _.samples = (timbre.samplerate * (_.delay / 1000))|0;
         _.x0 = 0; _.dx = 0;
         _.currentTime = 0;
         
@@ -318,7 +323,190 @@ Easeing.functions = {
     },
 };
 
+
+var Glide = (function() {
+    var Glide = function() {
+        initialize.apply(this, arguments);
+    }, $this = Glide.prototype;
+    
+    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
+    Object.defineProperty($this, "type", {
+        set: function(value) {
+            var f;
+            if (typeof value === "string") {
+                if ((f = Easeing.functions[value]) !== undefined) {
+                    this._.type = value;
+                    this._.func = f;
+                }
+            } else if (typeof value === "function") {
+                this._.type = "function";
+                this._.func = value;
+            }
+        },
+        get: function() { return this._.type; }
+    });
+    Object.defineProperty($this, "delay", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._.delay = value;
+            }
+        },
+        get: function() { return this._.delay; }
+    });
+    Object.defineProperty($this, "duration", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._.duration = value;
+            }
+        },
+        get: function() { return this._.duration; }
+    });
+    Object.defineProperty($this, "value", {
+        set: function(value) {
+            var _ = this._;
+            if (typeof value === "number") {
+                _.status = 0;
+                _.start  = _.value;
+                _.stop   = value;
+                _.samples = (timbre.samplerate * (_.delay / 1000))|0;
+                _.x0 = 0; _.dx = 0;
+            }
+        },
+        get: function() { return this._.value; }
+    });
+    Object.defineProperty($this, "currentTime", {
+        get: function() { return this._.currentTime; }
+    });
+    
+    var initialize = function(_args) {
+        var i, _;
+        
+        this._ = _ = {};
+        
+        i = 0;
+        if (typeof _args[i] === "string" &&
+            (Easeing.functions[_args[i]]) !== undefined) {
+            this.type = _args[i++];
+        } else if (typeof _args[i] === "function") {
+            this.type = _args[i++];
+        } else {
+            this.type = "linear";
+        }
+        _.duration = (typeof _args[i] === "number") ? _args[i++] : 1000;
+        _.value    = (typeof _args[i] === "number") ? _args[i++] : 0;
+        
+        if (typeof _args[i] === "number") {
+            _.mul = _args[i++];
+        }
+        if (typeof _args[i] === "number") {
+            _.add = _args[i++];
+        }
+        if (typeof _args[i] === "function") {
+            this.onchanged = _args[i++];
+        }
+        
+        _.ison = true;
+        _.delay = 0;
+        
+        _.status  = -1;
+        _.start   =  0;
+        _.stop    =  0;
+        _.samples = Infinity;
+        _.x0 = 0;
+        _.dx = 0;
+        _.currentTime = 0;
+    };
+    
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        newone = timbre("glide");
+        newone._.type = _.type;
+        newone._.func = _.func;
+        newone._.duration = _.duration;
+        newone._.start = _.start;
+        newone._.stop  = _.stop;
+        newone._.mul = _.mul;
+        newone._.add = _.add;
+        return newone;
+    };
+    
+    $this.bang = function() {
+        var _ = this._;
+        
+        _.status = 0;
+        _.start  = _.value;
+        _.stop   = _.value;
+        _.samples = (timbre.samplerate * (_.delay / 1000))|0;
+        _.x0 = 0; _.dx = 0;
+        _.currentTime = 0;
+        
+        timbre.fn.do_event(this, "bang");
+        return this;
+    };
+    
+    $this.seq = function(seq_id) {
+        var _ = this._;
+        var cell, x, value, i, imax;
+        
+        if (!_.ison) return timbre._.none;
+        
+        cell = this.cell;
+        if (seq_id !== this.seq_id) {
+            while (_.samples <= 0) {
+                if (_.status === 0) {
+                    _.status = 1;
+                    _.samples = (timbre.samplerate * (_.duration / 1000))|0;
+                    _.x0 = 0;
+                    _.dx = timbre.cellsize / _.samples;
+                    continue;
+                }
+                if (_.status === 1) {
+                    _.status = -1;
+                    _.samples = Infinity;
+                    _.x0 = 1;
+                    _.dx = 0;
+                    timbre.fn.do_event(this, "ended");
+                    continue;
+                }
+            }
+            x = (_.status !== 0) ? _.func(_.x0) : 0;
+            
+            value = (x * (_.stop - _.start) + _.start) * _.mul + _.add;
+            for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                cell[i] = value;
+            }
+            if (_.status === 1) {
+                timbre.fn.do_event(this, "changed", [value]);
+            }
+            _.value = value;
+            _.x0 += _.dx;
+            _.samples -= imax;
+            _.currentTime += imax * 1000 / timbre.samplerate;
+            this.seq_id = seq_id;
+        }
+        return cell;
+    };
+    
+    $this.getFunction = function(name) {
+        return Easeing.functions[name];
+    };
+    
+    $this.setFunction = function(name, func) {
+        if (typeof func === "function") {
+            Easeing.functions[name] = func;
+        }
+    };
+    
+    return Glide;
+}());
+timbre.fn.register("glide", Glide);
+
+
 // __END__
 describe("ease", function() {
     object_test(Easeing, "ease");
+});
+describe("glide", function() {
+    object_test(Glide, "glide");
 });
