@@ -1,16 +1,16 @@
 /**
  * timbre/easing
- * It refered to https://github.com/sole/tween.js
+ * 'Easing.functions' refered to https://github.com/sole/tween.js
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-var Easeing = (function() {
-    var Easeing = function() {
+var Easing = (function() {
+    var Easing = function() {
         initialize.apply(this, arguments);
-    }, $this = Easeing.prototype;
+    }, $this = Easing.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "kr-only");
     
@@ -18,7 +18,7 @@ var Easeing = (function() {
         set: function(value) {
             var f;
             if (typeof value === "string") {
-                if ((f = Easeing.functions[value]) !== undefined) {
+                if ((f = Easing.functions[value]) !== undefined) {
                     this._.type = value;
                     this._.func = f;
                 }
@@ -75,7 +75,7 @@ var Easeing = (function() {
         
         i = 0;
         if (typeof _args[i] === "string" &&
-            (Easeing.functions[_args[i]]) !== undefined) {
+            (Easing.functions[_args[i]]) !== undefined) {
             this.type = _args[i++];
         } else if (typeof _args[i] === "function") {
             this.type = _args[i++];
@@ -177,20 +177,20 @@ var Easeing = (function() {
     };
     
     $this.getFunction = function(name) {
-        return Easeing.functions[name];
+        return Easing.functions[name];
     };
     
     $this.setFunction = function(name, func) {
         if (typeof func === "function") {
-            Easeing.functions[name] = func;
+            Easing.functions[name] = func;
         }
     };
     
-    return Easeing;
+    return Easing;
 }());
-timbre.fn.register("ease", Easeing);
+timbre.fn.register("ease", Easing);
 
-Easeing.functions = {
+Easing.functions = {
     "linear": function(k) {
         return k;
     },
@@ -304,7 +304,7 @@ Easeing.functions = {
 		return 0.5 * ( ( k -= 2 ) * k * ( ( s + 1 ) * k + s ) + 2 );
     },
     "bounce.in": function(k) {
-		return 1 - Easeing.functions["bounce.out"]( 1 - k );
+		return 1 - Easing.functions["bounce.out"]( 1 - k );
     },
     "bounce.out": function(k) {
 		if ( k < ( 1 / 2.75 ) ) {
@@ -318,8 +318,8 @@ Easeing.functions = {
 		}
     },
     "bounce.inout": function(k) {
-		if ( k < 0.5 ) return Easeing.functions["bounce.in"]( k * 2 ) * 0.5;
-		return Easeing.functions["bounce.out"]( k * 2 - 1 ) * 0.5 + 0.5;
+		if ( k < 0.5 ) return Easing.functions["bounce.in"]( k * 2 ) * 0.5;
+		return Easing.functions["bounce.out"]( k * 2 - 1 ) * 0.5 + 0.5;
     },
 };
 
@@ -335,7 +335,7 @@ var Glide = (function() {
         set: function(value) {
             var f;
             if (typeof value === "string") {
-                if ((f = Easeing.functions[value]) !== undefined) {
+                if ((f = Easing.functions[value]) !== undefined) {
                     this._.type = value;
                     this._.func = f;
                 }
@@ -386,7 +386,7 @@ var Glide = (function() {
         
         i = 0;
         if (typeof _args[i] === "string" &&
-            (Easeing.functions[_args[i]]) !== undefined) {
+            (Easing.functions[_args[i]]) !== undefined) {
             this.type = _args[i++];
         } else if (typeof _args[i] === "function") {
             this.type = _args[i++];
@@ -489,12 +489,12 @@ var Glide = (function() {
     };
     
     $this.getFunction = function(name) {
-        return Easeing.functions[name];
+        return Easing.functions[name];
     };
     
     $this.setFunction = function(name, func) {
         if (typeof func === "function") {
-            Easeing.functions[name] = func;
+            Easing.functions[name] = func;
         }
     };
     
@@ -505,7 +505,7 @@ timbre.fn.register("glide", Glide);
 
 // __END__
 describe("ease", function() {
-    object_test(Easeing, "ease");
+    object_test(Easing, "ease");
 });
 describe("glide", function() {
     object_test(Glide, "glide");
