@@ -58,6 +58,22 @@ var ADSREnvelope = (function() {
         },
         get: function() { return this._.r; }
     });
+    Object.defineProperty($this, "al", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._.al = value;
+            }
+        },
+        get: function() { return this._.al; }
+    });
+    Object.defineProperty($this, "dl", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._.dl = value;
+            }
+        },
+        get: function() { return this._.dl; }
+    });
     Object.defineProperty($this, "sl", {
         set: function(value) {
             if (typeof value === "number") {
@@ -65,6 +81,14 @@ var ADSREnvelope = (function() {
             }
         },
         get: function() { return this._.sl; }
+    });
+    Object.defineProperty($this, "rl", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._.rl = value;
+            }
+        },
+        get: function() { return this._.rl; }
     });
     Object.defineProperty($this, "reversed", {
         set: function(value) {
@@ -97,8 +121,11 @@ var ADSREnvelope = (function() {
         }
         
         _.ison = true;
-        _.delay   = 0;
-        _.s = Infinity;
+        _.delay = 0;
+        _.al = 0;
+        _.dl = 1;
+        _.rl = 0;
+        _.s  = Infinity;
         _.reversed = false;
         
         _.status = -1;
@@ -123,7 +150,8 @@ var ADSREnvelope = (function() {
         // off -> delay
         _.status  = 0;
         _.samples = (timbre.samplerate * (_.delay / 1000))|0;
-        _.x0 = 0; _.x1 = 1; _.dx = 0;
+        _.x0 = 0; _.x1 = 1;
+        _.dx = (timbre.cellsize * _.al) / _.samples;
         _.currentTime = 0;
         
         timbre.fn.do_event(this, "bang");
@@ -137,7 +165,8 @@ var ADSREnvelope = (function() {
             // (delay, A, D, S) -> R
             _.status  = 4;
             _.samples = (timbre.samplerate * (_.r / 1000))|0;
-            _.x1 = _.x0; _.x0 = 1; _.dx = -timbre.cellsize / _.samples;
+            _.x1 = _.x0; _.x0 = 1;
+            _.dx = -timbre.cellsize * (1 - _.rl) / _.samples;
             timbre.fn.do_event(this, "R");
         }
     };
@@ -153,16 +182,17 @@ var ADSREnvelope = (function() {
             while (_.samples <= 0) {
                 if (_.status === 0) { // delay -> A
                     _.status = 1;
-                    _.samples = (timbre.samplerate * (_.a / 1000))|0;
-                    _.dx = timbre.cellsize / _.samples;
+                    _.samples += (timbre.samplerate * (_.a / 1000))|0;
+                    _.x0 = _.al;
+                    _.dx = (timbre.cellsize * (_.dl -_.al)) / _.samples;
                     timbre.fn.do_event(this, "A");
                     continue;
                 }
                 if (_.status === 1) { // A -> D
                     _.status = 2;
                     _.samples += (timbre.samplerate * (_.d / 1000))|0;
-                    _.x0 = 1;
-                    _.dx = -timbre.cellsize * (1 - _.sl) / _.samples;
+                    _.x0 = _.dl;
+                    _.dx = -timbre.cellsize * (_.dl - _.sl) / _.samples;
                     timbre.fn.do_event(this, "D");
                     continue;
                 }
@@ -178,7 +208,7 @@ var ADSREnvelope = (function() {
                         _.dx = 0;
                     } else {
                         _.samples += (timbre.samplerate * (_.s / 1000))|0;
-                        _.dx = -timbre.cellsize * _.sl / _.samples;
+                        _.dx = -timbre.cellsize * (_.sl - _.rl) / _.samples;
                     }
                     timbre.fn.do_event(this, "S");
                     continue;
