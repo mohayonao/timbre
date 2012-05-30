@@ -15,7 +15,7 @@ var Oscillator = (function() {
     
     Object.defineProperty($this, "wave", {
         set: function(value) {
-            var wave, i, j, k, x, dx;
+            var wave, i, dx;
             wave = this._.wave;
             if (typeof value === "function") {
                 for (i = 0; i < 1024; i++) {
@@ -169,6 +169,37 @@ var Oscillator = (function() {
         }
         
         return cell;
+    };
+    
+    $this.getWavetable = function(name) {
+        var wave = Oscillator.waves[name];
+        if (wave !== undefined) {
+            if (typeof wave === "function") wave = wave();
+            return wave;
+        }
+    };
+    
+    $this.setWavetable = function(name, value) {
+        var wave, i;
+        if (typeof value === "function") {
+            wave = new Float32Array(1024);
+            for (i = 0; i < 1024; i++) {
+                wave[i] = value(i / 1024);
+            }
+            Oscillator.waves[name] = wave;
+        } else if (typeof value === "object" &&
+                   (value instanceof Array || value.buffer instanceof ArrayBuffer)) {
+            if (value.length === 1024) {
+                Oscillator.waves[name] = value;
+            } else {
+                wave = new Float32Array(1024);
+                dx = value.length / 1024;
+                for (i = 0; i < 1024; i++) {
+                    wave[i] = value[(i * dx)|0] || 0.0;
+                }
+                Oscillator.waves[name] = value;
+            }
+        }
     };
     
     return Oscillator;
