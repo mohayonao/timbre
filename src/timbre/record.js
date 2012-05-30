@@ -52,18 +52,16 @@ var Record = (function() {
     };
     
     $this.on = function() {
-        if (!this._.ison) {
-            this._.ison = true;
-            timbre.fn.do_event(this, "on");
-        }
+        this._.ison = true;
+        timbre.fn.do_event(this, "on");
         return this;
     };
     $this.off = function() {
         if (this._.ison) {
-            this._.ison = false;
             onrecorded.call(this);
-            timbre.fn.do_event(this, "off");
         }
+        this._.ison = false;
+        timbre.fn.do_event(this, "off");
         return this;
     };
     $this.bang = function() {

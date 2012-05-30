@@ -520,32 +520,6 @@ timbre.fn.register("func", FuncOscillator);
 
 describe("osc", function() {
     object_test(Oscillator, "osc");
-    describe("#wave", function() {
-        it("should convert string to wave", function() {
-            var instance = timbre("osc");
-            instance.wave = "cos";
-            instance.wave.should.equal(Oscillator.waves.cos);
-        });
-        it("should convert function to wave", function() {
-            var instance = timbre("osc");
-            instance.wave = function(x) { return x < 0.5 ? -1 : +1; };
-            instance.wave.should.eql(Oscillator.waves.pulse);
-        });
-        it("should convert array to wave", function() {
-            var instance = timbre("osc");
-            instance.wave = [ +0.000, +0.125, +0.250, +0.375, +0.500, +0.625, +0.750, +0.875,
-                              +0.875, +0.750, +0.625, +0.500, +0.375, +0.250, +0.125, +0.000,
-                              -0.125, -0.250, -0.375, -0.500, -0.625, -0.750, -0.875, -1.000,
-                              -1.000, -0.875, -0.750, -0.625, -0.500, -0.375, -0.250, -0.125 ];
-            instance.wave.should.eql(Oscillator.waves.fami);
-        });
-        it("should ref Float32Array(1024) to wave", function() {
-            var instance = timbre("osc");
-            var list = new Float32Array(1024);
-            instance.wave = list;
-            instance.wave.should.equal(list);
-        });
-    });
 });
 describe("noise", function() {
     object_test(WhiteNoise, "noise");

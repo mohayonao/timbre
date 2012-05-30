@@ -328,6 +328,7 @@ var PercussiveEnvelope = (function() {
     };
     
     $this.clone = function(deep) {
+        var _ = this._;
         var newone = timbre("perc",
                             _.duration, _.iteration, _.decayRate, _.mul, _.add);
         newone._.delay    = _.delay;
