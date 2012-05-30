@@ -28,8 +28,48 @@
         <button id="play0">play</button><button id="pause0">pause</button>
         <div id="p"><canvas id="canvas"></canvas></div>
         <pre id="code" class="prettyprint">
-        </pre>
+var osc1 = T("osc", "pulse", T("glide", 5, 880), 0.25);
+var osc2 = T("osc", "tri"  , T("glide", 5, 880), 0.50);
+var vco  = T("+", osc1, osc2);
 
+var env1 = T("adsr", 50, 100, 1, 0, 2000);
+var vcf  = T("rlpf", T("+", 2300, env1).kr(), vco);
+
+var env2 = T("adsr", 0, 200, 0.5);
+var vca  = T("*", vcf, env2);
+
+var efx1 = T("efx.dist"  , 0, 0, 8000, vca).off();    
+var efx2 = T("efx.chorus", efx1);
+var efx3 = T("efx.delay" , efx2);
+
+var params = { osc1: { waveform:1, freq:8, fine:0 },
+               osc2: { waveform:3, freq:1, fine:0 } };
+
+var score = getScore().split(/\s+/).map(function(x) {
+    return (timbre.utils.atom(x) - 12) * 64;
+});
+
+var m64tof = function(m64) {
+    return 440 * Math.pow(Math.pow(2, (1/(12*64))), m64 - (69*64));
+};
+
+var metro = T("interval", timbre.utils.bpm2msec(80, 16), function() {
+    var note = score[metro.count % score.length];
+    osc1.freq.value = m64tof(note + params.osc1.fine) / params.osc1.freq;
+    osc2.freq.value = m64tof(note + params.osc2.fine) / params.osc2.freq;
+    env1.bang();
+    env2.bang();
+});
+
+var ex1 = efx3;
+ex1.onplay = function() {
+    metro.on().bang();
+};
+ex1.onpause = function() {
+    metro.off();
+};
+ex1.play();
+        </pre>
       </div>
     </section>
   </body>

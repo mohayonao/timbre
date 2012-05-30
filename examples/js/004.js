@@ -6,10 +6,10 @@ ex1 = (function() {
     var osc2 = T("osc", "tri"  , T("glide", 5, 880), 0.50);
     var vco  = T("+", osc1, osc2);
     
-    var env1 = T("adsr", 50, 100, 0.5, 0, 2000);
+    var env1 = T("adsr", 50, 100, 1, 0, 2000);
     var vcf  = T("rlpf", T("+", 2300, env1).kr(), vco);
     
-    var env2 = T("adsr", 0, 200, 1);
+    var env2 = T("adsr", 0, 200, 0.5);
     var vca  = T("*", vcf, env2);
     
     var efx1 = T("efx.dist"  , 0, 0, 8000, vca).off();    
