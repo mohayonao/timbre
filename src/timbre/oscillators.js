@@ -73,11 +73,7 @@ var Oscillator = (function() {
         } else if (typeof _args[i] === "string") {
             this.wave = _args[i++];
         }
-        if (typeof _args[i] !== "undefined") {
-            this.freq = _args[i++];
-        } else {
-            this.freq = 0;
-        }
+        this.freq = _args[i++];
         if (typeof _args[i] === "number") {
             _.mul = _args[i++];    
         }

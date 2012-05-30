@@ -280,22 +280,20 @@ timbre.fn = (function(timbre) {
             instance = new FunctionWrapper(args);
             break;
         case "object":
-            if (key == null) {
-                instance = new NullWrapper();
-            }  else if (Object.getPrototypeOf(key)._ instanceof TimbreObject) {
+            if (key === null) {
+                instance = new NumberWrapper([0]);
+            } else if (Object.getPrototypeOf(key)._ instanceof TimbreObject) {
                 instance = key;
                 isThrougOut = true;
             }
             if (instance === undefined) {
                 if (key instanceof Array || key.buffer instanceof ArrayBuffer) {
                     instance = new ArrayWrapper([key]);
-                } else {
-                    instance = new ObjectWrapper([key]);
                 }
             }
             break;
         }
-        if (instance === undefined) instance = new UndefinedWrapper();
+        if (instance === undefined) instance = new NumberWrapper([0]);
         
         // init
         if (!isThrougOut) {
@@ -895,47 +893,6 @@ var ArrayWrapper = (function() {
 }());
 timbre.fn.register("array", ArrayWrapper);
 
-var ObjectWrapper = (function() {
-    var ObjectWrapper = function() {
-        initialize.apply(this, arguments);
-    }, $this = ObjectWrapper.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
-    
-    Object.defineProperty($this, "value", {
-        set: function(value) {
-            if (typeof value === "object") {
-                this._.value = value;
-            }
-        },
-        get: function() { return this._.value; }
-    });
-    
-    var initialize = function(_args) {
-        this._ = {};
-        if (typeof _args[0] === "object") {
-            this._.value = _args[0];
-        } else{
-            this._.value = {};
-        }
-    };
-    
-    $this.clone = function(deep) {
-        return timbre("object", this._.value);
-    };
-    
-    return ObjectWrapper;
-}());
-timbre.fn.register("object", ObjectWrapper);
-
-var UndefinedWrapper = function() {};
-timbre.fn.setPrototypeOf.call(UndefinedWrapper.prototype, "kr-only");
-timbre.fn.register("undefined", UndefinedWrapper);
-
-var NullWrapper = function() {};
-timbre.fn.setPrototypeOf.call(NullWrapper.prototype, "kr-only");
-timbre.fn.register("null", NullWrapper);
-
 
 // __END__
 global.T = global.timbre = timbre;
@@ -1120,15 +1077,6 @@ if (module.parent && !module.parent.parent) {
             instance.index = -1;
             instance.cell[0].should.equal(13);
         });
-    });
-    describe("ObjectWrapper", function() {
-        object_test(ObjectWrapper, {});
-    });
-    describe("NullWrapper", function() {
-        object_test(NullWrapper, null);
-    });
-    describe("UndefinedWrapper", function() {
-        object_test(UndefinedWrapper, undefined);
     });
     describe("Through out", function() {
         var instance = timbre();
