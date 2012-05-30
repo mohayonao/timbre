@@ -7,6 +7,11 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 var Wav = (function() {
+    /**
+     * Wav: 0.1.0
+     * Decode wav file
+     * [ar-only]
+     */
     var Wav = function() {
         initialize.apply(this, arguments);
     }, $this = Wav.prototype;
@@ -45,16 +50,8 @@ var Wav = (function() {
         this._ = _ = {};
         
         i = 0;
-        if (typeof _args[i] === "string") {
-            _.src = _args[i++];
-        } else {
-            _.src = "";
-        }
-        if (typeof _args[i] === "boolean") {
-            _.loop = _args[i++];
-        } else {
-            _.loop = false;
-        }
+        _.src  = (typeof _args[i] === "string" ) ? _args[i++] : "";
+        _.loop = (typeof _args[i] === "boolean") ? _args[i++] : false;
         
         _.loaded_src = undefined;
         _.buffer     = new Int16Array(0);
@@ -62,6 +59,47 @@ var Wav = (function() {
         _.duration   = 0;
         _.phaseStep  = 0;
         _.phase = 0;
+    };
+    
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        newone = timbre("wav");
+        newone._.src        = _.src;
+        newone._.loop       = _.loop;
+        newone._.loaded_src = _.loaded_src;
+        newone._.buffer     = _.buffer;
+        newone._.samplerate = _.samplerate;
+        newone._.duration   = _.duration;
+        newone._.phaseStep  = _.phaseStep;
+        newone._.phase = 0;
+        timbre.fn.copy_for_clone(this, newone, deep);
+        return newone;
+    };
+    
+    $this.slice = function(begin, end) {
+        var newone, _ = this._, tmp;
+        if (typeof begin === "number") {
+            begin = (begin / 1000) * _.samplerate;
+        } else begin = 0;
+        if (typeof end   === "number") {
+            end   = (end   / 1000) * _.samplerate;
+        } else end = _.buffer.length;
+        if (begin > end) {
+            tmp   = begin;
+            begin = end;
+            end   = tmp;
+        }
+        newone = timbre("wav");
+        newone._.src        = _.src;
+        newone._.loop       = _.loop;
+        newone._.loaded_src = _.loaded_src;
+        newone._.buffer     = _.buffer.subarray(begin, end);
+        newone._.samplerate = _.samplerate;
+        newone._.duration   = (end - begin / _.samplerate) * 1000;
+        newone._.phaseStep  = _.phaseStep;
+        newone._.phase = 0;
+        timbre.fn.copy_for_clone(this, newone);
+        return newone;
     };
     
     var send = function(result, callback) {
@@ -143,47 +181,6 @@ var Wav = (function() {
             send.call(this, {}, callback);
         }
         return this;
-    };
-
-    $this.clone = function(deep) {
-        var newone, _ = this._;
-        newone = timbre("wav");
-        newone._.src        = _.src;
-        newone._.loop       = _.loop;
-        newone._.loaded_src = _.loaded_src;
-        newone._.buffer     = _.buffer;
-        newone._.samplerate = _.samplerate;
-        newone._.duration   = _.duration;
-        newone._.phaseStep  = _.phaseStep;
-        newone._.phase = 0;
-        timbre.fn.copy_for_clone(this, newone, deep);
-        return newone;
-    };
-    
-    $this.slice = function(begin, end) {
-        var newone, _ = this._, tmp;
-        if (typeof begin === "number") {
-            begin = (begin / 1000) * _.samplerate;
-        } else begin = 0;
-        if (typeof end   === "number") {
-            end   = (end   / 1000) * _.samplerate;
-        } else end = _.buffer.length;
-        if (begin > end) {
-            tmp   = begin;
-            begin = end;
-            end   = tmp;
-        }
-        newone = timbre("wav");
-        newone._.src        = _.src;
-        newone._.loop       = _.loop;
-        newone._.loaded_src = _.loaded_src;
-        newone._.buffer     = _.buffer.subarray(begin, end);
-        newone._.samplerate = _.samplerate;
-        newone._.duration   = (end - begin / _.samplerate) * 1000;
-        newone._.phaseStep  = _.phaseStep;
-        newone._.phase = 0;
-        timbre.fn.copy_for_clone(this, newone);
-        return newone;
     };
     
     $this.bang = function() {
