@@ -249,14 +249,14 @@ var PercussiveEnvelope = (function() {
     }, $this = PercussiveEnvelope.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "kr-only");
-
-    Object.defineProperty($this, "delayTime", {
+    
+    Object.defineProperty($this, "delay", {
         set: function(value) {
             if (typeof value === "number") {
-                this._.delayTime = value;
+                this._.delay = value;
             }
         },
-        get: function() { return this._.delayTime; }
+        get: function() { return this._.delay; }
     });
     Object.defineProperty($this, "duration", {
         set: function(value) {
@@ -315,8 +315,8 @@ var PercussiveEnvelope = (function() {
             this.onended = _args[i++];
         }
         
-        _.ison = true;
-        _.delayTime = 0;
+        _.ison  = true;
+        _.delay = 0;
         _.reversed = false;
         
         _.status  = -1;        
@@ -328,15 +328,18 @@ var PercussiveEnvelope = (function() {
     };
     
     $this.clone = function(deep) {
-        return timbre("perc", _.duration, _.iteration, _.decayRate,
-                      _.mul, _.add, this.onended);
+        var newone = timbre("perc",
+                            _.duration, _.iteration, _.decayRate, _.mul, _.add);
+        newone._.delay    = _.delay;
+        newone._.reversed = _.reversed;
+        return newone;
     };
     
     $this.bang = function() {
         var _ = this._;
 
         _.status  = 0;
-        _.samples = (timbre.samplerate * (_.delayTime / 1000))|0;
+        _.samples = (timbre.samplerate * (_.delay / 1000))|0;
         _.x0 = 0; _.dx = 0;
         _.count  = _.iteration;
         _.volume = 1;
