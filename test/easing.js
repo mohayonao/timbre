@@ -11,7 +11,7 @@ tests = (function() {
         synth.onplay = function() { env.bang(); };
         synth.onbang = function() { env.bang(); };
         env.onended = function() { synth.pause(); };
-        env.delayTime = 1000;
+        env.delay = 1000;
         
         synth.listener = T("rec", 3000).listen(env).off();
         
@@ -28,7 +28,7 @@ tests = (function() {
         synth.onplay = function() { env.bang(); };
         synth.onbang = function() { env.bang(); };
         env.onended = function() { synth.pause(); };
-        env.delayTime = 500;
+        env.delay = 500;
         
         synth.listener = T("rec", 3000).listen(env).off();
         
@@ -49,7 +49,7 @@ tests = (function() {
         synth.onplay = function() { env.bang(); };
         synth.onbang = function() { env.bang(); };
         env.onended = function() { synth.pause(); };
-        env.delayTime = 500;
+        env.delay = 500;
         
         synth.listener = T("rec", 3000).listen(env).off();
         

@@ -17,7 +17,7 @@ tests = (function() {
         env.onS     = function() { tri.freq =  660; };
         env.onR     = function() { tri.freq =  440; };
         env.onended = function() { synth.pause(); };
-        env.delayTime = 100;
+        env.delay = 100;
         
         synth.listener = T("rec", 3000).listen(env).off();
         
@@ -58,7 +58,7 @@ tests = (function() {
         env.onS     = function() { tri.freq =  660; };
         env.onR     = function() { tri.freq =  440; };
         env.onended = function() { synth.pause(); };
-        env.sustainTime = 3000;
+        env.s = 3000;
         env.reversed = true;
         
         synth.listener = T("rec", 5000).listen(env).off();
@@ -84,7 +84,7 @@ tests = (function() {
 
     tests[i] = function() {
         var synth, tri, env;
-        synth = T("*", T("HPF", 8000, T("noise")),
+        synth = T("*", T("hpf", 8000, T("noise")),
                   env = T("perc", 30), 0.1)        
         
         synth.onplay = function() { env.bang(); };

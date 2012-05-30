@@ -5,7 +5,7 @@ tests = (function() {
 
     tests[i] = function() {
         return T("osc", "sin", 880, 0.5, -0.5);
-    }; tests[i++].desc = "constructor: wavelet, freq, mul, add";
+    }; tests[i++].desc = "constructor: wave, freq, mul, add";
     
     tests[i] = function() {
         return T("osc", "sin", 220, 0.5).kr();
@@ -22,12 +22,12 @@ tests = (function() {
     }; tests[i++].desc = "assgin Float32Array to 1st argument";
     
     tests[i] = function() {
-        return T("osc", 440, 0.25).set("wavelet", "pulse");
+        return T("osc", 440, 0.25).set("wave", "pulse");
     }; tests[i++].desc = "abbr argument";
     
     tests[i] = function() {
         var mod = T("osc", "sin", 8, 40, 880).kr();
-        return T("osc", mod, 0.25).set("wavelet", "pulse");
+        return T("osc", mod, 0.25).set("wave", "pulse");
     }; tests[i++].desc = "modulation";
 
     tests[i] = function() {
@@ -37,6 +37,13 @@ tests = (function() {
     tests[i] = function() {
         return T("konami", 660, 0.5, -0.5);
     }; tests[i++].desc = 'alias: T("konami", ...) is T("osc", "konami", ...)';
+    
+    tests[i] = function() {
+        T("osc").setWavetable("random", function() {
+            return Math.random() - 0.5;
+        });
+        return T("osc", "random", 440);
+    }; tests[i++].desc = "set wavetable";
     
     tests[i] = function() {
         var tone = timbre.utils.wavb("8084888C90989CA4ACB8C0CCE0002C50707C7C78746858483C3024181004F8E0E4E0F804101824303C48586874787C7C70502C00E0CCC0B8ACA49C98908C8884");
