@@ -1,6 +1,9 @@
 a {
     color: rgba(  0, 128, 255, 0.8);
 }
+h3 {
+    display:inline;margin-left: 5px;
+}
 #title {
     font-family: 'Comfortaa', sans-serif;
     height:45px;
