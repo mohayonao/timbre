@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * DspRecord: <draft>
+ * DspRecord: 0.1.0
  * Record sound into a buffer
  * [ar-only]
  */
@@ -34,7 +34,9 @@ var DspRecord = (function() {
     Object.defineProperty($this, "currentTime", {
         get: function() { return this._.index / timbre.samplerate * 1000; }
     });
-    // TODO: isRecording (status?)
+    Object.defineProperty($this, "isRecording", {
+        get: function() { return this._.ison; }
+    });
     
     var initialize = function(_args) {
         var i, _;
@@ -47,12 +49,11 @@ var DspRecord = (function() {
         } else {
             _.recTime = 1000;
         }
-        // TODO: wait interval
         if (typeof _args[i] === "function") {
-            _.onrecorded = _args[i++];
+            this.onrecorded = _args[i++];
         }
         this.args = timbre.fn.valist.call(this, _args.slice(i));
-
+        
         _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
         _.index  = _.currentTime = 0;
         _.ison   = true;
@@ -84,11 +85,9 @@ var DspRecord = (function() {
     
     var onrecorded = function() {
         var _ = this._;
-        if (_.onrecorded) {
-            _.onrecorded.call(this, {
-                buffer:_.buffer.subarray(0, _.index)
-            });
-        }
+        timbre.fn.do_event(this, "recorded", [{
+            buffer:_.buffer.subarray(0, _.index)
+        }]);
     };
     
     $this.seq = function(seq_id) {
