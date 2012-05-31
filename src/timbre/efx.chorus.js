@@ -111,11 +111,7 @@ var EfxChorus = (function() {
             
             pointerWrite = _.pointerWrite;
             for (i = 0, imax = args.length; i < imax; ++i) {
-                if (args[i].seq_id === seq_id) {
-                    tmp = args[i].cell;
-                } else {
-                    tmp = args[i].seq(seq_id);
-                }
+                tmp = args[i].seq(seq_id);
                 for (j = 0; j < jmax; ++j) {
                     buffer[pointerWrite] += tmp[j];
                     pointerWrite = (pointerWrite + 1) & buffer_mask;
@@ -129,11 +125,8 @@ var EfxChorus = (function() {
                 wet = _.wet0;
                 dry = _.dry0;
                 fb  = _.fb;
-                if (_.lfo.seq_id !== seq_id)  {
-                    offset = _.lfo.seq(seq_id)[0]|0;
-                } else {
-                    offset = _.lfo.cell[0]|0;
-                }
+                offset = _.lfo.seq(seq_id)[0]|0;
+                
                 pointerRead0 = _.pointerRead;
                 pointerRead1 = (pointerRead0 + offset + buffer.length) & buffer_mask;
                 pointerWrite = _.pointerWrite;

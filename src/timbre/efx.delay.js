@@ -117,11 +117,7 @@ var EfxDelay = (function() {
                 cell[j] = 0.0;
             }
             for (i = 0, imax = args.length; i < imax; ++i) {
-                if (args[i].seq_id === seq_id) {
-                    tmp = args[i].cell;
-                } else {
-                    tmp = args[i].seq(seq_id);
-                }
+                tmp = args[i].seq(seq_id);
                 for (j = jmax; j--; ) {
                     cell[j] += tmp[j];
                 }

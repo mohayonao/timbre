@@ -1,6 +1,6 @@
 /**
  * timbre 0.0.0 / JavaScript Library for Objective Sound Programming
- * build: Thu, 31 May 2012 10:49:19 GMT
+ * build: Thu, 31 May 2012 10:55:10 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,7 +10,7 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.0.0";
-    timbre.BUILD      = "Thu, 31 May 2012 10:49:19 GMT";
+    timbre.BUILD      = "Thu, 31 May 2012 10:55:10 GMT";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.workerpath = "";
@@ -1073,11 +1073,7 @@ var timbre = (function(context, timbre) {
             cell = this.cell;
             if (seq_id !== this.seq_id) {
                 this.seq_id = seq_id;
-                if (_.pan.seq_id === seq_id) {
-                    pan = _.pan.cell[0];
-                } else {
-                    pan = _.pan.seq(seq_id)[0];
-                }
+                pan = _.pan.seq(seq_id)[0];
                 if (pan !== _.prev_pan) {
                     _.panL = Math.cos(0.5 * Math.PI * pan);
                     _.panR = Math.sin(0.5 * Math.PI * pan);
@@ -1095,11 +1091,7 @@ var timbre = (function(context, timbre) {
                 args = this.args.slice(0);
                 for (i = 0, imax = args.length; i < imax; ++i) {
                     if (args[i] !== undefined) {
-                        if (args[i].seq_id === seq_id) {
-                            tmp = args[i].cell;
-                        } else {
-                            tmp = args[i].seq(seq_id);
-                        }
+                        tmp = args[i].seq(seq_id);
                         for (j = jmax; j--; ) {
                             cell[j] += tmp[j] * mul;
                             L[j] += tmp[j] * panL;
@@ -1216,11 +1208,7 @@ var timbre = (function(context, timbre) {
                 }
                 args = this.args.slice(0);
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id === seq_id) {
-                        tmp = args[i].cell;
-                    } else {
-                        tmp = args[i].seq(seq_id);
-                    }
+                    tmp = args[i].seq(seq_id);
                     for (j = jmax; j--; ) {
                         cell[j] += tmp[j];
                     }
@@ -1329,11 +1317,7 @@ var timbre = (function(context, timbre) {
                 args = this.args.slice(0);
                 tmp  = 0;
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id === seq_id) {
-                        tmp += args[i].cell[0];
-                    } else {
-                        tmp += args[i].seq(seq_id)[0];
-                    }
+                    tmp += args[i].seq(seq_id)[0];
                 }
                 tmp = tmp * mul + add;
                 for (j = jmax; j--; ) {
@@ -1388,11 +1372,7 @@ var timbre = (function(context, timbre) {
                         cell[j] = 0;
                     }
                     for (i = 0, imax = args.length; i < imax; ++i) {
-                        if (args[i].seq_id === seq_id) {
-                            tmp = args[i].cell;
-                        } else {
-                            tmp = args[i].seq(seq_id);
-                        }
+                        tmp = args[i].seq(seq_id);
                         for (j = jmax; j--; ) {
                             cell[j] += tmp[j];
                         }
@@ -1404,11 +1384,7 @@ var timbre = (function(context, timbre) {
                 } else {
                     tmp = 0;
                     for (i = 0, imax = args.length; i < imax; ++i) {
-                        if (args[i].seq_id === seq_id) {
-                            tmp += args[i].cell[0];
-                        } else {
-                            tmp += args[i].seq(seq_id)[0];
-                        }
+                        tmp += args[i].seq(seq_id)[0];
                     }
                     tmp = tmp * mul + add;
                     for (j = jmax; j--; ) {
@@ -1619,11 +1595,8 @@ var timbre = (function(context, timbre) {
             if (seq_id !== this.seq_id) {
                 this.seq_id = seq_id;
                 
-                if (_.freq.seq_id === seq_id) {
-                    freq = _.freq.cell;
-                } else {
-                    freq = _.freq.seq(seq_id);
-                }
+                freq = _.freq.seq(seq_id);
+                
                 mul  = _.mul;
                 add  = _.add;
                 wave = _.wave;
@@ -2034,11 +2007,8 @@ var timbre = (function(context, timbre) {
                 this.seq_id = seq_id;
                 
                 func  = _.func;
-                if (_.freq.seq_id === seq_id) {
-                    freq  = _.freq.cell;
-                } else {
-                    freq  = _.freq.seq(seq_id);
-                }
+                freq  = _.freq.seq(seq_id);
+                
                 x     = _.x;
                 coeff = _.coeff;
                 mul   = _.mul;
@@ -2595,11 +2565,7 @@ var timbre = (function(context, timbre) {
                     cell[j] = 0.0;
                 }
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id === seq_id) {
-                        tmp = args[i].cell;
-                    } else {
-                        tmp = args[i].seq(seq_id);
-                    }
+                    tmp = args[i].seq(seq_id);
                     for (j = jmax; j--; ) {
                         cell[j] += tmp[j];
                     }
@@ -3209,11 +3175,7 @@ var timbre = (function(context, timbre) {
                     cell[j] = 0.0;
                 }
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id === seq_id) {
-                        tmp = args[i].cell;
-                    } else {
-                        tmp = args[i].seq(seq_id);
-                    }
+                    tmp = args[i].seq(seq_id);
                     for (j = jmax; j--; ) {
                         cell[j] += tmp[j];
                     }
@@ -3400,11 +3362,7 @@ var timbre = (function(context, timbre) {
                     cell[j] = 0.0;
                 }
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id === seq_id) {
-                        tmp = args[i].cell;
-                    } else {
-                        tmp = args[i].seq(seq_id);
-                    }
+                    tmp = args[i].seq(seq_id);
                     for (j = jmax; j--; ) {
                         cell[j] += tmp[j];
                     }
@@ -3592,11 +3550,7 @@ var timbre = (function(context, timbre) {
                 
                 pointerWrite = _.pointerWrite;
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id === seq_id) {
-                        tmp = args[i].cell;
-                    } else {
-                        tmp = args[i].seq(seq_id);
-                    }
+                    tmp = args[i].seq(seq_id);
                     for (j = 0; j < jmax; ++j) {
                         buffer[pointerWrite] += tmp[j];
                         pointerWrite = (pointerWrite + 1) & buffer_mask;
@@ -3610,11 +3564,8 @@ var timbre = (function(context, timbre) {
                     wet = _.wet0;
                     dry = _.dry0;
                     fb  = _.fb;
-                    if (_.lfo.seq_id !== seq_id)  {
-                        offset = _.lfo.seq(seq_id)[0]|0;
-                    } else {
-                        offset = _.lfo.cell[0]|0;
-                    }
+                    offset = _.lfo.seq(seq_id)[0]|0;
+                    
                     pointerRead0 = _.pointerRead;
                     pointerRead1 = (pointerRead0 + offset + buffer.length) & buffer_mask;
                     pointerWrite = _.pointerWrite;
@@ -5560,11 +5511,8 @@ var timbre = (function(context, timbre) {
                 }
                 args = this.args.slice(0);
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id === seq_id) {
-                        tmp = args[i].cell;
-                    } else {
-                        tmp = args[i].seq(seq_id);
-                    }
+                    tmp = args[i].seq(seq_id);
+                    
                     for (j = jmax; j--; ) {
                         cell[j] += tmp[j];
                     }
@@ -5697,11 +5645,8 @@ var timbre = (function(context, timbre) {
                 }
                 args = this.args.slice(0);
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id === seq_id) {
-                        tmp = args[i].cell;
-                    } else {
-                        tmp = args[i].seq(seq_id);
-                    }
+                    tmp = args[i].seq(seq_id);
+                    
                     for (j = jmax; j--; ) {
                         cell[j] += tmp[j];
                     }

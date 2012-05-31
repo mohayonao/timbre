@@ -124,11 +124,8 @@ var Oscillator = (function() {
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
             
-            if (_.freq.seq_id === seq_id) {
-                freq = _.freq.cell;
-            } else {
-                freq = _.freq.seq(seq_id);
-            }
+            freq = _.freq.seq(seq_id);
+            
             mul  = _.mul;
             add  = _.add;
             wave = _.wave;
@@ -539,11 +536,8 @@ var FuncOscillator = (function() {
             this.seq_id = seq_id;
             
             func  = _.func;
-            if (_.freq.seq_id === seq_id) {
-                freq  = _.freq.cell;
-            } else {
-                freq  = _.freq.seq(seq_id);
-            }
+            freq  = _.freq.seq(seq_id);
+            
             x     = _.x;
             coeff = _.coeff;
             mul   = _.mul;

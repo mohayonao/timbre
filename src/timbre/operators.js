@@ -46,11 +46,7 @@ var DspAdd = (function() {
                     cell[j] = 0;
                 }
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id === seq_id) {
-                        tmp = args[i].cell;
-                    } else {
-                        tmp = args[i].seq(seq_id);
-                    }
+                    tmp = args[i].seq(seq_id);
                     for (j = jmax; j--; ) {
                         cell[j] += tmp[j];
                     }
@@ -62,11 +58,7 @@ var DspAdd = (function() {
             } else {
                 tmp = 0;
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id === seq_id) {
-                        tmp += args[i].cell[0];
-                    } else {
-                        tmp += args[i].seq(seq_id)[0];
-                    }
+                    tmp += args[i].seq(seq_id)[0];
                 }
                 tmp = tmp * mul + add;
                 for (j = jmax; j--; ) {
