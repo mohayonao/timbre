@@ -69,6 +69,8 @@ var EasingBasis = {
                         _.samples = Infinity;
                         _.x0 = 1;
                         _.dx = 0;
+                        x = _.func(1);
+                        _.value = (x * (_.stop-_.start) + _.start) * _.mul + _.add;
                         timbre.fn.do_event(this, "ended");
                         continue;
                     }
