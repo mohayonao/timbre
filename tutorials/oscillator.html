@@ -1,0 +1,120 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>timbre - oscillators</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="css/style.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="css/libs/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+
+      <div id="contents">
+        <h2>Oscillator</h2>
+        <button id="play0">play</button><button id="pause0">pause</button>
+        <button id="bang0">bang</button>
+        Constructor
+        <pre id="code" class="prettyprint">
+T("osc", "sin", 1340, 0.5, 0).play();
+// 0: Oscillator Class
+// 1: Wavetable ["sin", "tri", "saw", "pulse" or ...]
+// 2: Frequency [Hz]       (default is 0)
+// 3: Multiply the output  (default is 1)
+// 4:   and add the output (default is 0)
+
+
+// The oscillator class has some aliases.
+T("sin"), T("tri"), T("saw"), T("pulse"), T("fami");
+
+// It's same as the above code.
+T("sin", 1340, 0.5).play();
+        </pre>
+
+        <button id="play1">play</button><button id="pause1">pause</button>
+        <button id="bang1">bang</button>
+        Properties
+        <pre id="code" class="prettyprint">
+var osc = T("sin");
+
+osc.wave  = "tri";
+osc.freq  = T("sin", 8, 10, 880).kr();
+osc.phase = 0.5;
+osc.mul   = 0.2;
+osc.add   = 0.8;
+        </pre>
+        
+        <button id="play2">play</button><button id="pause2">pause</button>
+        <button id="bang2">bang</button>
+        Customize wavetable
+        <pre id="code" class="prettyprint">
+// Custom wavetable from a function
+var func = function(x) { return x * x * x; };
+T("osc", func, 880).play(); 
+
+// From an array (PWM25%)
+T("osc", [ -1, 1, 1, 1 ], 880);
+
+// Directly set
+T("osc", new Float32Array(1024), 880);
+
+// Register a wavetable and use it
+T("osc").setWavetable("myosc", function(x) {
+    return Math.random() - 0.5;
+});
+
+T("osc", "myosc", 1340).play();
+
+// Get a wavetable
+T("osc", "myosc") // Float32Array(1024)
+        </pre>
+        
+      </div>
+    </section>
+  </body>
+  <script type="text/javascript" src="js/libs/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="js/oscillator.js"></script>
+  <script type="text/javascript" src="js/libs/waveviewer.js"></script>  
+  <script type="text/javascript" src="js/libs/jquery.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+        if (!timbre.isEnabled) $("#caution").show();
+        
+        var viewer = new WaveViewer(timbre.sys.cell, 60, "waveviewer", 512, 256);
+        
+        timbre.addEventListener("on", function() {
+            $("#title").css("color", "rgb(0, 136, 0)");
+            viewer.start();
+        });
+        timbre.addEventListener("off", function() {
+            $("#title").css("color", "rgb(136, 136, 136)");
+            viewer.pause();
+        });
+        
+        
+        var list = [ ex0, ex1, ex2 ];
+        list.forEach(function(ex, i) {
+            ex.addEventListener("play" , function() {
+                timbre.on();
+            });
+            ex.addEventListener("pause", function() {
+                ex.dac.off();
+                if (list.every(function(ex) {
+                    return !ex.dac || ex.dac.isOff;
+                })) timbre.off();
+            });
+            $("#play"  + i).on("click", function() { ex.play() ; });
+            $("#pause" + i).on("click", function() { ex.pause(); });
+            $("#bang"  + i).on("click", function() { ex.bang() ; });
+        });
+    });
+  </script>
+</html>
