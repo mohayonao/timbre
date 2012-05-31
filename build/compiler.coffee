@@ -100,7 +100,7 @@ source = replace_souce source, "WORKER_CODE", concat_source WORKER_SOURCES
 source = replace_souce source, "NODE_CODE"  , concat_source NODE_SOURCES
 source = source.replace /\${VERSION}/g, VERSION
 source = source.replace /\${DATE}/g   , BUILD_DATE
-console.log "build: #{BUILD_DATE}"
+console.log "build: #{VERSION} (#{BUILD_DATE})"
 
 fs.writeFileSync "#{DST_DIR}/#{PRODUCT_NAME}.js", source, "utf-8"
 console.log "build  >> #{DST_DIR}/#{PRODUCT_NAME}.js"
