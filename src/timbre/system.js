@@ -172,23 +172,43 @@ var AR = (function() {
     };
     
     $this._.play = function() {
-        timbre.fn.do_event(this.args[0], "play");
+        var args, i, imax;
+        args = this.args.slice(0);
+        for (i = 0, imax = args.length; i < imax; ++i) {
+            timbre.fn.do_event(args[i], "play");
+        }
         return $this._._play.call(this);
     };
     $this._.pause = function() {
-        timbre.fn.do_event(this.args[0], "pause");
+        var args, i, imax;
+        args = this.args.slice(0);
+        for (i = 0, imax = args.length; i < imax; ++i) {
+            timbre.fn.do_event(args[i], "pause");
+        }
         return $this._._pause.call(this);
     };
     $this._.on = function() {
-        this.args[0].on();
+        var args, i, imax;
+        args = this.args.slice(0);
+        for (i = 0, imax = args.length; i < imax; ++i) {
+            args[i].on();
+        }
         return $this._._on.call(this);
     };
     $this._.off = function() {
-        this.args[0].off();
+        var args, i, imax;
+        args = this.args.slice(0);
+        for (i = 0, imax = args.length; i < imax; ++i) {
+            args[i].off();
+        }
         return $this._._off.call(this);
     };
     $this._.$bang = function() {
-        this.args[0].bang();
+        var args, i, imax;
+        args = this.args.slice(0);
+        for (i = 0, imax = args.length; i < imax; ++i) {
+            args[i].bang();
+        }
         return $this._._bang.call(this);
     };
     
@@ -267,23 +287,43 @@ var KR = (function() {
     };
     
     $this._.play = function() {
-        timbre.fn.do_event(this.args[0], "play");
+        var args, i, imax;
+        args = this.args.slice(0);
+        for (i = 0, imax = args.length; i < imax; ++i) {
+            timbre.fn.do_event(args[i], "play");
+        }
         return $this._._play.call(this);
     };
     $this._.pause = function() {
-        timbre.fn.do_event(this.args[0], "pause");
+        var args, i, imax;
+        args = this.args.slice(0);
+        for (i = 0, imax = args.length; i < imax; ++i) {
+            timbre.fn.do_event(args[i], "pause");
+        }
         return $this._._pause.call(this);
     };
     $this._.on = function() {
-        this.args[0].on();
+        var args, i, imax;
+        args = this.args.slice(0);
+        for (i = 0, imax = args.length; i < imax; ++i) {
+            args[i].on();
+        }
         return $this._._on.call(this);
     };
     $this._.off = function() {
-        this.args[0].off();
+        var args, i, imax;
+        args = this.args.slice(0);
+        for (i = 0, imax = args.length; i < imax; ++i) {
+            args[i].off();
+        }
         return $this._._off.call(this);
     };
     $this._.bang = function() {
-        this.args[0].bang();
+        var args, i, imax;
+        args = this.args.slice(0);
+        for (i = 0, imax = args.length; i < imax; ++i) {
+            args[i].bang();
+        }
         return $this._._bang.call(this);
     };
     
@@ -324,10 +364,160 @@ timbre.fn.register("kr", KR);
 
 describe("dac", function() {
     object_test(Dac, "dac");
+    describe("#play()", function() {
+        it("should append self from dacs", function() {
+            var i, instance = timbre("dac");
+            i = timbre.dacs.length;
+            instance.play();
+            timbre.dacs.length.should.equal(i + 1);
+            instance.should.equal(timbre.dacs[timbre.dacs.length-1]);
+        });
+    });
+    describe("#pause()", function() {
+        it("should remove self from dacs", function() {
+            var i, instance = timbre("dac");
+            i = timbre.dacs.length;
+            instance.play();
+            timbre.dacs.length.should.equal(i + 1);
+            instance.pause();
+            timbre.dacs.length.should.equal(i);
+        });
+    });
+    describe("#on()", function() {
+        it("should append self from dacs", function() {
+            var i, instance = timbre("dac");
+            i = timbre.dacs.length;
+            instance.play();
+            timbre.dacs.length.should.equal(i + 1);
+            instance.should.equal(timbre.dacs[timbre.dacs.length-1]);
+        });
+    });
+    describe("#off()", function() {
+        it("should remove self from dacs", function() {
+            var i, instance = timbre("dac");
+            i = timbre.dacs.length;
+            instance.play();
+            timbre.dacs.length.should.equal(i + 1);
+            instance.pause();
+            timbre.dacs.length.should.equal(i);
+        });
+    });
+    describe("processing", function() {
+        it("should add signals", function() {
+            var instance = timbre("dac");
+            var a = timbre(10);
+            var b = timbre(20);
+            instance.append(a, b)
+            instance.seq(0);
+            instance.cell.should.eql(timbre(30).cell);
+        })
+    });
 });
 describe("ar", function() {
     object_test(AR, "ar", 0);
+    describe("wrapping event", function() {
+        it("should send on when on()", function(done) {
+            var instance = timbre("ar");
+            var a = timbre(10);
+            var b = timbre(20);
+            var i = 0;
+            instance.append(a, b)
+            a.onon = function() { i++; };
+            b.onon = function() { i++; };
+            instance.onon = function() {
+                if (i === 2) done();
+            };
+            instance.on();
+        });
+        it("should send off when off()", function(done) {
+            var instance = timbre("ar");
+            var a = timbre(10);
+            var b = timbre(20);
+            var i = 0;
+            instance.append(a, b)
+            a.onoff = function() { i++; };
+            b.onoff = function() { i++; };
+            instance.onoff = function() {
+                if (i === 2) done();
+            };
+            instance.off();
+        });
+        it("should send bang when bang()", function(done) {
+            var instance = timbre("ar");
+            var a = timbre(10);
+            var b = timbre(20);
+            var i = 0;
+            instance.append(a, b)
+            a.onbang = function() { i++; };
+            b.onbang = function() { i++; };
+            instance.onbang = function() {
+                if (i === 2) done();
+            };
+            instance.bang();
+        });
+    });
+    describe("processing", function() {
+        it("should add signals", function() {
+            var instance = timbre("ar");
+            var a = timbre(10);
+            var b = timbre(20);
+            instance.append(a, b)
+            instance.seq(0);
+            instance.cell.should.eql(timbre(30).cell);
+        })
+    });
 });
 describe("kr", function() {
     object_test(KR, "kr", 0);
+    describe("wrapping event", function() {
+        it("should send on when on()", function(done) {
+            var instance = timbre("kr");
+            var a = timbre(10);
+            var b = timbre(20);
+            var i = 0;
+            instance.append(a, b)
+            a.onon = function() { i++; };
+            b.onon = function() { i++; };
+            instance.onon = function() {
+                if (i === 2) done();
+            };
+            instance.on();
+        });
+        it("should send off when off()", function(done) {
+            var instance = timbre("kr");
+            var a = timbre(10);
+            var b = timbre(20);
+            var i = 0;
+            instance.append(a, b)
+            a.onoff = function() { i++; };
+            b.onoff = function() { i++; };
+            instance.onoff = function() {
+                if (i === 2) done();
+            };
+            instance.off();
+        });
+        it("should send bang when bang()", function(done) {
+            var instance = timbre("kr");
+            var a = timbre(10);
+            var b = timbre(20);
+            var i = 0;
+            instance.append(a, b)
+            a.onbang = function() { i++; };
+            b.onbang = function() { i++; };
+            instance.onbang = function() {
+                if (i === 2) done();
+            };
+            instance.bang();
+        });
+    });
+    describe("processing", function() {
+        it("should add signals", function() {
+            var instance = timbre("kr");
+            var a = timbre(10);
+            var b = timbre(20);
+            instance.append(a, b)
+            instance.seq(0);
+            instance.cell.should.eql(timbre(30).cell);
+        })
+    });
 });
