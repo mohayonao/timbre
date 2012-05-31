@@ -44,8 +44,8 @@ ex1 = (function() {
     };
     
     ex1.initUI = function initUI() {
-        var WAVELETS = ["sin","pulse","saw","tri"];
-        var FREQS    = [ 16, 8, 4, 2, 1, 0.5 ];
+        var WAVES = ["sin","pulse","saw","tri"];
+        var FREQS = [ 16, 8, 4, 2, 1, 0.5 ];
         
         var ui = new CnvUI({elem:"#canvas", width:700, height:180,
                             lineWidth: 3, background:"#999"});
@@ -71,7 +71,7 @@ ex1 = (function() {
                     change:function() {
                         if (params.osc1.waveform !== this.value) {
                             params.osc1.waveform = this.value;
-                            osc1.wavelet = WAVELETS[this.value];
+                            osc1.wave = WAVES[this.value];
                         }
                     }});
         ui.vco.set({type:"label", x:30, y:60, align:"center", value:"wave"});
@@ -90,7 +90,7 @@ ex1 = (function() {
                     change:function() {
                         if (params.osc2.waveform !== this.value) {
                             params.osc2.waveform = this.value;
-                            osc2.wavelet = WAVELETS[this.value];
+                            osc2.wave = WAVES[this.value];
                         }
                     }});
         ui.vco.set({type:"label", x:30, y:140, align:"center", value:"wave"});
