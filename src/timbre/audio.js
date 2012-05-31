@@ -90,13 +90,12 @@ var AudioBasis = {
             var klassname, newone, _ = this._;
             klassname = Object.getPrototypeOf(this)._.klassname;
             newone = timbre(klassname, _.src, _.loop);
-            newone._.mul = _.mul;
-            newone._.add = _.add;
             newone._.reversed = _.reversed;
             newone._.isloaded = _.isloaded;
             newone._.buffer   = _.buffer;
             newone._.duration = _.duration;
             newone._.phase = (_.reversed) ? Math.max(0, _.buffer.length - 1) : 0;
+            timbre.fn.copy_for_clone(this, newone, deep);
             return newone;
         };
         
@@ -120,12 +119,11 @@ var AudioBasis = {
             
             newone = timbre(klassname);
             newone._.loop = _.loop;
-            newone._.mul = _.mul;
-            newone._.add = _.add;
             newone._.reversed = reversed;
             newone._.buffer   = _.buffer.subarray(begin, end);
             newone._.duration = (end - begin / timbre.samplerate) * 1000;
             newone._.phase = (reversed) ? Math.max(0, newone._.buffer.length - 1) : 0;
+            timbre.fn.copy_for_clone(this, newone);
             return newone;
         };
         
