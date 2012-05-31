@@ -1,6 +1,6 @@
 /**
  * timbre/easing
- * 'Easing.functions' refered to https://github.com/sole/tween.js
+ * 'Easing.Functions' refered to https://github.com/sole/tween.js
  */
 "use strict";
 
@@ -22,7 +22,7 @@ var Easing = (function() {
         set: function(value) {
             var f;
             if (typeof value === "string") {
-                if ((f = Easing.functions[value]) !== undefined) {
+                if ((f = Easing.Functions[value]) !== undefined) {
                     this._.type = value;
                     this._.func = f;
                 }
@@ -79,7 +79,7 @@ var Easing = (function() {
         
         i = 0;
         if (typeof _args[i] === "string" &&
-            (Easing.functions[_args[i]]) !== undefined) {
+            (Easing.Functions[_args[i]]) !== undefined) {
             this.type = _args[i++];
         } else if (typeof _args[i] === "function") {
             this.type = _args[i++];
@@ -147,7 +147,7 @@ var Easing = (function() {
                     continue;
                 }
                 if (_.status === 1) {
-                    _.status = -1;
+                    _.status = 2;
                     _.samples = Infinity;
                     _.x0 = 1;
                     _.dx = 0;
@@ -155,30 +155,36 @@ var Easing = (function() {
                     continue;
                 }
             }
-            x = (_.status !== 0) ? _.func(_.x0) : 0;
-            
-            value = (x * (_.stop - _.start) + _.start) * _.mul + _.add;
-            for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
-                cell[i] = value;
+            if (_.status !== 2) {
+                x = (_.status === 1) ? _.func(_.x0) : 0;
+                value = (x * (_.stop - _.start) + _.start) * _.mul + _.add;
+                for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                    cell[i] = value;
+                }
+                if (_.status === 1) {
+                    timbre.fn.do_event(this, "changed", [value]);
+                }
+                _.value = value;
+                _.x0 += _.dx;
+                _.samples -= imax;
+            } else {
+                value = _.value;
+                for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                    cell[i] = value;
+                }
             }
-            if (_.status === 1) {
-                timbre.fn.do_event(this, "changed", [value]);
-            }
-            _.value = value;
-            _.x0 += _.dx;
-            _.samples -= imax;
             _.currentTime += imax * 1000 / timbre.samplerate;
         }
         return cell;
     };
     
     $this.getFunction = function(name) {
-        return Easing.functions[name];
+        return Easing.Functions[name];
     };
     
     $this.setFunction = function(name, func) {
         if (typeof func === "function") {
-            Easing.functions[name] = func;
+            Easing.Functions[name] = func;
         }
     };
     
@@ -186,7 +192,7 @@ var Easing = (function() {
 }());
 timbre.fn.register("ease", Easing);
 
-Easing.functions = {
+Easing.Functions = {
     "linear": function(k) {
         return k;
     },
@@ -300,7 +306,7 @@ Easing.functions = {
 		return 0.5 * ( ( k -= 2 ) * k * ( ( s + 1 ) * k + s ) + 2 );
     },
     "bounce.in": function(k) {
-		return 1 - Easing.functions["bounce.out"]( 1 - k );
+		return 1 - Easing.Functions["bounce.out"]( 1 - k );
     },
     "bounce.out": function(k) {
 		if ( k < ( 1 / 2.75 ) ) {
@@ -314,8 +320,8 @@ Easing.functions = {
 		}
     },
     "bounce.inout": function(k) {
-		if ( k < 0.5 ) return Easing.functions["bounce.in"]( k * 2 ) * 0.5;
-		return Easing.functions["bounce.out"]( k * 2 - 1 ) * 0.5 + 0.5;
+		if ( k < 0.5 ) return Easing.Functions["bounce.in"]( k * 2 ) * 0.5;
+		return Easing.Functions["bounce.out"]( k * 2 - 1 ) * 0.5 + 0.5;
     },
 };
 
@@ -335,7 +341,7 @@ var Glide = (function() {
         set: function(value) {
             var f;
             if (typeof value === "string") {
-                if ((f = Easing.functions[value]) !== undefined) {
+                if ((f = Easing.Functions[value]) !== undefined) {
                     this._.type = value;
                     this._.func = f;
                 }
@@ -386,7 +392,7 @@ var Glide = (function() {
         
         i = 0;
         if (typeof _args[i] === "string" &&
-            (Easing.functions[_args[i]]) !== undefined) {
+            (Easing.Functions[_args[i]]) !== undefined) {
             this.type = _args[i++];
         } else if (typeof _args[i] === "function") {
             this.type = _args[i++];
@@ -402,12 +408,11 @@ var Glide = (function() {
         
         _.delay = 0;
         
-        _.status  = -1;
-        _.start   =  0;
-        _.stop    =  0;
+        _.status = -1;
+        _.start  = _.value;
+        _.stop   = _.value;
         _.samples = Infinity;
-        _.x0 = 0;
-        _.dx = 0;
+        _.x0 = 0; _.dx = 0;
         _.currentTime = 0;
     };
     
@@ -455,7 +460,7 @@ var Glide = (function() {
                     continue;
                 }
                 if (_.status === 1) {
-                    _.status = -1;
+                    _.status = 2;
                     _.samples = Infinity;
                     _.x0 = 1;
                     _.dx = 0;
@@ -463,30 +468,36 @@ var Glide = (function() {
                     continue;
                 }
             }
-            x = (_.status !== 0) ? _.func(_.x0) : 0;
-            
-            value = (x * (_.stop - _.start) + _.start) * _.mul + _.add;
-            for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
-                cell[i] = value;
+            if (_.status !== 2) {
+                x = (_.status === 1) ? _.func(_.x0) : 0;
+                value = (x * (_.stop - _.start) + _.start) * _.mul + _.add;
+                for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                    cell[i] = value;
+                }
+                if (_.status === 1) {
+                    timbre.fn.do_event(this, "changed", [value]);
+                }
+                _.value = value;
+                _.x0 += _.dx;
+                _.samples -= imax;
+            } else {
+                value = _.value;
+                for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                    cell[i] = value;
+                }
             }
-            if (_.status === 1) {
-                timbre.fn.do_event(this, "changed", [value]);
-            }
-            _.value = value;
-            _.x0 += _.dx;
-            _.samples -= imax;
             _.currentTime += imax * 1000 / timbre.samplerate;
         }
         return cell;
     };
     
     $this.getFunction = function(name) {
-        return Easing.functions[name];
+        return Easing.Functions[name];
     };
     
     $this.setFunction = function(name, func) {
         if (typeof func === "function") {
-            Easing.functions[name] = func;
+            Easing.Functions[name] = func;
         }
     };
     
