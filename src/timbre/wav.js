@@ -7,14 +7,14 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Wav: 0.1.0
+ * WavDecoder: 0.1.0
  * Decode wav file and play it
  * [ar-only]
  */
-var Wav = (function() {
-    var Wav = function() {
+var WavDecoder = (function() {
+    var WavDecoder = function() {
         initialize.apply(this, arguments);
-    }, $this = Wav.prototype;
+    }, $this = WavDecoder.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "ar-only");
     
@@ -300,12 +300,12 @@ var Wav = (function() {
         return cell;
     };
     
-    return Wav;
+    return WavDecoder;
 }());
-timbre.fn.register("wav", Wav);
+timbre.fn.register("wav", WavDecoder);
 
 // __END__
 
 describe("wav", function() {
-    object_test(Wav, "wav");
+    object_test(WavDecoder, "wav");
 });

@@ -7,14 +7,14 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Record: <draft>
+ * DspRecord: <draft>
  * Record sound into a buffer
  * [ar-only]
  */
-var Record = (function() {
-    var Record = function() {
+var DspRecord = (function() {
+    var DspRecord = function() {
         initialize.apply(this, arguments);
-    }, $this = Record.prototype;
+    }, $this = DspRecord.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "ar-only");
 
@@ -140,12 +140,12 @@ var Record = (function() {
         return cell;
     };
     
-    return Record;
+    return DspRecord;
 }());
-timbre.fn.register("rec", Record);
+timbre.fn.register("rec", DspRecord);
 
 // __END__
 
 describe("rec", function() {
-    object_test(Record, "rec");
+    object_test(DspRecord, "rec");
 });

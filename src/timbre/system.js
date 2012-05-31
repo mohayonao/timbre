@@ -136,14 +136,14 @@ timbre.fn.register("pandac", Dac, function(_args) {
 
 
 /**
- * AR: 0.1.0
- * Convert audiorate
+ * AudioRate: 0.1.0
+ * Convert audio-rate
  * [ar-only]
  */
-var AR = (function() {
-    var AR = function() {
+var AudioRate = (function() {
+    var AudioRate = function() {
         initialize.apply(this, arguments);
-    }, $this = AR.prototype;
+    }, $this = AudioRate.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "ar-only");
     
@@ -245,20 +245,20 @@ var AR = (function() {
         return cell;
     };
     
-    return AR;
+    return AudioRate;
 }());
-timbre.fn.register("ar", AR);
+timbre.fn.register("ar", AudioRate);
 
 
 /**
- * KR: 0.1.0
- * Convert controlrate
+ * KontrolRate: 0.1.0
+ * Convert control-rate
  * [kr-only]
  */
-var KR = (function() {
-    var KR = function() {
+var KontrolRate = (function() {
+    var KontrolRate = function() {
         initialize.apply(this, arguments);
-    }, $this = KR.prototype;
+    }, $this = KontrolRate.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "kr-only");
     
@@ -356,9 +356,9 @@ var KR = (function() {
         return cell;
     };
     
-    return KR;
+    return KontrolRate;
 }());
-timbre.fn.register("kr", KR);
+timbre.fn.register("kr", KontrolRate);
 
 // __END__
 
@@ -414,7 +414,7 @@ describe("dac", function() {
     });
 });
 describe("ar", function() {
-    object_test(AR, "ar", 0);
+    object_test(AudioRate, "ar", 0);
     describe("wrapping event", function() {
         it("should send on when on()", function(done) {
             var instance = timbre("ar");
@@ -468,7 +468,7 @@ describe("ar", function() {
     });
 });
 describe("kr", function() {
-    object_test(KR, "kr", 0);
+    object_test(KontrolRate, "kr", 0);
     describe("wrapping event", function() {
         it("should send on when on()", function(done) {
             var instance = timbre("kr");

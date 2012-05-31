@@ -7,11 +7,11 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Audio: 0.1.0
+ * DspAudio: 0.1.0
  * Store audio samples
  * [ar-only]
  */
-var AudioBasis = {
+var AudioDecoder = {
     initialize: function(_args) {
         var i, _;
         
@@ -188,8 +188,8 @@ var AudioBasis = {
  */
 var WebKitAudio = (function() {
     var WebKitAudio = function() {
-        AudioBasis.initialize.apply(this, arguments);
-    }, $this = AudioBasis.setPrototype.call(WebKitAudio.prototype);
+        AudioDecoder.initialize.apply(this, arguments);
+    }, $this = AudioDecoder.setPrototype.call(WebKitAudio.prototype);
     
     timbre.fn.setPrototypeOf.call($this, "ar-only");
     
@@ -242,8 +242,8 @@ timbre.fn.register("-webkit-audio", WebKitAudio);
  */
 var MozAudio = (function() {
     var MozAudio = function() {
-        AudioBasis.initialize.apply(this, arguments);
-    }, $this = AudioBasis.setPrototype.call(MozAudio.prototype);
+        AudioDecoder.initialize.apply(this, arguments);
+    }, $this = AudioDecoder.setPrototype.call(MozAudio.prototype);
     
     timbre.fn.setPrototypeOf.call($this, "ar-only");
     
