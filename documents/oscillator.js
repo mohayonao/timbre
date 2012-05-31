@@ -1,9 +1,9 @@
 ex0 = (function() {
-    return T("osc", "sin", 1320, 0.5, 0);
+    return T("osc", "sin", 440, 1, 0);
 }());
 
 ex1 = (function() {
-    var osc = T("sin");
+    var osc = T("osc");
 
     osc.wave  = "tri";
     osc.freq  = 880;
@@ -15,11 +15,21 @@ ex1 = (function() {
 }());
 
 ex2 = (function() {
-    var func = function(x) { return x * x * x; };
-    return T("osc", func, 880); 
+    var synth = T("osc", 660, 0.5);
+    synth.onplay = synth.onbang = function() {
+        var wave = ["sin", "tri", "saw", "pulse", "fami", "konami"];
+        wave = wave[(Math.random() * wave.length)|0];
+        synth.wave = wave;
+    };
+    return synth;
 }());
 
 ex3 = (function() {
+    var func = function(x) { return x * x * x; };
+    return T("osc", func, 880);
+}());
+
+ex4 = (function() {
     T("osc").setWaveform("myosc", function(x) {
         return Math.random() - 0.5;
     });
@@ -32,11 +42,22 @@ ex3 = (function() {
     return synth;
 }());
 
-ex4 = (function() {
-    return T("*", T("pulse", 880, 0.25),
-                  T("+tri", 8).kr());
+ex5 = (function() {
+    return T("*", T("tri", 880, 0.25),
+                  T("+sin", 8).kr());
 }());
 
-ex5 = (function() {
-    return T("pulse", T("tri", 4, 20, 1320).kr(), 0.25);
+ex6 = (function() {
+    return T("tri", T("tri", 2, 30, 880).kr(), 0.25);
+}());
+
+ex7 = (function() {
+    var synth = T("fami", T("glide", 150, 880), 0.25);
+    var cnt = 0;
+
+    synth.onbang = function() {
+        synth.freq.value = [880, 1320, 1100, 660][++cnt % 4]
+    };
+    
+    return synth;
 }());

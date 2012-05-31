@@ -3,7 +3,7 @@
     <meta charset="utf-8"/>
     <title>timbre - oscillators</title>
     <link type="text/css" media="screen" rel="stylesheet" href="css/style.css" />
-    <link type="text/css" media="screen" rel="stylesheet" href="css/libs/prettify.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
   </head>
   <body>
@@ -18,57 +18,63 @@
 
       <div id="contents">
         <h2>Oscillator</h2>
-        <button id="play0">play</button><button id="pause0">pause</button>
-        <button id="bang0">bang</button>
-        Constructor
-        <pre id="code" class="prettyprint">
-T("osc", "sin", 1320, 0.5, 0).play();
-// 0: Oscillator Class
-// 1: Wavetable ["sin", "tri", "saw", "pulse" or ...]
-// 2: Frequency [Hz]       (default is 0)
-// 3: Multiply the output  (default is 1)
-// 4:   and add the output (default is 0)
+        
+        <h3>Constructor</h3>
+        <pre id="ex0" class="prettyprint">
+osc = T("osc", wave="sin", freq=440, mul=1, add=0);
 
+// wave [String / Function / Float32Array]
+// freq [Object] Frequency
+// mul  [Number] Multiply the output  (default is 1)
+// add  [Number]   and add the output (default is 0)
 
-// The oscillator class has some aliases.
-T("sin"), T("tri"), T("saw"), T("pulse"), T("fami");
-
-// It's same as the above code.
-T("sin", 1320, 0.5).play();
+osc.play();
         </pre>
 
-        <button id="play1">play</button><button id="pause1">pause</button>
-        <button id="bang1">bang</button>
-        Properties
-        <pre id="code" class="prettyprint">
-var osc = T("sin");
+        <h3>Properties</h3>
+        <pre id="ex1" class="prettyprint">
+osc = T("osc");
 
 osc.wave  = "tri";
 osc.freq  = 880;
 osc.phase = 0.5;
 osc.mul   = 0.2;
 osc.add   = 0.8;
+
+osc.play();
         </pre>
         
-        <button id="play2">play</button><button id="pause2">pause</button>
-        <button id="bang2">bang</button>
-        Customizing the waveform
-        <pre id="code" class="prettyprint">
+        <h3>Waveform</h3>
+        <pre id="ex2" class="prettyprint">
+wave = ["sin", "tri", "saw", "pulse", "fami"][(Math.random()*5)|0];
+
+T("osc", wave, 660, 0.5).play();
+
+
+// The oscillator class has some aliases.
+T("sin"), T("tri"), T("saw"), T("pulse"), T("fami");
+
+// It's same as the above code.
+T(wave, 1320, 0.5).play();
+
+// (push [bang] button to change the wave)
+        </pre>
+        
+        <h3>Customizing the waveform</h3>
+        <pre id="ex3" class="prettyprint">
 // Define custom waveform from a function
-var func = function(x) { return x * x * x; };
+func = function(x) { return x * x * x; };
 T("osc", func, 880).play(); 
 
 // From an array (PWM25%)
-T("osc", [ -1, 1, 1, 1 ], 880);
+T("osc", [ -1, +1, +1, +1 ], 880);
 
 // Directly set
 T("osc", new Float32Array(1024), 880);
         </pre>
 
-        <button id="play3">play</button><button id="pause3">pause</button>
-        <button id="bang3">bang</button>
-        Register the waveform
-        <pre id="code" class="prettyprint">
+        <h3>Register the waveform</h3>
+        <pre id="ex4" class="prettyprint">
 // Register a waveform and use it
 T("osc").setWaveform("myosc", function(x) {
     return Math.random() - 0.5;
@@ -81,30 +87,45 @@ T("osc", "myosc", 1340).play();
 T("osc").getWaveform("myosc"); // Float32Array(1024)
         </pre>
 
-        <button id="play4">play</button><button id="pause4">pause</button>
-        <button id="bang4">bang</button>
-        LFO(1) tremolo
-        <pre id="code" class="prettyprint">
-T("*", T("pulse", 880, 0.25),
-       T("+tri", 8).kr());
+        <h3>tremolo</h3>
+        <pre id="ex5" class="prettyprint">
+T("*", T("tri", 880, 0.25),
+       T("+sin", 8).kr());
+
+// kr() method switches to processing mode 'Control Rate'
+// Control rate are used for low frequency or slowly chaning control signal.
+
+// T("+sin") generate signals between 0.0 and 1.0.
+// It's convenient to control amplitude.
+//   T("+sin"), T("+saw"), T("+tri") or T("+pulse")
         </pre>
 
-        <button id="play5">play</button><button id="pause5">pause</button>
-        <button id="bang5">bang</button>
-        LFO(2) vibrato
-        <pre id="code" class="prettyprint">
-T("pulse", T("tri", 4, 20, 1320).kr(), 0.25);
+        <h3>vibrato</h3>
+        <pre id="ex6" class="prettyprint">
+T("tri", T("tri", 2, 30, 880).kr(), 0.25);
+        </pre>
+        
+        <h3>glide</h3>
+        <pre id="ex7" class="prettyprint">
+synth = T("fami", T("glide", 150, 880), 0.25);
+cnt   = 0;
+
+synth.onbang = function() {
+    synth.freq.value = [880, 1320, 1100, 660][++cnt % 4]
+};
+
+synth.play();
         </pre>
         
       </div>
     </section>
   </body>
-  <script type="text/javascript" src="js/libs/prettify.js"></script>
+  <script type="text/javascript" src="js/prettify.js"></script>
   <script type="text/javascript">prettyPrint();</script>
   <script type="text/javascript" src="../timbre.js"></script>
-  <script type="text/javascript" src="js/oscillator.js"></script>
-  <script type="text/javascript" src="js/libs/waveviewer.js"></script>  
-  <script type="text/javascript" src="js/libs/jquery.min.js"></script>
+  <script type="text/javascript" src="oscillator.js"></script>
+  <script type="text/javascript" src="js/waveviewer.js"></script>  
+  <script type="text/javascript" src="js/jquery.min.js"></script>
   <script type="text/javascript">
     $(function() {
         if (!timbre.isEnabled) $("#caution").show();
@@ -119,22 +140,37 @@ T("pulse", T("tri", 4, 20, 1320).kr(), 0.25);
             $("#title").css("color", "rgb(136, 136, 136)");
             viewer.pause();
         });
-        
-        
-        var list = [ ex0, ex1, ex2, ex3, ex4, ex5 ];
-        list.forEach(function(ex, i) {
-            ex.addEventListener("play" , function() {
+
+        var list = [];
+        $("pre").each(function(i, pre) {
+            var $pre = $(pre);
+            var $elem = $(pre).prev();
+            var synth = window[$pre.attr("id")];
+            if (synth instanceof HTMLElement) return;
+            
+            $("<button>").text("play").on("click", function() {
+                $pre.css("background", "rgba(255,224,224,0.75)");
+                synth.play();
+            }).insertBefore($elem);
+            $("<button>").text("pause").on("click", function() {
+                $pre.css("background", "rgba(255,255,255,0.75)");
+                synth.pause();
+            }).insertBefore($elem);
+            $("<button>").text("bang").on("click", function() {
+                synth.bang();
+            }).insertBefore($elem);
+
+            synth.addEventListener("play" , function() {
                 timbre.on();
             });
-            ex.addEventListener("pause", function() {
-                ex.dac.off();
-                if (list.every(function(ex) {
-                    return !ex.dac || ex.dac.isOff;
+            synth.addEventListener("pause", function() {
+                synth.dac.off();
+                if (list.every(function(synth) {
+                    return !synth.dac || synth.dac.isOff;
                 })) timbre.off();
             });
-            $("#play"  + i).on("click", function() { ex.play() ; });
-            $("#pause" + i).on("click", function() { ex.pause(); });
-            $("#bang"  + i).on("click", function() { ex.bang() ; });
+            
+            list.push(synth);
         });
     });
   </script>
