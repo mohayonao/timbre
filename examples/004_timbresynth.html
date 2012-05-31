@@ -68,6 +68,13 @@ ex1.onplay = function() {
 ex1.onpause = function() {
     metro.off();
 };
+
+ex1.fft = T("fft").listen(ex1);
+ex1.fft.onfft = function(real, imag) {
+    this.spectrum(ex1.res, real, imag);
+};
+ex1.res = new Float32Array(ex1.fft.size);
+
 ex1.play();
         </pre>
       </div>
@@ -85,7 +92,8 @@ ex1.play();
     $(function() {
         if (!timbre.isEnabled) $("#caution").show();
         
-        var viewer = new WaveViewer(timbre.sys.cell, 60, "waveviewer", 512, 256);
+        var viewer = new WaveViewer(ex1.res, 60, "waveviewer", 512, 256);
+        viewer.range = [0, 3000];
         
         timbre.addEventListener("on", function() {
             $("#title").css("color", "rgb(0, 136, 0)");
@@ -95,8 +103,7 @@ ex1.play();
             $("#title").css("color", "rgb(136, 136, 136)");
             viewer.pause();
         });
-        
-        
+                
         var list = [ ex1 ];
         list.forEach(function(ex, i) {
             ex.addEventListener("play" , function() {

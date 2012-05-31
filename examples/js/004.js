@@ -43,6 +43,12 @@ ex1 = (function() {
         metro.off();
     };
     
+    ex1.fft = T("fft").listen(ex1);
+    ex1.fft.onfft = function(real, imag) {
+        this.spectrum(ex1.res, real, imag);
+    };
+    ex1.res = new Float32Array(ex1.fft.size >> 1);
+    
     ex1.initUI = function initUI() {
         var WAVES = ["sin","pulse","saw","tri"];
         var FREQS = [ 16, 8, 4, 2, 1, 0.5 ];
