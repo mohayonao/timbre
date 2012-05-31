@@ -2,10 +2,13 @@ tests = (function() {
     "use strict";
     
     var i = 0, tests = [];
-    
-    var rec = T("rec", 2500, function() {
-        console.log("rec done");
-    });
+
+    var rec;
+    tests[i] = function() {
+        return rec = T("rec", 2500, function() {
+            console.log("rec done");
+        });
+    }; tests[i++].desc = "rec";
     
     tests[i] = function() {
         var synth = T("*", T("sin", 880), T("+saw", 2).ar());
@@ -28,7 +31,7 @@ tests = (function() {
     }; tests[i++].desc = "source";
     
     tests[i] = function() {
-        var synth = T("+");
+        var synth = T("ar");
         synth.onplay = function() {
             synth.args[0] = T("buffer", rec.buffer, true);
         };
@@ -36,7 +39,7 @@ tests = (function() {
     }; tests[i++].desc = "buffer from rec";
     
     tests[i] = function() {
-        var synth = T("+");
+        var synth = T("ar");
         synth.onplay = function() {
             synth.args[0] = T("buffer", rec.buffer, true).set("reversed", true);
         };

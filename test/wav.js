@@ -7,18 +7,18 @@ tests = (function() {
     
     tests[i] = function() {
         var synth;
-        synth = T("wav", "/audio/amen.wav", true);
+        synth = T("wav", "/public/audio/amen.wav", true);
         synth.onerror = function(res) {
             console.log("error", res);
         };
         synth.onloadend = function(res) {
-            console.log("loadend", res);
+            console.log("loadend", res.buffer.length);
         };
         return synth.load();
     }; tests[i++].desc = "wav";
     
     tests[i] = function() {
-        var synth = T("+");
+        var synth = T("ar");
         synth.onplay = function() {
             synth.args[0] = s[0].slice(500, 1500);
         };
@@ -26,7 +26,7 @@ tests = (function() {
     }; tests[i++].desc = "wav#slice()";
     
     tests[i] = function() {
-        var synth = T("+");
+        var synth = T("ar");
         synth.onplay = function() {
             synth.args[0] = s[0].clone().set("reversed", true);
         };
@@ -34,7 +34,7 @@ tests = (function() {
     }; tests[i++].desc = "reversed wav";
     
     tests[i] = function() {
-        var synth = T("+");
+        var synth = T("ar");
         synth.onplay = function() {
             synth.args[0] = s[0].slice(2500, 1500);
         };

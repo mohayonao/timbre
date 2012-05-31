@@ -64,15 +64,19 @@ EJS_VIEW = """
 
           synth.addEventListener("play" , function() {
               pre.css("background", "rgba(255,224,224,0.75)");
-              if (synth.listener) {
-                  synth.listener.on().bang();
-                  viewer.target = synth.listener.buffer;
-                  viewer.step =  100;
-                  viewer.stay = true;
+
+              if (synth.$listener) {
+                  synth.$listener.on().bang();
+              }
+              if (synth.$view) {
+                  viewer.target = synth.$view;
               } else {
                   viewer.target = timbre.sys.cell;
-                  viewer.step =  1;
-                  viewer.stay = false;
+              }
+              if (synth.$range) {
+                  viewer.range = synth.$range;
+              } else {
+                  viewer.range = [-1, +1];
               }
               timbre.on();
           });

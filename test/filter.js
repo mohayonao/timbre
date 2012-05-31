@@ -4,18 +4,26 @@ tests = (function() {
     timbre.workerpath = "/timbre.js";
     
     var i = 0, tests = [];
-
-    var audio = T("audio", "/audio/sample.ogg", true).load(function() {
-        console.log("loaded!");
-    });
     
     tests[i] = function() {
-        return T("filter", "lpf", audio);
-    }; tests[i++].desc = "filter.lpf";
+        return T("audio", "/public/audio/sample.ogg", true).load();
+    }; tests[i++].desc = "audio source";
+        
+    tests[i] = function() {
+        var synth = T("filter");
+        synth.onplay = function() {
+            synth.args[0] = s[0].clone();
+        };
+        return synth;
+    }; tests[i++].desc = "filter";
 
     tests[i] = function() {
-        return T("rfilter", "lpf", audio);
-    }; tests[i++].desc = "rfilter.lpf";
+        var synth = T("rfilter");
+        synth.onplay = function() {
+            synth.args[0] = s[0].clone();
+        };
+        return synth;
+    }; tests[i++].desc = "rfilter";
     
     return tests;
 }());

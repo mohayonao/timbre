@@ -16,10 +16,10 @@ tests = (function() {
         env.onD     = function() { tri.freq =  880; };
         env.onS     = function() { tri.freq =  660; };
         env.onR     = function() { tri.freq =  440; };
-        env.onended = function() { synth.pause(); };
         env.delay = 100;
         
-        synth.listener = T("rec", 3000).listen(env).off();
+        synth.$listener = T("rec", 3000).listen(env).off();
+        synth.$view  = synth.$listener.buffer;
         
         return synth;
     }; tests[i++].desc = "adsr: delay->a->d->end";
@@ -37,9 +37,9 @@ tests = (function() {
         env.onD     = function() { tri.freq =  880; };
         env.onS     = function() { tri.freq =  660; };
         env.onR     = function() { tri.freq =  440; };
-        env.onended = function() { synth.pause(); };
         
-        synth.listener = T("rec", 5000).listen(env).off();
+        synth.$listener = T("rec", 3000).listen(env).off();
+        synth.$view  = synth.$listener.buffer;
         
         return synth;
     }; tests[i++].desc = "adsr: a->d->s->r";
@@ -57,15 +57,15 @@ tests = (function() {
         env.onD     = function() { tri.freq =  880; };
         env.onS     = function() { tri.freq =  660; };
         env.onR     = function() { tri.freq =  440; };
-        env.onended = function() { synth.pause(); };
         env.s = 3000;
         env.reversed = true;
-        
-        synth.listener = T("rec", 5000).listen(env).off();
+
+        synth.$listener = T("rec", 3000).listen(env).off();
+        synth.$view  = synth.$listener.buffer;
         
         return synth;
     }; tests[i++].desc = "adsr: sustain-rate & reversed";
-
+    
     tests[i] = function() {
         var synth, tri, env;
         synth = T("*", tri = T("tri" , 1340, 0.5),
@@ -73,11 +73,12 @@ tests = (function() {
         
         synth.onplay = function() { env.bang(); };
         synth.onbang = function() { env.bang(); };
-        env.onended = function() { synth.pause(); console.log(env.currentTime); };
+        env.onended  = function() { console.log(env.currentTime); };
         env.iteration = 30;
         env.decayRate = 0.45;
         
-        synth.listener = T("rec", 3000).listen(env).off();
+        synth.$listener = T("rec", 3000).listen(env).off();
+        synth.$view  = synth.$listener.buffer;
         
         return synth;
     }; tests[i++].desc = "perc:";
@@ -85,14 +86,15 @@ tests = (function() {
     tests[i] = function() {
         var synth, tri, env;
         synth = T("*", T("hpf", 8000, T("noise")),
-                  env = T("perc", 30), 0.1)        
+                       env = T("perc", 30), 0.1)        
         
         synth.onplay = function() { env.bang(); };
         synth.onbang = function() { env.bang(); };
         env.iteration = 0;
         env.decayRate = 0;
-        
-        synth.listener = T("rec", 3000).listen(env).off();
+
+        synth.$listener = T("rec", 3000).listen(env).off();
+        synth.$view  = synth.$listener.buffer;
         
         return synth;
     }; tests[i++].desc = "perc:";

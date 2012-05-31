@@ -4,13 +4,10 @@ tests = (function() {
     timbre.workerpath = "/timbre.js";
     
     var i = 0, tests = [];
-
-    var audio = T("audio", "/audio/sample.ogg", true).load(function() {
-        console.log("loaded!");
-    });
     
     tests[i] = function() {
-        return T("efx.dist", audio);
+        var audio = T("audio", "/public/audio/sample.ogg", true);
+        return T("efx.dist", audio.load());
     }; tests[i++].desc = "efx.dist";
     
     return tests;
