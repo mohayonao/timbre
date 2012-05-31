@@ -51,7 +51,7 @@ SRC_DIR = path.normalize "#{__dirname}/../src"
 DST_DIR = path.normalize "#{__dirname}/.."
 
 VERSION    = fs.readFileSync("#{DST_DIR}/version.txt", "utf-8").split("\n")[0].trim()
-BUILD_DATE = new Date().toString()
+BUILD_DATE = new Date().toUTCString()
 
 
 # build-functions
