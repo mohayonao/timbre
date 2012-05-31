@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Oscillator: 0.1.0
+ * Oscillator: 0.0.0
  * Table lookup oscillator
  * [ar-kr]
  */
@@ -435,7 +435,7 @@ timbre.fn.register("noise", WhiteNoise);
 
 
 /**
- * FuncOscillator: 0.1.0
+ * FuncOscillator: 0.0.0
  * Signal generator
  * [ar-kr] TODO: kr
  */

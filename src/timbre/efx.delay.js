@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * EfxDelay: 0.1.0
+ * EfxDelay: 0.0.0
  * [ar-only]
  */
 var EfxDelay = (function() {

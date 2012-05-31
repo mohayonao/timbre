@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Interval: 0.1.0
+ * Interval: 0.0.0
  * Calls a bang() repeatedly at regular intervals
  * [kr-only]
  */
@@ -119,7 +119,7 @@ timbre.fn.register("interval", Interval);
 
 
 /**
- * Timeout: 0.1.0
+ * Timeout: 0.0.0
  * Calls a bang() after specified delay
  * [kr-only]
  */

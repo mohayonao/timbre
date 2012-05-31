@@ -1,6 +1,6 @@
 /**
- * timbre 0.1.0 / JavaScript Library for Objective Sound Programming
- * build: Thu, 31 May 2012 08:50:09 GMT
+ * timbre 0.0.0 / JavaScript Library for Objective Sound Programming
+ * build: Thu, 31 May 2012 10:49:19 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -9,8 +9,8 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "0.1.0";
-    timbre.BUILD      = "Thu, 31 May 2012 08:50:09 GMT";
+    timbre.VERSION    = "0.0.0";
+    timbre.BUILD      = "Thu, 31 May 2012 10:49:19 GMT";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.workerpath = "";
@@ -30,7 +30,7 @@ var timbre = (function(context, timbre) {
     var TimbreObject = function() {};
     
     /**
-     * SoundSystem: 0.1.0
+     * SoundSystem: 0.0.0
      */
     var SoundSystem = (function() {
         var SoundSystem = function() {
@@ -656,7 +656,7 @@ var timbre = (function(context, timbre) {
     
     // built-in-types
     /**
-     * NumberWrapper: 0.1.0
+     * NumberWrapper: 0.0.0
      * Constant signal of a number
      * [kr-only]
      */
@@ -730,7 +730,7 @@ var timbre = (function(context, timbre) {
     timbre.fn.register("number", NumberWrapper);
     
     /**
-     * BooleanWrapper: 0.1.0
+     * BooleanWrapper: 0.0.0
      * Constant signal of 0 or 1
      * [kr-only]
      */
@@ -810,7 +810,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * ArrayWrapper: 0.1.0
+     * ArrayWrapper: 0.0.0
      * [kr-only]
      */
     var ArrayWrapper = (function() {
@@ -930,7 +930,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * FunctionWrapper: 0.1.0
+     * FunctionWrapper: 0.0.0
      * [kr-only]
      */
     var FunctionWrapper = (function() {
@@ -993,7 +993,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * Dac: 0.1.0
+     * Dac: 0.0.0
      * Audio output
      * [ar-only]
      */
@@ -1123,7 +1123,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * AudioRate: 0.1.0
+     * AudioRate: 0.0.0
      * Convert audio-rate
      * [ar-only]
      */
@@ -1238,7 +1238,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * KontrolRate: 0.1.0
+     * KontrolRate: 0.0.0
      * Convert control-rate
      * [kr-only]
      */
@@ -1349,7 +1349,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * DspAdd: 0.1.0
+     * DspAdd: 0.0.0
      * Add signals
      * [ar-kr]
      */
@@ -1425,7 +1425,7 @@ var timbre = (function(context, timbre) {
     timbre.fn.register("+", DspAdd);
     
     /**
-     * DspMultiply: 0.1.0
+     * DspMultiply: 0.0.0
      * Multiply signals
      * [ar-kr]
      */
@@ -1502,7 +1502,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * Oscillator: 0.1.0
+     * Oscillator: 0.0.0
      * Table lookup oscillator
      * [ar-kr]
      */
@@ -1930,7 +1930,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * FuncOscillator: 0.1.0
+     * FuncOscillator: 0.0.0
      * Signal generator
      * [ar-kr] TODO: kr
      */
@@ -2076,7 +2076,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * ADSREnvelope: 0.1.0
+     * ADSREnvelope: 0.0.0
      * ADSR envelope generator
      * [kr-only]
      */
@@ -2311,7 +2311,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * PercussiveEnvelope: 0.1.0
+     * PercussiveEnvelope: 0.0.0
      * Percussive envelope generator
      * [kr-only]
      */
@@ -2472,7 +2472,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * DspFilter: 0.1.0
+     * DspFilter: 0.0.0
      * [ar-only]
      */
     var DspFilter = (function() {
@@ -2872,7 +2872,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * ResonantDspFilter: 0.1.0
+     * ResonantDspFilter: 0.0.0
      * [ar-only]
      */
     var ResonantFilter = (function() {
@@ -3099,7 +3099,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * EfxDelay: 0.1.0
+     * EfxDelay: 0.0.0
      * [ar-only]
      */
     var EfxDelay = (function() {
@@ -3261,7 +3261,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * EfxDistortion: 0.1.0
+     * EfxDistortion: 0.0.0
      * [ar-only]
      */
     var EfxDistortion = (function() {
@@ -3488,7 +3488,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * EfxChorus: 0.1.0
+     * EfxChorus: 0.0.0
      * [ar-only]
      */
     var EfxChorus = (function() {
@@ -3647,7 +3647,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * Interval: 0.1.0
+     * Interval: 0.0.0
      * Calls a bang() repeatedly at regular intervals
      * [kr-only]
      */
@@ -3759,7 +3759,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * Timeout: 0.1.0
+     * Timeout: 0.0.0
      * Calls a bang() after specified delay
      * [kr-only]
      */
@@ -4207,7 +4207,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * WavDecoder: 0.1.0
+     * WavDecoder: 0.0.0
      * Decode wav file and play it
      * [ar-only]
      */
@@ -4505,7 +4505,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * DspAudio: 0.1.0
+     * DspAudio: 0.0.0
      * Store audio samples
      * [ar-only]
      */
@@ -4673,7 +4673,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * WebKitAudio: 0.1.0
+     * WebKitAudio: 0.0.0
      * Store audio samples (Web Audio API)
      * [ar-only]
      */
@@ -4787,7 +4787,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * DspBuffer: 0.1.0
+     * DspBuffer: 0.0.0
      * Store audio samples
      * [ar-only]
      */
@@ -4969,7 +4969,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * Easing: 0.1.0
+     * Easing: 0.0.0
      * [kr-only]
      */
     var Easing = (function() {
@@ -5282,7 +5282,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * Glide: 0.1.0
+     * Glide: 0.0.0
      * [kr-only]
      */
     var Glide = (function() {
@@ -5458,7 +5458,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * DspRecord: 0.1.0
+     * DspRecord: 0.0.0
      * Record sound into a buffer
      * [ar-only]
      */
@@ -5595,7 +5595,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * DspRecord: 0.1.0
+     * DspRecord: 0.0.0
      * Record sound into a buffer
      * [ar-only]
      */
@@ -5732,7 +5732,7 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * AwesomeTimbre: 0.1.0
+     * AwesomeTimbre: 0.0.0
      * Do something fun
      * [ar-only]
      */

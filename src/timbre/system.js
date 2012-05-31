@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Dac: 0.1.0
+ * Dac: 0.0.0
  * Audio output
  * [ar-only]
  */
@@ -137,7 +137,7 @@ timbre.fn.register("pandac", Dac, function(_args) {
 
 
 /**
- * AudioRate: 0.1.0
+ * AudioRate: 0.0.0
  * Convert audio-rate
  * [ar-only]
  */
@@ -252,7 +252,7 @@ timbre.fn.register("ar", AudioRate);
 
 
 /**
- * KontrolRate: 0.1.0
+ * KontrolRate: 0.0.0
  * Convert control-rate
  * [kr-only]
  */

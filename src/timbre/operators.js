@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * DspAdd: 0.1.0
+ * DspAdd: 0.0.0
  * Add signals
  * [ar-kr]
  */
@@ -83,7 +83,7 @@ var DspAdd = (function() {
 timbre.fn.register("+", DspAdd);
 
 /**
- * DspMultiply: 0.1.0
+ * DspMultiply: 0.0.0
  * Multiply signals
  * [ar-kr]
  */

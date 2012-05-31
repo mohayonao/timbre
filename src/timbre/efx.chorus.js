@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * EfxChorus: 0.1.0
+ * EfxChorus: 0.0.0
  * [ar-only]
  */
 var EfxChorus = (function() {

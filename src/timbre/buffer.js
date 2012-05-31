@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * DspBuffer: 0.1.0
+ * DspBuffer: 0.0.0
  * Store audio samples
  * [ar-only]
  */

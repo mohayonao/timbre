@@ -8,7 +8,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Easing: 0.1.0
+ * Easing: 0.0.0
  * [kr-only]
  */
 var Easing = (function() {
@@ -321,7 +321,7 @@ Easing.functions = {
 
 
 /**
- * Glide: 0.1.0
+ * Glide: 0.0.0
  * [kr-only]
  */
 var Glide = (function() {

@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * DspFilter: 0.1.0
+ * DspFilter: 0.0.0
  * [ar-only]
  */
 var DspFilter = (function() {
@@ -407,7 +407,7 @@ timbre.fn.register("highboost", DspFilter, function(_args) {
 
 
 /**
- * ResonantDspFilter: 0.1.0
+ * ResonantDspFilter: 0.0.0
  * [ar-only]
  */
 var ResonantFilter = (function() {
