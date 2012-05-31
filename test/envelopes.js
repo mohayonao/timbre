@@ -92,7 +92,7 @@ tests = (function() {
         synth.onbang = function() { env.bang(); };
         env.iteration = 0;
         env.decayRate = 0;
-
+        
         synth.$listener = T("rec", 3000).listen(env).off();
         synth.$view  = synth.$listener.buffer;
         
