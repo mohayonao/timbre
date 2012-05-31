@@ -136,7 +136,7 @@ var AudioBasis = {
         
         this.seq = function(seq_id) {
             var _ = this._;
-            var cell, buffer, vec, mul, add;
+            var cell, buffer, mul, add;
             var i, imax;
             
             if (!_.ison) return timbre._.none;
@@ -145,25 +145,26 @@ var AudioBasis = {
             if (seq_id !== this.seq_id) {
                 this.seq_id = seq_id;
                 buffer = _.buffer;
-                vec    = _.reversed ? -1 : +1;
                 mul    = _.mul
                 add    = _.add;
-                for (i = 0, imax = cell.length; i < imax; ++i) {
-                    cell[i] = (buffer[_.phase]||0) * mul + add;
-                    _.phase += vec;
-                    if (vec === +1) {
-                        if (_.phase === buffer.length) {
+                if (_.reversed) {
+                    for (i = 0, imax = cell.length; i < imax; ++i) {
+                        cell[i] = (buffer[_.phase--]||0) * mul + add;
+                        if (_.phase < 0) {
                             if (_.loop) {
-                                _.phase = 0;
+                                _.phase = Math.max(0, _.buffer.length - 1);
                                 timbre.fn.do_event(this, "looped");
                             } else {
                                 timbre.fn.do_event(this, "ended");
                             }
                         }
-                    } else {
-                        if (_.phase < 0) {
+                    }
+                } else {
+                    for (i = 0, imax = cell.length; i < imax; ++i) {
+                        cell[i] = (buffer[_.phase++]||0) * mul + add;
+                        if (_.phase >= buffer.length) {
                             if (_.loop) {
-                                _.phase = Math.max(0, _.buffer.length - 1);
+                                _.phase = 0;
                                 timbre.fn.do_event(this, "looped");
                             } else {
                                 timbre.fn.do_event(this, "ended");
