@@ -369,7 +369,7 @@ timbre.fn.register("metro", Mertonome);
 
 
 /**
- * Scheulde: <draft>
+ * Schedule: <draft>
  * [kr-only]
  */
 var Schedule = (function() {
