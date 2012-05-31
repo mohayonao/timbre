@@ -1,6 +1,6 @@
 /**
  * waveviewer.js
- * version: 0.1.0
+ * version: 0.1.1
  */
 var WaveViewer = (function() {
     var WaveViewer = function() {
@@ -22,7 +22,6 @@ var WaveViewer = (function() {
         }
         this.target   = target;
         this.interval = interval;
-        this.step      = 1;
         this.isUpdated = false;
         this.isPlaying = false;
         this.context = canvas.getContext("2d");
@@ -35,39 +34,39 @@ var WaveViewer = (function() {
     
     $this.start = function() {
         var self = this;
-        var target, interval, step, context, width, height, half_h;
+        var target, interval, range;
+        var context, width, height, half_h;
         var prev, stop_delay = 10;
         
         target   = this.target;
         interval = this.interval;
-        step     = this.step;
+        range    = this.range;
         context  = this.context;
         width    = this.width;
         height   = this.height;
         half_h   = height >> 1;
         prev = 0;
         
-        context.fillStyle   = "rgba(255, 255, 255, 1.0)";
-        context.fillRect(0, 0, width, height);
-        context.fillStyle   = "rgba(255, 255, 255, 0.4)";
-        
         var animate = function() {
-            var now, wave, dx, i, imax;
+            var now, wave, min, max, y, dx, i, imax;
             now = +new Date();
             if (now - prev >= interval) {
                 prev = now;
-
-                if (! self.stay) {
-                    context.fillRect(0, 0, width, height);
-                }
+                
+                context.fillRect(0, 0, width, height);
                 
                 if (self.isPlaying) {
                     wave = target;
+                    step = (target.length / 128)|0;
                     dx   = width / wave.length;
+                    min  = range[0];
+                    max  = range[1];
                     context.beginPath();
-                    context.moveTo(0, half_h - (half_h * wave[0]));
+                    y = (wave[0] - min) / (max - min);
+                    context.moveTo(0, height - (height * y));
                     for (i = step, imax = wave.length; i < imax; i += step) {
-                        context.lineTo(i*dx, half_h - (half_h * wave[i]));
+                        y = (wave[i] - min) / (max - min);
+                        context.lineTo(i * dx, height - (height * y));
                     }
                     context.stroke();
                 } else {
