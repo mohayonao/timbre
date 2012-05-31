@@ -1,3 +1,7 @@
+/**
+ * waveviewer.js
+ * version: 0.1.0
+ */
 var WaveViewer = (function() {
     var WaveViewer = function() {
         initialize.apply(this, arguments);
@@ -42,7 +46,7 @@ var WaveViewer = (function() {
         height   = this.height;
         half_h   = height >> 1;
         prev = 0;
-
+        
         context.fillStyle   = "rgba(255, 255, 255, 1.0)";
         context.fillRect(0, 0, width, height);
         context.fillStyle   = "rgba(255, 255, 255, 0.4)";
@@ -58,7 +62,7 @@ var WaveViewer = (function() {
                 }
                 
                 if (self.isPlaying) {
-                    wave = self.target;
+                    wave = target;
                     dx   = width / wave.length;
                     context.beginPath();
                     context.moveTo(0, half_h - (half_h * wave[0]));

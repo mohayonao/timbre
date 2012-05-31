@@ -1,3 +1,7 @@
+/**
+ * waveviewer.js
+ * version: 0.1.0
+ */
 var WaveViewer = (function() {
     var WaveViewer = function() {
         initialize.apply(this, arguments);
@@ -18,6 +22,7 @@ var WaveViewer = (function() {
         }
         this.target   = target;
         this.interval = interval;
+        this.step      = 1;
         this.isUpdated = false;
         this.isPlaying = false;
         this.context = canvas.getContext("2d");
@@ -30,31 +35,38 @@ var WaveViewer = (function() {
     
     $this.start = function() {
         var self = this;
-        var target, interval, context, width, height, half_h;
+        var target, interval, step, context, width, height, half_h;
         var prev, stop_delay = 10;
         
         target   = this.target;
         interval = this.interval;
+        step     = this.step;
         context  = this.context;
         width    = this.width;
         height   = this.height;
         half_h   = height >> 1;
         prev = 0;
         
+        context.fillStyle   = "rgba(255, 255, 255, 1.0)";
+        context.fillRect(0, 0, width, height);
+        context.fillStyle   = "rgba(255, 255, 255, 0.4)";
+        
         var animate = function() {
             var now, wave, dx, i, imax;
             now = +new Date();
             if (now - prev >= interval) {
                 prev = now;
-                
-                context.fillRect(0, 0, width, height);
 
+                if (! self.stay) {
+                    context.fillRect(0, 0, width, height);
+                }
+                
                 if (self.isPlaying) {
                     wave = target;
                     dx   = width / wave.length;
                     context.beginPath();
                     context.moveTo(0, half_h - (half_h * wave[0]));
-                    for (i = 1, imax = wave.length; i < imax; ++i) {
+                    for (i = step, imax = wave.length; i < imax; i += step) {
                         context.lineTo(i*dx, half_h - (half_h * wave[i]));
                     }
                     context.stroke();
