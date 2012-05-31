@@ -16,6 +16,7 @@ TIMBRE_SOURCES = [
     "timbre/timers"
     "timbre/wav"
     "timbre/audio"
+    "timbre/buffer"
     "timbre/easing"
     "timbre/record"
 ]
