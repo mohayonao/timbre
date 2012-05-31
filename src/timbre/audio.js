@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Audio: <draft>
+ * Audio: 0.1.0
  * Store audio samples
  * [ar-only]
  */
@@ -35,9 +35,12 @@ var AudioBasis = {
             }
         }
         
+        _.ison     = true;
         _.buffer   = new Float32Array(0);
+        _.duration = 0;
         _.phase    = 0;
-        _.isLoaded = false;
+        _.reversed = false;
+        _.isloaded = false;
     },
     setPrototype: function() {
         Object.defineProperty(this, "src", {
@@ -45,62 +48,131 @@ var AudioBasis = {
                 if (typeof value === "string") {
                     if (this._.src !== value) {
                         this._.src = value;
-                        this._.isLoaded = false;
+                        this._.isloaded = false;
                     }
                 }
             },
             get: function() { return this._.src; }
         });
-        // TODO: isLoop
         Object.defineProperty(this, "loop", {
-            set: function(value) {
-                if (typeof value === "boolean") {
-                    this._.loop = value;
-                }            
-            },
+            set: function(value) { this._.loop = !!value; },
             get: function() { return this._.loop; }
         });
+        Object.defineProperty(this, "reversed", {
+            set: function(value) {
+                var _ = this._;
+                _.reversed = !!value;
+                if (_.reversed && _.phase === 0) {
+                    _.phase = Math.max(0, _.buffer.length - 1);
+                }
+            },
+            get: function() { return this._.reversed; }
+        });
         Object.defineProperty(this, "isLoaded", {
-            get: function() { return this._.isLoaded; }
+            get: function() { return this._.isloaded; }
+        });
+        Object.defineProperty(this, "duration", {
+            get: function() { return this._.duration; }
+        });
+        Object.defineProperty(this, "currentTime", {
+            set: function(value) {
+                var _ = this._;
+                if (typeof value === "number") {
+                    if (0 <= value && value <= _.duration) {
+                        _.phase = ((value / 1000) * timbre.samplerate)|0;
+                    }
+                }
+            },
+            get: function() { return (this._.phase / timbre.samplerate) * 1000; }
         });
         
         this.clone = function(deep) {
             var klassname, newone, _ = this._;
             klassname = Object.getPrototypeOf(this)._.klassname;
-            newone = timbre(klassname, _.src, _.loop, _.mul, _.add);
-            newone._.isLoaded = _.isLoaded;
+            newone = timbre(klassname, _.src, _.loop);
+            newone._.mul = _.mul;
+            newone._.add = _.add;
+            newone._.reversed = _.reversed;
+            newone._.isloaded = _.isloaded;
             newone._.buffer   = _.buffer;
+            newone._.duration = _.duration;
+            newone._.phase = (_.reversed) ? Math.max(0, _.buffer.length - 1) : 0;
+            return newone;
+        };
+        
+        this.slice = function(begin, end) {
+            var klassname, newone, _ = this._, tmp, reversed;
+            klassname = Object.getPrototypeOf(this)._.klassname;
+            
+            reversed = _.reversed;
+            if (typeof begin === "number") {
+                begin = (begin / 1000) * timbre.samplerate;
+            } else begin = 0;
+            if (typeof end   === "number") {
+                end   = (end   / 1000) * timbre.samplerate;
+            } else end = _.buffer.length;
+            if (begin > end) {
+                tmp   = begin;
+                begin = end;
+                end   = tmp;
+                reversed = !reversed;
+            }
+            
+            newone = timbre(klassname);
+            newone._.loop = _.loop;
+            newone._.mul = _.mul;
+            newone._.add = _.add;
+            newone._.reversed = reversed;
+            newone._.buffer   = _.buffer.subarray(begin, end);
+            newone._.duration = (end - begin / timbre.samplerate) * 1000;
+            newone._.phase = (reversed) ? Math.max(0, newone._.buffer.length - 1) : 0;
             return newone;
         };
         
         this.bang = function() {
-            this._.phase = 0;
+            var _ = this._;
+            _.phase = (_.reversed) ? Math.max(0, _.buffer.length - 1) : 0;
             timbre.fn.do_event(this, "bang");
             return this;
         };
         
         this.seq = function(seq_id) {
             var _ = this._;
-            var cell, buffer, mul, add;
+            var cell, buffer, vec, mul, add;
             var i, imax;
+            
+            if (!_.ison) return timbre._.none;
             
             cell = this.cell;
             if (seq_id !== this.seq_id) {
+                this.seq_id = seq_id;
                 buffer = _.buffer;
+                vec    = _.reversed ? -1 : +1;
                 mul    = _.mul
                 add    = _.add;
                 for (i = 0, imax = cell.length; i < imax; ++i) {
-                    cell[i] = (buffer[_.phase++]||0) * mul + add;
-                    if (buffer.length === _.phase) {
-                        if (_.loop) {
-                            _.phase = 0;
-                            timbre.fn.do_event(this, "looped");
-                        } else {
-                            timbre.fn.do_event(this, "ended");
+                    cell[i] = (buffer[_.phase]||0) * mul + add;
+                    _.phase += vec;
+                    if (vec === +1) {
+                        if (_.phase === buffer.length) {
+                            if (_.loop) {
+                                _.phase = 0;
+                                timbre.fn.do_event(this, "looped");
+                            } else {
+                                timbre.fn.do_event(this, "ended");
+                            }
+                        }
+                    } else {
+                        if (_.phase < 0) {
+                            if (_.loop) {
+                                _.phase = Math.max(0, _.buffer.length - 1);
+                                timbre.fn.do_event(this, "looped");
+                            } else {
+                                timbre.fn.do_event(this, "ended");
+                            }
                         }
                     }
                 }
-                this.seq_id = seq_id;
             }
             return cell;
         };
@@ -111,7 +183,7 @@ var AudioBasis = {
 
 
 /**
- * WebKitAudio: <draft>
+ * WebKitAudio: 0.1.0
  * Store audio samples (Web Audio API)
  * [ar-only]
  */
@@ -128,24 +200,32 @@ var WebKitAudio = (function() {
         
         ctx  = new webkitAudioContext();
         xhr  = new XMLHttpRequest();
-        opts = { success:true, buffer:null, samplerate:ctx.sampleRate };
+        opts = { buffer:null, samplerate:ctx.sampleRate };
         
         if (_.src !== "") {
             xhr.open("GET", _.src, true);
             xhr.responseType = "arraybuffer";
+            xhr.onreadystatechange = function(event) {
+                if (xhr.readyState === 4) {
+                    if (xhr.status !== 200) {
+                        timbre.fn.do_event(self, "error", [xhr]);
+                    }
+                }
+            };
             xhr.onload = function() {
                 _.buffer = ctx.createBuffer(xhr.response, true).getChannelData(0);
+                _.duration  = _.buffer.length / timbre.samplerate * 1000;
                 opts.buffer = _.buffer;
-                _.isLoaded = true;
+                
                 timbre.fn.do_event(self, "loadedmetadata", [opts]);
+                _.isloaded = true;
                 timbre.fn.do_event(self, "loadeddata", [opts]);
             };
             xhr.send();
         } else {
-            opts.success = false;
-            timbre.fn.do_event(self, "loadedmetadata", [opts]);
+            timbre.fn.do_event(self, "error", [xhr]);
         }
-        _.isLoaded = false;
+        _.isloaded = false;
         _.buffer   = new Float32Array(0);
         _.phase    = 0;
         return this;
@@ -171,21 +251,25 @@ var MozAudio = (function() {
     $this.load = function(callback) {
         var self = this, _ = this._;
         var audio, output, buffer_index, istep, opts;
-        var callback_count = 1;
         
-        opts = { success:true, buffer:null, samplerate:0 };
+        opts = { buffer:null, samplerate:0 };
         
         if (_.src !== "") {
             audio = new Audio(_.src);
             audio.loop = false;
+            audio.addEventListener("error", function(e) {
+                timbre.fn.do_event(self, "error", [e]);
+            }, false);
             audio.addEventListener("loadedmetadata", function(e) {
                 audio.volume = 0.0;
                 _.buffer = new Float32Array((audio.duration * audio.mozSampleRate)|0);
+                _.duration = audio.duration * 1000;
                 buffer_index = 0;
                 istep = audio.mozSampleRate / timbre.samplerate;
                 audio.play();
                 opts.buffer = _.buffer;
                 opts.samplerate = audio.mozSampleRate;
+                timbre.fn.do_event(self, "loadedmetadata", [opts]);
             }, false);
             audio.addEventListener("MozAudioAvailable", function(e) {
                 var samples, buffer, i, imax;
@@ -194,18 +278,14 @@ var MozAudio = (function() {
                 for (i = 0, imax = samples.length; i < imax; i += istep) {
                     buffer[buffer_index++] = samples[i|0];
                 }
-                callback_count -= 1;
-                if (callback_count === 0) {
-                    timbre.fn.do_event(self, "loadedmetadata", [opts]);
-                }
             }, false);
             audio.addEventListener("ended", function(e) {
-                _.isLoaded = true;
-                timbre.fn.do_event(self, "loadedata", [opts]);
+                _.isloaded = true;
+                timbre.fn.do_event(self, "loadeddata", [opts]);
             }, false);
             audio.load();
         }
-        _.isLoaded = false;
+        _.isloaded = false;
         _.buffer   = new Float32Array(0);
         _.phase    = 0;
         return this;
