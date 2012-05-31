@@ -1,6 +1,6 @@
 /**
  * timbre 0.1.0 / JavaScript Library for Objective Sound Programming
- * build: Thu, 31 May 2012 08:12:15 GMT
+ * build: Thu, 31 May 2012 08:50:09 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,7 +10,7 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.1.0";
-    timbre.BUILD      = "Thu, 31 May 2012 08:12:15 GMT";
+    timbre.BUILD      = "Thu, 31 May 2012 08:50:09 GMT";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.workerpath = "";
@@ -1888,17 +1888,7 @@ var timbre = (function(context, timbre) {
         timbre.fn.setPrototypeOf.call($this, "ar-kr");
         
         var initialize = function(_args) {
-            var i, _;
             
-            this._ = _ = {};
-            
-            i = 0;
-            if (typeof _args[i] === "number") {
-                this._.mul = _args[i++];
-            }
-            if (typeof _args[i] === "number") {
-                this._.add = _args[i++];
-            }
         };
         
         $this.clone = function(deep) {
@@ -2004,12 +1994,7 @@ var timbre = (function(context, timbre) {
                 _.func = DEFAULT_FUNCTION;    
             }
             this.freq = _args[i++];
-            if (typeof _args[i] === "number") {
-                _.mul = _args[i++];    
-            }
-            if (typeof _args[i] === "number") {
-                _.add = _args[i++];    
-            }
+            
             _.saved = new Float32Array(_.numOfSamples);
             _.index = 0;
             _.phase = _.x = 0;
@@ -2202,13 +2187,6 @@ var timbre = (function(context, timbre) {
             _.sl = (typeof _args[i] === "number") ? _args[i++] : 0;                
             _.r  = (typeof _args[i] === "number") ? _args[i++] : 0;
             
-            if (typeof _args[i] === "number") {
-                _.mul = _args[i++];
-            }
-            if (typeof _args[i] === "number") {
-                _.add = _args[i++];
-            }
-            
             _.delay = 0;
             _.al = 0;
             _.dl = 1;
@@ -2225,10 +2203,11 @@ var timbre = (function(context, timbre) {
         $this.clone = function(deep) {
             var newone, _ = this._;
             var args, i, imax;
-            newone = timbre("adsr", _.a, _.d, _.sl, _.r, _.mul, _.add);
+            newone = timbre("adsr", _.a, _.d, _.sl, _.r);
             newone._.delay = _.delay;
             newone._.s = _.s;
             newone._.reversed = _.reversed;
+            timbre.fn.copy_for_clone(this, newone, deep);
             return newone;
         };
         
@@ -2398,12 +2377,6 @@ var timbre = (function(context, timbre) {
             _.iteration = (typeof _args[i] === "number") ? _args[i++] : 0;
             _.decayRate = (typeof _args[i] === "number") ? _args[i++] : 0.2;
             
-            if (typeof _args[i] === "number") {
-                _.mul = _args[i++];
-            }
-            if (typeof _args[i] === "number") {
-                _.add = _args[i++];
-            }
             if (typeof _args[i] === "function") {
                 this.onended = _args[i++];
             }
@@ -2422,9 +2395,10 @@ var timbre = (function(context, timbre) {
         $this.clone = function(deep) {
             var _ = this._;
             var newone = timbre("perc",
-                                _.duration, _.iteration, _.decayRate, _.mul, _.add);
+                                _.duration, _.iteration, _.decayRate);
             newone._.delay    = _.delay;
             newone._.reversed = _.reversed;
+            timbre.fn.copy_for_clone(this, newone, deep);
             return newone;
         };
         
@@ -2575,13 +2549,6 @@ var timbre = (function(context, timbre) {
                 _.gain = timbre(_args[i++]);
             } else {
                 _.gain = timbre(DspFilter.Types[type].default_gain || 6);
-            }
-            
-            if (typeof _args[i] === "number") {
-                _.mul = _args[i++];
-            }
-            if (typeof _args[i] === "number") {
-                _.add = _args[i++];
             }
             this.args = timbre.fn.valist.call(this, _args.slice(i));
             
@@ -2985,13 +2952,6 @@ var timbre = (function(context, timbre) {
             } else {
                 _.depth = timbre(0.5);
             }
-            
-            if (typeof _args[i] === "number") {
-                _.mul = _args[i++];
-            }
-            if (typeof _args[i] === "number") {
-                _.add = _args[i++];
-            }
             this.args = timbre.fn.valist.call(this, _args.slice(i));
             
             _.prev_cutoff = undefined;
@@ -3377,12 +3337,6 @@ var timbre = (function(context, timbre) {
                 _.lpfSlope = timbre(1);
             }
             
-            if (typeof _args[i] === "number") {
-                _.mul = _args[i++];
-            }
-            if (typeof _args[i] === "number") {
-                _.add = _args[i++];
-            }
             this.args = timbre.fn.valist.call(this, _args.slice(i));
             
             _.prev_preGain  = undefined;
@@ -4565,12 +4519,6 @@ var timbre = (function(context, timbre) {
             _.src  = (typeof _args[i] === "string" ) ? _args[i++] : "";
             _.loop = (typeof _args[i] === "boolean") ? _args[i++] : false;
             
-            if (typeof _args[i] === "number") {
-                _.mul = _args[i++];
-            }
-            if (typeof _args[i] === "number") {
-                _.add = _args[i++];
-            }
             if (typeof _args[i] === "function") {
                 if (_.loop) {
                     this.onlooped = _args[i++];
@@ -5103,12 +5051,6 @@ var timbre = (function(context, timbre) {
             _.start    = (typeof _args[i] === "number") ? _args[i++] : 0;
             _.stop     = (typeof _args[i] === "number") ? _args[i++] : 1;
             
-            if (typeof _args[i] === "number") {
-                _.mul = _args[i++];
-            }
-            if (typeof _args[i] === "number") {
-                _.add = _args[i++];
-            }
             if (typeof _args[i] === "function") {
                 this.onchanged = _args[i++];
             }
@@ -5131,8 +5073,7 @@ var timbre = (function(context, timbre) {
             newone._.duration = _.duration;
             newone._.start = _.start;
             newone._.stop  = _.stop;
-            newone._.mul = _.mul;
-            newone._.add = _.add;
+            timbre.fn.copy_for_clone(this, newone, deep);
             return newone;
         };
         
@@ -5416,12 +5357,6 @@ var timbre = (function(context, timbre) {
             _.duration = (typeof _args[i] === "number") ? _args[i++] : 1000;
             _.value    = (typeof _args[i] === "number") ? _args[i++] : 0;
             
-            if (typeof _args[i] === "number") {
-                _.mul = _args[i++];
-            }
-            if (typeof _args[i] === "number") {
-                _.add = _args[i++];
-            }
             if (typeof _args[i] === "function") {
                 this.onchanged = _args[i++];
             }
@@ -5445,8 +5380,7 @@ var timbre = (function(context, timbre) {
             newone._.duration = _.duration;
             newone._.start = _.start;
             newone._.stop  = _.stop;
-            newone._.mul = _.mul;
-            newone._.add = _.add;
+            timbre.fn.copy_for_clone(this, newone, deep);
             return newone;
         };
         
