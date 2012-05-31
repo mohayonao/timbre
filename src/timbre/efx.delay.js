@@ -138,7 +138,6 @@ var EfxDelay = (function() {
             mul = _.mul;
             add = _.add;
             
-            // filter
             if (_.ison) {
                 for (i = 0, imax = cell.length; i < imax; ++i) {
                     x = buffer[pointerRead];

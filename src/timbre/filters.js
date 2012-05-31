@@ -78,16 +78,12 @@ var Filter = (function() {
             _.band = timbre(Filter.types[type].default_band);
         }
         
-        if (type === "peaking" || type === "lowboost" || type === "highboost") {
-            if (typeof _args[i] === "object" && _args[i].isKr) {
-                _.gain = _args[i++];
-            } else if (typeof _args[i] === "number") {
-                _.gain = timbre(_args[i++]);
-            } else {
-                _.gain = timbre(Filter.types[type].default_gain);
-            }
+        if (typeof _args[i] === "object" && _args[i].isKr) {
+            _.gain = _args[i++];
+        } else if (typeof _args[i] === "number") {
+            _.gain = timbre(_args[i++]);
         } else {
-            _.gain = timbre(undefined);
+            _.gain = timbre(Filter.types[type].default_gain || 6);
         }
         
         if (typeof _args[i] === "number") {
@@ -158,9 +154,21 @@ var Filter = (function() {
             // filter
             if (_.ison) {
                 type = _.type;
-                freq = _.freq.seq(seq_id)[0];
-                band = _.band.seq(seq_id)[0];
-                gain = _.gain.seq(seq_id)[0];
+                if (_.freq.seq_id === seq_id) {
+                    freq = _.freq.cell[0];
+                } else {
+                    freq = _.freq.seq(seq_id)[0];
+                }
+                if (_.band.seq_id === seq_id) {
+                    band = _.band.cell[0];
+                } else {
+                    band = _.band.seq(seq_id)[0];
+                }
+                if (_.gain.seq_id === seq_id) {
+                    gain = _.gain.cell[0];
+                } else {
+                    gain = _.gain.seq(seq_id)[0];
+                }
                 if (type !== _.prev_type ||
                     freq !== _.prev_freq ||
                     band !== _.prev_band ||
@@ -563,8 +571,16 @@ var ResonantFilter = (function() {
             // filter
             if (_.ison) {
                 mode   = _.mode;
-                cutoff = _.cutoff.seq(seq_id)[0];
-                Q      = _.Q.seq(seq_id)[0];
+                if (_.cutoff.seq_id === seq_id) {
+                    cutoff = _.cutoff.cell[0];
+                } else {
+                    cutoff = _.cutoff.seq(seq_id)[0];
+                }
+                if (_.Q.seq_id === seq_id) {
+                    Q = _.Q.cell[0];
+                } else {
+                    Q = _.Q.seq(seq_id)[0];
+                }
                 if (cutoff !== _.prev_cutoff || Q !== _.prev_Q ) {
                     set_params.call(this, cutoff, Q);
                     _.prev_cutoff = cutoff;
