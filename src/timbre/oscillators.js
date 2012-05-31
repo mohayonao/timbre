@@ -37,7 +37,7 @@ var Oscillator = (function() {
                     }
                 }
             } else if (typeof value === "string") {
-                if ((dx = Oscillator.waves[value]) !== undefined) {
+                if ((dx = Oscillator.Waveforms[value]) !== undefined) {
                     if (typeof dx === "function") dx = dx();
                     this._.wave = dx;
                 }
@@ -175,33 +175,33 @@ var Oscillator = (function() {
         return cell;
     };
     
-    $this.getWavetable = function(name) {
-        var wave = Oscillator.waves[name];
+    $this.getWaveform = function(name) {
+        var wave = Oscillator.Waveforms[name];
         if (wave !== undefined) {
             if (typeof wave === "function") wave = wave();
             return wave;
         }
     };
     
-    $this.setWavetable = function(name, value) {
+    $this.setWaveform = function(name, value) {
         var wave, i;
         if (typeof value === "function") {
             wave = new Float32Array(1024);
             for (i = 0; i < 1024; i++) {
                 wave[i] = value(i / 1024);
             }
-            Oscillator.waves[name] = wave;
+            Oscillator.Waveforms[name] = wave;
         } else if (typeof value === "object" &&
                    (value instanceof Array || value.buffer instanceof ArrayBuffer)) {
             if (value.length === 1024) {
-                Oscillator.waves[name] = value;
+                Oscillator.Waveforms[name] = value;
             } else {
                 wave = new Float32Array(1024);
                 dx = value.length / 1024;
                 for (i = 0; i < 1024; i++) {
                     wave[i] = value[(i * dx)|0] || 0.0;
                 }
-                Oscillator.waves[name] = value;
+                Oscillator.Waveforms[name] = value;
             }
         }
     };
@@ -210,8 +210,8 @@ var Oscillator = (function() {
 }());
 timbre.fn.register("osc", Oscillator);
 
-Oscillator.waves = {};
-Oscillator.waves["sin"] = function() {
+Oscillator.Waveforms = {};
+Oscillator.Waveforms["sin"] = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -219,7 +219,7 @@ Oscillator.waves["sin"] = function() {
     }
     return l;
 };
-Oscillator.waves["+sin"] = function() {
+Oscillator.Waveforms["+sin"] = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -227,7 +227,7 @@ Oscillator.waves["+sin"] = function() {
     }
     return l;
 };
-Oscillator.waves["cos"] = function() {
+Oscillator.Waveforms["cos"] = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -235,7 +235,7 @@ Oscillator.waves["cos"] = function() {
     }
     return l;
 };
-Oscillator.waves["+cos"] = function() {
+Oscillator.Waveforms["+cos"] = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -243,7 +243,7 @@ Oscillator.waves["+cos"] = function() {
     }
     return l;
 };
-Oscillator.waves["pulse"] = function() {
+Oscillator.Waveforms["pulse"] = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -251,7 +251,7 @@ Oscillator.waves["pulse"] = function() {
     }
     return l;
 };
-Oscillator.waves["+pulse"] = function() {
+Oscillator.Waveforms["+pulse"] = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -259,7 +259,7 @@ Oscillator.waves["+pulse"] = function() {
     }
     return l;
 };
-Oscillator.waves["tri"] = function() {
+Oscillator.Waveforms["tri"] = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -268,7 +268,7 @@ Oscillator.waves["tri"] = function() {
     }
     return l;
 };
-Oscillator.waves["+tri"] = function() {
+Oscillator.Waveforms["+tri"] = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -277,7 +277,7 @@ Oscillator.waves["+tri"] = function() {
     }
     return l;
 };
-Oscillator.waves["sawup"] = function() {
+Oscillator.Waveforms["sawup"] = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -286,7 +286,7 @@ Oscillator.waves["sawup"] = function() {
     }
     return l;
 };
-Oscillator.waves["+sawup"] = function() {
+Oscillator.Waveforms["+sawup"] = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -295,9 +295,9 @@ Oscillator.waves["+sawup"] = function() {
     }
     return l;
 };
-Oscillator.waves["saw"]  = Oscillator.waves["sawup"];
-Oscillator.waves["+saw"] = Oscillator.waves["+sawup"];
-Oscillator.waves["sawdown"] = function() {
+Oscillator.Waveforms["saw"]  = Oscillator.Waveforms["sawup"];
+Oscillator.Waveforms["+saw"] = Oscillator.Waveforms["+sawup"];
+Oscillator.Waveforms["sawdown"] = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -306,7 +306,7 @@ Oscillator.waves["sawdown"] = function() {
     }
     return l;
 };
-Oscillator.waves["+sawdown"] = function() {
+Oscillator.Waveforms["+sawdown"] = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -315,7 +315,7 @@ Oscillator.waves["+sawdown"] = function() {
     }
     return l;
 };
-Oscillator.waves["fami"] = function() {
+Oscillator.Waveforms["fami"] = function() {
     var l, d, x, i, j;
     d = [ +0.000, +0.125, +0.250, +0.375, +0.500, +0.625, +0.750, +0.875,
           +0.875, +0.750, +0.625, +0.500, +0.375, +0.250, +0.125, +0.000,
@@ -327,7 +327,7 @@ Oscillator.waves["fami"] = function() {
     }
     return l;
 };
-Oscillator.waves["konami"] = function() {
+Oscillator.Waveforms["konami"] = function() {
     var l, d, x, i, j;
         d = [-0.625, -0.875, -0.125, +0.750, + 0.500, +0.125, +0.500, +0.750,
              +0.250, -0.125, +0.500, +0.875, + 0.625, +0.000, +0.250, +0.375,
