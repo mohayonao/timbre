@@ -25,8 +25,8 @@ EJS_VIEW = """
   <head>
     <meta charset="utf-8" />
     <title>timbre : test <%= js %></title>
-    <link type="text/css" media="screen" rel="stylesheet" href="/css/test.css" />
-    <link type="text/css" media="screen" rel="stylesheet" href="/css/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="/public/css/test.css" />
+    <link type="text/css" rel="stylesheet" href="/public/css/prettify.css" />
   </head>
   <body>
     <canvas id="waveviewer"></canvas>
@@ -34,9 +34,9 @@ EJS_VIEW = """
   </body>
   <script type="text/javascript" src="/timbre.js"></script>
   <script type="text/javascript" src="/<%= js %>"></script>
-  <script type="text/javascript" src="/js/waveviewer.js"></script>
-  <script type="text/javascript" src="/js/prettify.js"></script>
-  <script type="text/javascript" src="/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/public/js/waveviewer.js"></script>
+  <script type="text/javascript" src="/public/js/prettify.js"></script>
+  <script type="text/javascript" src="/public/js/jquery.min.js"></script>
 
   <script type="text/javascript">
   var s = [];
@@ -54,7 +54,7 @@ EJS_VIEW = """
 
       timbre.amp = 0.5;
       tests.forEach(function(x, i) {
-          var synth, src, pre;
+          var synth, pre;
 
           synth = x.call(null);
 
@@ -84,15 +84,7 @@ EJS_VIEW = """
               })) timbre.off();
           });
 
-          src = x.toString().split("\\n");
-          src = src.slice(1, src.length-1).map(function(x) {
-              return (timbre.env === "webkit") ? x.substr(8) : x.substr(4);
-          });
-          if (src[0] === '"use strict";') src.shift();
-          src[src.length-1] = src[src.length-1].replace(/^return /, "");
-          src = src.join("\\n");
-
-          pre = $("<pre>").text(src).addClass("prettyprint");
+          pre = $("<pre>").text(x.toString()).addClass("prettyprint");
 
           $("<div>")
             .append($("<h3>").text("s[" + i + "]: " + x.desc||""))
