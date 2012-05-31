@@ -24,13 +24,13 @@ EJS_VIEW = """
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>timbre : test <%= js %></title>
+    <title>test: <%= js %></title>
     <link type="text/css" rel="stylesheet" href="/public/css/test.css" />
     <link type="text/css" rel="stylesheet" href="/public/css/prettify.css" />
   </head>
   <body>
     <canvas id="waveviewer"></canvas>
-    <section id="body"><h1>test <%= js %></h1><div id="tests"></div></section>
+    <section id="body"><h1>test: <%= js %></h1><div id="tests"></div></section>
   </body>
   <script type="text/javascript" src="/timbre.js"></script>
   <script type="text/javascript" src="/<%= js %>"></script>
