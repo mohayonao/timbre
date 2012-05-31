@@ -1,6 +1,6 @@
 /**
  * timbre 0.0.0 / JavaScript Library for Objective Sound Programming
- * build: Thu, 31 May 2012 10:55:10 GMT
+ * build: Thu, 31 May 2012 22:34:16 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,7 +10,7 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.0.0";
-    timbre.BUILD      = "Thu, 31 May 2012 10:55:10 GMT";
+    timbre.BUILD      = "Thu, 31 May 2012 22:34:16 GMT";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.workerpath = "";
@@ -4920,185 +4920,110 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * Easing: 0.0.0
-     * [kr-only]
+     * EasingBasis: 0.0.0
      */
-    var Easing = (function() {
-        var Easing = function() {
-            initialize.apply(this, arguments);
-        }, $this = Easing.prototype;
-        
-        timbre.fn.setPrototypeOf.call($this, "kr-only");
-        
-        Object.defineProperty($this, "type", {
-            set: function(value) {
-                var f;
-                if (typeof value === "string") {
-                    if ((f = Easing.functions[value]) !== undefined) {
-                        this._.type = value;
-                        this._.func = f;
+    var EasingBasis = {
+        setPrototype: function() {
+            Object.defineProperty(this, "type", {
+                set: function(value) {
+                    var f;
+                    if (typeof value === "string") {
+                        if ((f = EasingBasis.Functions[value]) !== undefined) {
+                            this._.type = value;
+                            this._.func = f;
+                        }
+                    } else if (typeof value === "function") {
+                        this._.type = "function";
+                        this._.func = value;
                     }
-                } else if (typeof value === "function") {
-                    this._.type = "function";
-                    this._.func = value;
-                }
-            },
-            get: function() { return this._.type; }
-        });
-        Object.defineProperty($this, "delay", {
-            set: function(value) {
-                if (typeof value === "number") {
-                    this._.delay = value;
-                }
-            },
-            get: function() { return this._.delay; }
-        });
-        Object.defineProperty($this, "duration", {
-            set: function(value) {
-                if (typeof value === "number") {
-                    this._.duration = value;
-                }
-            },
-            get: function() { return this._.duration; }
-        });
-        Object.defineProperty($this, "start", {
-            set: function(value) {
-                if (typeof value === "number") {
-                    this._.start = value;
-                }
-            },
-            get: function() { return this._.start; }
-        });
-        Object.defineProperty($this, "stop", {
-            set: function(value) {
-                if (typeof value === "number") {
-                    this._.stop = value;
-                }
-            },
-            get: function() { return this._.stop; }
-        });
-        Object.defineProperty($this, "value", {
-            get: function() { return this._.value; }
-        });
-        Object.defineProperty($this, "currentTime", {
-            get: function() { return this._.currentTime; }
-        });
-        
-        var initialize = function(_args) {
-            var i, _;
-            
-            this._ = _ = {};
-            
-            i = 0;
-            if (typeof _args[i] === "string" &&
-                (Easing.functions[_args[i]]) !== undefined) {
-                this.type = _args[i++];
-            } else if (typeof _args[i] === "function") {
-                this.type = _args[i++];
-            } else {
-                this.type = "linear";
-            }
-            _.duration = (typeof _args[i] === "number") ? _args[i++] : 1000;
-            _.start    = (typeof _args[i] === "number") ? _args[i++] : 0;
-            _.stop     = (typeof _args[i] === "number") ? _args[i++] : 1;
-            
-            if (typeof _args[i] === "function") {
-                this.onchanged = _args[i++];
-            }
-            
-            _.delay = 0;
-            
-            _.status  = -1;
-            _.value   =  0;
-            _.samples = Infinity;
-            _.x0 = 0;
-            _.dx = 0;
-            _.currentTime = 0;
-        };
-        
-        $this.clone = function(deep) {
-            var newone, _ = this._;
-            newone = timbre("ease");
-            newone._.type = _.type;
-            newone._.func = _.func;
-            newone._.duration = _.duration;
-            newone._.start = _.start;
-            newone._.stop  = _.stop;
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
-        };
-        
-        $this.bang = function() {
-            var _ = this._;
-            
-            _.status = 0;
-            _.value  = 0;
-            _.samples = (timbre.samplerate * (_.delay / 1000))|0;
-            _.x0 = 0; _.dx = 0;
-            _.currentTime = 0;
-            
-            timbre.fn.do_event(this, "bang");
-            return this;
-        };
-        
-        $this.seq = function(seq_id) {
-            var _ = this._;
-            var cell, x, value, i, imax;
-            
-            if (!_.ison) return timbre._.none;
-            
-            cell = this.cell;
-            if (seq_id !== this.seq_id) {
-                this.seq_id = seq_id;
-                while (_.samples <= 0) {
-                    if (_.status === 0) {
-                        _.status = 1;
-                        _.samples = (timbre.samplerate * (_.duration / 1000))|0;
-                        _.x0 = 0;
-                        _.dx = timbre.cellsize / _.samples;
-                        continue;
+                },
+                get: function() { return this._.type; }
+            });
+            Object.defineProperty(this, "delay", {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        this._.delay = value;
                     }
-                    if (_.status === 1) {
-                        _.status = -1;
-                        _.samples = Infinity;
-                        _.x0 = 1;
-                        _.dx = 0;
-                        timbre.fn.do_event(this, "ended");
-                        continue;
+                },
+                get: function() { return this._.delay; }
+            });
+            Object.defineProperty(this, "duration", {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        this._.duration = value;
                     }
-                }
-                x = (_.status !== 0) ? _.func(_.x0) : 0;
+                },
+                get: function() { return this._.duration; }
+            });
+            Object.defineProperty(this, "currentTime", {
+                get: function() { return this._.currentTime; }
+            });
+            
+            this.seq = function(seq_id) {
+                var _ = this._;
+                var cell, x, value, i, imax;
                 
-                value = (x * (_.stop - _.start) + _.start) * _.mul + _.add;
-                for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
-                    cell[i] = value;
+                if (!_.ison) return timbre._.none;
+                
+                cell = this.cell;
+                if (seq_id !== this.seq_id) {
+                    this.seq_id = seq_id;
+                    while (_.samples <= 0) {
+                        if (_.status === 0) {
+                            _.status = 1;
+                            _.samples = (timbre.samplerate * (_.duration / 1000))|0;
+                            _.x0 = 0;
+                            _.dx = timbre.cellsize / _.samples;
+                            continue;
+                        }
+                        if (_.status === 1) {
+                            _.status = 2;
+                            _.samples = Infinity;
+                            _.x0 = 1;
+                            _.dx = 0;
+                            x = _.func(1);
+                            _.value = (x * (_.stop-_.start) + _.start) * _.mul + _.add;
+                            timbre.fn.do_event(this, "ended");
+                            continue;
+                        }
+                    }
+                    if (_.status !== 2) {
+                        x = (_.status === 1) ? _.func(_.x0) : 0;
+                        value = (x * (_.stop - _.start) + _.start) * _.mul + _.add;
+                        for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                            cell[i] = value;
+                        }
+                        if (_.status === 1) {
+                            timbre.fn.do_event(this, "changed", [value]);
+                        }
+                        _.value = value;
+                        _.x0 += _.dx;
+                        _.samples -= imax;
+                    } else {
+                        value = _.value;
+                        for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                            cell[i] = value;
+                        }
+                    }
+                    _.currentTime += imax * 1000 / timbre.samplerate;
                 }
-                if (_.status === 1) {
-                    timbre.fn.do_event(this, "changed", [value]);
+                return cell;
+            };
+            
+            this.getFunction = function(name) {
+                return EasingBasis.Functions[name];
+            };
+            
+            this.setFunction = function(name, func) {
+                if (typeof func === "function") {
+                    EasingBasis.Functions[name] = func;
                 }
-                _.value = value;
-                _.x0 += _.dx;
-                _.samples -= imax;
-                _.currentTime += imax * 1000 / timbre.samplerate;
-            }
-            return cell;
-        };
-        
-        $this.getFunction = function(name) {
-            return Easing.functions[name];
-        };
-        
-        $this.setFunction = function(name, func) {
-            if (typeof func === "function") {
-                Easing.functions[name] = func;
-            }
-        };
-        
-        return Easing;
-    }());
-    timbre.fn.register("ease", Easing);
-    
-    Easing.functions = {
+            };
+            
+            return this;
+        }
+    };
+    EasingBasis.Functions = {
         "linear": function(k) {
             return k;
         },
@@ -5212,7 +5137,7 @@ var timbre = (function(context, timbre) {
     		return 0.5 * ( ( k -= 2 ) * k * ( ( s + 1 ) * k + s ) + 2 );
         },
         "bounce.in": function(k) {
-    		return 1 - Easing.functions["bounce.out"]( 1 - k );
+    		return 1 - EasingBasis.Functions["bounce.out"]( 1 - k );
         },
         "bounce.out": function(k) {
     		if ( k < ( 1 / 2.75 ) ) {
@@ -5226,10 +5151,104 @@ var timbre = (function(context, timbre) {
     		}
         },
         "bounce.inout": function(k) {
-    		if ( k < 0.5 ) return Easing.functions["bounce.in"]( k * 2 ) * 0.5;
-    		return Easing.functions["bounce.out"]( k * 2 - 1 ) * 0.5 + 0.5;
+    		if ( k < 0.5 ) return EasingBasis.Functions["bounce.in"]( k * 2 ) * 0.5;
+    		return EasingBasis.Functions["bounce.out"]( k * 2 - 1 ) * 0.5 + 0.5;
         },
     };
+    
+    
+    /**
+     * Easing: 0.0.0
+     * [kr-only]
+     */
+    var Easing = (function() {
+        var Easing = function() {
+            initialize.apply(this, arguments);
+        }, $this = EasingBasis.setPrototype.call(Easing.prototype);
+        
+        timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
+        Object.defineProperty($this, "start", {
+            set: function(value) {
+                if (typeof value === "number") {
+                    this._.start = value;
+                }
+            },
+            get: function() { return this._.start; }
+        });
+        Object.defineProperty($this, "stop", {
+            set: function(value) {
+                if (typeof value === "number") {
+                    this._.stop = value;
+                }
+            },
+            get: function() { return this._.stop; }
+        });
+        Object.defineProperty($this, "value", {
+            get: function() { return this._.value; }
+        });
+        
+        var initialize = function(_args) {
+            var i, _;
+            
+            this._ = _ = {};
+            
+            i = 0;
+            if (typeof _args[i] === "string" &&
+                (EasingBasis.Functions[_args[i]]) !== undefined) {
+                this.type = _args[i++];
+            } else if (typeof _args[i] === "function") {
+                this.type = _args[i++];
+            } else {
+                this.type = "linear";
+            }
+            _.duration = (typeof _args[i] === "number") ? _args[i++] : 1000;
+            _.start    = (typeof _args[i] === "number") ? _args[i++] : 0;
+            _.stop     = (typeof _args[i] === "number") ? _args[i++] : 1;
+            
+            if (typeof _args[i] === "function") {
+                this.onchanged = _args[i++];
+            }
+            
+            _.delay = 0;
+            
+            _.status  = -1;
+            _.value   =  0;
+            _.samples = Infinity;
+            _.x0 = 0;
+            _.dx = 0;
+            _.currentTime = 0;
+        };
+        
+        $this.clone = function(deep) {
+            var newone, _ = this._;
+            newone = timbre("ease");
+            newone._.type = _.type;
+            newone._.func = _.func;
+            newone._.duration = _.duration;
+            newone._.value = _.value;
+            newone._.start = _.start;
+            newone._.stop  = _.stop;
+            timbre.fn.copy_for_clone(this, newone, deep);
+            return newone;
+        };
+        
+        $this.bang = function() {
+            var _ = this._;
+            
+            _.status = 0;
+            _.value  = 0;
+            _.samples = (timbre.samplerate * (_.delay / 1000))|0;
+            _.x0 = 0; _.dx = 0;
+            _.currentTime = 0;
+            
+            timbre.fn.do_event(this, "bang");
+            return this;
+        };
+        
+        return Easing;
+    }());
+    timbre.fn.register("ease", Easing);
     
     
     /**
@@ -5239,41 +5258,10 @@ var timbre = (function(context, timbre) {
     var Glide = (function() {
         var Glide = function() {
             initialize.apply(this, arguments);
-        }, $this = Glide.prototype;
+        }, $this = EasingBasis.setPrototype.call(Glide.prototype);
         
         timbre.fn.setPrototypeOf.call($this, "kr-only");
         
-        Object.defineProperty($this, "type", {
-            set: function(value) {
-                var f;
-                if (typeof value === "string") {
-                    if ((f = Easing.functions[value]) !== undefined) {
-                        this._.type = value;
-                        this._.func = f;
-                    }
-                } else if (typeof value === "function") {
-                    this._.type = "function";
-                    this._.func = value;
-                }
-            },
-            get: function() { return this._.type; }
-        });
-        Object.defineProperty($this, "delay", {
-            set: function(value) {
-                if (typeof value === "number") {
-                    this._.delay = value;
-                }
-            },
-            get: function() { return this._.delay; }
-        });
-        Object.defineProperty($this, "duration", {
-            set: function(value) {
-                if (typeof value === "number") {
-                    this._.duration = value;
-                }
-            },
-            get: function() { return this._.duration; }
-        });
         Object.defineProperty($this, "value", {
             set: function(value) {
                 var _ = this._;
@@ -5287,9 +5275,6 @@ var timbre = (function(context, timbre) {
             },
             get: function() { return this._.value; }
         });
-        Object.defineProperty($this, "currentTime", {
-            get: function() { return this._.currentTime; }
-        });
         
         var initialize = function(_args) {
             var i, _;
@@ -5298,7 +5283,7 @@ var timbre = (function(context, timbre) {
             
             i = 0;
             if (typeof _args[i] === "string" &&
-                (Easing.functions[_args[i]]) !== undefined) {
+                (EasingBasis.Functions[_args[i]]) !== undefined) {
                 this.type = _args[i++];
             } else if (typeof _args[i] === "function") {
                 this.type = _args[i++];
@@ -5314,12 +5299,11 @@ var timbre = (function(context, timbre) {
             
             _.delay = 0;
             
-            _.status  = -1;
-            _.start   =  0;
-            _.stop    =  0;
+            _.status = -1;
+            _.start  = _.value;
+            _.stop   = _.value;
             _.samples = Infinity;
-            _.x0 = 0;
-            _.dx = 0;
+            _.x0 = 0; _.dx = 0;
             _.currentTime = 0;
         };
         
@@ -5329,8 +5313,9 @@ var timbre = (function(context, timbre) {
             newone._.type = _.type;
             newone._.func = _.func;
             newone._.duration = _.duration;
-            newone._.start = _.start;
-            newone._.stop  = _.stop;
+            newone._.value = _.value;
+            newone._.start = _.value;
+            newone._.stop  = _.value;
             timbre.fn.copy_for_clone(this, newone, deep);
             return newone;
         };
@@ -5349,65 +5334,11 @@ var timbre = (function(context, timbre) {
             return this;
         };
         
-        $this.seq = function(seq_id) {
-            var _ = this._;
-            var cell, x, value, i, imax;
-            
-            if (!_.ison) return timbre._.none;
-            
-            cell = this.cell;
-            if (seq_id !== this.seq_id) {
-                this.seq_id = seq_id;
-                while (_.samples <= 0) {
-                    if (_.status === 0) {
-                        _.status = 1;
-                        _.samples = (timbre.samplerate * (_.duration / 1000))|0;
-                        _.x0 = 0;
-                        _.dx = timbre.cellsize / _.samples;
-                        continue;
-                    }
-                    if (_.status === 1) {
-                        _.status = -1;
-                        _.samples = Infinity;
-                        _.x0 = 1;
-                        _.dx = 0;
-                        timbre.fn.do_event(this, "ended");
-                        continue;
-                    }
-                }
-                x = (_.status !== 0) ? _.func(_.x0) : 0;
-                
-                value = (x * (_.stop - _.start) + _.start) * _.mul + _.add;
-                for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
-                    cell[i] = value;
-                }
-                if (_.status === 1) {
-                    timbre.fn.do_event(this, "changed", [value]);
-                }
-                _.value = value;
-                _.x0 += _.dx;
-                _.samples -= imax;
-                _.currentTime += imax * 1000 / timbre.samplerate;
-            }
-            return cell;
-        };
-        
-        $this.getFunction = function(name) {
-            return Easing.functions[name];
-        };
-        
-        $this.setFunction = function(name, func) {
-            if (typeof func === "function") {
-                Easing.functions[name] = func;
-            }
-        };
-        
         return Glide;
     }());
     timbre.fn.register("glide", Glide);
     
     
-    
     /**
      * DspRecord: 0.0.0
      * Record sound into a buffer
@@ -5543,137 +5474,248 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * DspRecord: 0.0.0
-     * Record sound into a buffer
+     * FFT: 0.0.0
+     * Fast Fourier transform
      * [ar-only]
      */
-    var DspRecord = (function() {
-        var DspRecord = function() {
+    var FFT = (function() {
+        var FFT = function() {
             initialize.apply(this, arguments);
-        }, $this = DspRecord.prototype;
+        }, $this = FFT.prototype;
+        
+        var PI2 = Math.PI * 2;
         
         timbre.fn.setPrototypeOf.call($this, "ar-only");
-    
-        Object.defineProperty($this, "buffer", {
-            get: function() { return this._.buffer; }
+        
+        Object.defineProperty($this, "size", {
+            get: function() { return this._.buffersize >> 1; }
         });
-        Object.defineProperty($this, "recTime", {
+        Object.defineProperty($this, "window", {
             set: function(value) {
-                var _ = this._;
-                if (typeof value === "number" && value > 0) {
-                    _.recTime = value;
-                    _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
+                var f;
+                if (typeof value === "string") {
+                    if ((f = FFT.WindowFunctions[value]) !== undefined) {
+                        this._.window = value;
+                        this._.windowfunc = f;
+                    }
+                } else if (typeof value === "function") {
+                    this._.window = "function";
+                    this._.windowfunc = value;
                 }
             },
-            get: function() { return this._.recTime; }
+            get: function() { return this._.window; }
         });
-        Object.defineProperty($this, "currentTime", {
-            get: function() { return this._.index / timbre.samplerate * 1000; }
-        });
-        Object.defineProperty($this, "isRecording", {
-            get: function() { return this._.ison; }
+        Object.defineProperty($this, "interval", {
+            set: function(value) {
+                var _ = this._;
+                if (typeof value === "number") {
+                    _.interval = value;
+                    _.interval_samples = (timbre.samplerate * (value / 1000))|0;
+                    if (_.interval_samples < _.buffersize) {
+                        _.interval_samples = _.buffersize;
+                        _.interval = _.buffersize * timbre.samplerate / 1000;
+                    }
+                }
+            },
+            get: function() { return this._.interval; }
         });
         
         var initialize = function(_args) {
-            var i, _;
+            var n, i, _;
+            var sintable, costable, k;
             
             this._ = _ = {};
-            
+    
             i = 0;
-            if (typeof _args[i] === "number" && _args[i] > 0) {
-                _.recTime = _args[i++];
-            } else {
-                _.recTime = 1000;
-            }
-            if (typeof _args[i] === "function") {
-                this.onrecorded = _args[i++];
-            }
-            this.args = timbre.fn.valist.call(this, _args.slice(i));
+            n = (typeof _args[i] === "number") ? _args[i++] : 512;
+            if (n < 256) n = 256;
+            else if (2048 < n) n = 2048;
+            n = 1 << Math.ceil(Math.log(n) * Math.LOG2E);
             
-            _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
-            _.index  = _.currentTime = 0;
-        };
-        
-        $this.on = function() {
-            this._.ison = true;
-            timbre.fn.do_event(this, "on");
-            return this;
-        };
-        $this.off = function() {
-            if (this._.ison) {
-                onrecorded.call(this);
+            if (typeof _args[i] === "string" &&
+                (FFT.WindowFunctions[_args[i]]) !== undefined) {
+                this.window = _args[i++];
+            } else {
+                this.window = "Hann";
             }
-            this._.ison = false;
-            timbre.fn.do_event(this, "off");
-            return this;
-        };
-        $this.bang = function() {
-            var buffer, i, _ = this._;
-            _.index = _.currentTime = 0;
-            buffer = _.buffer;
-            for (i = _.buffer.length; i--; ) {
-                buffer[i] = 0.0;
+            
+            if (typeof _args[i] === "function") {
+                this.onfft = _args[i++];
             }
-            timbre.fn.do_event(this, "bang");
-            return this;
+            
+            timbre.fn.valist.call(this, _args.slice(i));
+            
+            this.interval = 100;
+            _.status   = 0;
+            _.samples  = 0;
+            _.buffersize = n;
+            _.samplerate = timbre.samplerate;
+            _.buffer = new Float32Array(n);
+            _.index  = 0;
+    
+            _.real = new Float32Array(n);
+            _.imag = new Float32Array(n);
+            
+            _.bitrev = (function() {
+                var x, i, j, k, n2;
+                x = new Int16Array(n);
+                n2 = n >> 1;
+                i = j = 0;
+                for (;;) {
+                    x[i] = j;
+                    if (++i >= n) break;
+                    k = n2;
+                    while (k <= j) { j -= k; k >>= 1; }
+                    j += k;
+                }
+                return x;
+            }());
+            
+            k = Math.floor(Math.log(n) / Math.LN2);
+            sintable = new Float32Array((1<<k)-1);
+            costable = new Float32Array((1<<k)-1);
+            
+            for (i = sintable.length; i--; ) {
+                sintable[i] = Math.sin(PI2 * (i / n));
+                costable[i] = Math.cos(PI2 * (i / n));
+            }
+            _.sintable = sintable;
+            _.costable = costable;
         };
-        
-        var onrecorded = function() {
-            var _ = this._;
-            timbre.fn.do_event(this, "recorded", [{
-                buffer:_.buffer.subarray(0, _.index)
-            }]);
+    
+        $this.clone = function(deep) {
+            var newone, _ = this._;
+            newone = timbre("fft", _.buffersize);
+            newone._.window     = _.window;
+            newone._.windowfunc = _.windowfunc;
+            newone._.interval   = _.interval;
+            newone._.interval_samples = _.interval_samples;
+            return newone;
         };
         
         $this.seq = function(seq_id) {
             var _ = this._;
-            var args, cell;
-            var buffer, index;
-            var mul, add;
-            var tmp, i, imax, j, jmax;
+            var args, cell, amp, center;
+            var tmp, i, j, jmax;
+            var buffer, buffersize;
             
             cell = this.cell;
             if (seq_id !== this.seq_id) {
                 this.seq_id = seq_id;
-                buffer = _.buffer;
-                index  = _.index;
-                mul  = _.mul;
-                add  = _.add;
-                jmax = timbre.cellsize;
-                for (j = jmax; j--; ) {
-                    cell[j] = 0;
-                }
                 args = this.args.slice(0);
-                for (i = 0, imax = args.length; i < imax; ++i) {
+                for (j = jmax = cell.length; j--; ) {
+                    cell[j] = 0.0;
+                }
+                for (i = args.length; i--; ) {
                     tmp = args[i].seq(seq_id);
-                    
                     for (j = jmax; j--; ) {
                         cell[j] += tmp[j];
                     }
                 }
-                if (_.ison) {
-                    for (j = 0; j < jmax; ++j) {
-                        buffer[index++] = cell[j];
-                        cell[j] = cell[j] * mul + add;
+                
+                buffer     = _.buffer;
+                buffersize = _.buffersize;
+                
+                for (j = 0; j < jmax; ++j) {
+                    if (_.samples <= 0) {
+                        if (_.status === 0) {
+                            _.status = 1;
+                            _.samples += _.interval_samples;
+                            _.index = 0;
+                        }
                     }
-                    if (index >= buffer.length) {
-                        _.ison = false;
-                        onrecorded.call(this);
-                        timbre.fn.do_event(this, "ended");
+                    if (_.status === 1) {
+                        buffer[_.index++] = cell[j];
+                        if (buffersize <= _.index) {
+                            if (_.ison) {
+                                process.call(this, buffer);
+                            }
+                            _.status = 0;
+                        }
                     }
-                    _.index = index;
-                } else {
-                    for (j = jmax; j--; ) {
-                        cell[j] = cell[j] * mul + add;
-                    }
+                    --_.samples;
                 }
             }
             return cell;
         };
         
-        return DspRecord;
+        var process = function(buffer) {
+            var _ = this._;
+            var bitrev, real, imag;
+            var sintable, costable, windowfunc;
+            var i, j, n, k, k2, h, d, c, s, ik, dx, dy;
+            
+            bitrev = _.bitrev;
+            real   = _.real;
+            imag   = _.imag;
+            sintable = _.sintable;
+            costable = _.costable;
+            windowfunc = _.windowfunc;
+            n = _.buffersize;
+    
+            for (i = n; i--; ) {
+                buffer[i] *= windowfunc(i / n);
+            }        
+            
+            for (i = n; i--; ) {
+                real[i] = buffer[bitrev[i]];
+                imag[i] = 0.0;
+            }
+            
+            for (k = 1; k < n; k = k2) {
+                h = 0; k2 = k + k; d = n / k2;
+                for (j = 0; j < k; j++) {
+                    c = costable[h];
+                    s = sintable[h];
+                    for (i = j; i < n; i += k2) {
+                        ik = i + k;
+                        dx = s * imag[ik] + c * real[ik];
+                        dy = c * imag[ik] - s * real[ik];
+                        real[ik] = real[i] - dx; real[i] += dx;
+                        imag[ik] = imag[i] - dy; imag[i] += dy;
+                    }
+                    h += d;
+                }
+            }
+            
+            timbre.fn.do_event(this, "fft", [real, imag]);
+        };
+        
+        $this.spectrum = function(list, real, imag) {
+            var n, i, rval, ival, mag, bSi;
+            var sqrt = Math.sqrt;
+            n = real.length >> 1;
+            bSi = this._.buffersize;
+            for (i = n; i--; ) {
+                rval = real[i];
+                ival = imag[i];
+                mag  = bSi * sqrt(rval * rval + ival * ival);
+                list[i] = mag;
+            }
+            return list;
+        };
+        
+        $this.getWindowFunction = function(name) {
+            return FFT.WindowFunctions[name];
+        };
+        
+        $this.setWindowFunction = function(name, func) {
+            if (typeof value === "function") {
+                FFT.WindowFunctions[name] = func;
+            }
+        };
+        
+        return FFT;
     }());
-    timbre.fn.register("rec", DspRecord);
+    timbre.fn.register("fft", FFT);
+    
+    FFT.WindowFunctions = {};
+    (function() {
+        var PI2 = Math.PI * 2;
+        FFT.WindowFunctions["Hann"] = function(x) {
+            return 0.5 * (1 - Math.cos(PI2 * x));
+        };
+    }());
     
     
     /**
