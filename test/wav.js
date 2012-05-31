@@ -4,22 +4,42 @@ tests = (function() {
     timbre.workerpath = "/timbre.js";
     
     var i = 0, tests = [];
-
-    var wav = T("wav", "/audio/sample.wav").load(function() {
-        console.log("loaded!");
-    });
     
     tests[i] = function() {
-        var synth, env;
-            
-        synth = wav;
-        
-        // synth.onplay  = synth.onon   = function() { t.on() ; };
-        // synth.onpause = synth.onoff  = function() { t.off(); };
-        // synth.onbang  = function() { wav.bang(); };
-        
-        return synth;
+        var synth;
+        synth = T("wav", "/audio/amen.wav", true);
+        synth.onerror = function(res) {
+            console.log("error", res);
+        };
+        synth.onloadend = function(res) {
+            console.log("loadend", res);
+        };
+        return synth.load();
     }; tests[i++].desc = "wav";
+    
+    tests[i] = function() {
+        var synth = T("+");
+        synth.onplay = function() {
+            synth.args[0] = s[0].slice(500, 1500);
+        };
+        return synth;
+    }; tests[i++].desc = "wav#slice()";
+    
+    tests[i] = function() {
+        var synth = T("+");
+        synth.onplay = function() {
+            synth.args[0] = s[0].clone().set("reversed", true);
+        };
+        return synth;
+    }; tests[i++].desc = "reversed wav";
+    
+    tests[i] = function() {
+        var synth = T("+");
+        synth.onplay = function() {
+            synth.args[0] = s[0].slice(2500, 1500);
+        };
+        return synth;
+    }; tests[i++].desc = "reversed slice";
     
     return tests;
 }());

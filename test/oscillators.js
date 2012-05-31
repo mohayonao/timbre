@@ -79,5 +79,11 @@ tests = (function() {
         return T("func", 3, func, 440).kr();
     }; tests[i++].desc = "control-rate FuncOscillator";
 
+    tests[i] = function() {
+        return T("*", T("sin", 880), T("+tri", 0.8));
+                      
+    }; tests[i++].desc = "constructor: wave, freq, mul, add";
+    
+
     return tests;
 }());
