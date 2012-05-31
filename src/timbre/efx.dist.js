@@ -83,12 +83,6 @@ var EfxDistortion = (function() {
             _.lpfSlope = timbre(1);
         }
         
-        if (typeof _args[i] === "number") {
-            _.mul = _args[i++];
-        }
-        if (typeof _args[i] === "number") {
-            _.add = _args[i++];
-        }
         this.args = timbre.fn.valist.call(this, _args.slice(i));
         
         _.prev_preGain  = undefined;

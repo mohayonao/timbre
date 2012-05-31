@@ -393,17 +393,7 @@ var WhiteNoise = (function() {
     timbre.fn.setPrototypeOf.call($this, "ar-kr");
     
     var initialize = function(_args) {
-        var i, _;
         
-        this._ = _ = {};
-        
-        i = 0;
-        if (typeof _args[i] === "number") {
-            this._.mul = _args[i++];
-        }
-        if (typeof _args[i] === "number") {
-            this._.add = _args[i++];
-        }
     };
     
     $this.clone = function(deep) {
@@ -509,12 +499,7 @@ var FuncOscillator = (function() {
             _.func = DEFAULT_FUNCTION;    
         }
         this.freq = _args[i++];
-        if (typeof _args[i] === "number") {
-            _.mul = _args[i++];    
-        }
-        if (typeof _args[i] === "number") {
-            _.add = _args[i++];    
-        }
+        
         _.saved = new Float32Array(_.numOfSamples);
         _.index = 0;
         _.phase = _.x = 0;

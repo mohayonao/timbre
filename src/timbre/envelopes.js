@@ -118,13 +118,6 @@ var ADSREnvelope = (function() {
         _.sl = (typeof _args[i] === "number") ? _args[i++] : 0;                
         _.r  = (typeof _args[i] === "number") ? _args[i++] : 0;
         
-        if (typeof _args[i] === "number") {
-            _.mul = _args[i++];
-        }
-        if (typeof _args[i] === "number") {
-            _.add = _args[i++];
-        }
-        
         _.delay = 0;
         _.al = 0;
         _.dl = 1;
@@ -141,10 +134,11 @@ var ADSREnvelope = (function() {
     $this.clone = function(deep) {
         var newone, _ = this._;
         var args, i, imax;
-        newone = timbre("adsr", _.a, _.d, _.sl, _.r, _.mul, _.add);
+        newone = timbre("adsr", _.a, _.d, _.sl, _.r);
         newone._.delay = _.delay;
         newone._.s = _.s;
         newone._.reversed = _.reversed;
+        timbre.fn.copy_for_clone(this, newone, deep);
         return newone;
     };
     
@@ -314,12 +308,6 @@ var PercussiveEnvelope = (function() {
         _.iteration = (typeof _args[i] === "number") ? _args[i++] : 0;
         _.decayRate = (typeof _args[i] === "number") ? _args[i++] : 0.2;
         
-        if (typeof _args[i] === "number") {
-            _.mul = _args[i++];
-        }
-        if (typeof _args[i] === "number") {
-            _.add = _args[i++];
-        }
         if (typeof _args[i] === "function") {
             this.onended = _args[i++];
         }
@@ -338,9 +326,10 @@ var PercussiveEnvelope = (function() {
     $this.clone = function(deep) {
         var _ = this._;
         var newone = timbre("perc",
-                            _.duration, _.iteration, _.decayRate, _.mul, _.add);
+                            _.duration, _.iteration, _.decayRate);
         newone._.delay    = _.delay;
         newone._.reversed = _.reversed;
+        timbre.fn.copy_for_clone(this, newone, deep);
         return newone;
     };
     

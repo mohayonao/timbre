@@ -85,13 +85,6 @@ var DspFilter = (function() {
         } else {
             _.gain = timbre(DspFilter.Types[type].default_gain || 6);
         }
-        
-        if (typeof _args[i] === "number") {
-            _.mul = _args[i++];
-        }
-        if (typeof _args[i] === "number") {
-            _.add = _args[i++];
-        }
         this.args = timbre.fn.valist.call(this, _args.slice(i));
         
         _.prev_type = undefined;
@@ -494,13 +487,6 @@ var ResonantFilter = (function() {
         } else {
             _.depth = timbre(0.5);
         }
-        
-        if (typeof _args[i] === "number") {
-            _.mul = _args[i++];
-        }
-        if (typeof _args[i] === "number") {
-            _.add = _args[i++];
-        }
         this.args = timbre.fn.valist.call(this, _args.slice(i));
         
         _.prev_cutoff = undefined;
@@ -649,7 +635,7 @@ timbre.fn.register("rbrf", ResonantFilter, function(_args) {
 // __END__
 
 describe("filter", function() {
-    object_test(Filter, "filter");
+    object_test(DspFilter, "filter");
 });
 describe("rfilter", function() {
     object_test(ResonantFilter, "rfilter");

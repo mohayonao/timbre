@@ -21,12 +21,6 @@ var AudioDecoder = {
         _.src  = (typeof _args[i] === "string" ) ? _args[i++] : "";
         _.loop = (typeof _args[i] === "boolean") ? _args[i++] : false;
         
-        if (typeof _args[i] === "number") {
-            _.mul = _args[i++];
-        }
-        if (typeof _args[i] === "number") {
-            _.add = _args[i++];
-        }
         if (typeof _args[i] === "function") {
             if (_.loop) {
                 this.onlooped = _args[i++];

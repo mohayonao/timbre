@@ -90,12 +90,6 @@ var Easing = (function() {
         _.start    = (typeof _args[i] === "number") ? _args[i++] : 0;
         _.stop     = (typeof _args[i] === "number") ? _args[i++] : 1;
         
-        if (typeof _args[i] === "number") {
-            _.mul = _args[i++];
-        }
-        if (typeof _args[i] === "number") {
-            _.add = _args[i++];
-        }
         if (typeof _args[i] === "function") {
             this.onchanged = _args[i++];
         }
@@ -118,8 +112,7 @@ var Easing = (function() {
         newone._.duration = _.duration;
         newone._.start = _.start;
         newone._.stop  = _.stop;
-        newone._.mul = _.mul;
-        newone._.add = _.add;
+        timbre.fn.copy_for_clone(this, newone, deep);
         return newone;
     };
     
@@ -403,12 +396,6 @@ var Glide = (function() {
         _.duration = (typeof _args[i] === "number") ? _args[i++] : 1000;
         _.value    = (typeof _args[i] === "number") ? _args[i++] : 0;
         
-        if (typeof _args[i] === "number") {
-            _.mul = _args[i++];
-        }
-        if (typeof _args[i] === "number") {
-            _.add = _args[i++];
-        }
         if (typeof _args[i] === "function") {
             this.onchanged = _args[i++];
         }
@@ -432,8 +419,7 @@ var Glide = (function() {
         newone._.duration = _.duration;
         newone._.start = _.start;
         newone._.stop  = _.stop;
-        newone._.mul = _.mul;
-        newone._.add = _.add;
+        timbre.fn.copy_for_clone(this, newone, deep);
         return newone;
     };
     
