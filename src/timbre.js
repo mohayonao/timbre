@@ -27,6 +27,9 @@ timbre._ = { ev:{}, none: new Float32Array(timbre.cellsize) };
 
 var TimbreObject = function() {};
 
+/**
+ * SoundSystem: 0.1.0
+ */
 var SoundSystem = (function() {
     var SoundSystem = function() {
         initialize.apply(this, arguments);
@@ -661,54 +664,30 @@ var NumberWrapper = (function() {
     
     Object.defineProperty($this, "value", {
         set: function(value) {
-            var _ = this._;
-            var cell, i;
             if (typeof value === "number") {
-                _.value = value;
-                value = _.value * _.mul + _.add;
-                cell = this.cell;
-                for (i = cell.length; i--; ) {
-                    cell[i] = value;
-                }
+                this._.value = value;
+                changeTheValue.call(this);
             }
         },
-        get: function() {
-            return this._.value;
-        }
+        get: function() { return this._.value; }
     });
     Object.defineProperty($this, "mul", {
         set: function(value) {
-            var _ = this._;
-            var cell, i;
             if (typeof value === "number") {
-                _.mul = value;
-                value = _.value * _.mul + _.add;
-                cell = this.cell;
-                for (i = cell.length; i--; ) {
-                    cell[i] = value;
-                }
+                this._.mul = value;
+                changeTheValue.call(this);
             }
         },
-        get: function() {
-            return this._.mul;
-        }
+        get: function() { return this._.mul; }
     });
     Object.defineProperty($this, "add", {
         set: function(value) {
-            var _ = this._;
-            var cell, i;
             if (typeof value === "number") {
-                _.add = value;
-                value = _.value * _.mul + _.add;
-                cell = this.cell;
-                for (i = cell.length; i--; ) {
-                    cell[i] = value;
-                }
+                this._.add = value;
+                changeTheValue.call(this);
             }
         },
-        get: function() {
-            return this._.add;
-        }
+        get: function() { return this._.add; }
     });
     
     var initialize = function(_args) {
@@ -720,12 +699,25 @@ var NumberWrapper = (function() {
         }
     };
     
+    var changeTheValue = function() {
+        var x, cell, i, _ = this._;
+        x = _.value * _.mul + _.add;
+        cell = this.cell;
+        for (i = cell.length; i--; ) {
+            cell[i] = x;
+        }
+    };
+    
     $this._post_init = function() {
         this.value = this._.value;
     };
     
     $this.clone = function() {
-        return timbre(this._.value);
+        var newone = timbre(this._.value);
+        newone._.mul = this._.mul;
+        newone._.add = this._.add;
+        changeTheValue.call(newone);
+        return newone;
     };
     
     return NumberWrapper;
@@ -734,7 +726,7 @@ timbre.fn.register("number", NumberWrapper);
 
 /**
  * BooleanWrapper: 0.1.0
- * Constant signal of a 0 or 1
+ * Constant signal of 0 or 1
  * [kr-only]
  */
 var BooleanWrapper = (function() {
@@ -749,9 +741,7 @@ var BooleanWrapper = (function() {
             this._.value = !!value;
             changeTheValue.call(this);
         },
-        get: function() {
-            return this._.value;
-        }
+        get: function() { return this._.value; }
     });
     Object.defineProperty($this, "mul", {
         set: function(value) {
@@ -760,9 +750,7 @@ var BooleanWrapper = (function() {
                 changeTheValue.call(this);
             }
         },
-        get: function() {
-            return this._.mul;
-        }
+        get: function() { return this._.mul; }
     });
     Object.defineProperty($this, "add", {
         set: function(value) {
@@ -771,9 +759,7 @@ var BooleanWrapper = (function() {
                 changeTheValue.call(this);
             }
         },
-        get: function() {
-            return this._.add;
-        }
+        get: function() { return this._.add; }
     });
     
     var initialize = function(_args) {
@@ -799,9 +785,13 @@ var BooleanWrapper = (function() {
     };
     
     $this.clone = function() {
-        return timbre(!!this._.value);
+        var newone = timbre(this._.value);
+        newone._.mul = this._.mul;
+        newone._.add = this._.add;
+        changeTheValue.call(newone);
+        return newone;
     };
-
+    
     $this.bang = function() {
         this._.value = !this._.value;
         changeTheValue.call(this);
@@ -831,6 +821,7 @@ var ArrayWrapper = (function() {
                 (value instanceof Array ||
                  value.buffer instanceof ArrayBuffer)) {
                 this._.value = value;
+                this._.index = 0;
             }
         },
         get: function() { return this._.value; }
@@ -838,19 +829,12 @@ var ArrayWrapper = (function() {
     Object.defineProperty($this, "index", {
         set: function(value) {
             var _ = this._;
-            var cell, i, imax;
             if (typeof value === "number") {
                 value = value|0;
-                if (value < 0) {
-                    value = _.value.length + value;
-                }
+                if (value < 0) value = _.value.length + value;
                 if (0 <= value && value < _.value.length) {
-                    _.index = value|0;
-                    cell = this.cell;
-                    value = _.value[_.index] * _.mul + _.add;
-                    for (i = cell.length; i--; ) {
-                        cell[i] = value;
-                    }
+                    _.index = value;
+                    changeTheValue.call(this);
                 }
             }
         },
@@ -858,37 +842,21 @@ var ArrayWrapper = (function() {
     });
     Object.defineProperty($this, "mul", {
         set: function(value) {
-            var _ = this._;
-            var cell, i;
             if (typeof value === "number") {
-                _.mul = value;
-                value = _.value[_.index] * _.mul + _.add;
-                cell = this.cell;
-                for (i = cell.length; i--; ) {
-                    cell[i] = value;
-                }
+                this._.mul = value;
+                changeTheValue.call(this);
             }
         },
-        get: function() {
-            return this._.mul;
-        }
+        get: function() { return this._.mul; }
     });
     Object.defineProperty($this, "add", {
         set: function(value) {
-            var _ = this._;
-            var cell, i;
             if (typeof value === "number") {
-                _.add = value;
-                value = _.value[_.index] * _.mul + _.add;
-                cell = this.cell;
-                for (i = cell.length; i--; ) {
-                    cell[i] = value;
-                }
+                this._.add = value;
+                changeTheValue.call(this);
             }
         },
-        get: function() {
-            return this._.add;
-        }
+        get: function() { return this._.add; }
     });
     
     var initialize = function(_args) {
@@ -903,22 +871,29 @@ var ArrayWrapper = (function() {
                 value = _args[i++];
             }
         }
-        _.value = (value !== undefined) ? value : new Float32Array(0);
-        if (typeof _args[i] === "number") {
-            _.mul = _args[i++];    
-        }
-        if (typeof _args[i] === "number") {
-            _.add = _args[i++];    
-        }
+        _.value = (value !== undefined) ? value : [];
         _.index = 0;
+    };
+    
+    var changeTheValue = function() {
+        var x, cell, i, _ = this._;
+        x = _.value[_.index] * _.mul + _.add;
+        cell = this.cell;
+        for (i = cell.length; i--; ) {
+            cell[i] = x;
+        }
     };
     
     $this._post_init = function() {
         this.index = 0;
     };
     
-    $this.clone = function(deep) {
-        return timbre("array", this._.value, this._.mul, this._.add);
+    $this.clone = function() {
+        var newone = timbre(this._.value);
+        newone._.mul = this._.mul;
+        newone._.add = this._.add;
+        changeTheValue.call(newone);
+        return newone;
     };
     
     $this.bang = function() {
@@ -966,9 +941,7 @@ var FunctionWrapper = (function() {
                 this._.value = value;
             }
         },
-        get: function() {
-            return this._.value;
-        }
+        get: function() { return this._.value; }
     });
     Object.defineProperty($this, "args", {
         set: function(value) {
@@ -976,9 +949,7 @@ var FunctionWrapper = (function() {
                 this._.args = value;
             }
         },
-        get: function() {
-            return this._.args;
-        }
+        get: function() { return this._.args; }
     });
     
     var initialize = function(_args) {
@@ -1129,7 +1100,7 @@ if (module.parent && !module.parent.parent) {
                 var instance = timbre(100);
                 instance.value = 10;
                 instance.value.should.equal(10);
-                instance.cell[0].should.equal(10);
+                instance.cell.should.eql(timbre(10).cell);
             });
             it("should not changed with no number", function() {
                 var instance = timbre(100);
@@ -1172,11 +1143,11 @@ if (module.parent && !module.parent.parent) {
                 var instance = timbre(true);
                 instance.value = false;
                 instance.value.should.equal(false);
-                instance.cell[0].should.equal(0);
+                instance.cell.should.eql(timbre(0).cell);
                 
                 instance.value = true;
                 instance.value.should.equal(true);
-                instance.cell[0].should.equal(1);
+                instance.cell.should.eql(timbre(1).cell);
                 
                 instance.value = false;
                 instance.value = 1000;
@@ -1217,29 +1188,17 @@ if (module.parent && !module.parent.parent) {
             });
         });
     });
-    describe("FunctionWrapper", function() {
-        var y, func = function(x) { y = x * 2; };
-        object_test(FunctionWrapper, func);
-        describe("#bang()", function() {
-            var instance = timbre(func, [ 100 ]);
-            instance.bang();
-            y.should.equal(200);
-            instance.args = [ 50 ];
-            instance.bang();
-            y.should.equal(100);
-        });
-    });
     describe("ArrayWrapper", function() {
         object_test(ArrayWrapper, [2, 3, 5, 7, 11, 13]);
         describe("#bang()", function() {
             var instance = timbre([2, 3, 5, 7, 11, 13]);
-            instance.cell[0].should.equal(2);
+            instance.cell.should.eql(timbre(2).cell);
             instance.bang();
-            instance.cell[0].should.equal(3);
+            instance.cell.should.eql(timbre(3).cell);
             instance.index = 3;
-            instance.cell[0].should.equal(7);
+            instance.cell.should.eql(timbre(7).cell);
             instance.index = -1;
-            instance.cell[0].should.equal(13);
+            instance.cell.should.eql(timbre(13).cell);
         });
         describe("#value", function() {
             it("should multiply", function() {
@@ -1264,11 +1223,50 @@ if (module.parent && !module.parent.parent) {
             });
         });
     });
+    describe("FunctionWrapper", function() {
+        var y, func = function(x) { y = x * 2; };
+        object_test(FunctionWrapper, func);
+        describe("#bang()", function() {
+            var instance = timbre(func, [ 100 ]);
+            instance.bang();
+            y.should.equal(200);
+            instance.args = [ 50 ];
+            instance.bang();
+            y.should.equal(100);
+        });
+    });
     describe("Through out", function() {
         var instance = timbre();
         instance.should.equal(timbre(instance));
     });
     describe("EventListener", function() {
+        it("onbang", function(done) {
+            var x = 0, instance = timbre();
+            instance.onbang = function() {
+                if (++x === 2) done();
+            };
+            instance.bang();
+            instance.bang();
+        });
+        it("addEventListener", function(done) {
+            var x = 0, instance = timbre();
+            instance.addEventListener("bang", function() {
+                if (++x === 2) done();
+            });
+            instance.bang();
+            instance.bang();
+        });
+        it("onbang & addEventListener", function(done) {
+            var x = 0, instance = timbre();
+            instance.onbang = function() {
+                ++x;
+            };
+            instance.addEventListener("bang", function() {
+                if (++x === 4) done();
+            });
+            instance.bang();
+            instance.bang();
+        });
         it("Once Time", function(done) {
             var instance = timbre();
             instance.addEventListener("~bang", done);
