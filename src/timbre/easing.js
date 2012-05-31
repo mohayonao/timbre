@@ -100,7 +100,6 @@ var Easing = (function() {
             this.onchanged = _args[i++];
         }
         
-        _.ison = true;
         _.delay = 0;
         
         _.status  = -1;
@@ -414,7 +413,6 @@ var Glide = (function() {
             this.onchanged = _args[i++];
         }
         
-        _.ison = true;
         _.delay = 0;
         
         _.status  = -1;

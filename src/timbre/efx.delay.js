@@ -67,7 +67,6 @@ var EfxDelay = (function() {
         if (typeof _args[i] === "number") {
             _.wet = _args[i++];
         }
-        _.ison = true;
         
         set_params.call(this, _.delayTime, _.feedback, _.wet);
         this.args = timbre.fn.valist.call(this, _args.slice(i));

@@ -89,7 +89,6 @@ var Oscillator = (function() {
         _.phase = 0;
         _.x = 1024 * _.phase;
         _.coeff = 1024 / timbre.samplerate;
-        _.ison = true;
     };
     
     $this.clone = function(deep) {
@@ -405,7 +404,6 @@ var WhiteNoise = (function() {
         if (typeof _args[i] === "number") {
             this._.add = _args[i++];
         }
-        _.ison = true;
     };
     
     $this.clone = function(deep) {
@@ -521,7 +519,6 @@ var FuncOscillator = (function() {
         _.index = 0;
         _.phase = _.x = 0;
         _.coeff = 1 / timbre.samplerate;
-        _.ison = true;
     };
     
     $this.clone = function(deep) {

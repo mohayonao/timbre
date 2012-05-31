@@ -68,8 +68,7 @@ var WavDecoder = (function() {
         i = 0;
         _.src  = (typeof _args[i] === "string" ) ? _args[i++] : "";
         _.loop = (typeof _args[i] === "boolean") ? _args[i++] : false;
-
-        _.ison = true;
+        
         _.loaded_src = undefined;
         _.buffer     = new Int16Array(0);
         _.samplerate = 0;

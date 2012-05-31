@@ -98,7 +98,6 @@ var EfxDistortion = (function() {
         _.in1 = _.in2 = _.out1 = _.out2 = 0;
         _.a1  = _.a2  = 0;
         _.b0  = _.b1  = _.b2 = 0;
-        _.ison = true;
     };
     
     $this.clone = function(deep) {

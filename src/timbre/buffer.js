@@ -92,7 +92,6 @@ var DspBuffer = (function() {
         
         _.loop   = (typeof _args[i] === "boolean") ? _args[i++] : false;
         
-        _.ison = true;
         _.buffer = buffer;
         _.duration = buffer.length / timbre.samplerate * 1000;
         _.phase    = 0;

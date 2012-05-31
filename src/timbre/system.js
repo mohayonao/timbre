@@ -35,6 +35,7 @@ var Dac = (function() {
         this.L = new Float32Array(timbre.cellsize);
         this.R = new Float32Array(timbre.cellsize);
         _.prev_pan = undefined;
+        _.ison = false;
     };
     
     $this._post_init = function() {

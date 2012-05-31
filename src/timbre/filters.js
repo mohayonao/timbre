@@ -99,7 +99,6 @@ var DspFilter = (function() {
         _.prev_band = undefined;
         _.prev_gain = undefined;
         
-        _.ison = true;
         _.in1 = _.in2 = _.out1 = _.out2 = 0;
     };
     
@@ -508,7 +507,6 @@ var ResonantFilter = (function() {
         _.prev_Q      = undefined;
         _.prev_depth  = undefined;
         
-        _.ison = true;
         _.f = new Float32Array(4);
         _.mode = 0;
         _.damp = 0;

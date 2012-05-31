@@ -35,7 +35,6 @@ var AudioDecoder = {
             }
         }
         
-        _.ison     = true;
         _.buffer   = new Float32Array(0);
         _.duration = 0;
         _.phase    = 0;

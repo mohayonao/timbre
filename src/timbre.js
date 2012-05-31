@@ -318,6 +318,9 @@ timbre.fn = (function(timbre) {
                     instance._.ar = false;
                 }
             }
+            if (typeof instance._.ison !== "boolean") {
+                instance._.ison = true;
+            }
             if (typeof instance._.mul !== "number") {
                 instance._.mul = 1.0;
             }

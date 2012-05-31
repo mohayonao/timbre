@@ -125,7 +125,6 @@ var ADSREnvelope = (function() {
             _.add = _args[i++];
         }
         
-        _.ison = true;
         _.delay = 0;
         _.al = 0;
         _.dl = 1;
@@ -325,7 +324,6 @@ var PercussiveEnvelope = (function() {
             this.onended = _args[i++];
         }
         
-        _.ison  = true;
         _.delay = 0;
         _.reversed = false;
         

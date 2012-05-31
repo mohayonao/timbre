@@ -69,7 +69,6 @@ var EfxChorus = (function() {
         _.wet0 = Math.sin(0.25 * Math.PI * _.wet);
         _.dry0 = Math.cos(0.25 * Math.PI * _.wet);
         
-        _.ison = true;
         _.sr   = timbre.samplerate / 1000;
         _.offset = (_.sr * _.delay)|0;
         _.pointerRead  = 0;

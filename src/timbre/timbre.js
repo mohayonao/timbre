@@ -47,8 +47,6 @@ var AwesomeTimbre = (function() {
         } else {
             this.version = "0.1";
         }
-        
-        _.ison = true;
     };
     
     $this.clone = function(deep) {

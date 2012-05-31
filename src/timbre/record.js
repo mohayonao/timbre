@@ -56,7 +56,6 @@ var DspRecord = (function() {
         
         _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
         _.index  = _.currentTime = 0;
-        _.ison   = true;
     };
     
     $this.on = function() {
