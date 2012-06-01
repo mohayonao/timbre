@@ -1,3 +1,4 @@
+// main.js 0.0.1
 var s = [];
 $(function() {
     if (!timbre.isEnabled) $("#caution").show();
@@ -12,14 +13,15 @@ $(function() {
         $("#title").css("color", "rgb(136, 136, 136)");
         viewer.pause();
     });
-
+    
     $("pre").each(function(i, pre) {
         var $pre = $(pre);
         var $elem = $(pre).prev();
         var synth = window[$pre.attr("id")];
-        if (synth instanceof HTMLElement) return;
+        if (!synth || synth instanceof HTMLElement) return;
         
         $("<button>").text("play").on("click", function() {
+            if (synth.$ready === false) return;
             $pre.css("background", "rgba(255,224,224,0.75)");
             if (!synth.dac || synth.dac.isOff) {
                 if (synth.$listener) synth.$listener.on().bang();
@@ -45,6 +47,8 @@ $(function() {
                 return !synth || !synth.dac || synth.dac.isOff;
             })) timbre.off();
         });
+
+        if (synth.initUI) synth.initUI();
         
         s[i] = synth;
     });
