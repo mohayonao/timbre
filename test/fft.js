@@ -17,14 +17,9 @@ tests = (function() {
         
         synth.$listener = T("fft", 256).listen(synth).off();
         synth.$listener.interval = 50;
-        
-        var res = new Float32Array(synth.$listener.size);
-        synth.$view = res;
+
+        synth.$view = synth.$listener.spectrum;
         synth.$range = [0, 3000];
-        
-        synth.$listener.onfft = function(real, imag) {
-            this.spectrum(res, real, imag);
-        };
         
         return synth;
     }; tests[i++].desc = "fft";
