@@ -43,11 +43,12 @@ ex0 = (function() {
         metro.off();
     };
     
-    ex0.fft = T("fft").listen(ex0);
-    ex0.fft.onfft = function(real, imag) {
-        this.spectrum(ex0.res, real, imag);
+    ex0.$listener = T("fft").listen(ex0);
+    ex0.$listener.onfft = function(real, imag) {
+        this.spectrum(ex0.$view, real, imag);
     };
-    ex0.res = new Float32Array(ex0.fft.size >> 1);
+    ex0.$view  = new Float32Array(ex0.$listener.size >> 1);
+    ex0.$range = [0, 3000];
     
     ex0.initUI = function initUI() {
         var WAVES = ["sin","pulse","saw","tri"];
