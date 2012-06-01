@@ -241,7 +241,7 @@ timbre.removeAllEventListeners = function(name) {
                 this.push(args[i]);
             }
         }
-        if ( timbre.autorun ) timbre.on();
+        if ( timbre.autorun && this !== timbre.listeners ) timbre.on();
         return this;
     };
     var remove = function() {
@@ -252,17 +252,15 @@ timbre.removeAllEventListeners = function(name) {
             }
         }
         if ( timbre.autorun &&
-             timbre.dacs.length      === 0 &&
-             timbre.timers.length    === 0 &&
-             timbre.listeners.length === 0 ) timbre.off();
+             timbre.dacs.length   === 0 &&
+             timbre.timers.length === 0 ) timbre.off();
         return this;
     };
     var removeAll = function() {
         while (this.length > 0) this.pop();
         if ( timbre.autorun &&
-             timbre.dacs.length      === 0 &&
-             timbre.timers.length    === 0 &&
-             timbre.listeners.length === 0 ) timbre.off();
+             timbre.dacs.length   === 0 &&
+             timbre.timers.length === 0 ) timbre.off();
         return this;
     };
     
