@@ -53,6 +53,14 @@ var FFT = (function() {
         },
         get: function() { return this._.interval; }
     });
+    Object.defineProperty($this, "spectrum", {
+        get: function() { return this._.spectrum; }
+    });
+    Object.defineProperty($this, "noSpectrum", {
+        set: function(value) { this._.noSpectrum = !!value; },
+        get: function() { return this._.noSpectrum; }
+    });
+    
     
     var initialize = function(_args) {
         var n, i, _;
@@ -115,8 +123,11 @@ var FFT = (function() {
         }
         _.sintable = sintable;
         _.costable = costable;
+        
+        _.noSpectrum = false;
+        _.spectrum   = new Float32Array(n>>1);
     };
-
+    
     $this.clone = function(deep) {
         var newone, _ = this._;
         newone = timbre("fft", _.buffersize);
@@ -177,7 +188,8 @@ var FFT = (function() {
         var _ = this._;
         var bitrev, real, imag;
         var sintable, costable, windowfunc;
-        var i, j, n, k, k2, h, d, c, s, ik, dx, dy;
+        var i, j, n, m, k, k2, h, d, c, s, ik, dx, dy;
+        var rval, ival, mag, spectrum, sqrt;
         
         bitrev = _.bitrev;
         real   = _.real;
@@ -212,21 +224,20 @@ var FFT = (function() {
             }
         }
         
-        timbre.fn.do_event(this, "fft", [real, imag]);
-    };
-    
-    $this.spectrum = function(list, real, imag) {
-        var n, i, rval, ival, mag, bSi;
-        var sqrt = Math.sqrt;
-        n = real.length >> 1;
-        bSi = this._.buffersize;
-        for (i = n; i--; ) {
-            rval = real[i];
-            ival = imag[i];
-            mag  = bSi * sqrt(rval * rval + ival * ival);
-            list[i] = mag;
+        // calc spectrum
+        if (!_.noSpectrum) {
+            sqrt = Math.sqrt;
+            spectrum = _.spectrum;
+            m = n >> 1;
+            for (i = n; i--; ) {
+                rval = real[i];
+                ival = imag[i];
+                mag  = n * sqrt(rval * rval + ival * ival);
+                spectrum[i] = mag;
+            }
         }
-        return list;
+        
+        timbre.fn.do_event(this, "fft", [real, imag]);
     };
     
     $this.getWindowFunction = function(name) {
