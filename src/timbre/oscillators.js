@@ -75,10 +75,16 @@ var Oscillator = (function() {
             this.wave = _args[i++];
         } else if (typeof _args[i] === "object" && _args[i] instanceof Float32Array) {
             this.wave = _args[i++];
-        } else if (typeof _args[i] === "string") {
+        } else if (typeof _args[i] === "string" && Oscillator.Wavetables[_args[i]]) {
             this.wave = _args[i++];
+        } else {
+            this.wave = "sin";
         }
-        this.freq = _args[i++];
+        if (typeof _args[i] !== "undefined") {
+            this.freq = _args[i++];
+        } else {
+            this.freq = 440;
+        }
         if (typeof _args[i] === "number") {
             _.mul = _args[i++];    
         }
