@@ -72,12 +72,8 @@ var DspRecord = (function() {
         return this;
     };
     $this.bang = function() {
-        var buffer, i, _ = this._;
+        var i, _ = this._;
         _.index = _.currentTime = 0;
-        buffer = _.buffer;
-        for (i = _.buffer.length; i--; ) {
-            buffer[i] = 0.0;
-        }
         timbre.fn.do_event(this, "bang");
         return this;
     };
@@ -92,7 +88,7 @@ var DspRecord = (function() {
     $this.seq = function(seq_id) {
         var _ = this._;
         var args, cell;
-        var buffer, index;
+        var buffer;
         var mul, add;
         var tmp, i, imax, j, jmax;
         
@@ -100,7 +96,6 @@ var DspRecord = (function() {
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
             buffer = _.buffer;
-            index  = _.index;
             mul  = _.mul;
             add  = _.add;
             jmax = timbre.cellsize;
@@ -117,15 +112,14 @@ var DspRecord = (function() {
             }
             if (_.ison) {
                 for (j = 0; j < jmax; ++j) {
-                    buffer[index++] = cell[j];
+                    buffer[_.index++] = cell[j];
                     cell[j] = cell[j] * mul + add;
                 }
-                if (index >= buffer.length) {
+                if (_.index >= buffer.length) {
                     _.ison = false;
                     onrecorded.call(this);
                     timbre.fn.do_event(this, "ended");
                 }
-                _.index = index;
             } else {
                 for (j = jmax; j--; ) {
                     cell[j] = cell[j] * mul + add;
