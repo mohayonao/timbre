@@ -127,34 +127,43 @@ ex1 = (function() {
         metronome.off();
     };
     
-    ex1.bridge = {
-        set_beat: function(_beat) {
-            beat = _beat;
-            beattimer.interval  = (amen.duration / 3) / beat;
-        },
-        get_beat: function() {
-            return beat;
-        },
-        set_piano: function(_piano) {
-            piano = _piano;
-            pianotimer.interval = (amen.duration / 3) / piano;
-        },
-        get_piano: function() {
-            return piano;
-        },
-        set_melo: function(_melo) {
-            melo = _melo;
-            melotimer.interval  = (amen.duration / 3) / melo;
-        },
-        get_melo: function() {
-            return melo;
-        },
-        get_dist: function() {
-            return dist;
-        },
-        get_delay: function() {
-            return delay;
-        },
+    ex1.initUI = function() {
+        Object.defineProperty(window, "beat", {
+            set: function(value) {
+                beat = value;
+                beattimer.interval  = (amen.duration / 3) / beat;
+            },
+            get: function() { return beat; }
+        });
+        Object.defineProperty(window, "piano", {
+            set: function(value) {
+                piano = value;
+                pianotimer.interval = (amen.duration / 3) / piano;
+            },
+            get: function() { return piano; }
+        });
+        Object.defineProperty(window, "melo", {
+            set: function(value) {
+                melo = value;
+                melotimer.interval  = (amen.duration / 3) / melo;
+            },
+            get: function() { return melo; }
+        });
+        window.dist  = dist;
+        window.delay = delay;
+        
+        if (timbre.env !== "webkit") $("#caution2").show();
+        var isOpen = false;
+        $("#read").on("click", function() {
+            if (isOpen) {
+                $(this).text("read");
+                $("#list").hide(100);
+            } else {
+                $(this).text("close");
+                $("#list").show(100);
+            }
+            isOpen = !isOpen;
+        });
     };
     
     return ex1;

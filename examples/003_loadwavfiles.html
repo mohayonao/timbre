@@ -215,28 +215,9 @@ ex1.play();
             $("#title").css("color", "rgb(136, 136, 136)");
             viewer.pause();
         });
-
+        
         // UI
-        Object.defineProperty(window, "beat", {
-            set: function(value) {
-                ex1.bridge.set_beat(value);
-            },
-            get: function() { return ex1.bridge.get_beat(); }
-        });
-        Object.defineProperty(window, "piano", {
-            set: function(value) {
-                ex1.bridge.set_piano(value);
-            },
-            get: function() { return ex1.bridge.get_piano(); }
-        });
-        Object.defineProperty(window, "melo", {
-            set: function(value) {
-                ex1.bridge.set_melo(value);
-            },
-            get: function() { return ex1.bridge.get_melo(); }
-        });
-        window.dist  = ex1.bridge.get_dist();
-        window.delay = ex1.bridge.get_delay();
+        ex1.initUI();
         
         var list = [ ex1 ];
         list.forEach(function(ex, i) {
@@ -251,19 +232,6 @@ ex1.play();
             });
             $("#play"  + i).on("click", function() { if (ex.ready === 2) ex.play() ; });
             $("#pause" + i).on("click", function() { ex.pause(); });
-        });
-        
-        if (timbre.env !== "webkit") $("#caution2").show();
-        var isOpen = false;
-        $("#read").on("click", function() {
-            if (isOpen) {
-                $(this).text("read");
-                $("#list").hide(100);
-            } else {
-                $(this).text("close");
-                $("#list").show(100);
-            }
-            isOpen = !isOpen;
         });
     });
   </script>
