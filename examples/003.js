@@ -134,7 +134,7 @@ ex0 = (function() {
         ex0.$listener.on().bang();
     };
     
-    ex0.initUI = function() {
+    ex0.$initUI = function() {
         Object.defineProperty(window, "beat", {
             set: function(value) {
                 beat = value;

@@ -94,7 +94,7 @@ ex0 = (function() {
         ex0.$listener.on().bang();
     };
     
-    ex0.initUI = function() {
+    ex0.$initUI = function() {
         var elem = document.getElementById("p");
         var div, x, i, j;
         for (i = 0; i < p.length; i++) {

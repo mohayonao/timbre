@@ -47,7 +47,7 @@ ex0 = (function() {
     ex0.$view  = ex0.$listener.spectrum;
     ex0.$range = [0, 3000];
     
-    ex0.initUI = function initUI() {
+    ex0.$initUI = function() {
         var WAVES = ["sin","pulse","saw","tri"];
         var FREQS = [ 16, 8, 4, 2, 1, 0.5 ];
         

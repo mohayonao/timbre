@@ -1,4 +1,4 @@
-// main.js 0.0.1
+// main.js 0.0.2
 var s = [];
 $(function() {
     if (!timbre.isEnabled) $("#caution").show();
@@ -47,8 +47,8 @@ $(function() {
                 return !synth || !synth.dac || synth.dac.isOff;
             })) timbre.off();
         });
-
-        if (synth.initUI) synth.initUI();
+        
+        if (synth.$initUI) synth.$initUI();
         
         s[i] = synth;
     });
