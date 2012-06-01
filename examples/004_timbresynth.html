@@ -68,12 +68,6 @@ ex1.onpause = function() {
     metro.off();
 };
 
-ex1.fft = T("fft").listen(ex1);
-ex1.fft.onfft = function(real, imag) {
-    this.spectrum(ex1.res, real, imag);
-};
-ex1.res = new Float32Array(ex1.fft.size);
-
 ex1.play();
         </pre>
       </div>

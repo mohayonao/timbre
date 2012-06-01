@@ -86,8 +86,15 @@ ex0 = (function() {
     drumkit.onpause = function() {
         metro.off();
     };
+
+    var ex0 = drumkit;
+    ex0.$listener = T("rec", 3636).listen(ex0).off().set("overwrite", true);
+    ex0.$view = ex0.$listener.buffer;
+    ex0.$listener.onrecorded = function () {
+        ex0.$listener.on().bang();
+    };
     
-    drumkit.initUI = function() {
+    ex0.initUI = function() {
         var elem = document.getElementById("p");
         var div, x, i, j;
         for (i = 0; i < p.length; i++) {
@@ -112,5 +119,5 @@ ex0 = (function() {
         }
     };
     
-    return drumkit;
+    return ex0;
 }());

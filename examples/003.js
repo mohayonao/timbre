@@ -6,7 +6,8 @@ ex0 = (function() {
     
     // dac
     var ex0 = T("dac");
-    ex0.ready = 0;
+    var ready = 0;
+    ex0.$ready = false;
     
     // metronome
     var metronome = T("interval", function() {
@@ -17,7 +18,7 @@ ex0 = (function() {
     // amen (load a wav file and decode it)
     var amen = T("wav", "./public/audio/amen.wav", true).load(function(res) {
         metronome.interval = (this.duration / 3) / 16;
-        ex0.ready += 1;
+        if (ready === 1) ex0.$ready = true; else ready = 1;
     });
     var dist = T("efx.dist", 0, -18, 2400, amen).set("mul", 0.5);
     dist.dac = ex0;
@@ -53,7 +54,7 @@ ex0 = (function() {
             for (var i = 0; i < 9; i++) {
                 pianotones[i] = this.slice(dx * i, dx * i + dx);
             }
-            ex0.ready += 1;
+            if (ready === 1) ex0.$ready = true; else ready = 1;
         });
         
         function play_chord(chord, amp) {
@@ -109,7 +110,6 @@ ex0 = (function() {
         });
     }());
     
-    
     ex0.onplay  = function() {
         metronome.measure = -1;
         metronome.on();
@@ -125,6 +125,13 @@ ex0 = (function() {
         pianotimer.off();
         beattimer.off();
         metronome.off();
+    };
+
+    ex0.$listener = T("rec", 100).listen(ex0).off().set("overwrite", true);
+    ex0.$view = ex0.$listener.buffer;
+    ex0.$range = [-2.5, +2.5];
+    ex0.$listener.onrecorded = function () {
+        ex0.$listener.on().bang();
     };
     
     ex0.initUI = function() {

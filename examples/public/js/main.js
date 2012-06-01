@@ -1,3 +1,4 @@
+// main.js 0.0.1
 var s = [];
 $(function() {
     if (!timbre.isEnabled) $("#caution").show();
@@ -20,6 +21,7 @@ $(function() {
         if (!synth || synth instanceof HTMLElement) return;
         
         $("<button>").text("play").on("click", function() {
+            if (synth.$ready === false) return;
             $pre.css("background", "rgba(255,224,224,0.75)");
             if (!synth.dac || synth.dac.isOff) {
                 if (synth.$listener) synth.$listener.on().bang();
