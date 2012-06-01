@@ -38,12 +38,6 @@ var EfxDistortion = (function() {
         get: function() { return this._.lpfFreq; }
                         
     });
-    Object.defineProperty($this, "slope", {
-        set: function(value) {
-            this._.lpfSlope = timbre(value);
-        },
-        get: function() { return this._.lpfSlope; }
-    });
     
     var initialize = function(_args) {
         var i, _;
@@ -75,20 +69,11 @@ var EfxDistortion = (function() {
             _.lpfFreq = timbre(2400);
         }
         
-        if (typeof _args[i] === "object" && _args[i].isKr) {
-            _.lpfSlope = _args[i++];    
-        } else if (typeof _args[i] === "number") {
-            _.lpfSlope = timbre(_args[i++]);
-        } else {
-            _.lpfSlope = timbre(1);
-        }
-        
         this.args = timbre.fn.valist.call(this, _args.slice(i));
         
         _.prev_preGain  = undefined;
         _.prev_postGain = undefined;
         _.prev_lpfFreq  = undefined;
-        _.prev_lpfSlope = undefined;
         _.in1 = _.in2 = _.out1 = _.out2 = 0;
         _.a1  = _.a2  = 0;
         _.b0  = _.b1  = _.b2 = 0;
@@ -97,8 +82,7 @@ var EfxDistortion = (function() {
     $this.clone = function(deep) {
         var newone, _ = this._;
         var args, i, imax;
-        newone = timbre("efx.dist",
-                        _.preGain, _.postGain, _.lpfFreq, _.lpfSlope);
+        newone = timbre("efx.dist", _.preGain, _.postGain, _.lpfFreq);
         timbre.fn.copy_for_clone(this, newone, deep);
         return newone;
     };
@@ -131,7 +115,7 @@ var EfxDistortion = (function() {
         var _ = this._;
         var cell, args;
         var tmp, i, imax, j, jmax;
-        var preGain, postGain, lpfFreq, lpfSlope;
+        var preGain, postGain, lpfFreq;
         var preScale, limit;
         var mul, add;
         var a1, a2, b0, b1, b2;
@@ -160,12 +144,10 @@ var EfxDistortion = (function() {
                 preGain  = _.preGain.seq(seq_id)[0];
                 postGain = _.postGain.seq(seq_id)[0];
                 lpfFreq  = _.lpfFreq.seq(seq_id)[0];
-                lpfSlope = _.lpfSlope.seq(seq_id)[0];
                 if (preGain  !== _.prev_preGain ||
                     postGain !== _.prev_postGain ||
-                    lpfFreq  !== _.prev_lpfFreq  ||
-                    lpfSlope !== _.prev_lpfSlope) {
-                    set_params.call(this, preGain, postGain, lpfFreq, lpfSlope);    
+                    lpfFreq  !== _.prev_lpfFreq) {
+                    set_params.call(this, preGain, postGain, lpfFreq, 1);
                 }
                 
                 preScale = _.preScale;
