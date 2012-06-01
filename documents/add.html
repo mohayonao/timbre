@@ -26,7 +26,7 @@
         <pre id="ex0" class="prettyprint">
 add = T("+", ...);
 
-// ...   Input objects to process
+// ...   Input objects which will be added
         </pre>
 
         <h3>Properties</h3>
@@ -47,9 +47,41 @@ add.add  // [Number]    and will be added to the output
         
         <h3>Example: Chord</h3>
         <pre id="ex4" class="prettyprint">
-T("+", T("sin", 440, 0.25),
-       T("sin", 660, 0.25),
-       T("sin", 880, 0.25)).play();
+T("+", T("tri",  783, 0.25),
+       T("tri", 1046, 0.25),
+       T("tri", 1318, 0.25)).play();
+        </pre>
+
+        <h3>Example: Arrpegio</h3>
+        <pre id="ex5" class="prettyprint">
+add = T("+");
+
+tones = [ /* loaded piano tones and stored here */ ];
+score = [ [0],[1],[4],[6], [2],[5],[7],[5],
+          [3],[5],[7],[5], [4,6], [], [2,5], [] ];
+
+function play_piano(i) {
+    score[i].forEach(function(x) {
+        add.append(tones[x].clone());
+    });
+    if (add.args.length >= 4) {
+        add.args.shift();
+    }
+}
+
+i = 0, metro = T("metro", 90, 8, function() {
+    if (i < score.length) play_piano(i++);
+});
+
+add.onbang = function() {
+    i = 0;
+};
+add.onplay = function() {
+    metro.on();
+};
+add.onpause = function(){
+    metro.off();
+};
         </pre>
         
         <h3>See Also: </h3>

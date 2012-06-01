@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>doc: Filter</title>
+    <title>doc: EfxDelay</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -18,40 +18,34 @@
 
       <div class="navi"><a href=".">index</a></div>
       <div id="contents">
-        <h2>Filter</h2>
+        <h2>EfxDelay</h2>
         <p class="desc">
-         Filter
+          Delay
         </p>
         <div id="p"><canvas id="canvas"></canvas></div>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-filter = T("filter", type="lpf", freq=3200, band=1, gain=6, ...);
+delay  = T("efx.delay", time=250, fb=0.25, wet=0.25, ...);
 
-// type  [String] Filter type
-// freq  [Object] Frequency {kr-only}
-// band  [Object] Bandwidth {kr-only}
-// gain  [Object] Gain {kr-only}
+// time  [Number] Delay time
+// fb    [Number] Feedback
+// wet   [Number] Wet
 // ...   Input objects which will be added and processed
-        </pre>
-        
+         </pre>
+
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
-filter.type // [String] Filter type
-filter.freq // [Object] Frequency
-filter.band // [Object] Bandwidth
-filter.gain // [Object] Gain
+delay.time  // [Number]  Delay Time
+delay.fb    // [Number]  Feedback
+delay.wet   // [Number]  Wet
 
-filter.mul  // [Number] Output will be multiplied by this value
-filter.add  // [Number]    and will be added to the output
+delay.mul   // [Number]  Output will be multiplied by this value
+delay.add   // [Number]     and will be added to the output
         </pre>
 
         <h3>Methods</h3>
         <pre id="ex2" class="prettyprint">
-// Enable processing
-filter.on();
-
-// Disable processing
-filter.off();
+// none
         </pre>
 
         <h3>Events</h3>
@@ -59,46 +53,12 @@ filter.off();
 // none
         </pre>
 
-        <h3>Change the filter type</h3>
-        <pre id="ex4" class="prettyprint">
-// The filter class has some aliases.
-T("lpf")       // Low pass filter
-T("hpf")       // High pass filter
-T("bpf")       // Band pass filter
-T("brf")       // Band reject filter
-T("allpass")   // Allpass filter
-T("peaking")   // Peaking filter
-T("lowboost")  // Low-Boost filter
-T("highboost") // High-Boost filter
-        </pre>
-
-        <h3>Register the filter parameters</h3>
-        <pre id="ex5" class="prettyprint">
-params = {
-    default_freq: 800, default_band: 1, default_gain: 6,
-    set_params: function(freq, band) {
-        // calculate below parameters
-        this._.a1;
-        this._.a2;
-        this._.b0;
-        this._.b1;
-        this._.b2;
-    }
-};
-
-T("filter").setFilter("myfilter", params);
-
-// Use it
-T("filter", "myfilter");
-        </pre>
-        
         <h3>See Also: </h3>
-        <a href="rfilter.html">T("rfilter")</a>
+        <a href="efx.dist.html">T("efx.dist")</a>,
+        <a href="efx.chorus.html">T("efx.chorus")</a>
         
       </div>
       <div class="navi"><a href=".">index</a></div>
-      <footer>
-      </footer>
     </section>
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>
@@ -108,5 +68,5 @@ T("filter", "myfilter");
   <script type="text/javascript" src="public/js/cnvui.js"></script>  
   <script type="text/javascript" src="public/js/main.js"></script>
   <script type="text/javascript" src="../timbre.js"></script>
-  <script type="text/javascript" src="filter.js"></script>
+  <script type="text/javascript" src="efx.delay.js"></script>  
 </html>

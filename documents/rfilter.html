@@ -22,15 +22,16 @@
         <p class="desc">
          Filter
         </p>
+        <div id="p"><canvas id="canvas"></canvas></div>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-rfilter = T("rfilter", type="rlpf", cutoff=800, Q=0.5, depth=0.5, ...);
+rfilter = T("rfilter", type="lpf", cutoff=800, Q=0.5, depth=0.5, ...);
 
 // type   [String] Filter type
 // cutoff [Object] {kr-only}
 // Q      [Object] {kr-only}
 // depth  [Object] {kr-only}
-// ...    Input objects to process
+// ...    Input objects which will be added and processed
         </pre>
         
         <h3>Properties</h3>
@@ -79,7 +80,8 @@ T("rbrf")  // Band reject filter
   <script type="text/javascript" src="public/js/prettify.js"></script>
   <script type="text/javascript">prettyPrint();</script>
   <script type="text/javascript" src="public/js/jquery.min.js"></script>
-  <script type="text/javascript" src="public/js/waveviewer.js"></script>  
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>
+  <script type="text/javascript" src="public/js/cnvui.js"></script>  
   <script type="text/javascript" src="public/js/main.js"></script>
   <script type="text/javascript" src="../timbre.js"></script>
   <script type="text/javascript" src="rfilter.js"></script>
