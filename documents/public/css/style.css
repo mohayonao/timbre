@@ -44,3 +44,10 @@ header span {
 .navi {
     padding:15px;text-align:right;
 }
+#alllist {
+    list-style:none;
+    margin:0px;padding-left:15px;
+}
+#alllist li {
+    display:inline; padding:5px; line-height:24px;
+}
