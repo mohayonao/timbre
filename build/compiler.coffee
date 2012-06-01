@@ -5,21 +5,37 @@ exec = require("child_process").exec
 TIMBRE_SOURCES = [
     "timbre"
     "timbre/dac"
-    "timbre/operators"
-    "timbre/oscillators"
-    "timbre/buddy"
-    "timbre/envelopes"
-    "timbre/filters"
+
+    "timbre/add"
+    "timbre/mul"
+
+    "timbre/osc"
+    "timbre/func"
+    "timbre/noise"
+
+    "timbre/adsr"
+    "timbre/perc"
+
+    "timbre/filter"
+    "timbre/rfilter"
     "timbre/efx.delay"
     "timbre/efx.dist"
     "timbre/efx.chorus"
-    "timbre/timers"
-    "timbre/wav"
+
     "timbre/audio"
-    "timbre/buffer"
+    "timbre/wav"
+
+    "timbre/buddy"
     "timbre/easing"
+
     "timbre/record"
+    "timbre/buffer"
     "timbre/fft"
+
+    "timbre/tick"
+    "timbre/interval"
+    "timbre/timeout"
+    "timbre/metro"
     "timbre/timbre"
 ]
 
