@@ -7,6 +7,7 @@ TIMBRE_SOURCES = [
     "timbre/system"
     "timbre/operators"
     "timbre/oscillators"
+    "timbre/buddy"
     "timbre/envelopes"
     "timbre/filters"
     "timbre/efx.delay"
