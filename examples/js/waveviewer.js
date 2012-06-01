@@ -1,6 +1,6 @@
 /**
  * waveviewer.js
- * version: 0.1.1
+ * version: 0.1.2
  */
 var WaveViewer = (function() {
     var WaveViewer = function() {
@@ -30,6 +30,7 @@ var WaveViewer = (function() {
         this.context.fillStyle   = "rgba(255, 255, 255, 0.4)";
         this.context.strokeStyle = "rgba(  0, 128, 255, 0.8)";
         this.context.lineWidth = 2;
+        this.range = [-1, +1];
     };
     
     $this.start = function() {
