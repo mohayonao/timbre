@@ -434,6 +434,10 @@ timbre.fn = (function(timbre) {
         this.args.remove.apply(this.args, arguments);
         return this;
     };
+    defaults.removeAll = function() {
+        this.args.removeAll.apply(this.args, arguments);
+        return this;
+    };
     defaults.listen = function(target) {
         if (target === null) {
             this.args = this._.args;
@@ -630,7 +634,7 @@ timbre.fn = (function(timbre) {
             while (this.length > 0) this.pop();
             return this;
         };
-        var update = function() {
+        var extend = function() {
             this.append.apply(this, list);
             return this;
         };
@@ -646,7 +650,7 @@ timbre.fn = (function(timbre) {
             self.append    = append;
             self.remove    = remove;
             self.removeAll = removeAll;
-            self.update    = update;
+            self.extend    = extend;
             return self;
         };
     }());
