@@ -16,6 +16,7 @@ timbre.samplerate = 44100;
 timbre.channels   = 2;
 timbre.cellsize   = 128;
 timbre.streamsize = 1024;
+timbre.autorun    = true;
 timbre.amp        = 0.8;
 timbre.verbose    = true;
 timbre.dacs       = [];
@@ -229,6 +230,50 @@ timbre.removeAllEventListeners = function(name) {
     }
     return this;
 };
+
+
+(function() {
+    var append = function() {
+        var args, i, imax;
+        args = timbre.fn.valist(arguments);
+        for (i = 0, imax = args.length; i < imax; ++i) {
+            if (this.indexOf(args[i]) === -1) {
+                this.push(args[i]);
+            }
+        }
+        if ( timbre.autorun ) timbre.on();
+        return this;
+    };
+    var remove = function() {
+        var i, j;
+        for (i = arguments.length; i--; ) {
+            if ((j = this.indexOf(arguments[i])) !== -1) {
+                this.splice(j, 1);
+            }
+        }
+        if ( timbre.autorun &&
+             timbre.dacs.length      === 0 &&
+             timbre.timers.length    === 0 &&
+             timbre.listeners.length === 0 ) timbre.off();
+        return this;
+    };
+    var removeAll = function() {
+        while (this.length > 0) this.pop();
+        if ( timbre.autorun &&
+             timbre.dacs.length      === 0 &&
+             timbre.timers.length    === 0 &&
+             timbre.listeners.length === 0 ) timbre.off();
+        return this;
+    };
+    
+    var i, x;
+    for (i = arguments.length; i--; ) {
+        x = arguments[i];
+        x.append    = append;
+        x.remove    = remove;
+        x.removeAll = removeAll;
+    }
+}(timbre.dacs, timbre.timers, timbre.listeners));
 
 
 // timbre.functions
@@ -647,9 +692,6 @@ timbre.fn = (function(timbre) {
     
     return fn;
 }(timbre));
-timbre.fn.arrayset(timbre.dacs);
-timbre.fn.arrayset(timbre.timers);
-timbre.fn.arrayset(timbre.listeners);
 
 
 // built-in-types
