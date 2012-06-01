@@ -7,14 +7,14 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * DspBuffer: 0.0.0
+ * Buffer: 0.0.0
  * Store audio samples
  * [ar-only]
  */
-var DspBuffer = (function() {
-    var DspBuffer = function() {
+var Buffer = (function() {
+    var Buffer = function() {
         initialize.apply(this, arguments);
-    }, $this = DspBuffer.prototype;
+    }, $this = Buffer.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "ar-only");
     
@@ -183,12 +183,12 @@ var DspBuffer = (function() {
         return cell;
     };
     
-    return DspBuffer;
+    return Buffer;
 }());
-timbre.fn.register("buffer", DspBuffer);
+timbre.fn.register("buffer", Buffer);
 
 // __END__
 
 describe("buffer", function() {
-    object_test(DspBuffer, "buffer");
+    object_test(Buffer, "buffer");
 });

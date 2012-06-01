@@ -7,14 +7,14 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * DspAdd: 0.0.0
+ * Add: 0.0.0
  * Add signals
  * [ar-kr]
  */
-var DspAdd = (function() {
-    var DspAdd = function() {
+var Add = (function() {
+    var Add = function() {
         initialize.apply(this, arguments);
-    }, $this = DspAdd.prototype;
+    }, $this = Add.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "ar-kr");
     
@@ -70,19 +70,19 @@ var DspAdd = (function() {
         return cell;
     };
     
-    return DspAdd;
+    return Add;
 }());
-timbre.fn.register("+", DspAdd);
+timbre.fn.register("+", Add);
 
 /**
- * DspMultiply: 0.0.0
+ * Multiply: 0.0.0
  * Multiply signals
  * [ar-kr]
  */
-var DspMultiply = (function() {
-    var DspMultiply = function() {
+var Multiply = (function() {
+    var Multiply = function() {
         initialize.apply(this, arguments);
-    }, $this = DspMultiply.prototype;
+    }, $this = Multiply.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "ar-kr");
     
@@ -146,16 +146,16 @@ var DspMultiply = (function() {
         return cell;
     };
     
-    return DspMultiply;
+    return Multiply;
 }());
-timbre.fn.register("*", DspMultiply);
+timbre.fn.register("*", Multiply);
 
 // __END__
 
 describe("+", function() {
-    object_test(DspAdd, "+");
+    object_test(Add, "+");
 });
 
 describe("*", function() {
-    object_test(DspMultiply, "*");
+    object_test(Multiply, "*");
 });

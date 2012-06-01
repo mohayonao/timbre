@@ -7,13 +7,13 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * DspFilter: 0.0.0
+ * Filter: 0.0.0
  * [ar-only]
  */
-var DspFilter = (function() {
-    var DspFilter = function() {
+var Filter = (function() {
+    var Filter = function() {
         initialize.apply(this, arguments);
-    }, $this = DspFilter.prototype;
+    }, $this = Filter.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "ar-only");
     
@@ -21,7 +21,7 @@ var DspFilter = (function() {
         set: function(value) {
             var f;
             if (typeof value === "string") {
-                if ((f = DspFilter.Types[value]) !== undefined) {
+                if ((f = Filter.Types[value]) !== undefined) {
                     this._.type = value;
                     this._.set_params = f.set_params;
                 }
@@ -55,7 +55,7 @@ var DspFilter = (function() {
         
         i = 0;
         if (typeof _args[i] === "string" &&
-            (DspFilter.Types[_args[i]]) !== undefined) {
+            (Filter.Types[_args[i]]) !== undefined) {
             this.type = _args[i++];
         } else {
             this.type = "lpf";
@@ -67,7 +67,7 @@ var DspFilter = (function() {
         } else if (typeof _args[i] === "number") {
             _.freq = timbre(_args[i++]);
         } else {
-            _.freq = timbre(DspFilter.Types[type].default_freq);
+            _.freq = timbre(Filter.Types[type].default_freq);
         }
         
         if (typeof _args[i] === "object" && _args[i].isKr) {
@@ -75,7 +75,7 @@ var DspFilter = (function() {
         } else if (typeof _args[i] === "number") {
             _.band = timbre(_args[i++]);
         } else {
-            _.band = timbre(DspFilter.Types[type].default_band);
+            _.band = timbre(Filter.Types[type].default_band);
         }
         
         if (typeof _args[i] === "object" && _args[i].isKr) {
@@ -83,7 +83,7 @@ var DspFilter = (function() {
         } else if (typeof _args[i] === "number") {
             _.gain = timbre(_args[i++]);
         } else {
-            _.gain = timbre(DspFilter.Types[type].default_gain || 6);
+            _.gain = timbre(Filter.Types[type].default_gain || 6);
         }
         this.args = timbre.fn.valist.call(this, _args.slice(i));
         
@@ -202,7 +202,7 @@ var DspFilter = (function() {
     };
 
     $this.getFilter = function(name) {
-        return DspFilter.Types[name];
+        return Filter.Types[name];
     };
     
     $this.setFilter = function(name, params) {
@@ -217,16 +217,16 @@ var DspFilter = (function() {
                 if (typeof params.default_gain !== "number") {
                     params.default_freq = 6;
                 }
-                DspFilter.Types[name] = params;
+                Filter.Types[name] = params;
             }
         }
     };
     
-    return DspFilter;
+    return Filter;
 }());
 
-DspFilter.Types = {};
-DspFilter.Types.lpf = {
+Filter.Types = {};
+Filter.Types.lpf = {
     default_freq: 800, default_band: 1,
     set_params: function(freq, band) {
         var _ = this._;
@@ -244,7 +244,7 @@ DspFilter.Types.lpf = {
         _.b2 = _.b0 = _.b1 * 0.5;
     }
 };
-DspFilter.Types.hpf = {
+Filter.Types.hpf = {
     default_freq: 5500, default_band: 1,
     set_params: function(freq, band) {
         var _ = this._;
@@ -262,7 +262,7 @@ DspFilter.Types.hpf = {
         _.b2 = _.b0 = - _.b1 * 0.5;
     }
 };
-DspFilter.Types.bpf = {
+Filter.Types.bpf = {
     default_freq: 3000, default_band: 1,
     set_params: function(freq, band) {
         var _ = this._;
@@ -280,7 +280,7 @@ DspFilter.Types.bpf = {
         _.b2 = -_.b0;
     }
 };
-DspFilter.Types.brf = {
+Filter.Types.brf = {
     default_freq: 3000, default_band: 1,
     set_params: function(freq, band) {
         var _ = this._;
@@ -298,7 +298,7 @@ DspFilter.Types.brf = {
         _.b2 = 1;
     }
 };
-DspFilter.Types.allpass = {
+Filter.Types.allpass = {
     default_freq: 3000, default_band: 1,
     set_params: function(freq, band) {
         var _ = this._;
@@ -316,7 +316,7 @@ DspFilter.Types.allpass = {
         _.b2 = 1;
     }
 };
-DspFilter.Types.peaking = {
+Filter.Types.peaking = {
     default_freq: 3000, default_band: 1, default_gain: 6,
     set_params: function(freq, band, gain) {
         var _ = this._;
@@ -337,7 +337,7 @@ DspFilter.Types.peaking = {
         _.b2 = +(1 - alpA ) * ia0;
     }
 };
-DspFilter.Types.lowboost = {
+Filter.Types.lowboost = {
     default_freq: 3000, default_band: 1, default_gain: 6,
     set_params: function(freq, band, gain) {
         var _ = this._;
@@ -356,7 +356,7 @@ DspFilter.Types.lowboost = {
         _.b2 =      ((A + 1) - (A - 1) * cos - alpsA2) * A * ia0;
     }
 };
-DspFilter.Types.highboost = {
+Filter.Types.highboost = {
     default_freq: 5500, default_band: 1, default_gain: 6,
     set_params: function(freq, band, gain) {
         var _ = this._;
@@ -375,35 +375,35 @@ DspFilter.Types.highboost = {
         _.b2 =      ((A + 1) - (A - 1) * cos - alpsA2) * A * ia0;
     }
 };
-timbre.fn.register("filter", DspFilter);
-timbre.fn.register("lpf", DspFilter, function(_args) {
-    return new DspFilter(["lpf"].concat(_args));
+timbre.fn.register("filter", Filter);
+timbre.fn.register("lpf", Filter, function(_args) {
+    return new Filter(["lpf"].concat(_args));
 });
-timbre.fn.register("hpf", DspFilter, function(_args) {
-    return new DspFilter(["hpf"].concat(_args));
+timbre.fn.register("hpf", Filter, function(_args) {
+    return new Filter(["hpf"].concat(_args));
 });
-timbre.fn.register("bpf", DspFilter, function(_args) {
-    return new DspFilter(["bpf"].concat(_args));
+timbre.fn.register("bpf", Filter, function(_args) {
+    return new Filter(["bpf"].concat(_args));
 });
-timbre.fn.register("brf", DspFilter, function(_args) {
-    return new DspFilter(["brf"].concat(_args));
+timbre.fn.register("brf", Filter, function(_args) {
+    return new Filter(["brf"].concat(_args));
 });
-timbre.fn.register("allpass", DspFilter, function(_args) {
-    return new DspFilter(["allpass"].concat(_args));
+timbre.fn.register("allpass", Filter, function(_args) {
+    return new Filter(["allpass"].concat(_args));
 });
-timbre.fn.register("peaking", DspFilter, function(_args) {
-    return new DspFilter(["peaking"].concat(_args));
+timbre.fn.register("peaking", Filter, function(_args) {
+    return new Filter(["peaking"].concat(_args));
 });
-timbre.fn.register("lowboost", DspFilter, function(_args) {
-    return new DspFilter(["lowboost"].concat(_args));
+timbre.fn.register("lowboost", Filter, function(_args) {
+    return new Filter(["lowboost"].concat(_args));
 });
-timbre.fn.register("highboost", DspFilter, function(_args) {
-    return new DspFilter(["highboost"].concat(_args));
+timbre.fn.register("highboost", Filter, function(_args) {
+    return new Filter(["highboost"].concat(_args));
 });
 
 
 /**
- * ResonantDspFilter: 0.0.0
+ * ResonantFilter: 0.0.0
  * [ar-only]
  */
 var ResonantFilter = (function() {
@@ -631,7 +631,7 @@ timbre.fn.register("rbrf", ResonantFilter, function(_args) {
 // __END__
 
 describe("filter", function() {
-    object_test(DspFilter, "filter");
+    object_test(Filter, "filter");
 });
 describe("rfilter", function() {
     object_test(ResonantFilter, "rfilter");

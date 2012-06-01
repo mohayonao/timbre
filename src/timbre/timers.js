@@ -231,10 +231,10 @@ timbre.fn.register("timeout", Timeout);
  * Calls a bang() at a metronomic bpm
  * [kr-only]
  */
-var Mertonome = (function() {
-    var Mertonome = function() {
+var Metronome = (function() {
+    var Metronome = function() {
         initialize.apply(this, arguments);
-    }, $this = Mertonome.prototype;
+    }, $this = Metronome.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "kr-only");
     
@@ -304,7 +304,9 @@ var Mertonome = (function() {
     };
     
     $this.clone = function(deep) {
-        return timbre("metro", this._.bpm, this._.beat);
+        var newone, _ = this._;
+        newone = timbre("metro", _.bpm, _.beat, _.shuffle);
+        return newone;
     };
     
     $this.on = function() {
@@ -363,9 +365,9 @@ var Mertonome = (function() {
         return this.cell;
     };
     
-    return Mertonome;
+    return Metronome;
 }());
-timbre.fn.register("metro", Mertonome);
+timbre.fn.register("metro", Metronome);
 
 
 /**
@@ -666,7 +668,7 @@ describe("timeout", function() {
     object_test(Timeout, "timeout");
 });
 describe("metro", function() {
-    object_test(Metronome, "metrox");
+    object_test(Metronome, "metro");
 });
 describe("tick", function() {
     object_test(Tick, "tick");
