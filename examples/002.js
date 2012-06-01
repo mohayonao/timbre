@@ -87,5 +87,30 @@ ex1 = (function() {
         metro.off();
     };
     
+    drumkit.initUI = function() {
+        var elem = document.getElementById("p");
+        var div, x, i, j;
+        for (i = 0; i < p.length; i++) {
+            div = $(document.createElement("div"));
+            div.append($(document.createElement("label")).text(["S1","S2","HH","SD","BD"][i]));
+            for (j = 0; j < p[i].length; j++) {
+                x = $(document.createElement("input")).attr("type", "checkbox")
+                    .on("click", (function(i, j) {
+                        return function() {
+                            p[i][j] = $(this).attr("checked") ? 1 : 0;
+                        };
+                    }(i, j)));
+                if (p[i][j]) x.attr("checked", true);
+                if (j === 15) {
+                    x.css("margin-right", "25px");
+                } else if (j % 4 === 3) {
+                    x.css("margin-right", "10px");
+                }
+                div.append(x);
+            }
+            div.appendTo(elem);
+        }
+    };
+    
     return drumkit;
 }());
