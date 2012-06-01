@@ -88,8 +88,9 @@ ex0 = (function() {
     };
 
     var ex0 = drumkit;
-    ex0.$listener = T("rec", 3636).listen(ex0).off().set("overwrite", true);
+    ex0.$listener = T("rec", 1818).listen(ex0).off().set("overwrite", true);
     ex0.$view = ex0.$listener.buffer;
+    ex0.$range = [-2, +2];
     ex0.$listener.onrecorded = function () {
         ex0.$listener.on().bang();
     };

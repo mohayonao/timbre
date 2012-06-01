@@ -6,7 +6,7 @@ ex0 = (function() {
 
 // 880Hz pulse with tremolo(10Hz)
 ex1 = (function() {
-    return T("*", T("pulse", 880),
+    return T("*", T("pulse", 880, 0.2),
                   T("tri", 10, 0.6, 0.8).kr());
 }());
 
@@ -75,6 +75,7 @@ ex4 = (function() {
     b_env.onended = function() {
         b_env.bang();
     };
+    player.mul = 0.25;
     
     return player;
 }());    

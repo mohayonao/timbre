@@ -28,7 +28,7 @@ T("sin", 1320).play();
         <pre id="ex1" class="prettyprint">
 // 880Hz pulse with tremolo(10Hz)
           
-T("*", T("pulse", 880),
+T("*", T("pulse", 880, 0.2),
        T("tri", 10, 0.6, 0.8).kr()).play();
         </pre>
         
