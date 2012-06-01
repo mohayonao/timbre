@@ -25,9 +25,8 @@
       <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
 
       <div id="contents">
-        <button id="play0">play</button><button id="pause0">pause</button>
         <div id="p"><canvas id="canvas"></canvas></div>
-        <pre id="code" class="prettyprint">
+        <pre id="ex0" class="prettyprint">
 var osc1 = T("osc", "pulse", T("glide", 5, 880), 0.25);
 var osc2 = T("osc", "tri"  , T("glide", 5, 880), 0.50);
 var vco  = T("+", osc1, osc2);
@@ -82,44 +81,10 @@ ex1.play();
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>
   <script type="text/javascript">prettyPrint();</script>
-  <script type="text/javascript" src="../timbre.js"></script>
-  <script type="text/javascript" src="004.js"></script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
   <script type="text/javascript" src="public/js/waveviewer.js"></script>
   <script type="text/javascript" src="public/js/cnvui.js"></script>    
-  <script type="text/javascript" src="public/js/jquery.min.js"></script>
-  
-  <script type="text/javascript">
-    $(function() {
-        if (!timbre.isEnabled) $("#caution").show();
-        
-        var viewer = new WaveViewer(ex1.res, 60, "waveviewer", 512, 256);
-        viewer.range = [0, 3000];
-        
-        timbre.addEventListener("on", function() {
-            $("#title").css("color", "rgb(0, 136, 0)");
-            viewer.start();
-        });
-        timbre.addEventListener("off", function() {
-            $("#title").css("color", "rgb(136, 136, 136)");
-            viewer.pause();
-        });
-                
-        var list = [ ex1 ];
-        list.forEach(function(ex, i) {
-            ex.addEventListener("play" , function() {
-                timbre.on();
-            });
-            ex.addEventListener("pause", function() {
-                ex.dac.off();
-                if (list.every(function(ex) {
-                    return !ex.dac || ex.dac.isOff;
-                })) timbre.off();
-            });
-            $("#play"  + i).on("click", function() { ex.play() ; });
-            $("#pause" + i).on("click", function() { ex.pause(); });
-        });
-    
-        ex1.initUI();
-    });
-  </script>
+  <script type="text/javascript" src="public/js/main.js"></script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="004.js"></script>
 </html>

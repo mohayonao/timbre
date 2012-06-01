@@ -1,24 +1,24 @@
 // hello, sinewave!!
-ex1 = (function() {
+ex0 = (function() {
     return T("sin", 1320);
 }());
 
 
 // 880Hz pulse with tremolo(10Hz)
-ex2 = (function() {
+ex1 = (function() {
     return T("*", T("pulse", 880),
                   T("tri", 10, 0.6, 0.8).kr());
 }());
 
 
 // 660Hz triangle with vibrato(5Hz)
-ex3 = (function() {
+ex2 = (function() {
     return T("tri", T("sin", 5, 20, 660).kr());
 }());
 
 
 // computer noise
-ex4 = (function() {
+ex3 = (function() {
     var tone, timerId;
     
     tone = T("fami", 880);
@@ -36,7 +36,7 @@ ex4 = (function() {
 
 
 // chords
-ex5 = (function() {
+ex4 = (function() {
     var c1, c2, c3, c_env, b0, b_env;
     var player, chords = [
         [ 698.456, 880.000, 1318.510, 349.228 ], // FM7  = F A E / F

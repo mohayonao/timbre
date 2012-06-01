@@ -29,7 +29,6 @@
       <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
 
       <div id="contents">
-        <button id="play0">play</button><button id="pause0">pause</button>
         <div id="p">
           You can operate music with your WebConsole. <a href="javascript:void(0)" id="read">read</a>
           <div id="list">
@@ -64,7 +63,7 @@
             </ul>
           </div>
         </div>
-        <pre id="code" class="prettyprint">
+        <pre id="ex0" class="prettyprint">
 // load wav files and decode
 
 timbre.workerpath = "../timbre.js";
@@ -197,42 +196,9 @@ ex1.play();
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>
   <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>
+  <script type="text/javascript" src="public/js/main.js"></script>
   <script type="text/javascript" src="../timbre.js"></script>
   <script type="text/javascript" src="003.js"></script>    
-  <script type="text/javascript" src="public/js/waveviewer.js"></script>  
-  <script type="text/javascript" src="public/js/jquery.min.js"></script>
-  <script type="text/javascript">
-    $(function() {
-        if (!timbre.isEnabled) $("#caution").show();
-    
-        var viewer = new WaveViewer(timbre.sys.cell, 60, "waveviewer", 512, 256);
-        
-        timbre.addEventListener("on", function() {
-            $("#title").css("color", "rgb(0, 136, 0)");
-            viewer.start();
-        });
-        timbre.addEventListener("off", function() {
-            $("#title").css("color", "rgb(136, 136, 136)");
-            viewer.pause();
-        });
-        
-        // UI
-        ex1.initUI();
-        
-        var list = [ ex1 ];
-        list.forEach(function(ex, i) {
-            ex.addEventListener("play" , function() {
-                timbre.on();
-            });
-            ex.addEventListener("pause", function() {
-                ex.dac.off();
-                if (list.every(function(ex) {
-                    return !ex.dac || ex.dac.isOff;
-                })) timbre.off();
-            });
-            $("#play"  + i).on("click", function() { if (ex.ready === 2) ex.play() ; });
-            $("#pause" + i).on("click", function() { ex.pause(); });
-        });
-    });
-  </script>
 </html>

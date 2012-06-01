@@ -11,7 +11,7 @@ var p = [
       1, 0, 0, 0,  0, 0, 1, 0,  0, 1, 0, 0,  1, 0, 0, 0, ],
 ];
 
-ex1 = (function() {
+ex0 = (function() {
     "use strict";
     
     var bpm = 132;

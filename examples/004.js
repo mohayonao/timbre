@@ -1,5 +1,5 @@
 // timbre-synth
-ex1 = (function() {
+ex0 = (function() {
     "use strict";
     
     var osc1 = T("osc", "pulse", T("glide", 5, 880), 0.25);
@@ -35,21 +35,21 @@ ex1 = (function() {
         env2.bang();
     });
     
-    var ex1 = efx3;
-    ex1.onplay = function() {
+    var ex0 = efx3;
+    ex0.onplay = function() {
         metro.on().bang();
     };
-    ex1.onpause = function() {
+    ex0.onpause = function() {
         metro.off();
     };
     
-    ex1.fft = T("fft").listen(ex1);
-    ex1.fft.onfft = function(real, imag) {
-        this.spectrum(ex1.res, real, imag);
+    ex0.fft = T("fft").listen(ex0);
+    ex0.fft.onfft = function(real, imag) {
+        this.spectrum(ex0.res, real, imag);
     };
-    ex1.res = new Float32Array(ex1.fft.size >> 1);
+    ex0.res = new Float32Array(ex0.fft.size >> 1);
     
-    ex1.initUI = function initUI() {
+    ex0.initUI = function initUI() {
         var WAVES = ["sin","pulse","saw","tri"];
         var FREQS = [ 16, 8, 4, 2, 1, 0.5 ];
         
@@ -189,7 +189,7 @@ ex1 = (function() {
                            width:50, height:80, background:"#ededed"});
         ui.maser.set({type:"knob" , x:25, y:40, radius:15, value:50,
                       change:function() {
-                          ex1.mul = this.value / 50;
+                          ex0.mul = this.value / 50;
                       }});
         ui.maser.set({type:"label", x:25, y:60, align:"center", value:"master"});
         ui.efx = ui.set({type:"panel", x:475, y:90,
@@ -264,5 +264,5 @@ ex1 = (function() {
         return Prelude.trim();
     }
     
-    return ex1;
+    return ex0;
 }());
