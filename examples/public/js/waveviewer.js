@@ -1,6 +1,6 @@
 /**
  * waveviewer.js
- * version: 0.1.2
+ * version: 0.1.3
  */
 var WaveViewer = (function() {
     var WaveViewer = function() {
@@ -58,7 +58,8 @@ var WaveViewer = (function() {
                 
                 if (self.isPlaying) {
                     wave = target;
-                    step = (target.length / 128)|0;
+                    step = (target.length / width)|0;
+                    if (step === 0) step = 1;
                     dx   = width / wave.length;
                     min  = range[0];
                     max  = range[1];
