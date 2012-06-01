@@ -37,6 +37,10 @@ var DspRecord = (function() {
     Object.defineProperty($this, "isRecording", {
         get: function() { return this._.ison; }
     });
+    Object.defineProperty($this, "overwrite", {
+        set: function(value) { this._.overwrite = !!value; },
+        get: function() { return this._.overwrite; }
+    });
     
     var initialize = function(_args) {
         var i, _;
@@ -56,6 +60,7 @@ var DspRecord = (function() {
         
         _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
         _.index  = _.currentTime = 0;
+        _.overwrite = false;
     };
     
     $this.on = function() {
@@ -72,8 +77,14 @@ var DspRecord = (function() {
         return this;
     };
     $this.bang = function() {
-        var i, _ = this._;
+        var buffer, i, _ = this._;
         _.index = _.currentTime = 0;
+        if (!_.overwrite) {
+            buffer = _.buffer;
+            for (i = buffer.length; i--; ) {
+                buffer[i] = 0;
+            }
+        }
         timbre.fn.do_event(this, "bang");
         return this;
     };
