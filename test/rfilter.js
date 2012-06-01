@@ -8,12 +8,12 @@ tests = (function() {
     }; tests[i++].desc = "audio source";
     
     tests[i] = function() {
-        var synth = T("filter");
+        var synth = T("rfilter");
         synth.onplay = function() {
             synth.args[0] = s[0].clone();
         };
         return synth;
-    }; tests[i++].desc = "filter";
+    }; tests[i++].desc = "rfilter";
     
     return tests;
 }());
