@@ -19,7 +19,7 @@ $(function() {
         synth = x.call(null);
         
         if (synth.isKr) {
-            synth = T("ar", synth);
+            synth = T("buddy", synth);
         }
         
         $pre = $("<pre>").text(x.toString()).addClass("prettyprint");

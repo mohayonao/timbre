@@ -18,7 +18,7 @@ tests = (function() {
     }; tests[i++].desc = "wav";
     
     tests[i] = function() {
-        var synth = T("ar");
+        var synth = T("buddy");
         synth.onplay = function() {
             synth.args[0] = s[0].slice(500, 1500);
         };
@@ -26,7 +26,7 @@ tests = (function() {
     }; tests[i++].desc = "wav#slice()";
     
     tests[i] = function() {
-        var synth = T("ar");
+        var synth = T("buddy");
         synth.onplay = function() {
             synth.args[0] = s[0].clone().set("reversed", true);
         };
@@ -34,7 +34,7 @@ tests = (function() {
     }; tests[i++].desc = "reversed wav";
     
     tests[i] = function() {
-        var synth = T("ar");
+        var synth = T("buddy");
         synth.onplay = function() {
             synth.args[0] = s[0].slice(2500, 1500);
         };

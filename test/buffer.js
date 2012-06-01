@@ -31,7 +31,7 @@ tests = (function() {
     }; tests[i++].desc = "source";
     
     tests[i] = function() {
-        var synth = T("ar");
+        var synth = T("buddy");
         synth.onplay = function() {
             synth.args[0] = T("buffer", rec.buffer, true);
         };
@@ -39,7 +39,7 @@ tests = (function() {
     }; tests[i++].desc = "buffer from rec";
     
     tests[i] = function() {
-        var synth = T("ar");
+        var synth = T("buddy");
         synth.onplay = function() {
             synth.args[0] = T("buffer", rec.buffer, true).set("reversed", true);
         };

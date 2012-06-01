@@ -10,7 +10,7 @@ tests = (function() {
     }; tests[i++].desc = "audio source";
     
     tests[i] = function() {
-        var synth = T("ar");
+        var synth = T("buddy");
         synth.onplay = function() {
             synth.args[0] = s[0].clone();
         };
