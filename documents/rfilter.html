@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>doc: WavDecoder</title>
+    <title>doc: ResonantFilter</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -18,80 +18,62 @@
 
       <div class="navi"><a href=".">index</a></div>
       <div id="contents">
-        <h2>WavDecoder</h2>
+        <h2>ResonantFilter</h2>
         <p class="desc">
-          Load a wav file and store it to the buffer.
+         Filter
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-T("wav", src="public/audio/amen.wav", loop=true).load();
+rfilter = T("rfilter", type="rlpf", cutoff=800, Q=0.5, depth=0.5, ...);
 
-// src  [String]  The url of an wav file to load
-// loop [Boolean] Looping
+// type   [String] Filter type
+// cutoff [Object] {kr-only}
+// Q      [Object] {kr-only}
+// depth  [Object] {kr-only}
+// ...    Input objects to process
         </pre>
-
+        
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
-wav.src         // [String]   The url of an wav file to load
-wav.loop        // [Boolean]  Looping
+rfilter.type   // [String]
+rfilter.cutoff // [Object]
+rfilter.Q      // [Object]
+rfilter.depth  // [Object]
 
-wav.currentTime // [Number]   Current position in msec of the buffer
-wav.reversed    // [Boolean]  Play backwards
-
-wav.mul         // [Number]   Output will be multiplied by this value
-wav.add         // [Number]      and will be added to the output
-
-wav.isLoaded    // [Readonly] 'true' when loaded wav and stored
-wav.duration    // [Readonly] The duration of the buffer
+rfilter.mul  // [Number] Output will be multiplied by this value
+rfilter.add  // [Number]    and will be added to the output
         </pre>
 
         <h3>Methods</h3>
         <pre id="ex2" class="prettyprint">
-// Async load an wav file and store it to the buffer
-wav.load();
+// Enable processing
+rfilter.on();
 
-
-// Return new T("wav") instance which refers to the same buffer
-wav.clone();
-
-
-// Return new T("wav") instance which has the extracted buffer
-wav.slice(begin=0, end=1000);
+// Disable processing
+rfilter.off();
         </pre>
 
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
-// Script to be run when the buffer has reach the end
-wav.onended = function() {};
-
-
-// Script to be run when the buffer has reach the end and loop
-wav.onlooped = function() {};
-
-
-// Scripts to be run when an wav data is loaded
-wav.onloadend = function(res) {};
-
-
-// Scripts to be run when an error occurs when the file is being loaded
-wav.onerror = function() {};
+// none
         </pre>
 
-        <h3>Example: Reversed wav</h3>
+        <h3>Change the filter type</h3>
         <pre id="ex4" class="prettyprint">
-wav.clone().set("reversed", true).play();
+// The filter class has some aliases.
+T("rlpf")  // Low pass filter
+T("rhpf")  // High pass filter
+T("rbpf")  // Band pass filter
+T("rbrf")  // Band reject filter
         </pre>
         
-        <h3>Example: Beat from slice wav</h3>
-        <pre id="ex5" class="prettyprint">
-wav.slice(280, 280+214).play();
-        </pre>
-
         <h3>See Also: </h3>
-        <a href="audio.html">Audio</a>
+        <a href="filter.html">T("filter")</a>
         
       </div>
       <div class="navi"><a href=".">index</a></div>
+      <footer>
+      </footer>
     </section>
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>
@@ -100,5 +82,5 @@ wav.slice(280, 280+214).play();
   <script type="text/javascript" src="public/js/waveviewer.js"></script>  
   <script type="text/javascript" src="public/js/main.js"></script>
   <script type="text/javascript" src="../timbre.js"></script>
-  <script type="text/javascript" src="wavdecoder.js"></script>  
+  <script type="text/javascript" src="rfilter.js"></script>
 </html>

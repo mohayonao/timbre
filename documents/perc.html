@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>doc: ResonantFilter</title>
+    <title>doc: PercussiveEnvelope</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -18,57 +18,57 @@
 
       <div class="navi"><a href=".">index</a></div>
       <div id="contents">
-        <h2>ResonantFilter</h2>
+        <h2>PercussiveEnvelope</h2>
         <p class="desc">
-         Filter
+         Control signal generator which outputs shaped decay envelopes.
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-rfilter = T("rfilter", type="rlpf", cutoff=800, Q=0.5, depth=0.5, ...);
+perc = T("perc", r=200, ended=function(){});
 
-// type   [String] Filter type
-// cutoff [Object] {kr-only}
-// Q      [Object] {kr-only}
-// depth  [Object] {kr-only}
-// ...    Input objects to process
+// r     [Number]   Release time in msec
+// ended [Function] Script to be run when the envelope status reach the end
         </pre>
-        
+
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
-rfilter.type   // [String]
-rfilter.cutoff // [Object]
-rfilter.Q      // [Object]
-rfilter.depth  // [Object]
+perc.delay  // [Number] Delay time in msec
+perc.a      // [Number] Attack time in msec
+perc.r      // [Number] Release time in msec
 
-rfilter.mul  // [Number] Output will be multiplied by this value
-rfilter.add  // [Number]    and will be added to the output
+perc.al     // [Number] Attack Level
+
+perc.mul    // [Number] Output will be multiplied by this value
+perc.add    // [Number]    and will be added to the output
+
+adsr.reversed    // [Boolean] Reverse envelope
+
+perc.currentTime // [Readonly] Current position in msec of the envelope
+adsr.status      // [Readonly] The status of envelope
         </pre>
 
         <h3>Methods</h3>
         <pre id="ex2" class="prettyprint">
-// Enable processing
-rfilter.on();
-
-// Disable processing
-rfilter.off();
+// Trigger the envelope
+perc.bang();
         </pre>
 
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
-// none
-        </pre>
+// Script to be run when the envelope status reach 'A'
+adsr.onA = function() {};
 
-        <h3>Change the filter type</h3>
-        <pre id="ex4" class="prettyprint">
-// The filter class has some aliases.
-T("rlpf")  // Low pass filter
-T("rhpf")  // High pass filter
-T("rbpf")  // Band pass filter
-T("rbrf")  // Band reject filter
+
+// Script to be run when the envelope status reach 'R'
+adsr.onR = function() {};
+
+
+// Script to be run when the envelope status reach the end
+perc.onended = function() {};
         </pre>
         
         <h3>See Also: </h3>
-        <a href="filter.html">Filter</a>
+        <a href="adsr.html">T("adsr")</a>
         
       </div>
       <div class="navi"><a href=".">index</a></div>
@@ -82,5 +82,5 @@ T("rbrf")  // Band reject filter
   <script type="text/javascript" src="public/js/waveviewer.js"></script>  
   <script type="text/javascript" src="public/js/main.js"></script>
   <script type="text/javascript" src="../timbre.js"></script>
-  <script type="text/javascript" src="filter.js"></script>
+  <script type="text/javascript" src="perc.js"></script>
 </html>

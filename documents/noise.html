@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>doc: PercussiveEnvelope</title>
+    <title>doc: Noise</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -18,62 +18,54 @@
 
       <div class="navi"><a href=".">index</a></div>
       <div id="contents">
-        <h2>PercussiveEnvelope</h2>
+        <h2>WhiteNoise</h2>
         <p class="desc">
-         Control signal generator which outputs shaped decay envelopes.
+          White noise generator
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-perc = T("perc", r=200, ended=function(){});
+noise = T("noise");
 
-// r     [Number]   Release time in msec
-// ended [Function] Script to be run when the envelope status reach the end
+noise.play();
         </pre>
 
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
-perc.delay  // [Number] Delay time in msec
-perc.a      // [Number] Attack time in msec
-perc.r      // [Number] Release time in msec
-
-perc.al     // [Number] Attack Level
-
-perc.mul    // [Number] Output will be multiplied by this value
-perc.add    // [Number]    and will be added to the output
-
-adsr.reversed    // [Boolean] Reverse envelope
-
-perc.currentTime // [Readonly] Current position in msec of the envelope
-adsr.status      // [Readonly] The status of envelope
-        </pre>
-
-        <h3>Methods</h3>
-        <pre id="ex2" class="prettyprint">
-// Trigger the envelope
-perc.bang();
-        </pre>
-
-        <h3>Events</h3>
-        <pre id="ex3" class="prettyprint">
-// Script to be run when the envelope status reach 'A'
-adsr.onA = function() {};
-
-
-// Script to be run when the envelope status reach 'R'
-adsr.onR = function() {};
-
-
-// Script to be run when the envelope status reach the end
-perc.onended = function() {};
+noise.mul // [Number] Output will be multiplied by this value
+noise.add // [Number]    and will be added to the output
         </pre>
         
-        <h3>See Also: </h3>
-        <a href="adsrenvelope.html">ADSREnvelope</a>
+        <h3>Methods</h3>
+        <pre id="ex2" class="prettyprint">
+// none
+        </pre>
+        
+        <h3>Events</h3>
+        <pre id="ex3" class="prettyprint">
+// none
+        </pre>
+
+        <h3>Example: Hi-Hat</h3>
+        <pre id="ex4" class="prettyprint">
+synth = T("*", T("hpf", 6000, T("noise")),
+               env = T("perc"));
+
+metro = T("metro", 138, 16, function() {
+    var i = metro.beat % 4;
+    if (i <= 1) {
+        env.duration = 20;
+        env.mul = 0.6 - i * 0.4;
+        env.bang();
+    } else if (i === 2) {
+        env.duration = 200;
+        env.mul = 0.8;
+        env.bang();
+    }
+});
+        </pre>
         
       </div>
       <div class="navi"><a href=".">index</a></div>
-      <footer>
-      </footer>
     </section>
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>
@@ -82,5 +74,5 @@ perc.onended = function() {};
   <script type="text/javascript" src="public/js/waveviewer.js"></script>  
   <script type="text/javascript" src="public/js/main.js"></script>
   <script type="text/javascript" src="../timbre.js"></script>
-  <script type="text/javascript" src="percussiveenvelope.js"></script>
+  <script type="text/javascript" src="noise.js"></script>
 </html>
