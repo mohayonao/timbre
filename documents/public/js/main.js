@@ -1,4 +1,4 @@
-// main.js 0.0.2
+// main.js 0.0.3
 var s = [];
 $(function() {
     if (!timbre.isEnabled) $("#caution").show();
@@ -37,16 +37,6 @@ $(function() {
         $("<button>").text("bang").on("click", function() {
             synth.bang();
         }).css("float", "right").insertAfter($elem);
-
-        synth.addEventListener("play" , function() {
-            timbre.on();
-        });
-        synth.addEventListener("pause", function() {
-            synth.dac.off();
-            if (s.every(function(synth) {
-                return !synth || !synth.dac || synth.dac.isOff;
-            })) timbre.off();
-        });
         
         if (synth.$initUI) synth.$initUI();
         
