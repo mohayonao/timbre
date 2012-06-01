@@ -1,0 +1,109 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>doc: Audio</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+
+      <div class="navi"><a href=".">index</a></div>
+      <div id="contents">
+        <h2>Audio</h2>
+        <p class="desc">
+          Load an audio file and store it to the buffer.
+        </p>
+        <h3>Constructor</h3>
+        <pre id="ex0" class="prettyprint">
+T("audio", src="public/audio/sample.ogg", loop=true).load();
+
+// src  [String]  The url of an audio file to load
+// loop [Boolean] Looping
+        </pre>
+
+        <h3>Properties</h3>
+        <pre id="ex1" class="prettyprint">
+audio.src         // [String]   The url of an audio file to load
+audio.loop        // [Boolean]  Looping
+
+audio.currentTime // [Number]   Current position in msec of the buffer
+audio.reversed    // [Boolean]  Play backwards
+
+audio.mul         // [Number]   Output will be multiplied by this value
+audio.add         // [Number]      and will be added to the output
+
+audio.isLoaded    // [Readonly] 'true' when loaded audio and stored
+audio.duration    // [Readonly] The duration of the buffer
+        </pre>
+
+        <h3>Methods</h3>
+        <pre id="ex2" class="prettyprint">
+// Async load an audio file and store it to the buffer
+audio.load();
+
+
+// Return new T("audio") instance which refers to the same buffer
+audio.clone();
+
+
+// Return new T("audio") instance which has the extracted buffer
+audio.slice(begin=0, end=1000);
+        </pre>
+
+        <h3>Events</h3>
+        <pre id="ex3" class="prettyprint">
+// Script to be run when the audio has reach the end          
+audio.onended = function() {};
+
+
+// Script to be run when the audio has reach the end and loop
+audio.onlooped = function() {};
+
+
+// Scripts to be run when meta data
+audio.onloadedmetadata = function(res) {};
+
+
+// Scripts to be run when an audio data is loaded
+// In Firefox, will be kept waiting..
+audio.onloadeddata = function(res) {};
+
+
+// Scripts to be run when an error occurs when the file is being loaded
+audio.onerror = function() {};
+        </pre>
+
+        <h3>Example: Reversed audio</h3>
+        <pre id="ex4" class="prettyprint">
+audio.clone().set("reversed", true).play();
+        </pre>
+        
+        <h3>Example: Beat from slice audio</h3>
+        <pre id="ex5" class="prettyprint">
+audio.slice(280, 280+214).play();
+        </pre>
+        
+        <h3>See Also: </h3>
+        <a href="wavdecoder.html">WavDecoder</a>
+        
+      </div>
+      <div class="navi"><a href=".">index</a></div>
+    </section>
+  </body>
+  <script type="text/javascript" src="public/js/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>  
+  <script type="text/javascript" src="public/js/main.js"></script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="audio.js"></script>  
+</html>

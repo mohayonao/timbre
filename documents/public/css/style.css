@@ -5,7 +5,7 @@ h2 {
     margin: 0px;font-size:24px;
 }
 h3 {
-    display:inline;margin-left: 5px;
+    display:inline;
 }
 #title {
     font-family: 'Comfortaa', sans-serif;
@@ -38,6 +38,9 @@ header span {
     font-size: 1.1em;font-weight:bold;border:solid 1px #ff9999;display:none;
 }
 .prettyprint {
-    margin-top:0px;padding:10px !important;background:rgba(255,255,255,0.75);
+    margin-top:5px;padding:10px !important;background:rgba(255,255,255,0.75);
     font-family: 'Courier New', monospace; font-weight: bold;
+}
+.navi {
+    padding:15px;text-align:right;
 }
