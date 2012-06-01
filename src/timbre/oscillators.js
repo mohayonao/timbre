@@ -37,7 +37,7 @@ var Oscillator = (function() {
                     }
                 }
             } else if (typeof value === "string") {
-                if ((dx = Oscillator.Waveforms[value]) !== undefined) {
+                if ((dx = Oscillator.Wavetables[value]) !== undefined) {
                     if (typeof dx === "function") dx = dx();
                     this._.wave = dx;
                 }
@@ -172,33 +172,33 @@ var Oscillator = (function() {
         return cell;
     };
     
-    $this.getWaveform = function(name) {
-        var wave = Oscillator.Waveforms[name];
+    $this.getWavetable = function(name) {
+        var wave = Oscillator.Wavetables[name];
         if (wave !== undefined) {
             if (typeof wave === "function") wave = wave();
             return wave;
         }
     };
     
-    $this.setWaveform = function(name, value) {
+    $this.setWavetable = function(name, value) {
         var wave, i;
         if (typeof value === "function") {
             wave = new Float32Array(1024);
             for (i = 0; i < 1024; i++) {
                 wave[i] = value(i / 1024);
             }
-            Oscillator.Waveforms[name] = wave;
+            Oscillator.Wavetables[name] = wave;
         } else if (typeof value === "object" &&
                    (value instanceof Array || value.buffer instanceof ArrayBuffer)) {
             if (value.length === 1024) {
-                Oscillator.Waveforms[name] = value;
+                Oscillator.Wavetables[name] = value;
             } else {
                 wave = new Float32Array(1024);
                 dx = value.length / 1024;
                 for (i = 0; i < 1024; i++) {
                     wave[i] = value[(i * dx)|0] || 0.0;
                 }
-                Oscillator.Waveforms[name] = value;
+                Oscillator.Wavetables[name] = value;
             }
         }
     };
@@ -207,8 +207,8 @@ var Oscillator = (function() {
 }());
 timbre.fn.register("osc", Oscillator);
 
-Oscillator.Waveforms = {};
-Oscillator.Waveforms["sin"] = function() {
+Oscillator.Wavetables = {};
+Oscillator.Wavetables["sin"] = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -216,7 +216,7 @@ Oscillator.Waveforms["sin"] = function() {
     }
     return l;
 };
-Oscillator.Waveforms["+sin"] = function() {
+Oscillator.Wavetables["+sin"] = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -224,7 +224,7 @@ Oscillator.Waveforms["+sin"] = function() {
     }
     return l;
 };
-Oscillator.Waveforms["cos"] = function() {
+Oscillator.Wavetables["cos"] = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -232,7 +232,7 @@ Oscillator.Waveforms["cos"] = function() {
     }
     return l;
 };
-Oscillator.Waveforms["+cos"] = function() {
+Oscillator.Wavetables["+cos"] = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -240,7 +240,7 @@ Oscillator.Waveforms["+cos"] = function() {
     }
     return l;
 };
-Oscillator.Waveforms["pulse"] = function() {
+Oscillator.Wavetables["pulse"] = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -248,7 +248,7 @@ Oscillator.Waveforms["pulse"] = function() {
     }
     return l;
 };
-Oscillator.Waveforms["+pulse"] = function() {
+Oscillator.Wavetables["+pulse"] = function() {
     var l, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -256,7 +256,7 @@ Oscillator.Waveforms["+pulse"] = function() {
     }
     return l;
 };
-Oscillator.Waveforms["tri"] = function() {
+Oscillator.Wavetables["tri"] = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -265,7 +265,7 @@ Oscillator.Waveforms["tri"] = function() {
     }
     return l;
 };
-Oscillator.Waveforms["+tri"] = function() {
+Oscillator.Wavetables["+tri"] = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -274,7 +274,7 @@ Oscillator.Waveforms["+tri"] = function() {
     }
     return l;
 };
-Oscillator.Waveforms["sawup"] = function() {
+Oscillator.Wavetables["sawup"] = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -283,7 +283,7 @@ Oscillator.Waveforms["sawup"] = function() {
     }
     return l;
 };
-Oscillator.Waveforms["+sawup"] = function() {
+Oscillator.Wavetables["+sawup"] = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -292,9 +292,9 @@ Oscillator.Waveforms["+sawup"] = function() {
     }
     return l;
 };
-Oscillator.Waveforms["saw"]  = Oscillator.Waveforms["sawup"];
-Oscillator.Waveforms["+saw"] = Oscillator.Waveforms["+sawup"];
-Oscillator.Waveforms["sawdown"] = function() {
+Oscillator.Wavetables["saw"]  = Oscillator.Wavetables["sawup"];
+Oscillator.Wavetables["+saw"] = Oscillator.Wavetables["+sawup"];
+Oscillator.Wavetables["sawdown"] = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -303,7 +303,7 @@ Oscillator.Waveforms["sawdown"] = function() {
     }
     return l;
 };
-Oscillator.Waveforms["+sawdown"] = function() {
+Oscillator.Wavetables["+sawdown"] = function() {
     var l, x, i;
     l = new Float32Array(1024);
     for (i = 0; i < 1024; ++i) {
@@ -312,7 +312,7 @@ Oscillator.Waveforms["+sawdown"] = function() {
     }
     return l;
 };
-Oscillator.Waveforms["fami"] = function() {
+Oscillator.Wavetables["fami"] = function() {
     var l, d, x, i, j;
     d = [ +0.000, +0.125, +0.250, +0.375, +0.500, +0.625, +0.750, +0.875,
           +0.875, +0.750, +0.625, +0.500, +0.375, +0.250, +0.125, +0.000,
@@ -324,7 +324,7 @@ Oscillator.Waveforms["fami"] = function() {
     }
     return l;
 };
-Oscillator.Waveforms["konami"] = function() {
+Oscillator.Wavetables["konami"] = function() {
     var l, d, x, i, j;
         d = [-0.625, -0.875, -0.125, +0.750, + 0.500, +0.125, +0.500, +0.750,
              +0.250, -0.125, +0.500, +0.875, + 0.625, +0.000, +0.250, +0.375,

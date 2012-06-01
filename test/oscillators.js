@@ -39,16 +39,16 @@ tests = (function() {
     }; tests[i++].desc = 'alias: T("konami", ...) is T("osc", "konami", ...)';
     
     tests[i] = function() {
-        T("osc").setWaveform("random", function() {
+        T("osc").setWavetable("random", function() {
             return Math.random() - 0.5;
         });
         return T("osc", "random", 440);
-    }; tests[i++].desc = "set waveform";
+    }; tests[i++].desc = "set wavetable";
     
     tests[i] = function() {
         var tone = timbre.utils.wavb("8084888C90989CA4ACB8C0CCE0002C50707C7C78746858483C3024181004F8E0E4E0F804101824303C48586874787C7C70502C00E0CCC0B8ACA49C98908C8884");
         return T("osc", tone, 440);
-    }; tests[i++].desc = 'utils.wavb() define waveform';
+    }; tests[i++].desc = 'utils.wavb() define wavetable';
     
     tests[i] = function() {
         return T("noise");

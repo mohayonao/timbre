@@ -30,13 +30,13 @@ ex3 = (function() {
 }());
 
 ex4 = (function() {
-    T("osc").setWaveform("myosc", function(x) {
+    T("osc").setWavetable("myosc", function(x) {
         return Math.random() - 0.5;
     });
     
     var synth = T("osc", "myosc", 1340);
     synth.onbang = function() {
-        console.log( T("osc").getWaveform("myosc") );
+        console.log( T("osc").getWavetable("myosc") );
     };
     
     return synth;

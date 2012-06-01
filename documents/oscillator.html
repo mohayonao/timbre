@@ -46,7 +46,7 @@ osc.add   = 0.8;
 osc.play();
         </pre>
         
-        <h3>Waveform</h3>
+        <h3>Wavetable</h3>
         <pre id="ex2" class="prettyprint">
 wave = ["sin", "tri", "saw", "pulse", "fami"][(Math.random()*5)|0];
 
@@ -62,9 +62,9 @@ T(wave, 1320, 0.5).play();
 // (push [bang] button to change the wave)
         </pre>
         
-        <h3>Customizing the waveform</h3>
+        <h3>Customizing the wavetable</h3>
         <pre id="ex3" class="prettyprint">
-// Define custom waveform from a function
+// Define custom wavetable from a function
 func = function(x) { return x * x * x; };
 T("osc", func, 880).play(); 
 
@@ -74,19 +74,19 @@ T("osc", [ -1, +1, +1, +1 ], 880);
 // Directly set
 T("osc", new Float32Array(1024), 880);
         </pre>
-
-        <h3>Register the waveform</h3>
+        
+        <h3>Register the wavetable</h3>
         <pre id="ex4" class="prettyprint">
-// Register a waveform and use it
-T("osc").setWaveform("myosc", function(x) {
+// Register a wavetable and use it
+T("osc").setWavetable("myosc", function(x) {
     return Math.random() - 0.5;
 });
 
 T("osc", "myosc", 1340).play();
 
-// Get a waveform
+// Get a wavetable
 // (push [bang] button and see the result at WebConsole)
-T("osc").getWaveform("myosc"); // Float32Array(1024)
+T("osc").getWavetable("myosc"); // Float32Array(1024)
         </pre>
 
         <h3>tremolo</h3>
