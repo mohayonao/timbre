@@ -1,6 +1,9 @@
 a {
     color: rgba(  0, 128, 255, 0.8);
 }
+h2 {
+    margin: 0px;font-size:24px;
+}
 h3 {
     display:inline;margin-left: 5px;
 }
