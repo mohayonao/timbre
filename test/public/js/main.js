@@ -1,4 +1,4 @@
-// main.js for test 0.0.1
+// main.js for test 0.0.3
 var s = [];
 $(function() {
     "use strict";
@@ -51,19 +51,8 @@ $(function() {
             }))
             .append($pre)
             .appendTo("#tests");
-
         
-        synth.addEventListener("play" , function() {
-            timbre.on();
-        });
-        synth.addEventListener("pause", function() {
-            synth.dac.off();
-            if (s.every(function(synth) {
-                return !synth.dac || synth.dac.isOff;
-            })) timbre.off();
-        });
-        
-        if (synth.initUI) synth.initUI();
+        if (synth.$initUI) synth.$initUI();
         
         s.push(synth);
     });
