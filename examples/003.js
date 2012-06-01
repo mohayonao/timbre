@@ -15,7 +15,7 @@ ex1 = (function() {
     }); metronome.measure = 0; metronome.beat = 0;
     
     // amen (load a wav file and decode it)
-    var amen = T("wav", "./audio/amen.wav", true).load(function(res) {
+    var amen = T("wav", "./public/audio/amen.wav", true).load(function(res) {
         metronome.interval = (this.duration / 3) / 16;
         ex1.ready += 1;
     });
@@ -48,7 +48,7 @@ ex1 = (function() {
             [1, 6, 8], [2, 5, 8], [1, 4, 8], [0, 2, 6],
         ], amptable = [ 0.9, 0.5, 0.8, 0.6 ], pianotones = [];
         
-        T("wav", "./audio/piano_cmaj.wav").load(function(res) {
+        T("wav", "./public/audio/piano_cmaj.wav").load(function(res) {
             var dx = this.duration / 9;
             for (var i = 0; i < 9; i++) {
                 pianotones[i] = this.slice(dx * i, dx * i + dx);
