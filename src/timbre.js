@@ -11,7 +11,6 @@ timbre.VERSION    = "${VERSION}";
 timbre.BUILD      = "${DATE}";
 timbre.env        = "";
 timbre.platform   = "";
-timbre.workerpath = "";
 timbre.samplerate = 44100;
 timbre.channels   = 2;
 timbre.cellsize   = 128;
@@ -22,7 +21,7 @@ timbre.listeners  = [];
 timbre.sys        = null;
 timbre.context    = {};
 timbre._ = { ev:{}, amp:0.8,
-             autorun:true, verbose:true,
+             autorun:true, verbose:true, workerpath:"",
              none: new Float32Array(timbre.cellsize) };
 
 var TimbreObject = function() {};
@@ -174,6 +173,14 @@ Object.defineProperty(timbre, "autorun", {
         timbre._.autorun = !!value;
     },
     get: function() { return timbre._.autorun; }
+});
+Object.defineProperty(timbre, "workerpath", {
+    set: function(value) {
+        if (typeof value === "string") {
+            timbre._.workerpath = value;
+        }
+    },
+    get: function() { return timbre._.workerpath; }
 });
 Object.defineProperty(timbre, "verbose", {
     set: function(value) {

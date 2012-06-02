@@ -161,9 +161,9 @@ var WavDecoder = (function() {
             }
         } else if (_.src !== "") {
             timbre.fn.do_event(this, "loading");
-            if (timbre.platform === "web" && timbre.workerpath) {
+            if (timbre.platform === "web" && timbre._.workerpath) {
                 src = timbre.utils.relpath2rootpath(_.src);
-                worker = new Worker(timbre.workerpath);
+                worker = new Worker(timbre._.workerpath);
                 worker.onmessage = function(e) {
                     var data = e.data;
                     switch (data.result) {
