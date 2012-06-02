@@ -65,7 +65,17 @@ var Record = (function() {
     };
     
     $this.on = function() {
-        this._.ison = true;
+        var buffer, i, _ = this._;
+        _.ison = true;
+        if (_.index >= _.buffer.length) {
+            _.index = _.currentTime = 0;
+            if (!_.overwrite) {
+                buffer = _.buffer;
+                for (i = buffer.length; i--; ) {
+                    buffer[i] = 0;
+                }
+            }
+        }
         timbre.fn.do_event(this, "on");
         return this;
     };
@@ -92,9 +102,8 @@ var Record = (function() {
     
     var onrecorded = function() {
         var _ = this._;
-        timbre.fn.do_event(this, "recorded", [{
-            buffer:_.buffer.subarray(0, _.index)
-        }]);
+        timbre.fn.do_event(this, "recorded",
+                           [_.buffer.subarray(0, _.index)]);
     };
     
     $this.seq = function(seq_id) {
