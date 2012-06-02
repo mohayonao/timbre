@@ -49,23 +49,25 @@ num.value; // [Number]
         <h3>Example: Computer noise</h3>
         <pre id="ex4" class="prettyprint">
 num   = T(880);
-synth = T("fami", num, 0.25);
-    
+synth = T("fami", num, 0.25).play();
+
+timer = T("interval", 100, function() {
+    num.value = (Math.random() * 2000) + 200;
+});
+
 synth.onplay = function() {
-    timerId = setInterval(function() {
-        num.value = (Math.random() * 2000) + 200;
-    }, 100);
+    timer.on();
 };
 synth.onpause = function() {
-    clearInterval(timerId);
+    timer.off();
 };
 
 
 /** NOTE:
  * The number casted to timbre object when needed.
  *
- * T("sin", 880)     -&gt; T("sin", T("number", 880)).
- * synth.freq = 440; -&gt; synth.freq = T(440);
+ * T("sin", 880)     -&gt; T("sin", T("number", 880))
+ * synth.freq = 440  -&gt; synth.freq = T(440)
  *
  * synth.freq.value = 440; &lt;- It's effective assign!
  */
