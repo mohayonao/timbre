@@ -35,7 +35,7 @@ TIMBRE_SOURCES = [
     "timbre/tick"
     "timbre/interval"
     "timbre/timeout"
-    "timbre/metro"
+
     "timbre/timbre"
 ]
 
