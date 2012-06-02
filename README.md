@@ -1,5 +1,21 @@
 # timbre
 JavaScript Library for Objective Sound Programming
 
-## timbre is under developing yet
+http://mohayonao.github.com/timbre/
 
+
+## Examples
+[Rhythm Sequencer]
+(http://mohayonao.github.com/timbre/examples/002_rhythmsequencer.html)
+
+[Piano and Drums]
+(http://mohayonao.github.com/timbre/examples/003_loadwavfiles.html)
+
+[Timbre Synthesizer]
+(http://mohayonao.github.com/timbre/examples/004_timbresynth.html)
+
+
+## Documents
+It is so easily learn it. Because it is pure JavaScript.
+
+http://mohayonao.github.com/timbre/documents
