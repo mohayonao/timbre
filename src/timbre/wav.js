@@ -125,7 +125,9 @@ var WavDecoder = (function() {
     };
     
     var send = function(type, result, callback) {
-        if (type === "loadend") {
+        if (type === "loadedmetadata") {
+            timbre.fn.do_event(this, "loadedmetadata", [result]);
+        } else if (type === "loadeddata") {
             if (typeof callback === "function") {
                 callback.call(this, result);
             } else if (typeof callback === "object") {
@@ -137,7 +139,7 @@ var WavDecoder = (function() {
                     console.log("wav.load: done.");
                 }
             }
-            timbre.fn.do_event(this, "loadend", [result]);
+            timbre.fn.do_event(this, "loadeddata", [result]);
         } else if (type === "error") {
             if (typeof callback === "function") {
                 callback.call(this, "error");
@@ -155,7 +157,10 @@ var WavDecoder = (function() {
             if (_.samplerate === 0) {
                 send.call(this, "error", {}, callback);
             } else {
-                send.call(this, "loadend",
+                send.call(this, "loadedmetadata",
+                          {samplerate:_.samplerate,
+                           buffer    :_.buffer}, callback);    
+                send.call(this, "loadeddata",
                           {samplerate:_.samplerate,
                            buffer    :_.buffer}, callback);    
             }
@@ -170,6 +175,11 @@ var WavDecoder = (function() {
                     case "metadata":
                         buffer     = new Int16Array(data.bufferSize);
                         samplerate = data.samplerate;
+                        _.buffer     = buffer;
+                        _.samplerate = samplerate;
+                        send.call(self, "loadedmetadata",
+                                  {samplerate:_.samplerate,
+                                   buffer    :_.buffer}, callback);    
                         break;
                     case "data":
                         buffer.set(data.array, data.offset);
@@ -177,8 +187,6 @@ var WavDecoder = (function() {
                     case "ended":
                         _.isloaded   = true;
                         _.loaded_src = _.src;
-                        _.buffer     = buffer;
-                        _.samplerate = samplerate;
                         _.duration   = (buffer.length / samplerate) * 1000;
                         _.phaseStep  = samplerate / timbre.samplerate;
                         if (_.reversed) {
@@ -186,7 +194,7 @@ var WavDecoder = (function() {
                         } else {
                             _.phase = 0;    
                         }
-                        send.call(self, "loadend",
+                        send.call(self, "loadeddata",
                                   {samplerate:samplerate,
                                    buffer    :buffer}, callback);
                         break;
@@ -217,9 +225,12 @@ var WavDecoder = (function() {
                             if (_.reversed) {
                                 _.phase = Math.max(0, newone._.buffer.length - 1);
                             } else {
-                                _.phase = 0;    
+                                _.phase = 0;
                             }
-                            send.call(self, "loadend",
+                            send.call(self, "loadedmetadata",
+                                      {samplerate:_.samplerate,
+                                       buffer    :_.buffer}, callback);    
+                            send.call(self, "loadeddata",
                                       { samplerate:_.samplerate,
                                         buffer    :_.buffer }, callback);
                         }
