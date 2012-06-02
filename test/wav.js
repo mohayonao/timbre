@@ -11,8 +11,11 @@ tests = (function() {
         synth.onerror = function(res) {
             console.log("error", res);
         };
-        synth.onloadend = function(res) {
-            console.log("loadend", res.buffer.length);
+        synth.onloadedmetadata = function(res) {
+            console.log("loadedmetadata", res.buffer.length);
+        };
+        synth.onloadeddata = function(res) {
+            console.log("loadeddata", res.buffer.length);
         };
         return synth.load();
     }; tests[i++].desc = "wav";
