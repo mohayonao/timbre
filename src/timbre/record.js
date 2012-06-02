@@ -17,7 +17,8 @@ var Record = (function() {
     }, $this = Record.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "ar-only");
-
+    timbre.fn.setPrototypeOf.call($this, "listener");
+    
     Object.defineProperty($this, "buffer", {
         get: function() { return this._.buffer; }
     });

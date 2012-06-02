@@ -20,6 +20,7 @@ var FFT = (function() {
     var PI2 = Math.PI * 2;
     
     timbre.fn.setPrototypeOf.call($this, "ar-only");
+    timbre.fn.setPrototypeOf.call($this, "listener");
     
     Object.defineProperty($this, "size", {
         get: function() { return this._.buffersize >> 1; }

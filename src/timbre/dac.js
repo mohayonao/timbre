@@ -17,6 +17,7 @@ var Dac = (function() {
     }, $this = Dac.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "ar-only");
+    timbre.fn.setPrototypeOf.call($this, "dac");
     
     Object.defineProperty($this, "dac", {
         get: function() { return this; }
@@ -38,7 +39,7 @@ var Dac = (function() {
         _.ison = false;
     };
     
-    $this._post_init = function() {
+    $this._.init = function() {
         var i, args;
         args = this.args;
         for (i = args.length; i--; ) {
@@ -51,31 +52,6 @@ var Dac = (function() {
         newone._.pan = (deep) ? this._.pan.clone(true) : this._.pan;
         timbre.fn.copy_for_clone(this, newone, deep);
         return newone;
-    };
-    
-    $this.on = function() {
-        this._.ison = true;
-        timbre.dacs.append(this);
-        timbre.fn.do_event(this, "on");
-        return this;
-    };
-    $this.off = function() {
-        this._.ison = false;
-        timbre.dacs.remove(this);
-        timbre.fn.do_event(this, "off");
-        return this;
-    };
-    $this.play = function() {
-        this._.ison = true;
-        timbre.dacs.append(this);
-        timbre.fn.do_event(this, "play");        
-        return this;
-    };
-    $this.pause = function() {
-        this._.ison = false;
-        timbre.dacs.remove(this);
-        timbre.fn.do_event(this, "pause");        
-        return this;
     };
     
     $this.seq = function(seq_id) {

@@ -22,7 +22,7 @@ var Buddy = (function() {
         this.args = timbre.fn.valist.call(this, _args);
     };
     
-    $this._post_init = function() {
+    $this._.init = function() {
         $this._._play  = this.play;
         $this._._pause = this.pause;
         $this._._on    = this.on;

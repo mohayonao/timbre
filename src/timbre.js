@@ -234,14 +234,18 @@ timbre.removeAllEventListeners = function(name) {
 
 (function() {
     var append = function() {
-        var args, i, imax;
+        var args, p, b, i, imax;
         args = timbre.fn.valist(arguments);
-        for (i = 0, imax = args.length; i < imax; ++i) {
-            if (this.indexOf(args[i]) === -1) {
-                this.push(args[i]);
+        for (i = 0, imax = args.length, b = false; i < imax; ++i) {
+            p = Object.getPrototypeOf(args[i]);
+            if (p._.type === this.type) {
+                if (this.indexOf(args[i]) === -1) {
+                    this.push(args[i]);
+                    b = true;
+                }
             }
         }
-        if ( timbre.autorun && this !== timbre.listeners ) timbre.on();
+        if ( b && timbre.autorun && this !== timbre.listeners ) timbre.on();
         return this;
     };
     var remove = function() {
@@ -273,6 +277,10 @@ timbre.removeAllEventListeners = function(name) {
     }
 }(timbre.dacs, timbre.timers, timbre.listeners));
 
+timbre.dacs.type      = 1;
+timbre.timers.type    = 2;
+timbre.listeners.type = 3;
+
 
 // timbre.functions
 timbre.fn = (function(timbre) {
@@ -303,6 +311,81 @@ timbre.fn = (function(timbre) {
         return this;
     };
     
+    defaults.optional.listen = function(target) {
+        if (target === null) {
+            this.args = this._.args;
+            timbre.listeners.remove(this);
+        } else {
+            if (fn.isTimbreObject(target)) {
+                this._.args = this.args;
+                this.args.removeAll();
+                this.args.append(target);
+                timbre.listeners.append(this);
+            }
+        }
+        return this;
+    };
+
+    defaults.optional.dac = {};
+    defaults.optional.dac.on = function() {
+        this._.ison = true;
+        timbre.dacs.append(this);
+        timbre.fn.do_event(this, "on");
+        var p = Object.getPrototypeOf(this);
+        if (p._.on) p._.on.call(this);
+        return this;
+    };
+    defaults.optional.dac.off = function() {
+        this._.ison = false;
+        timbre.dacs.remove(this);
+        timbre.fn.do_event(this, "off");
+        var p = Object.getPrototypeOf(this);
+        if (p._.off) p._.off.call(this);
+        return this;
+    };
+    defaults.optional.dac.play = function() {
+        this._.ison = true;
+        timbre.dacs.append(this);
+        timbre.fn.do_event(this, "play");
+        var p = Object.getPrototypeOf(this);
+        if (p._.play) p._.play.call(this);
+        return this;
+    };
+    defaults.optional.dac.pause = function() {
+        this._.ison = false;
+        timbre.dacs.remove(this);
+        timbre.fn.do_event(this, "pause");
+        var p = Object.getPrototypeOf(this);
+        if (p._.pause) p._.pause.call(this);
+        return this;
+    };
+    
+    defaults.optional.timer = {};
+    defaults.optional.timer.on = function() {
+        this._.ison = true;
+        timbre.timers.append(this);
+        timbre.fn.do_event(this, "on");
+        var p = Object.getPrototypeOf(this);
+        if (p._.on) p._.on.call(this);
+        return this;
+    };
+    defaults.optional.timer.off = function() {
+        this._.ison = false;
+        timbre.timers.remove(this);
+        timbre.fn.do_event(this, "off");
+        var p = Object.getPrototypeOf(this);
+        if (p._.off) p._.off.call(this);
+        return this;
+    };
+    defaults.optional.timer.play = function() {
+        timbre.fn.do_event(this, "play");
+        return this;
+    };
+    defaults.optional.timer.pause = function() {
+        timbre.fn.do_event(this, "pause");
+        return this;
+    };
+    
     fn.init = function() {
         var args, key, klass, instance, isThrougOut, proto;
         args = Array.prototype.slice.call(arguments);
@@ -327,7 +410,7 @@ timbre.fn = (function(timbre) {
         case "object":
             if (key === null) {
                 instance = new NumberWrapper([0]);
-            } else if (Object.getPrototypeOf(key)._ instanceof TimbreObject) {
+            } else if (fn.isTimbreObject(key)) {
                 instance = key;
                 isThrougOut = true;
             }
@@ -341,6 +424,7 @@ timbre.fn = (function(timbre) {
         if (instance === undefined) instance = new NumberWrapper([0]);
         
         // init
+        proto = Object.getPrototypeOf(instance);
         if (!isThrougOut) {
             instance.seq_id = -1;
             if (!instance.cell) {
@@ -354,7 +438,6 @@ timbre.fn = (function(timbre) {
             if (typeof !instance._.ev !== "object") instance._.ev = {};
             
             if (typeof instance._.ar !== "boolean") {
-                proto = Object.getPrototypeOf(instance);
                 if (proto && typeof proto._ === "object") {
                     instance._.ar = !!proto._.ar;
                 } else {
@@ -374,7 +457,8 @@ timbre.fn = (function(timbre) {
                 instance._.dac = null;
             }
         }
-        if (instance._post_init) instance._post_init();
+        
+        if (proto._.init) proto._.init.call(instance);
         
         return instance;
     };
@@ -434,20 +518,6 @@ timbre.fn = (function(timbre) {
     };
     defaults.removeAll = function() {
         this.args.removeAll.apply(this.args, arguments);
-        return this;
-    };
-    defaults.listen = function(target) {
-        if (target === null) {
-            this.args = this._.args;
-            timbre.listeners.remove(this);
-        } else {
-            if (Object.getPrototypeOf(target)._ instanceof TimbreObject) {
-                this._.args = this.args;
-                this.args.removeAll();
-                this.args.append(target);
-                timbre.listeners.append(this);
-            }
-        }
         return this;
     };
     defaults.set = function(key, value) {
@@ -551,30 +621,45 @@ timbre.fn = (function(timbre) {
     };
     
     fn.setPrototypeOf = function(type) {
+        if (!this._) this._ = {};
         switch (type) {
         case "ar-only":
             this.ar = defaults.optional.fixrate;
             this.kr = defaults.optional.fixrate;
-            if (!this._) this._ = {};
             this._.ar = true;
             break;
         case "kr-only":
             this.ar = defaults.optional.fixrate;
             this.kr = defaults.optional.fixrate;
-            if (!this._) this._ = {};
             this._.ar = false;
             break;
         case "kr-ar":
             this.ar = defaults.optional.ar;
             this.kr = defaults.optional.kr;
-            if (!this._) this._ = {};
             this._.ar = false;
             break;
         case "ar-kr":
             this.ar = defaults.optional.ar;
             this.kr = defaults.optional.kr;
-            if (!this._) this._ = {};
             this._.ar = true;
+            break;
+        case "dac":
+            this.on    = defaults.optional.dac.on;
+            this.off   = defaults.optional.dac.off;
+            this.play  = defaults.optional.dac.play;
+            this.pause = defaults.optional.dac.pause;
+            this._.type = 1;
+            break;
+        case "timer":
+            this.on    = defaults.optional.timer.on;
+            this.off   = defaults.optional.timer.off;
+            this.play  = defaults.optional.timer.play;
+            this.pause = defaults.optional.timer.pause;
+            this._.type = 2;
+            break;
+        case "listener":
+            this.listen = defaults.optional.listen;
+            this._.type = 3;
             break;
         }
     };
@@ -760,7 +845,7 @@ var NumberWrapper = (function() {
         }
     };
     
-    $this._post_init = function() {
+    $this._.init = function() {
         this.value = this._.value;
     };
     
@@ -832,7 +917,7 @@ var BooleanWrapper = (function() {
         }
     };
     
-    $this._post_init = function() {
+    $this._.init = function() {
         this.value = this._.value;
     };
     
@@ -936,7 +1021,7 @@ var ArrayWrapper = (function() {
         }
     };
     
-    $this._post_init = function() {
+    $this._.init = function() {
         this.index = 0;
     };
     

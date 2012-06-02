@@ -17,6 +17,7 @@ var Interval = (function() {
     }, $this = Interval.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "kr-only");
+    timbre.fn.setPrototypeOf.call($this, "timer");
     
     Object.defineProperty($this, "interval", {
         set: function(value) {
@@ -54,30 +55,6 @@ var Interval = (function() {
     
     $this.clone = function(deep) {
         return timbre("interval", this._.interval);
-    };
-    
-    $this.on = function() {
-        this._.ison = true;
-        timbre.timers.append(this);
-        timbre.fn.do_event(this, "on");
-        return this;
-    };
-    
-    $this.off = function() {
-        this._.ison = false;
-        timbre.timers.remove(this);
-        timbre.fn.do_event(this, "off");
-        return this;
-    };
-    
-    $this.play = function() {
-        timbre.fn.do_event(this, "play");
-        return this;
-    };
-    
-    $this.pause = function() {
-        timbre.fn.do_event(this, "pause");
-        return this;
     };
     
     $this.bang = function() {

@@ -17,6 +17,7 @@ var Metronome = (function() {
     }, $this = Metronome.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "kr-only");
+    timbre.fn.setPrototypeOf.call($this, "timer");
     
     Object.defineProperty($this, "bpm", {
         set: function(value) {
@@ -87,30 +88,6 @@ var Metronome = (function() {
         var newone, _ = this._;
         newone = timbre("metro", _.bpm, _.beat, _.shuffle);
         return newone;
-    };
-    
-    $this.on = function() {
-        this._.ison = true;
-        timbre.timers.append(this);
-        timbre.fn.do_event(this, "on");
-        return this;
-    };
-    
-    $this.off = function() {
-        this._.ison = false;
-        timbre.timers.remove(this);
-        timbre.fn.do_event(this, "off");
-        return this;
-    };
-    
-    $this.play = function() {
-        timbre.fn.do_event(this, "play");
-        return this;
-    };
-    
-    $this.pause = function() {
-        timbre.fn.do_event(this, "pause");
-        return this;
     };
     
     $this.bang = function() {
