@@ -21,7 +21,7 @@ var Interval = (function() {
     
     Object.defineProperty($this, "interval", {
         set: function(value) {
-            if (typeof value === "number") {
+            if (typeof value === "number" && value > 0) {
                 this._.interval = value;
                 this._.interval_samples = (timbre.samplerate * (value / 1000))|0;
             }
@@ -75,19 +75,17 @@ var Interval = (function() {
         var args, i, imax;
         
         if (seq_id !== this.seq_id) {
-            if (_.interval_samples !== 0) {
-                _.samples -= timbre.cellsize;
-                if (_.samples <= 0) {
-                    _.samples += _.interval_samples;
-                    args = this.args;
-                    for (i = 0, imax = args.length; i < imax; ++i) {
-                        args[i].bang();
-                    }
-                    ++_.count;
+            this.seq_id = seq_id;
+            _.samples -= timbre.cellsize;
+            if (_.samples <= 0) {
+                _.samples += _.interval_samples;
+                args = this.args.slice(0);
+                for (i = 0, imax = args.length; i < imax; ++i) {
+                    args[i].bang();
                 }
+                ++_.count;
             }
             _.currentTime += timbre.cellsize * 1000 / timbre.samplerate;
-            this.seq_id = seq_id;
         }
         return this.cell;
     };

@@ -21,7 +21,7 @@ var Timeout = (function() {
     
     Object.defineProperty($this, "timeout", {
         set: function(value) {
-            if (typeof value === "number") {
+            if (typeof value === "number" && value > 0) {
                 this._.timeout = value;
                 this._.timeout_samples = (timbre.samplerate * (value / 1000))|0;
             }
@@ -40,6 +40,8 @@ var Timeout = (function() {
         i = 0;
         if (typeof _args[i] === "number") {
             this.timeout = _args[i++];
+        } else {
+            this.timeout = 1000;
         }
         this.args = timbre.fn.valist.call(this, _args.slice(i));
         
@@ -70,19 +72,17 @@ var Timeout = (function() {
         var _ = this._;
         var args, i, imax;
         if (seq_id !== this.seq_id) {
-            if (_.timeout_samples !== 0) {
-                _.samples -= timbre.cellsize;
-                if (_.samples <= 0) {
-                    _.samples = 0;
-                    args = this.args;
-                    for (i = 0, imax = args.length; i < imax; ++i) {
-                        args[i].bang();
-                    }
-                    if (_.samples <= 0) this.off();
+            this.seq_id = seq_id;
+            _.samples -= timbre.cellsize;
+            if (_.samples <= 0) {
+                _.samples = 0;
+                args = this.args.slice(0);
+                for (i = 0, imax = args.length; i < imax; ++i) {
+                    args[i].bang();
                 }
+                if (_.samples <= 0) this.off();
             }
             _.currentTime += timbre.cellsize * 1000 / timbre.samplerate;
-            this.seq_id = seq_id;
         }
         return this.cell;
     };
