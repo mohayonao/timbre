@@ -44,6 +44,8 @@ var Interval = (function() {
         i = 0;
         if (typeof _args[i] === "number") {
             this.interval = _args[i++];
+        } else {
+            this.interval = 1000;
         }
         this.args = timbre.fn.valist.call(this, _args.slice(i));
         
