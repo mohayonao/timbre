@@ -692,6 +692,11 @@ timbre.fn = (function(timbre) {
         return dst;
     };
     
+    fn.isTimbreObject = function(object) {
+        return (typeof object === "object") &&
+                (Object.getPrototypeOf(object)._ instanceof TimbreObject);
+    }
+    
     return fn;
 }(timbre));
 
