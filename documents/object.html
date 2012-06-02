@@ -1,0 +1,238 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>timbre: TimbreObject</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+
+      <div class="navi"><a href=".">index</a></div>
+      <div id="contents">
+        <h2>TimbreObject</h2>
+        <p class="desc">
+          The root class of timbre objects
+        </p>
+        <h3>Constructor</h3>
+        <pre id="ex0" class="prettyprint">
+object = T(name, ...);
+
+// name [String] Class name (i.e. "+", "sin")
+// ...   Arguments and input objects which will be processed
+
+
+// Examples:
+// Create a new instance of Oscillator with arguments
+osc = T("osc", "sin", 440, 0.25).play();
+
+// Create a new instance of Filter with arguments("lpf",440) and input(osc)
+fil = T("filter", "lpf", 440, osc);
+        </pre>
+
+        <h3>Properties</h3>
+        <pre id="ex1" class="prettyprint">
+object.mul   // [Number] Output will be multiplied by this value
+object.add   // [Number]    and will be added to the output
+
+object.args  // [Readonly] Input objects which will be processed (Extended Array)
+object.isOn  // [Readonly] on?
+object.isOff // [Readonly] off?
+object.isAr  // [Readonly] audio rate?
+object.isKr  // [Readonly] control rate?
+
+/** NOTE:
+ * Timbre objects that runs at control rate are used for
+ * low frequency or slowly changing control signal.
+ * Control rate timbre objects produce only a signal sample per control cycle
+ * and therefore useless processing power than audio rate objects.
+ */
+        </pre>
+
+        <h3>Methods</h3>
+        <pre id="ex2" class="prettyprint">
+// Switch play/pause
+object.play();
+object.pause();
+
+
+// Switch on/off
+object.on();
+object.off();
+
+
+// Do something
+object.bang();
+
+
+// Operate input objects
+object.append(...);
+object.remove();
+object.removeAll();
+
+
+// Event listener
+object.addEventListener(name, func);
+object.removeEventListener(name, func);
+
+
+// Setter/Getter
+object.set(key, value);
+value = object.get(key);
+        </pre>
+
+        <h3>Events</h3>
+        <pre id="ex3" class="prettyprint">
+// Script to be run when play()
+// It's useful to initialize objects (i.e. timer sync start)
+object.onplay = function() {};
+
+
+// Script to be run when pause()
+// It's useful to finalize objects
+object.onpause = function() {};
+
+
+// Script to be run when bang()
+object.onbang = function() {};
+
+
+// Script to be run when on()
+object.onon = function() {};  // ...
+
+
+// Script to be run when off()
+object.onoff = function() {}; // oh, ugly..
+
+
+
+
+// If the addEventListener() method is used,
+//                one or more listeners can register.
+object.addEventListener("play", function() {
+
+});
+
+// If the event name starts with '~', 
+//                the listener perfoms only once.
+object.addEventListener("~bang", function() {
+
+});
+
+// and
+object.removeEventListener("play", registered_func);
+        </pre>
+
+        <h3>Args</h3>
+        <pre id="ex4" class="prettyprint">
+// The .args property contains input objects which will be processed
+
+add = T("+").play();
+
+a = T("tri", 440);
+b = T("tri", 660);
+c = T("tri", 880);
+
+
+// push [bang] button to execute the below code
+add.append( a, b, c );
+add.args[0] === a; // true
+
+
+// push [bang] button to execute the below code
+add.remove(a);
+add.args[0] === b; // true
+
+
+// You can use methods that are provided in the Array
+add.args instanceof Array; // true
+
+
+// push [bang] button to execute the below code
+add.args.shift();
+add.args[0] === c; // true
+
+
+// push [bang] button to execute the below code
+add.removeAll();
+add.args.length === 0; // true
+        </pre>
+
+        <h3>Play() / Pause()</h3>
+        <pre id="ex5" class="prettyprint">
+// play()/pause() methods switch sound processing
+
+
+// push [play] or [pause] buttons to call methods
+osc1 = T("tri"  ,  660, 0.25).play();
+osc2 = T("pulse", 1320, 0.75);        // do not sound processing
+        </pre>
+
+        <h3>On() / Off()</h3>
+        <pre id="ex6" class="prettyprint">
+// on()/off() methods switching processing status
+
+
+// Oscillator's on/off are switchig mute on/off
+fami = T("fami", 1320, 0.25);
+
+// Effector's on/off are switching efx processing on/off
+dist = T("efx.dist", wav);
+
+// Operator's on/off are not do anything
+add  = T("+", fami, dist).play();
+
+
+// push [bang] button to switch on / off
+add.onbang = function() {
+    fami.isOff ? fami.on() : fami.off();
+    dist.isOff ? dist.on() : dist.off();
+    add .isOff ? add .on() : add .off();
+};
+        </pre>
+        
+        <h3>Bang()</h3>
+        <pre id="ex7" class="prettyprint">
+// A bang() method carries out something for every class.
+
+
+sin = T("sin", 880);
+env = T("adsr", 10, 500);
+syn = T("*", sin, env).play();
+
+
+// push [bang] button to execute the below code
+
+// Oscillator's bang() resets the phase
+syn.addEventListener("bang", function() {
+    sin.bang();
+});
+
+
+// Envelope's bang() triggers the envelope
+syn.addEventListener("bang", function() {    
+    env.bang();
+});
+        </pre>
+
+        
+      </div>
+      <footer></footer>
+    </section>
+  </body>
+  <script type="text/javascript" src="public/js/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>  
+  <script type="text/javascript" src="public/js/main.js"></script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="object.js"></script>
+</html>

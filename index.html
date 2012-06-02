@@ -2,8 +2,8 @@
   <head>
     <meta charset="utf-8" />
     <title>timbre - JavaScript Library for Objective Sound Programming</title>
-    <link type="text/css" rel="stylesheet" href="css/index.css" />
-    <link type="text/css" rel="stylesheet" href="css/libs/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="public/css/index.css" />
+    <link type="text/css" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
   </head>
   <body>
@@ -21,7 +21,10 @@
       <section id="contents">
         <h3>Latest Version</h3>
         <div>
-          (under developing)
+          <ul>
+            <li><a href="timbre.js">0.1.0</a> (206KB)</li>
+            <li><a href="timbre.min.js">minified</a> (79.6KB)</li>
+          </ul>
         </div>
         
         <h3>System Requirement</h3>
@@ -32,100 +35,101 @@
           </ul>
         </div>
         
+        <h3><a href="./documents">Documents</a></h3>
+        
+        <h3>Examples</h3>
+        <div>
+          <ul>
+            <li><a href="./examples/004_timbresynth.html">Timbre Synthesizer</a></li>
+            <li><a href="./examples/002_rhythmsequencer.html">Rhythm Sequencer</a></li>
+            <li><a href="./examples/003_loadwavfiles.html">Piano and Drums</a></li>
+          </ul>
+        </div>
+        
         <h3>Overview</h3>
         <div>
           <p>
-            timbre is so easy, useful and powerful.
+            Timbre is so easy, useful and powerful.
           </p>
-          <button id="play0">play</button><button id="pause0">pause</button>
-          <pre class="prettyprint">
+          <pre id="ex0" class="prettyprint">
 T("*", T("sin", 1340),
        T("tri", 8, 0.8, 0.4).kr(),
        T("adsr", 500, 1500)).play();
           </pre>
 
           <p>
-            Looks a bit like SuperCollider??
+            Looks a bit like SuperCollider?? CUI Max/MSP???
           </p>
-          <button id="play1">play</button><button id="pause1">pause</button>
-          <pre class="prettyprint">
-var delay = T("efx.delay", 125, 0.8, 0.75);
+          <pre id="ex1" class="prettyprint">
+delay = T("efx.delay", 125, 0.8, 0.75);
 
 function synth(freq) {
     var s, env;
     s = T("*", T("fami", freq, 0.6),
                env = T("perc", 1000).bang());
-    s.dac = delay;
-    env.onended = function() {
-        delay.remove(s);
-    };
+    delay.append(s);
+    if (delay.args.length >= 4) {
+        delay.args.shift();
+    }
 }
 
-var list  = [ "C5", "D5", "E5", "G5", "C6", "D6", 
-              "E6", "D6", "C6", "G5", "E5", "D5" ];
-var index = 0;
+index = 0;
+list  = [ "C5", "D5", "E5", "G5", "C6", "D6", 
+          "E6", "D6", "C6", "G5", "E5", "D5" ];
 
-// [play].on "click"
-delay.onbang = function() {
+timer = T("interval", 380, function() {
     synth(timbre.utils.atof(list[index++]));
     if (index >= list.length) index = 0;
+});
+
+delay.onbang = function() {
+    index = 0;
+};
+delay.onplay = function() {
+    timer.on();
+};
+delay.onpause = function() {
+    timer.off();
 };
 
 delay.play();
           </pre>
-
+          
           <p>
-            Fun!!!
+            You can so easily learn it. Because it is pure JavaScript. Fun!!!
           </p>
-          <button id="play2">play</button><button id="pause2">pause</button>
-          <pre class="prettyprint">
+          <pre id="ex2" class="prettyprint">
 // Open your WebConsole and input below
 //   > c, e , g [enter]
 //   > f, gg, c [enter] 'gg' is G#
 var pianotones = [], synth = [];
-var dac = T("dac");
+var lpf = T("lpf");
 
 // load wav file and slice
-T("wav", "./examples/audio/piano_cmaj.wav").load(function(res) {
+T("wav", "./examples/public/audio/piano_cmaj.wav").load(function(res) {
     var dx = this.duration / 9;
-    this.mul = 0.25;
     for (var i = 0; i < 9; i++) {
         pianotones[i] = this.slice(dx * i, dx * i + dx);
     }
-});
+}).set("mul", 0.5);
 
 function playpiano(id) {
-    if (synth[0]) synth[0].dac.remove(synth[0]);
-    synth[0] = synth[1];
-    synth[1] = synth[2];
-    synth[2] = pianotones[id].clone();
-    synth[2].dac = dac;
+    lpf.append( pianotones[id].clone() );
+    if (lpf.args.length >= 4) {
+        lpf.args.shift();
+    }
 }
 
-Object.defineProperty(window, "c", function() {
+Object.defineProperty(window, "c", {
     get: function() { playpiano(3); }
 });
-// ...                        
+// ...
           </pre>
-        </div>
-        
-        <h3>Examples</h3>
-        <div>
-          <ul>
-            <li><a href="./examples/001_oscillators.html">001. Oscillators</a></li>
-            <li><a href="./examples/002_rhythmsequencer.html">002. Rhythm Sequencer</a></li>
-            <li><a href="./examples/003_loadwavfiles.html">003. Load wav files and decode</a></li>
-          </ul>
-        </div>
-        
-        <h3>References</h3>
-        <div>
-          Working
         </div>
         
         <h3>Author</h3>
         <div>
-          <a href="https://twitter.com/#!/mohayonao" target="twitter">@mohayonao</a>
+          <a href="http://mohayonao.herokuapp.com" target="heroku">mohayonao</a>
         </div>
         
         <footer>
@@ -133,65 +137,15 @@ Object.defineProperty(window, "c", function() {
         </footer>
       </section>
     </section>
-  </body>
-  <script type="text/javascript" src="js/libs/prettify.js"></script>
-  <script type="text/javascript">prettyPrint();</script>
-  <script type="text/javascript" src="timbre.js"></script>
-  <script type="text/javascript" src="js/index.js"></script>
-  <script type="text/javascript" src="js/waveviewer.js"></script>  
-  <script type="text/javascript" src="js/libs/jquery.min.js"></script>
-  <script type="text/javascript">
-    $(function() {
-        var viewer = new WaveViewer(timbre.sys.cell, 60, "waveviewer", 512, 256);
-        
-        timbre.addEventListener("on", function() {
-            $("#title").css("color", "rgb(0, 136, 0)");
-            viewer.start();
-        });
-        timbre.addEventListener("off", function() {
-            $("#title").css("color", "rgb(136, 136, 136)");
-            viewer.pause();
-        });
 
-        Object.defineProperty(window, "c", {
-            get: function() { return ex2.bridge(6); }
-        });
-        Object.defineProperty(window, "d", { get: function() {
-            return ex2.bridge(7); }
-        });
-        Object.defineProperty(window, "e", { get: function() {
-            return ex2.bridge(0); }
-        });
-        Object.defineProperty(window, "f", { get: function() {
-            return ex2.bridge(1); }
-        });
-        Object.defineProperty(window, "g", { get: function() {
-            return ex2.bridge(2); }
-        });
-        Object.defineProperty(window, "gg", { get: function() {
-            return ex2.bridge(3); }
-        });
-        Object.defineProperty(window, "a", { get: function() {
-            return ex2.bridge(4); }
-        });
-        Object.defineProperty(window, "b", { get: function() {
-            return ex2.bridge(5); }
-        });
-        
-        var list = [ ex0, ex1, ex2 ];
-        list.forEach(function(ex, i) {
-            ex.addEventListener("play" , function() {
-                timbre.on();
-            });
-            ex.addEventListener("pause", function() {
-                ex.dac.off();
-                if (list.every(function(ex) {
-                    return !ex._.dac || ex.dac.isOff;
-                })) timbre.off();
-            });
-            $("#play"  + i).on("click", function() { ex.bang(); ex.play() ; });
-            $("#pause" + i).on("click", function() { ex.pause(); });
-        });
-    });
-  </script>
+    <a href="https://github.com/mohayonao/timbre"><img style="position: fixed; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+    
+  </body>
+  <script type="text/javascript" src="public/js/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>
+  <script type="text/javascript" src="public/js/main.js"></script>
+  <script type="text/javascript" src="timbre.js"></script>
+  <script type="text/javascript" src="index.js"></script>  
 </html>

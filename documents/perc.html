@@ -1,0 +1,81 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>timbre: PercussiveEnvelope</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+
+      <div class="navi"><a href=".">index</a></div>
+      <div id="contents">
+        <h2>PercussiveEnvelope</h2>
+        <p class="desc">
+          Control signal generator which outputs shaped decay envelopes.
+        </p>
+        <h3>Constructor</h3>
+        <pre id="ex0" class="prettyprint">
+perc = T("perc", r=200, ended=NOP);
+
+// r     [Number]   Release time in msec
+// ended [Function] Script to be run when the envelope status reach the end
+        </pre>
+        
+        <h3>Properties</h3>
+        <pre id="ex1" class="prettyprint">
+perc.delay  // [Number] Delay time in msec
+perc.a      // [Number] Attack time in msec
+perc.r      // [Number] Release time in msec
+
+perc.al     // [Number] Attack Level
+
+adsr.reversed    // [Boolean] Reverse envelope
+
+perc.currentTime // [Readonly] Current position in msec of the envelope
+adsr.status      // [Readonly] The status of envelope
+        </pre>
+
+        <h3>Methods</h3>
+        <pre id="ex2" class="prettyprint">
+// Trigger the envelope
+perc.bang();
+        </pre>
+
+        <h3>Events</h3>
+        <pre id="ex3" class="prettyprint">
+// Script to be run when the envelope status reach 'A'
+adsr.onA;
+
+
+// Script to be run when the envelope status reach 'R'
+adsr.onR;
+
+
+// Script to be run when the envelope status reach the end
+perc.onended;
+        </pre>
+        
+        <h3>See Also: </h3>
+        <a href="adsr.html">T("adsr")</a>
+        
+      </div>
+      <footer></footer>
+    </section>
+  </body>
+  <script type="text/javascript" src="public/js/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>  
+  <script type="text/javascript" src="public/js/main.js"></script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="perc.js"></script>
+</html>

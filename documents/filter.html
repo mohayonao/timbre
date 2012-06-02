@@ -1,0 +1,101 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>timbre: Filter</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+
+      <div class="navi"><a href=".">index</a></div>
+      <div id="contents">
+        <h2>Filter</h2>
+        <p class="desc">
+          Filter
+        </p>
+        <canvas id="canvas"></canvas>
+        <h3>Constructor</h3>
+        <pre id="ex0" class="prettyprint">
+filter = T("filter", type="lpf", freq=3200, band=1, gain=6, ...);
+
+// type  [String] Filter type
+// freq  [Object] Frequency {kr-only}
+// band  [Object] Bandwidth {kr-only}
+// gain  [Object] Gain {kr-only}
+// ...   Input objects which will be added and processed
+        </pre>
+        
+        <h3>Properties</h3>
+        <pre id="ex1" class="prettyprint">
+filter.type // [String] Filter type
+filter.freq // [Object] Frequency
+filter.band // [Object] Bandwidth
+filter.gain // [Object] Gain
+        </pre>
+        
+        <h3>Methods</h3>
+        <pre id="ex2" class="prettyprint">
+        </pre>
+
+        <h3>Events</h3>
+        <pre id="ex3" class="prettyprint">
+        </pre>
+
+        <h3>Change the filter type</h3>
+        <pre id="ex4" class="prettyprint">
+// The filter class has some aliases.
+T("lpf")       // Low pass filter
+T("hpf")       // High pass filter
+T("bpf")       // Band pass filter
+T("brf")       // Band reject filter
+T("allpass")   // Allpass filter
+T("peaking")   // Peaking filter
+T("lowboost")  // Low-Boost filter
+T("highboost") // High-Boost filter
+        </pre>
+
+        <h3>Register the filter parameters</h3>
+        <pre id="ex5" class="prettyprint">
+params = {
+    default_freq: 800, default_band: 1, default_gain: 6,
+    set_params: function(freq, band) {
+        // calculate below parameters
+        this._.a1;
+        this._.a2;
+        this._.b0;
+        this._.b1;
+        this._.b2;
+    }
+};
+
+T("filter").setFilter("myfilter", params);
+
+// Use it
+T("filter", "myfilter");
+        </pre>
+        
+        <h3>See Also: </h3>
+        <a href="rfilter.html">T("rfilter")</a>
+        
+      </div>
+      <footer></footer>
+    </section>
+  </body>
+  <script type="text/javascript" src="public/js/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>
+  <script type="text/javascript" src="public/js/cnvui.js"></script>  
+  <script type="text/javascript" src="public/js/main.js"></script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="filter.js"></script>
+</html>

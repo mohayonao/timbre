@@ -1,0 +1,91 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>timbre: Easing</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+
+      <div class="navi"><a href=".">index</a></div>
+      <div id="contents">
+        <h2>Easing</h2>
+        <p class="desc">
+          Easing
+        </p>
+        <h3>Constructor</h3>
+        <pre id="ex0" class="prettyprint">
+ease = T("ease", type="linear", duration=1000, start=0, stop=1, onchanged=NOP);
+
+// type      [String / Function]
+// duration  [Number]
+// start     [Number]
+// stop      [Number]
+// onchanged [Function]
+
+
+// NOTE:
+// The Easing.Functions refered to https://github.com/sole/tween.js
+//
+// The curves visualized.
+// http://sole.github.com/tween.js/examples/03_graphs.html
+        </pre>
+        
+        <h3>Properties</h3>
+        <pre id="ex1" class="prettyprint">
+ease.type;        // [String / Function]
+ease.duration;    // [Number]
+ease.start;       // [Number]
+ease.stop;        // [Number]
+ease.delay;       // [Number] Delay time
+
+ease.value;       // [Readonly] Current value
+ease.currentTime; // [Readonly]
+        </pre>
+        <h3>Methods</h3>
+        <pre id="ex2" class="prettyprint">
+        </pre>
+
+        <h3>Events</h3>
+        <pre id="ex3" class="prettyprint">
+// Script to be run when easing
+ease.onchanged = function(value) {};
+
+
+// Script to be run when has reach the end
+ease.onended = function() {};
+        </pre>
+        
+        <h3>Example</h3>
+        <pre id="ex4" class="prettyprint">
+ease  = T("ease", "bounce.out", 1500, 1320, 440);
+synth = T("tri", ease, 0.5).play();
+
+synth.onplay = function() { ease.bang(); };
+synth.onbang = function() { ease.bang(); };
+ease.delay = 1000;
+        </pre>
+        
+        <h3>See Also: </h3>
+        <a href="glide.html">T("glide")</a>
+      </div>
+      <footer></footer>
+    </section>
+  </body>
+  <script type="text/javascript" src="public/js/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>  
+  <script type="text/javascript" src="public/js/main.js"></script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="ease.js"></script>
+</html>

@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>timbre: Dac</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+
+      <div class="navi"><a href=".">index</a></div>
+      <div id="contents">
+        <h2>Dac</h2>
+        <p class="desc">
+          Audio output
+        </p>
+        <h3>Constructor</h3>
+        <pre id="ex0" class="prettyprint">
+dac = T("dac", ...);
+
+// ...   Input objects which will be processed
+
+
+dac = T("pandac", pan=0.5, ...);
+// pan  [Object]
+// ...  Input objects which will be processed
+        </pre>
+
+        <h3>Properties</h3>
+        <pre id="ex1" class="prettyprint">
+dac.pan  [Object] 
+        </pre>
+        
+        <h3>Methods</h3>
+        <pre id="ex2" class="prettyprint">
+        </pre>
+        
+        <h3>Events</h3>
+        <pre id="ex3" class="prettyprint">
+        </pre>
+
+        <h3>Example: Panning</h3>
+        <pre id="ex4" class="prettyprint">
+synth = T("saw", 880, 0.25);
+dac   = T("dac", synth);
+dac.pan = T("+sin", 0.5);
+
+dac.play();
+        </pre>
+
+        <h3>What is a play() method doing?</h3>
+        <pre id="ex5" class="prettyprint">
+synth = T("sin", 880).play();
+
+// In fact, the above code is the shortcut, it's the same as below.
+
+synth = T("sin", 880);
+dac = T("dac", synth);
+dac.play();
+
+synth.dac === dac; // true
+
+
+// A play() method creates a T("dac") object if it is not exists,
+// and appends self to it, and T("dac").play().
+        </pre>
+        
+      </div>
+      <footer></footer>
+    </section>
+  </body>
+  <script type="text/javascript" src="public/js/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>  
+  <script type="text/javascript" src="public/js/main.js"></script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="dac.js"></script>
+</html>

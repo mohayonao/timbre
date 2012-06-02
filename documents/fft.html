@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>timbre: FFT</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+
+      <div class="navi"><a href=".">index</a></div>
+      <div id="contents">
+        <h2>FFT</h2>
+        <p class="desc">
+          Fast Fourier transform
+        </p>
+        <h3>Constructor</h3>
+        <pre id="ex0" class="prettyprint">
+fft = T("fft", bufferSize=512, window="Hann", onfft=NOP, ...);
+
+// ...   Input objects which will be added and processed
+        </pre>
+        
+        <h3>Properties</h3>
+        <pre id="ex1" class="prettyprint">
+fft.window;     // [String / Function]
+fft.interval;   // [Number]    An interval of a FFT processing
+fft.noSpectrum; // [Boolean]   not calcurate spectrum
+
+fft.spectrum;   // [Readonly]  Spectrum (Float32Array(fft.size))
+fft.size;       // [Readonly]
+        </pre>
+        
+        <h3>Methods</h3>
+        <pre id="ex2" class="prettyprint">
+//           
+fft.listen(...);          
+        </pre>
+
+        <h3>Events</h3>
+        <pre id="ex3" class="prettyprint">
+//           
+fft.onfft = function(real, imag) {};          
+        </pre>
+        
+        <h3>Example</h3>
+        <pre id="ex4" class="prettyprint">
+synth = T("wav", "public/audio/amen.wav", true).load().play();
+
+fft = T("fft");
+
+fft.onfft = function(real, imag) {
+    // window.background.draw( this.spectrum );
+};
+
+fft.listen(synth);          
+        </pre>
+        
+        <h3>See Also: </h3>
+        
+      </div>
+      <footer></footer>
+    </section>
+  </body>
+  <script type="text/javascript" src="public/js/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>  
+  <script type="text/javascript" src="public/js/main.js"></script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="fft.js"></script>
+</html>

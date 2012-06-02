@@ -2,8 +2,8 @@
   <head>
     <meta charset="utf-8"/>
     <title>timbre - load wav files and decode</title>
-    <link type="text/css" media="screen" rel="stylesheet" href="css/examples.css" />
-    <link type="text/css" media="screen" rel="stylesheet" href="css/libs/prettify.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/examples.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
     <style>
       #p {
@@ -29,7 +29,6 @@
       <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
 
       <div id="contents">
-        <button id="play0">play</button><button id="pause0">pause</button>
         <div id="p">
           You can operate music with your WebConsole. <a href="javascript:void(0)" id="read">read</a>
           <div id="list">
@@ -64,7 +63,7 @@
             </ul>
           </div>
         </div>
-        <pre id="code" class="prettyprint">
+        <pre id="ex0" class="prettyprint">
 // load wav files and decode
 
 timbre.workerpath = "../timbre.js";
@@ -74,13 +73,13 @@ timbre.utils.exports("converter"); // use atof
 var ex1 = T("dac");
 
 // metronome
-var metronome = T("interval", function(count) {
-    metronome.count %= 16;
-    if (metronome.count === 0) metronome.measure += 1;
-}); metronome.measure = 0;
+var metronome = T("interval", function() {
+    metronome.beat = metronome.count % 16;
+    if (metronome.beat === 0) metronome.measure += 1;
+}); metronome.measure = 0; metronome.beat = 0;
 
 // amen (load a wav file and decode it)
-var amen = T("wav", "./audio/amen.wav", true).load(function(res) {
+var amen = T("wav", "./public/audio/amen.wav", true).load(function(res) {
     metronome.interval = (this.duration / 3) / 16;
 });
 dist = T("efx.dist", 0, -18, 2400, amen).set("mul", 0.5);
@@ -88,7 +87,7 @@ dist.dac = ex1;
 
 var beat = 8, beattimer = (function() {
     var tim = 0, cnt = 0, stay = 0;
-    return T("interval", function(count) {
+    return T("interval", function() {
         if (cnt === 0) {
             if (stay === 0) {
                 tim = ((Math.random() * beat)|0) * (amen.duration / beat);
@@ -112,7 +111,7 @@ var piano = 4, pianotimer = (function() {
         [1, 6, 8], [2, 5, 8], [1, 4, 8], [0, 2, 6],
     ], amptable = [ 0.9, 0.5, 0.8, 0.6 ], pianotones = [];
    
-    T("wav", "./audio/piano_cmaj.wav").load(function(res) {
+    T("wav", "./public/audio/piano_cmaj.wav").load(function(res) {
         var dx = this.duration / 9;
         for (var i = 0; i < 9; i++) {
             pianotones[i] = this.slice(dx * i, dx * i + dx);
@@ -131,12 +130,12 @@ var piano = 4, pianotimer = (function() {
         synth.dac = ex1;
     }
     
-    return T("interval", function(count) {
+    return T("interval", function() {
         var chord, amp;
         chord = metronome.measure % 4;
         if (chord !== prev_chord) {
             amp = 1.0; prev_chord = chord;
-        } else amp = amptable[metronome.count % 4];
+        } else amp = amptable[metronome.beat % 4];
         play_chord(chordtable[chord], amp);
     });
 }());
@@ -144,7 +143,7 @@ var piano = 4, pianotimer = (function() {
 // melo
 var leadtone = timbre.utils.wavb(/* define wavetable */);
 
-var lead = T("rLPF", T("pulse", 0.462, 800, 2000, 0.8).kr(),
+var lead = T("rlpf", T("pulse", 0.462, 800, 2000, 0.8).kr(),
                0.8, 0.8,
                T("*", T("+", T("osc", leadtone, 0, 0.20),
                              T("osc", leadtone, 0, 0.15)),
@@ -162,7 +161,7 @@ var melo = 16, melotimer = (function() {
     tone2 = lead.args[0].args[0].args[1];
     env   = lead.args[0].args[1];
     
-    return T("interval", function(count) {
+    return T("interval", function() {
         var freq = phrase[(Math.random() * phrase.length)|0];
         if (freq !== 0) {
             tone1.freq.value = freq;
@@ -195,76 +194,11 @@ ex1.play();
       </div>
     </section>
   </body>
-  <script type="text/javascript" src="js/libs/prettify.js"></script>
+  <script type="text/javascript" src="public/js/prettify.js"></script>
   <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>
+  <script type="text/javascript" src="public/js/main.js"></script>
   <script type="text/javascript" src="../timbre.js"></script>
-  <script type="text/javascript" src="js/003.js"></script>    
-  <script type="text/javascript" src="js/waveviewer.js"></script>  
-  <script type="text/javascript" src="js/libs/jquery.min.js"></script>
-  <script type="text/javascript">
-    $(function() {
-        if (!timbre.isEnabled) $("#caution").show();
-    
-        var viewer = new WaveViewer(timbre.sys.cell, 60, "waveviewer", 512, 256);
-        
-        timbre.addEventListener("on", function() {
-            $("#title").css("color", "rgb(0, 136, 0)");
-            viewer.start();
-        });
-        timbre.addEventListener("off", function() {
-            $("#title").css("color", "rgb(136, 136, 136)");
-            viewer.pause();
-        });
-
-        // UI
-        Object.defineProperty(window, "beat", {
-            set: function(value) {
-                ex1.bridge.set_beat(value);
-            },
-            get: function() { return ex1.bridge.get_beat(); }
-        });
-        Object.defineProperty(window, "piano", {
-            set: function(value) {
-                ex1.bridge.set_piano(value);
-            },
-            get: function() { return ex1.bridge.get_piano(); }
-        });
-        Object.defineProperty(window, "melo", {
-            set: function(value) {
-                ex1.bridge.set_melo(value);
-            },
-            get: function() { return ex1.bridge.get_melo(); }
-        });
-        window.dist  = ex1.bridge.get_dist();
-        window.delay = ex1.bridge.get_delay();
-        
-        var list = [ ex1 ];
-        list.forEach(function(ex, i) {
-            ex.addEventListener("play" , function() {
-                timbre.on();
-            });
-            ex.addEventListener("pause", function() {
-                ex.dac.off();
-                if (list.every(function(ex) {
-                    return !ex._.dac || ex.dac.isOff;
-                })) timbre.off();
-            });
-            $("#play"  + i).on("click", function() { if (ex.ready === 2) ex.play() ; });
-            $("#pause" + i).on("click", function() { ex.pause(); });
-        });
-        
-        if (timbre.env !== "webkit") $("#caution2").show();
-        var isOpen = false;
-        $("#read").on("click", function() {
-            if (isOpen) {
-                $(this).text("read");
-                $("#list").hide(100);
-            } else {
-                $(this).text("close");
-                $("#list").show(100);
-            }
-            isOpen = !isOpen;
-        });
-    });
-  </script>
+  <script type="text/javascript" src="003.js"></script>    
 </html>

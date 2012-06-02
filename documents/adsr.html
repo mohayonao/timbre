@@ -1,0 +1,129 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>timbre: ADSREnvelope</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+
+      <div class="navi"><a href=".">index</a></div>
+      <div id="contents">
+        <h2>ADSREnvelope</h2>
+        <p class="desc">
+          Control signal generator which outputs shaped Attack-Decay-Sustain-Release envelopes.
+        </p>
+        <h3>Constructor</h3>
+        <pre id="ex0" class="prettyprint">
+adsr = T("adsr", a=200, d=500, sl=0.5, r=500);
+
+// a  [Number] Attack time in msec
+// d  [Number] Decay time in msec
+// sl [Number] Sustain Level
+// r  [Number] Release time in msec
+
+// (push [bang] button to send 'keyoff')
+        </pre>
+
+        <h3>Properties</h3>
+        <pre id="ex1" class="prettyprint">
+adsr.delay    // [Number] Delay time in msec
+adsr.a        // [Number] Attack time in msec
+adsr.d        // [Number] Decay time in msec
+adsr.s        // [Number] Sustain time in msec
+adsr.r        // [Number] Release time in msec
+
+adsr.al       // [Number] Attack Level
+adsr.dl       // [Number] Decay Level
+adsr.sl       // [Number] Sustain Level
+adsr.rl       // [Number] Release Level
+
+adsr.reversed // [Boolean] Reverse envelope
+
+adsr.currentTime // [Readonly] Current position in msec of the envelope
+adsr.status      // [Readonly] The status of envelope
+        </pre>
+
+        <h3>Methods</h3>
+        <pre id="ex2" class="prettyprint">
+// Trigger the envelope
+adsr.bang();
+
+
+// Send a keyoff message to release
+adsr.keyoff();
+        </pre>
+        
+        <h3>Events</h3>
+        <pre id="ex3" class="prettyprint">
+// Script to be run when the envelope status reach 'A'
+adsr.onA = function() {
+    synth.freq.value = 880;
+};
+
+
+// Script to be run when the envelope status reach 'D'
+adsr.onD = function() {
+    synth.freq.value = 660;
+};
+
+
+// Script to be run when the envelope status reach 'S'
+adsr.onS = function() {
+    synth.freq.value = 440;
+};
+
+
+// Script to be run when the envelope status reach 'R'
+adsr.onR = function() {
+    synth.freq.value = 220;
+};
+
+// Script to be run when the envelope status reach the end
+adsr.onended = function() {
+    adsr.bang();
+};
+
+
+// (push [bang] button to send 'keyoff')
+        </pre>
+
+        <h3>Example: Controll Oscillator's Frequecny</h3>
+        <pre id="ex4" class="prettyprint">
+adsr  = T("adsr", 200, 500, 0.75, 500).set("delay", 200);
+synth = T("tri", adsr, 0.25);
+    
+adsr.al = 0.2;
+adsr.dl = 1.5;
+adsr.mul = 880;
+adsr.add = 440;
+
+synth.play();
+
+// (push [bang] button to send 'keyoff')
+        </pre>
+        
+        <h3>See Also: </h3>
+        <a href="perc.html">T("perc")</a>
+        
+      </div>
+      <footer></footer>
+    </section>
+  </body>
+  <script type="text/javascript" src="public/js/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>  
+  <script type="text/javascript" src="public/js/main.js"></script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="adsr.js"></script>
+</html>

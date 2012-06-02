@@ -1,0 +1,140 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>timbre: Oscillator</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+
+      <div class="navi"><a href=".">index</a></div>
+      <div id="contents">
+        <h2>Oscillator</h2>
+        <p class="desc">
+          Linear interpolating wavetable lookup oscillator with frequency modulation input.
+        </p>
+        <h3>Constructor</h3>
+        <pre id="ex0" class="prettyprint">
+osc = T("osc", wave="sin", freq=440, mul=1, add=0);
+
+// wave [String / Function / Float32Array]
+// freq [Object] Frequency
+// mul  [Number] Multiply the output  (default is 1)
+// add  [Number]   and add the output (default is 0)
+
+osc.play();
+        </pre>
+        
+        <h3>Properties</h3>
+        <pre id="ex1" class="prettyprint">
+osc.wave  // [String / Function / Float32Array]
+osc.freq  // [Object] Frequency
+osc.phase // [Number] Initial phase offset
+osc.mul   // [Number] Output will be multiplied by this value
+osc.add   // [Number]    and will be added to the output
+        </pre>
+        
+        <h3>Methods</h3>
+        <pre id="ex2" class="prettyprint">
+// Reset phase          
+osc.bang();
+        </pre>
+        
+        <h3>Events</h3>
+        <pre id="ex3" class="prettyprint">
+        </pre>
+        
+        <h3>Change the wavetable</h3>
+        <pre id="ex4" class="prettyprint">
+wave = ["sin", "tri", "saw", "pulse", "fami"][(Math.random()*5)|0];
+
+T("osc", wave, 660, 0.5).play();
+
+
+// The oscillator class has some aliases.
+T("sin"), T("tri"), T("saw"), T("pulse"), T("fami");
+
+// It's same as the above code.
+T(wave, 1320, 0.5).play();
+
+// (push [bang] button to change the wave)
+        </pre>
+        
+        <h3>Customize the wavetable</h3>
+        <pre id="ex5" class="prettyprint">
+// Define custom wavetable from a function
+func = function(x) { return x * x * x; };
+T("osc", func, 880).play(); 
+
+// From an array (PWM25%)
+T("osc", [ -1, +1, +1, +1 ], 880);
+
+// Directly set
+T("osc", new Float32Array(1024), 880);
+        </pre>
+        
+        <h3>Register the wavetable</h3>
+        <pre id="ex6" class="prettyprint">
+// Register a wavetable and use it
+T("osc").setWavetable("myosc", function(x) {
+    return Math.random() - 0.5;
+});
+
+T("osc", "myosc", 1340).play();
+
+// Get a wavetable
+// (push [bang] button and see the result at WebConsole)
+T("osc").getWavetable("myosc"); // Float32Array(1024)
+        </pre>
+
+        <h3>Example: Tremolo</h3>
+        <pre id="ex7" class="prettyprint">
+T("*", T("tri", 880, 0.25),
+       T("+sin", 8).kr()).play();
+
+// kr() method switches to processing mode 'Control Rate'
+// Control rate are used for low frequency or slowly chaning control signal.
+
+// T("+sin") generate signals between 0.0 and 1.0.
+// It's convenient to control amplitude.
+//   T("+sin"), T("+saw"), T("+tri") or T("+pulse")
+        </pre>
+
+        <h3>Example: Vibrato</h3>
+        <pre id="ex8" class="prettyprint">
+T("tri", T("tri", 2, 30, 880).kr(), 0.25).play();
+        </pre>
+        
+        <h3>Example: Glide</h3>
+        <pre id="ex9" class="prettyprint">
+synth = T("fami", T("glide", msec=150, freq.value=880), 0.25).play();
+
+
+// push [bang] button to execute the below code
+cnt   = 0;
+synth.onbang = function() {
+    synth.freq.value = [880, 1320, 1100, 660][++cnt % 4]
+};
+        </pre>
+        
+      </div>
+      <footer></footer>
+    </section>
+  </body>
+  <script type="text/javascript" src="public/js/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>  
+  <script type="text/javascript" src="public/js/main.js"></script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="osc.js"></script>
+</html>

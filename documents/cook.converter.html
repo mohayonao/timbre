@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>timbre: cookbook: Converter</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+
+      <div class="navi"><a href=".">index</a></div>
+      <div id="contents">
+        <h2>Converter</h2>
+        <p class="desc">
+        </p>
+        <h3>Example</h3>
+        <pre id="ex0" class="prettyprint">
+// copy utils functions to the window object          
+timbre.utils.exports("converter");
+
+// A midi number to frequency
+mtof(69);  // timbre.utils.mtof(69) is 440(Hz)
+
+
+// A tone name to a midi number
+atom("A4") // timbre.utils.atom("A4") is #81
+atom("G#3") === atom("G+3") === atom("A-3") === atom("Ab3");
+
+// A tone name to a frequency
+atof("C5") // timbre.utils.atom("A4") is 1046.50(Hz)
+ 
+
+// Others
+bpm2msec(134, 8); // timbre.utils.bpm2msec
+bpm2hz(134, 8);   // timbre.utils.bpm2hz
+msec2bpm(320, 8); // timbre.utils.msec2bpm
+msec2hz(250);     // timbre.utils.msec2hz
+        </pre>
+      </div>
+      <footer></footer>
+    </section>
+  </body>
+  <script type="text/javascript" src="public/js/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>  
+  <script type="text/javascript" src="public/js/main.js"></script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="cook.converter.js"></script>
+</html>

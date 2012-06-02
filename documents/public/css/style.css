@@ -1,0 +1,63 @@
+a {
+    color: rgba(  0, 128, 255, 0.8);
+}
+h2 {
+    margin: 0px;font-size:24px;
+    clear:both; 
+}
+h3 {
+    display:inline;
+}
+#title {
+    font-family: 'Comfortaa', sans-serif;
+    height:45px;
+    color: rgb(136, 136, 136);
+    margin:0px;
+    letter-spacing: 2.5px;
+    text-shadow: 0px 3px 0px #ddd;
+    font-size: 36px;
+}
+#title a {
+    color: inherit;
+    text-decoration: none;
+}
+header span {
+    font-size:0.8em;
+}
+#waveviewer {
+    position:fixed;top:0;left:0;width:100%;height:100%;
+}
+#body {
+    position:absolute;top:0;left:0;margin:10px;
+    font-family: 'Helvetica Neue', 'Lucida Grande', 'Lucida Sans Unicode', Helvetica, Arial, sans-serif;
+}
+#contents {
+    margin: 0px 10px;
+}
+#caution {
+    margin:15px 0px;padding:5px;color:red;background:#ffeeee;text-align:center;
+    font-size: 1.1em;font-weight:bold;border:solid 1px #ff9999;display:none;
+}
+.prettyprint {
+    margin-top:5px;padding:10px !important;background:rgba(255,255,255,0.75);
+    font-family: 'Courier New', monospace; font-weight: bold;
+}
+.navi {
+    padding:15px;text-align:right;
+}
+#alllist {
+    list-style:none;
+    margin:0px;padding-left:15px;
+}
+#alllist li {
+    display:inline; padding:5px; line-height:24px;
+}
+#allobjects {
+    padding: 50px 0px;
+}
+#canvas {
+    display:block;
+}
+.col3 div {
+    float:left; width:30%; padding:10px;
+}
