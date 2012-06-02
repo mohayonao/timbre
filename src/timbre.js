@@ -1068,7 +1068,6 @@ var ArrayWrapper = (function() {
             for (i = cell.length; i--; ) {
                 cell[i] = value;
             }
-            if ((++_.index) === _.value.length) _.index = 0;
         }
         return cell;
     };
