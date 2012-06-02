@@ -70,7 +70,11 @@ var FuncOscillator = (function() {
         } else {
             _.func = DEFAULT_FUNCTION;    
         }
-        this.freq = _args[i++];
+        if (typeof _args[i] !== "undefined") {
+            this.freq = _args[i++];
+        } else {
+            this.freq = 440;
+        }
         
         _.saved = new Float32Array(_.numOfSamples);
         _.index = 0;
