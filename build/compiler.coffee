@@ -32,7 +32,6 @@ TIMBRE_SOURCES = [
     "timbre/buffer"
     "timbre/fft"
 
-    "timbre/tick"
     "timbre/interval"
     "timbre/timeout"
 
