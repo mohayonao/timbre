@@ -16,15 +16,14 @@ timbre.samplerate = 44100;
 timbre.channels   = 2;
 timbre.cellsize   = 128;
 timbre.streamsize = 1024;
-timbre.autorun    = true;
-timbre.amp        = 0.8;
-timbre.verbose    = true;
 timbre.dacs       = [];
 timbre.timers     = [];
 timbre.listeners  = [];
-timbre.sys       = null;
-timbre.global    = {};
-timbre._ = { ev:{}, none: new Float32Array(timbre.cellsize) };
+timbre.sys        = null;
+timbre.global     = {};
+timbre._ = { ev:{}, amp:0.8,
+             autorun:true, verbose:true,
+             none: new Float32Array(timbre.cellsize) };
 
 var TimbreObject = function() {};
 
@@ -81,7 +80,7 @@ var SoundSystem = (function() {
         cell = this.cell;
         L = this.L;
         R = this.R;
-        amp = timbre.amp;
+        amp = timbre._.amp;
         
         seq_id = this.seq_id;
         
@@ -162,20 +161,31 @@ var SoundSystem = (function() {
 }());
 timbre.sys = new SoundSystem();
 
-Object.defineProperty(timbre, "isEnabled", {
-    get: function() {
-        return !!timbre.sys._.impl;
-    }
+Object.defineProperty(timbre, "amp", {
+    set: function(value) {
+        if (typeof value === "number") {
+            timbre._.amp = value;
+        }
+    },
+    get: function() { return timbre._.amp; }
+});
+Object.defineProperty(timbre, "autorun", {
+    set: function(value) {
+        timbre._.autorun = !!value;
+    },
+    get: function() { return timbre._.autorun; }
+});
+Object.defineProperty(timbre, "verbose", {
+    set: function(value) {
+        timbre._.verbose = !!value;
+    },
+    get: function() { return timbre._.verbose; }
 });
 Object.defineProperty(timbre, "isOn", {
-    get: function() {
-        return timbre.sys._.ison;
-    }
+    get: function() { return timbre.sys._.ison; }
 });
 Object.defineProperty(timbre, "isOff", {
-    get: function() {
-        return !timbre.sys._.ison;
-    }
+    get: function() { return !timbre.sys._.ison; }
 });
 
 timbre.on = function() {
@@ -245,7 +255,7 @@ timbre.removeAllEventListeners = function(name) {
                 }
             }
         }
-        if ( b && timbre.autorun && this !== timbre.listeners ) timbre.on();
+        if ( b && timbre._.autorun && this !== timbre.listeners ) timbre.on();
         return this;
     };
     var remove = function() {
@@ -255,14 +265,14 @@ timbre.removeAllEventListeners = function(name) {
                 this.splice(j, 1);
             }
         }
-        if ( timbre.autorun &&
+        if ( timbre._.autorun &&
              timbre.dacs.length   === 0 &&
              timbre.timers.length === 0 ) timbre.off();
         return this;
     };
     var removeAll = function() {
         while (this.length > 0) this.pop();
-        if ( timbre.autorun &&
+        if ( timbre._.autorun &&
              timbre.dacs.length   === 0 &&
              timbre.timers.length === 0 ) timbre.off();
         return this;

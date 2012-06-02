@@ -27,5 +27,8 @@ var timbre = (function(context, timbre) {
         ${NODE_CODE}
     }(context, timbre));
     
+    timbre.isEnabled = !!timbre.sys._.impl;
+    Object.freeze(timbre);
+        
     return timbre;
 }(this));
