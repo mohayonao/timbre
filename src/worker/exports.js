@@ -13,6 +13,6 @@ worker.onmessage = function(e) {
 };
 
 timbre.platform = "web";
-timbre.global  = worker;
+timbre.context  = worker;
 
 // __END__

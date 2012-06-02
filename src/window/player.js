@@ -8,13 +8,14 @@ var window = {};
 // __BEGIN__
 
 var WebKitPlayer = function(sys) {
-    var ctx, node;
-
+    var ctx, node, onaudioprocess;
+    
     ctx = new webkitAudioContext();
     timbre.samplerate = ctx.sampleRate;
+    
     node = ctx.createJavaScriptNode(sys.streamsize, 1, sys.channels);
     
-    node.onaudioprocess = function(e) {
+    onaudioprocess = function(e) {
         var inL, inR, outL, outR, i;
         sys.process();
         
@@ -30,15 +31,19 @@ var WebKitPlayer = function(sys) {
     
     return {
         on : function() {
-            node.connect(ctx.destination);
+            this.node = ctx.createJavaScriptNode(sys.streamsize, 1, sys.channels);
+            this.node.onaudioprocess = onaudioprocess;
+            this.node.connect(ctx.destination);
         },
         off: function() {
-            node.disconnect();
+            this.node.disconnect();
+            this.node = null;
         }
     };
 };
 
 var MozPlayer = function(sys) {
+    var self = this;
     var audio, timer;
     var interval, interleaved;
     var onaudioprocess;
@@ -68,13 +73,16 @@ var MozPlayer = function(sys) {
             interleaved[--i] = inL[j];
         }
     };
-
+    
     return {
         on : function() {
             timer.setInterval(onaudioprocess, interval);
         },
         off: function() {
             timer.clearInterval();
+            for (var i = interleaved.length; i--; ) {
+                interleaved[i] = 0.0;
+            }
         }
     };
 };

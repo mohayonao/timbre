@@ -8,7 +8,7 @@ var window = {};
 // __BEGIN__
 
 timbre.platform = "web";
-timbre.global  = window;
+timbre.context  = window;
 
 // start message
 (function() {
