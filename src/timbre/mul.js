@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Multiply: 0.0.0
+ * Multiply: 0.1.0
  * Multiply signals
  * [ar-kr]
  */

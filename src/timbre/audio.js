@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * AudioDecoder: 0.0.0
+ * AudioDecoder: 0.1.0
  * Store audio samples
  * [ar-only]
  */
@@ -175,7 +175,7 @@ var AudioDecoder = {
 
 
 /**
- * WebKitAudio: 0.0.0
+ * WebKitAudio: 0.1.0
  * Store audio samples (Web Audio API)
  * [ar-only]
  */

@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Add: 0.0.0
+ * Add: 0.1.0
  * Add signals
  * [ar-kr]
  */

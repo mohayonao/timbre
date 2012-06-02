@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Buddy: 0.0.0
+ * Buddy: 0.1.0
  * Synchronize arriving data, output them together
  * [ar-only]
  */

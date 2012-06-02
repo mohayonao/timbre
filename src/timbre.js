@@ -27,7 +27,7 @@ timbre._ = { ev:{}, amp:0.8,
 var TimbreObject = function() {};
 
 /**
- * SoundSystem: 0.0.0
+ * SoundSystem: 0.1.0
  */
 var SoundSystem = (function() {
     var SoundSystem = function() {
@@ -803,9 +803,8 @@ timbre.fn = (function(timbre) {
 }(timbre));
 
 
-// built-in-types
 /**
- * NumberWrapper: 0.0.0
+ * NumberWrapper: 0.1.0
  * Constant signal of a number
  * [kr-only]
  */
@@ -879,7 +878,7 @@ var NumberWrapper = (function() {
 timbre.fn.register("number", NumberWrapper);
 
 /**
- * BooleanWrapper: 0.0.0
+ * BooleanWrapper: 0.1.0
  * Constant signal of 0 or 1
  * [kr-only]
  */
@@ -959,7 +958,7 @@ timbre.fn.register("boolean", BooleanWrapper);
 
 
 /**
- * ArrayWrapper: 0.0.0
+ * ArrayWrapper: 0.1.0
  * [kr-only]
  */
 var ArrayWrapper = (function() {
@@ -1078,7 +1077,7 @@ timbre.fn.register("array", ArrayWrapper);
 
 
 /**
- * FunctionWrapper: 0.0.0
+ * FunctionWrapper: 0.1.0
  * [kr-only]
  */
 var FunctionWrapper = (function() {

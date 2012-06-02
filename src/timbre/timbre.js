@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * AwesomeTimbre: 0.0.0
+ * AwesomeTimbre: 0.1.0
  * Do something fun
  * [ar-only]
  */

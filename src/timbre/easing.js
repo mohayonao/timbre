@@ -8,7 +8,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * EasingBasis: 0.0.0
+ * EasingBasis: 0.1.0
  */
 var EasingBasis = {
     setPrototype: function() {
@@ -246,7 +246,7 @@ EasingBasis.Functions = {
 
 
 /**
- * Easing: 0.0.0
+ * Easing: 0.1.0
  * [kr-only]
  */
 var Easing = (function() {
@@ -340,7 +340,7 @@ timbre.fn.register("ease", Easing);
 
 
 /**
- * Glide: 0.0.0
+ * Glide: 0.1.0
  * [kr-only]
  */
 var Glide = (function() {

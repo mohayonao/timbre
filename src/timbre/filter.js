@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Filter: 0.0.0
+ * Filter: 0.1.0
  * [ar-only]
  */
 var Filter = (function() {

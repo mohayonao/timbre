@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * PercussiveEnvelope: 0.0.0
+ * PercussiveEnvelope: 0.1.0
  * Percussive envelope generator
  * [kr-only]
  */

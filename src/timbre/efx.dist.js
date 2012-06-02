@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * EfxDistortion: 0.0.0
+ * EfxDistortion: 0.1.0
  * [ar-only]
  */
 var EfxDistortion = (function() {

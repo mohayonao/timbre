@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * FuncOscillator: 0.0.0
+ * FuncOscillator: 0.1.0
  * Signal generator
  * [ar-kr] TODO: kr
  */

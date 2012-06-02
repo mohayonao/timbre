@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * WavDecoder: 0.0.0
+ * WavDecoder: 0.1.0
  * Decode wav file and play it
  * [ar-only]
  */

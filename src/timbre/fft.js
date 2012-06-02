@@ -8,7 +8,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * FFT: 0.0.0
+ * FFT: 0.1.0
  * Fast Fourier transform
  * [ar-only]
  */

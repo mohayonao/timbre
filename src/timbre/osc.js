@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Oscillator: 0.0.0
+ * Oscillator: 0.1.0
  * Table lookup oscillator
  * [ar-kr]
  */

@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * ADSREnvelope: 0.0.0
+ * ADSREnvelope: 0.1.0
  * ADSR envelope generator
  * [kr-only]
  */

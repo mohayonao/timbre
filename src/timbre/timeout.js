@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Timeout: 0.0.0
+ * Timeout: 0.1.0
  * Calls a bang() after specified delay
  * [kr-only]
  */

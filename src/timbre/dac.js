@@ -1,5 +1,5 @@
 /**
- * timbre/system
+ * timbre/dac
  */
 "use strict";
 
@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * Dac: 0.0.0
+ * Dac: 0.1.0
  * Audio output
  * [ar-only]
  */

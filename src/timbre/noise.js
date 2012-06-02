@@ -7,7 +7,7 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 /**
- * WhiteNoise: 0.0.0
+ * WhiteNoise: 0.1.0
  * White noise generator
  * [ar-kr]
  */
