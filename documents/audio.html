@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>doc: Audio</title>
+    <title>timbre: Audio</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -24,7 +24,7 @@
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-T("audio", src="public/audio/sample.ogg", loop=true).load();
+audio = T("audio", src="public/audio/sample.ogg", loop=true).load();
 
 // src  [String]  The url of an audio file to load
 // loop [Boolean] Looping
@@ -37,9 +37,6 @@ audio.loop        // [Boolean]  Looping
 
 audio.currentTime // [Number]   Current position in msec of the buffer
 audio.reversed    // [Boolean]  Play backwards
-
-audio.mul         // [Number]   Output will be multiplied by this value
-audio.add         // [Number]      and will be added to the output
 
 audio.isLoaded    // [Readonly] 'true' when loaded audio and stored
 audio.duration    // [Readonly] The duration of the buffer
@@ -58,7 +55,7 @@ audio.clone();
 // Return new T("audio") instance which has the extracted buffer
 audio.slice(begin=0, end=1000);
         </pre>
-
+        
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
 // Script to be run when the audio has reach the end
@@ -69,7 +66,7 @@ audio.onended = function() {};
 audio.onlooped = function() {};
 
 
-// Scripts to be run when meta data
+// Scripts to be run when the meta data is loaded
 audio.onloadedmetadata = function(res) {};
 
 
@@ -96,7 +93,7 @@ audio.slice(280, 280+214).play();
         <a href="wav.html">T("wav")</a>
         
       </div>
-      <div class="navi"><a href=".">index</a></div>
+      <footer></footer>
     </section>
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>

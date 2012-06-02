@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>doc: ADSREnvelope</title>
+    <title>timbre: ADSREnvelope</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -20,7 +20,7 @@
       <div id="contents">
         <h2>ADSREnvelope</h2>
         <p class="desc">
-         Control signal generator which outputs shaped Attack-Decay-Sustain-Release envelopes.
+          Control signal generator which outputs shaped Attack-Decay-Sustain-Release envelopes.
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
@@ -47,9 +47,6 @@ adsr.dl       // [Number] Decay Level
 adsr.sl       // [Number] Sustain Level
 adsr.rl       // [Number] Release Level
 
-adsr.mul      // [Number] Output will be multiplied by this value
-adsr.add      // [Number]    and will be added to the output
-
 adsr.reversed // [Boolean] Reverse envelope
 
 adsr.currentTime // [Readonly] Current position in msec of the envelope
@@ -65,7 +62,7 @@ adsr.bang();
 // Send a keyoff message to release
 adsr.keyoff();
         </pre>
-
+        
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
 // Script to be run when the envelope status reach 'A'
@@ -88,7 +85,7 @@ adsr.onS = function() {
 
 // Script to be run when the envelope status reach 'R'
 adsr.onR = function() {
-    console.log("R!");
+    synth.freq.value = 220;
 };
 
 // Script to be run when the envelope status reach the end
@@ -119,9 +116,7 @@ synth.play();
         <a href="perc.html">T("perc")</a>
         
       </div>
-      <div class="navi"><a href=".">index</a></div>
-      <footer>
-      </footer>
+      <footer></footer>
     </section>
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>

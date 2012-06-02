@@ -19,11 +19,12 @@ ex4 = (function() {
         } else if (i === 2) {
             add.args.shift();
         } else if (i === 3) {
-            add.args.removeAll();
+            add.removeAll();
             i = -1;
         }
         i += 1;
     };
+    add.mul = 0.25;
     
     return add;
 }());
@@ -34,32 +35,34 @@ ex5 = (function() {
     return osc1;
 }());
 
-
 ex6 = (function() {
-    var sin = T("sin", 880);
-    var env = T("adsr", 10, 500);
-    var syn = T("*", sin, env);    
-    
-    syn.onbang = function() {
-        sin.bang();
-        env.bang();
-    };
-    
-    return syn;
-}());
-
-ex7 = (function() {
     var wav = T("wav", "public/audio/amen.wav", true).load();
     
+    var fami = T("fami", 1320, 0.25);    
     var dist = T("efx.dist", wav);
-    var fami = T("fami", 1320, 0.25);
-    var add  = T("+", dist, fami);
+    var add  = T("+", fami, dist);
     
     add.onbang = function() {
+        fami.isOff ? fami.on() : fami.off();        
         dist.isOff ? dist.on() : dist.off();
-        fami.isOff ? fami.on() : fami.off();
         add .isOff ? add .on() : add .off();
     };
     
     return add;
+}());
+
+ex7 = (function() {
+    var sin = T("sin", 880);
+    var env = T("adsr", 10, 500);
+    var syn = T("*", sin, env);    
+
+    syn.addEventListener("bang", function() {
+        sin.bang();
+    });
+    
+    syn.addEventListener("bang", function() {    
+        env.bang();
+    });
+    
+    return syn;
 }());

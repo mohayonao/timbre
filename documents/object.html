@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>doc: Object</title>
+    <title>timbre: TimbreObject</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -18,9 +18,9 @@
 
       <div class="navi"><a href=".">index</a></div>
       <div id="contents">
-        <h2>Object</h2>
+        <h2>TimbreObject</h2>
         <p class="desc">
-         Object
+          The root class of timbre objects
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
@@ -30,11 +30,11 @@ object = T(name, ...);
 // ...   Arguments and input objects which will be processed
 
 
-// Examples
-// new instance of Oscillator with arguments
-osc = T("osc", "sin", 440, 0.25);
+// Examples:
+// Create a new instance of Oscillator with arguments
+osc = T("osc", "sin", 440, 0.25).play();
 
-// new instance of Filter with arguments("lpf",440) and input(osc)
+// Create a new instance of Filter with arguments("lpf",440) and input(osc)
 fil = T("filter", "lpf", 440, osc);
         </pre>
 
@@ -48,6 +48,13 @@ object.isOn  // [Readonly] on?
 object.isOff // [Readonly] off?
 object.isAr  // [Readonly] audio rate?
 object.isKr  // [Readonly] control rate?
+
+/** NOTE:
+ * Timbre objects that runs at control rate are used for
+ * low frequency or slowly changing control signal.
+ * Control rate timbre objects produce only a signal sample per control cycle
+ * and therefore useless processing power than audio rate objects.
+ */
         </pre>
 
         <h3>Methods</h3>
@@ -69,6 +76,7 @@ object.bang();
 // Operate input objects
 object.append(...);
 object.remove();
+object.removeAll();
 
 
 // Event listener
@@ -76,7 +84,7 @@ object.addEventListener(name, func);
 object.removeEventListener(name, func);
 
 
-// setter/getter
+// Setter/Getter
 object.set(key, value);
 value = object.get(key);
         </pre>
@@ -103,10 +111,30 @@ object.onon = function() {};  // ...
 
 // Script to be run when off()
 object.onoff = function() {}; // oh, ugly..
+
+
+
+
+// If the addEventListener() method is used,
+//                one or more listeners can register.
+object.addEventListener("play", function() {
+
+});
+
+// If the event name starts with '~', 
+//                the listener perfoms only once.
+object.addEventListener("~bang", function() {
+
+});
+
+// and
+object.removeEventListener("play", registered_func);
         </pre>
 
         <h3>Args</h3>
         <pre id="ex4" class="prettyprint">
+// The .args property contains input objects which will be processed
+
 add = T("+").play();
 
 a = T("tri", 440);
@@ -134,37 +162,39 @@ add.args[0] === c; // true
 
 
 // push [bang] button to execute the below code
-add.args.removeAll();
+add.removeAll();
 add.args.length === 0; // true
         </pre>
 
         <h3>Play() / Pause()</h3>
         <pre id="ex5" class="prettyprint">
-// push [play], [pause] buttons to call play(), pause()
+// play()/pause() methods switch sound processing
 
+
+// push [play] or [pause] buttons to call methods
 osc1 = T("tri"  ,  660, 0.25).play();
 osc2 = T("pulse", 1320, 0.75);        // do not sound processing
         </pre>
 
         <h3>On() / Off()</h3>
         <pre id="ex6" class="prettyprint">
-// on()/off() methods switching processing
+// on()/off() methods switching processing status
 
 
-// Effector's on/off are switching efx processing
-dist = T("efx.dist", wav);
-
-// Oscillator's on/off are switchig mute
+// Oscillator's on/off are switchig mute on/off
 fami = T("fami", 1320, 0.25);
 
+// Effector's on/off are switching efx processing on/off
+dist = T("efx.dist", wav);
+
 // Operator's on/off are not do anything
-add  = T("+", dist, fami).play();
+add  = T("+", fami, dist).play();
 
 
 // push [bang] button to switch on / off
 add.onbang = function() {
-    dist.isOff ? dist.on() : dist.off();
     fami.isOff ? fami.on() : fami.off();
+    dist.isOff ? dist.on() : dist.off();
     add .isOff ? add .on() : add .off();
 };
         </pre>
@@ -173,11 +203,13 @@ add.onbang = function() {
         <pre id="ex7" class="prettyprint">
 // A bang() method carries out something for every class.
 
-// push [bang] button to execute the below code
+
 sin = T("sin", 880);
 env = T("adsr", 10, 500);
 syn = T("*", sin, env).play();
 
+
+// push [bang] button to execute the below code
 
 // Oscillator's bang() resets the phase
 syn.addEventListener("bang", function() {
@@ -193,9 +225,7 @@ syn.addEventListener("bang", function() {
 
         
       </div>
-      <div class="navi"><a href=".">index</a></div>
-      <footer>
-      </footer>
+      <footer></footer>
     </section>
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>

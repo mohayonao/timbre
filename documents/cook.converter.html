@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>timbre: WhiteNoise</title>
+    <title>timbre: cookbook: Converter</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -18,48 +18,32 @@
 
       <div class="navi"><a href=".">index</a></div>
       <div id="contents">
-        <h2>WhiteNoise</h2>
+        <h2>Converter</h2>
         <p class="desc">
-          White noise generator
         </p>
-        <h3>Constructor</h3>
+        <h3>Example</h3>
         <pre id="ex0" class="prettyprint">
-noise = T("noise");
+// copy utils functions to the window object          
+timbre.utils.exports("converter");
 
-noise.play();
-        </pre>
+// A midi number to frequency
+mtof(69);  // timbre.utils.mtof(69) is 440(Hz)
 
-        <h3>Properties</h3>
-        <pre id="ex1" class="prettyprint">
-        </pre>
-        
-        <h3>Methods</h3>
-        <pre id="ex2" class="prettyprint">
-        </pre>
-        
-        <h3>Events</h3>
-        <pre id="ex3" class="prettyprint">
-        </pre>
 
-        <h3>Example: Hi-Hat</h3>
-        <pre id="ex4" class="prettyprint">
-synth = T("*", T("hpf", 6000, T("noise")),
-               env = T("perc"));
+// A tone name to a midi number
+atom("A4") // timbre.utils.atom("A4") is #81
+atom("G#3") === atom("G+3") === atom("A-3") === atom("Ab3");
 
-metro = T("interval", 110, function() {
-    var i = metro.count % 4;
-    if (i <= 1) {
-        env.r = 20;
-        env.mul = 0.6 - i * 0.4;
-        env.bang();
-    } else if (i === 2) {
-        env.r = 200;
-        env.mul = 0.8;
-        env.bang();
-    }
-});
+// A tone name to a frequency
+atof("C5") // timbre.utils.atom("A4") is 1046.50(Hz)
+ 
+
+// Others
+bpm2msec(134, 8); // timbre.utils.bpm2msec
+bpm2hz(134, 8);   // timbre.utils.bpm2hz
+msec2bpm(320, 8); // timbre.utils.msec2bpm
+msec2hz(250);     // timbre.utils.msec2hz
         </pre>
-        
       </div>
       <footer></footer>
     </section>
@@ -70,5 +54,5 @@ metro = T("interval", 110, function() {
   <script type="text/javascript" src="public/js/waveviewer.js"></script>  
   <script type="text/javascript" src="public/js/main.js"></script>
   <script type="text/javascript" src="../timbre.js"></script>
-  <script type="text/javascript" src="noise.js"></script>
+  <script type="text/javascript" src="cook.converter.js"></script>
 </html>

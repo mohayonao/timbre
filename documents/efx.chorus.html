@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>doc: EfxChorus</title>
+    <title>timbre: EfxChorus</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -22,7 +22,7 @@
         <p class="desc">
           Chorus
         </p>
-        <div id="p"><canvas id="canvas"></canvas></div>
+        <canvas id="canvas"></canvas>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
 chorus = T("efx.chorus", depth=0.8, rate=0.5, wet=0.5, ...);
@@ -38,27 +38,21 @@ chorus = T("efx.chorus", depth=0.8, rate=0.5, wet=0.5, ...);
 chorus.depth // [Number]
 chorus.rate  // [Number]
 chorus.wet   // [Number]
-
-chorus.mul   // [Number]  Output will be multiplied by this value
-chorus.add   // [Number]     and will be added to the output
         </pre>
-
+        
         <h3>Methods</h3>
         <pre id="ex2" class="prettyprint">
-// none
         </pre>
-
+        
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
-// none
         </pre>
-
-        <h3>See Also: </h3>
-        <a href="efx.dist.html">T("efx.dist")</a>,
-        <a href="efx.chorus.html">T("efx.delay")</a>
         
+        <h3>See Also: </h3>
+        <a href="efx.dist.html">T("efx.dist")</a>
+        <a href="efx.chorus.html">T("efx.delay")</a>
       </div>
-      <div class="navi"><a href=".">index</a></div>
+      <footer></footer>
     </section>
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>

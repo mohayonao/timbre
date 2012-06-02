@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>timbre: Add</title>
+    <title>timbre: Easing</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -18,71 +18,65 @@
 
       <div class="navi"><a href=".">index</a></div>
       <div id="contents">
-        <h2>Add</h2>
+        <h2>Easing</h2>
         <p class="desc">
-          Add signals
+          Easing
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-add = T("+", ...);
+ease = T("ease", type="linear", duration=1000, start=0, stop=1, onchanged=NOP);
 
-// ...   Input objects which will be added
+// type      [String / Function]
+// duration  [Number]
+// start     [Number]
+// stop      [Number]
+// onchanged [Function]
+
+
+// NOTE:
+// The Easing.Functions refered to https://github.com/sole/tween.js
+//
+// The curves visualized.
+// http://sole.github.com/tween.js/examples/03_graphs.html
         </pre>
         
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
-        </pre>
+ease.type;        // [String / Function]
+ease.duration;    // [Number]
+ease.start;       // [Number]
+ease.stop;        // [Number]
+ease.delay;       // [Number] Delay time
 
+ease.value;       // [Readonly] Current value
+ease.currentTime; // [Readonly]
+        </pre>
         <h3>Methods</h3>
         <pre id="ex2" class="prettyprint">
         </pre>
 
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
+// Script to be run when easing
+ease.onchanged = function(value) {};
+
+
+// Script to be run when has reach the end
+ease.onended = function() {};
         </pre>
         
-        <h3>Example: Chord</h3>
+        <h3>Example</h3>
         <pre id="ex4" class="prettyprint">
-T("+", T("tri",  783, 0.25),
-       T("tri", 1046, 0.25),
-       T("tri", 1318, 0.25)).play();
-        </pre>
+ease  = T("ease", "bounce.out", 1500, 1320, 440);
+synth = T("tri", ease, 0.5).play();
 
-        <h3>Example: Arrpegio</h3>
-        <pre id="ex5" class="prettyprint">
-add = T("+");
-
-tones = [ /* loaded piano tones and stored here */ ];
-score = [ [0],[1],[4],[6], [2],[5],[7],[5],
-          [3],[5],[7],[5], [4,6], [], [2,5], [] ];
-
-function play_piano(i) {
-    score[i].forEach(function(x) {
-        add.append(tones[x].clone());
-    });
-    if (add.args.length >= 4) {
-        add.args.shift();
-    }
-}
-
-i = 0, metro = T("interval", 300, function() {
-    if (i < score.length) play_piano(i++);
-});
-
-add.onbang = function() {
-    i = 0;
-};
-add.onplay = function() {
-    metro.on();
-};
-add.onpause = function(){
-    metro.off();
-};
+synth.onplay = function() { ease.bang(); };
+synth.onbang = function() { ease.bang(); };
+ease.delay = 1000;
         </pre>
         
         <h3>See Also: </h3>
-        <a href="mul.html">T("*")</a>
-        
+        <a href="glide.html">T("glide")</a>
       </div>
       <footer></footer>
     </section>
@@ -93,5 +87,5 @@ add.onpause = function(){
   <script type="text/javascript" src="public/js/waveviewer.js"></script>  
   <script type="text/javascript" src="public/js/main.js"></script>
   <script type="text/javascript" src="../timbre.js"></script>
-  <script type="text/javascript" src="add.js"></script>
+  <script type="text/javascript" src="ease.js"></script>
 </html>

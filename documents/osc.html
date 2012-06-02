@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>doc: Oscillator</title>
+    <title>timbre: Oscillator</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -33,7 +33,7 @@ osc = T("osc", wave="sin", freq=440, mul=1, add=0);
 
 osc.play();
         </pre>
-
+        
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
 osc.wave  // [String / Function / Float32Array]
@@ -51,7 +51,6 @@ osc.bang();
         
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
-// none
         </pre>
         
         <h3>Change the wavetable</h3>
@@ -100,7 +99,7 @@ T("osc").getWavetable("myosc"); // Float32Array(1024)
         <h3>Example: Tremolo</h3>
         <pre id="ex7" class="prettyprint">
 T("*", T("tri", 880, 0.25),
-       T("+sin", 8).kr());
+       T("+sin", 8).kr()).play();
 
 // kr() method switches to processing mode 'Control Rate'
 // Control rate are used for low frequency or slowly chaning control signal.
@@ -112,23 +111,23 @@ T("*", T("tri", 880, 0.25),
 
         <h3>Example: Vibrato</h3>
         <pre id="ex8" class="prettyprint">
-T("tri", T("tri", 2, 30, 880).kr(), 0.25);
+T("tri", T("tri", 2, 30, 880).kr(), 0.25).play();
         </pre>
         
         <h3>Example: Glide</h3>
         <pre id="ex9" class="prettyprint">
-synth = T("fami", T("glide", 150, 880), 0.25);
-cnt   = 0;
+synth = T("fami", T("glide", msec=150, freq.value=880), 0.25).play();
 
+
+// push [bang] button to execute the below code
+cnt   = 0;
 synth.onbang = function() {
     synth.freq.value = [880, 1320, 1100, 660][++cnt % 4]
 };
-
-synth.play();
         </pre>
         
       </div>
-      <div class="navi"><a href=".">index</a></div>
+      <footer></footer>
     </section>
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>

@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>doc: EfxDistortion</title>
+    <title>timbre: EfxDistortion</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -22,10 +22,10 @@
         <p class="desc">
           Distortion
         </p>
-        <div id="p"><canvas id="canvas"></canvas></div>
+        <canvas id="canvas"></canvas>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-dist  = T("efx.dist", pre=-60, post=18, freq=2400, ...);
+dist = T("efx.dist", pre=-60, post=18, freq=2400, ...);
 
 // pre   [Object] Pre gain (dB)
 // post  [Object] Post gain(dB)
@@ -38,27 +38,21 @@ dist  = T("efx.dist", pre=-60, post=18, freq=2400, ...);
 dist.pre   // [Object] Pre gain (dB)
 dist.post  // [Object] Post gain(dB)
 dist.freq  // [Object] Cutoff frequency of LPF
-
-dist.mul   // [Number]  Output will be multiplied by this value
-dist.add   // [Number]     and will be added to the output
         </pre>
-
+        
         <h3>Methods</h3>
         <pre id="ex2" class="prettyprint">
-// none
         </pre>
 
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
-// none
         </pre>
-
-        <h3>See Also: </h3>
-        <a href="efx.delay.html">T("efx.delay")</a>,
-        <a href="efx.chorus.html">T("efx.chorus")</a>
         
+        <h3>See Also: </h3>
+        <a href="efx.delay.html">T("efx.delay")</a>
+        <a href="efx.chorus.html">T("efx.chorus")</a>
       </div>
-      <div class="navi"><a href=".">index</a></div>
+      <footer></footer>
     </section>
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>

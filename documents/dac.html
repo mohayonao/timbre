@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>timbre: Add</title>
+    <title>timbre: Dac</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -18,70 +18,60 @@
 
       <div class="navi"><a href=".">index</a></div>
       <div id="contents">
-        <h2>Add</h2>
+        <h2>Dac</h2>
         <p class="desc">
-          Add signals
+          Audio output
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-add = T("+", ...);
+dac = T("dac", ...);
 
-// ...   Input objects which will be added
+// ...   Input objects which will be processed
+
+
+dac = T("pandac", pan=0.5, ...);
+// pan  [Object]
+// ...  Input objects which will be processed
         </pre>
-        
+
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
+dac.pan  [Object] 
         </pre>
-
+        
         <h3>Methods</h3>
         <pre id="ex2" class="prettyprint">
         </pre>
-
+        
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
         </pre>
-        
-        <h3>Example: Chord</h3>
+
+        <h3>Example: Panning</h3>
         <pre id="ex4" class="prettyprint">
-T("+", T("tri",  783, 0.25),
-       T("tri", 1046, 0.25),
-       T("tri", 1318, 0.25)).play();
+synth = T("saw", 880, 0.25);
+dac   = T("dac", synth);
+dac.pan = T("+sin", 0.5);
+
+dac.play();
         </pre>
 
-        <h3>Example: Arrpegio</h3>
+        <h3>What is a play() method doing?</h3>
         <pre id="ex5" class="prettyprint">
-add = T("+");
+synth = T("sin", 880).play();
 
-tones = [ /* loaded piano tones and stored here */ ];
-score = [ [0],[1],[4],[6], [2],[5],[7],[5],
-          [3],[5],[7],[5], [4,6], [], [2,5], [] ];
+// In fact, the above code is the shortcut, it's the same as below.
 
-function play_piano(i) {
-    score[i].forEach(function(x) {
-        add.append(tones[x].clone());
-    });
-    if (add.args.length >= 4) {
-        add.args.shift();
-    }
-}
+synth = T("sin", 880);
+dac = T("dac", synth);
+dac.play();
 
-i = 0, metro = T("interval", 300, function() {
-    if (i < score.length) play_piano(i++);
-});
+synth.dac === dac; // true
 
-add.onbang = function() {
-    i = 0;
-};
-add.onplay = function() {
-    metro.on();
-};
-add.onpause = function(){
-    metro.off();
-};
+
+// A play() method creates a T("dac") object if it is not exists,
+// and appends self to it, and T("dac").play().
         </pre>
-        
-        <h3>See Also: </h3>
-        <a href="mul.html">T("*")</a>
         
       </div>
       <footer></footer>
@@ -93,5 +83,5 @@ add.onpause = function(){
   <script type="text/javascript" src="public/js/waveviewer.js"></script>  
   <script type="text/javascript" src="public/js/main.js"></script>
   <script type="text/javascript" src="../timbre.js"></script>
-  <script type="text/javascript" src="add.js"></script>
+  <script type="text/javascript" src="dac.js"></script>
 </html>

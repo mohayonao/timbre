@@ -1,10 +1,12 @@
+timbre.workerpath = "../timbre.js";
+
 ex0 = (function() {
     var synth = T("wav", "public/audio/amen.wav", true).load();
     
     synth.$listener = T("rec", 100).listen(synth).off().set("overwrite", true);
     synth.$view = synth.$listener.buffer;
     synth.$listener.onrecorded = function () {
-        synth.$listener.on().bang();
+        synth.$listener.on();
     };
     
     return synth;
@@ -19,7 +21,7 @@ ex4 = (function() {
     synth.$listener = T("rec", 100).listen(synth).off().set("overwrite", true);
     synth.$view = synth.$listener.buffer;
     synth.$listener.onrecorded = function () {
-        synth.$listener.on().bang();
+        synth.$listener.on();
     };
     
     return synth;
@@ -34,7 +36,7 @@ ex5 = (function() {
     synth.$listener = T("rec", 100).listen(synth).off().set("overwrite", true);
     synth.$view = synth.$listener.buffer;
     synth.$listener.onrecorded = function () {
-        synth.$listener.on().bang();
+        synth.$listener.on();
     };
     
     return synth;

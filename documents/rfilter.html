@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>doc: ResonantFilter</title>
+    <title>timbre: ResonantFilter</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -20,9 +20,9 @@
       <div id="contents">
         <h2>ResonantFilter</h2>
         <p class="desc">
-         Filter
+          Filter
         </p>
-        <div id="p"><canvas id="canvas"></canvas></div>
+        <canvas id="canvas"></canvas>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
 rfilter = T("rfilter", type="lpf", cutoff=800, Q=0.5, depth=0.5, ...);
@@ -40,23 +40,14 @@ rfilter.type   // [String]
 rfilter.cutoff // [Object]
 rfilter.Q      // [Object]
 rfilter.depth  // [Object]
-
-rfilter.mul  // [Number] Output will be multiplied by this value
-rfilter.add  // [Number]    and will be added to the output
         </pre>
 
         <h3>Methods</h3>
         <pre id="ex2" class="prettyprint">
-// Enable processing
-rfilter.on();
-
-// Disable processing
-rfilter.off();
         </pre>
 
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
-// none
         </pre>
 
         <h3>Change the filter type</h3>
@@ -72,9 +63,7 @@ T("rbrf")  // Band reject filter
         <a href="filter.html">T("filter")</a>
         
       </div>
-      <div class="navi"><a href=".">index</a></div>
-      <footer>
-      </footer>
+      <footer></footer>
     </section>
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>

@@ -1,3 +1,5 @@
+timbre.workerpath = "../timbre.js";
+
 ex0 = (function() {
     var synth = T("filter", T("wav", "public/audio/amen.wav", true).load());
     

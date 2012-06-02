@@ -1,3 +1,5 @@
+timbre.workerpath = "../timbre.js";
+
 ex0 = (function() {
     var synth = T("rfilter", T("wav", "public/audio/amen.wav", true).load());
     
@@ -52,4 +54,3 @@ ex0 = (function() {
     
     return synth;
 }());
-

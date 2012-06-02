@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>timbre: Add</title>
+    <title>timbre: Buffer</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -18,70 +18,47 @@
 
       <div class="navi"><a href=".">index</a></div>
       <div id="contents">
-        <h2>Add</h2>
+        <h2>Buffer</h2>
         <p class="desc">
-          Add signals
+          Buffer
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-add = T("+", ...);
+buffer = T("buffer", bufer=new Float32Array(0), loop=false);
 
-// ...   Input objects which will be added
+// buffer [Object]
+// loop   [Boolean]
         </pre>
         
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
-        </pre>
+buffer.buffer;      // [Object]
+buffer.loop;        // [Boolean]
+buffer.reversed;    // [Boolean]
+buffer.currentTime; // [Number]
 
+buffer.duration;    // [Readonly]
+        </pre>
+        
         <h3>Methods</h3>
         <pre id="ex2" class="prettyprint">
+//           
+rec.clone();
+
+
+//           
+rec.slice();
         </pre>
 
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
         </pre>
         
-        <h3>Example: Chord</h3>
+        <h3>Example</h3>
         <pre id="ex4" class="prettyprint">
-T("+", T("tri",  783, 0.25),
-       T("tri", 1046, 0.25),
-       T("tri", 1318, 0.25)).play();
-        </pre>
-
-        <h3>Example: Arrpegio</h3>
-        <pre id="ex5" class="prettyprint">
-add = T("+");
-
-tones = [ /* loaded piano tones and stored here */ ];
-score = [ [0],[1],[4],[6], [2],[5],[7],[5],
-          [3],[5],[7],[5], [4,6], [], [2,5], [] ];
-
-function play_piano(i) {
-    score[i].forEach(function(x) {
-        add.append(tones[x].clone());
-    });
-    if (add.args.length >= 4) {
-        add.args.shift();
-    }
-}
-
-i = 0, metro = T("interval", 300, function() {
-    if (i < score.length) play_piano(i++);
-});
-
-add.onbang = function() {
-    i = 0;
-};
-add.onplay = function() {
-    metro.on();
-};
-add.onpause = function(){
-    metro.off();
-};
         </pre>
         
         <h3>See Also: </h3>
-        <a href="mul.html">T("*")</a>
         
       </div>
       <footer></footer>
@@ -93,5 +70,5 @@ add.onpause = function(){
   <script type="text/javascript" src="public/js/waveviewer.js"></script>  
   <script type="text/javascript" src="public/js/main.js"></script>
   <script type="text/javascript" src="../timbre.js"></script>
-  <script type="text/javascript" src="add.js"></script>
+  <script type="text/javascript" src="buffer.js"></script>
 </html>

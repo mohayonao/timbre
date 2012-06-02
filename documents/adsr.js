@@ -24,7 +24,7 @@ ex3 = (function() {
     adsr.onA = function() { osc.freq.value = 880; }
     adsr.onD = function() { osc.freq.value = 660; }
     adsr.onS = function() { osc.freq.value = 440; }
-    adsr.onR = function() { console.log("R!"); }
+    adsr.onR = function() { osc.freq.value = 220; }
     adsr.onended = function() { adsr.bang(); };
     
     synth.onplay = function() {

@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>timbre: Add</title>
+    <title>timbre: FuncOscillator</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -18,70 +18,54 @@
 
       <div class="navi"><a href=".">index</a></div>
       <div id="contents">
-        <h2>Add</h2>
+        <h2>FuncOscillator</h2>
         <p class="desc">
-          Add signals
+          
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-add = T("+", ...);
+osc = T("func", numOfSamples=0, func=function(x) { return x; }, freq=440);
 
-// ...   Input objects which will be added
+// numOfSamples [Number]
+// func         [Function]
+// freq         [Object]   Frequency
+
+osc.play();
         </pre>
-        
+
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
+osc.func         // [Function]
+osc.numOfSamples // [Number] 
+osc.freq         // [Object] Frequency
+osc.phase        // [Number] Initial phase offset
         </pre>
-
+        
         <h3>Methods</h3>
         <pre id="ex2" class="prettyprint">
+// Reset phase          
+osc.bang();
         </pre>
-
+        
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
         </pre>
-        
-        <h3>Example: Chord</h3>
+
+        <h3>Example: PWM (10%)</h3>
         <pre id="ex4" class="prettyprint">
-T("+", T("tri",  783, 0.25),
-       T("tri", 1046, 0.25),
-       T("tri", 1318, 0.25)).play();
-        </pre>
+T("func", function(x) {
+    return (x < 0.1) ? -1 : +1;
+}, 880).play();
 
-        <h3>Example: Arrpegio</h3>
-        <pre id="ex5" class="prettyprint">
-add = T("+");
-
-tones = [ /* loaded piano tones and stored here */ ];
-score = [ [0],[1],[4],[6], [2],[5],[7],[5],
-          [3],[5],[7],[5], [4,6], [], [2,5], [] ];
-
-function play_piano(i) {
-    score[i].forEach(function(x) {
-        add.append(tones[x].clone());
-    });
-    if (add.args.length >= 4) {
-        add.args.shift();
-    }
-}
-
-i = 0, metro = T("interval", 300, function() {
-    if (i < score.length) play_piano(i++);
-});
-
-add.onbang = function() {
-    i = 0;
-};
-add.onplay = function() {
-    metro.on();
-};
-add.onpause = function(){
-    metro.off();
-};
+// x is a phase in the range 0.0 to 1.0
         </pre>
         
-        <h3>See Also: </h3>
-        <a href="mul.html">T("*")</a>
+        <h3>Example: numOfSamples</h3>
+        <pre id="ex4" class="prettyprint">
+T("func", 3, function(x) {       // numOfSamples  is 3
+    return return [x-0.5, 0, 0]; // return.length is 3
+}, 880).play();
+        </pre>
         
       </div>
       <footer></footer>
@@ -93,5 +77,5 @@ add.onpause = function(){
   <script type="text/javascript" src="public/js/waveviewer.js"></script>  
   <script type="text/javascript" src="public/js/main.js"></script>
   <script type="text/javascript" src="../timbre.js"></script>
-  <script type="text/javascript" src="add.js"></script>
+  <script type="text/javascript" src="func.js"></script>
 </html>

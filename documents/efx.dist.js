@@ -1,12 +1,12 @@
 timbre.workerpath = "../timbre.js";
 
 ex0 = (function() {
-    var synth = T("efx.dist", T("wav", "public/audio/amen.wav", true).load());
+    var synth = T("efx.dist", T("wav", "public/audio/guitar.wav", true).load());
     
     synth.$listener = T("rec", 100).listen(synth).off().set("overwrite", true);
     synth.$view = synth.$listener.buffer;
     synth.$listener.onrecorded = function () {
-        synth.$listener.on().bang();
+        synth.$listener.on();
     };
     
     synth.$initUI = function() {

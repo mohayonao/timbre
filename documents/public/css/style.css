@@ -3,6 +3,7 @@ a {
 }
 h2 {
     margin: 0px;font-size:24px;
+    clear:both; 
 }
 h3 {
     display:inline;
@@ -50,4 +51,13 @@ header span {
 }
 #alllist li {
     display:inline; padding:5px; line-height:24px;
+}
+#allobjects {
+    padding: 50px 0px;
+}
+#canvas {
+    display:block;
+}
+.col3 div {
+    float:left; width:30%; padding:10px;
 }

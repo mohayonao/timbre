@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>doc: PercussiveEnvelope</title>
+    <title>timbre: PercussiveEnvelope</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -20,16 +20,16 @@
       <div id="contents">
         <h2>PercussiveEnvelope</h2>
         <p class="desc">
-         Control signal generator which outputs shaped decay envelopes.
+          Control signal generator which outputs shaped decay envelopes.
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-perc = T("perc", r=200, ended=function(){});
+perc = T("perc", r=200, ended=NOP);
 
 // r     [Number]   Release time in msec
 // ended [Function] Script to be run when the envelope status reach the end
         </pre>
-
+        
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
 perc.delay  // [Number] Delay time in msec
@@ -37,9 +37,6 @@ perc.a      // [Number] Attack time in msec
 perc.r      // [Number] Release time in msec
 
 perc.al     // [Number] Attack Level
-
-perc.mul    // [Number] Output will be multiplied by this value
-perc.add    // [Number]    and will be added to the output
 
 adsr.reversed    // [Boolean] Reverse envelope
 
@@ -56,24 +53,22 @@ perc.bang();
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
 // Script to be run when the envelope status reach 'A'
-adsr.onA = function() {};
+adsr.onA;
 
 
 // Script to be run when the envelope status reach 'R'
-adsr.onR = function() {};
+adsr.onR;
 
 
 // Script to be run when the envelope status reach the end
-perc.onended = function() {};
+perc.onended;
         </pre>
         
         <h3>See Also: </h3>
         <a href="adsr.html">T("adsr")</a>
         
       </div>
-      <div class="navi"><a href=".">index</a></div>
-      <footer>
-      </footer>
+      <footer></footer>
     </section>
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>

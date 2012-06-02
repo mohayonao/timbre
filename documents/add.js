@@ -1,3 +1,5 @@
+timbre.workerpath = "../timbre.js";
+
 ex4 = (function() {
     return T("+", T("tri",  783, 0.25),
                   T("tri", 1046, 0.25),
@@ -30,7 +32,7 @@ ex5 = (function() {
         }
     }
     
-    var i = 0, metro = T("metro", 90, 8, function() {
+    var i = 0, metro = T("interval", 300, function() {
         if (i < score.length) play_piano(i++);
     });
     

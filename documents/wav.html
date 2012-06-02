@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>doc: WavDecoder</title>
+    <title>timbre: WavDecoder</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -29,7 +29,7 @@ T("wav", src="public/audio/amen.wav", loop=true).load();
 // src  [String]  The url of an wav file to load
 // loop [Boolean] Looping
         </pre>
-
+        
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
 wav.src         // [String]   The url of an wav file to load
@@ -37,9 +37,6 @@ wav.loop        // [Boolean]  Looping
 
 wav.currentTime // [Number]   Current position in msec of the buffer
 wav.reversed    // [Boolean]  Play backwards
-
-wav.mul         // [Number]   Output will be multiplied by this value
-wav.add         // [Number]      and will be added to the output
 
 wav.isLoaded    // [Readonly] 'true' when loaded wav and stored
 wav.duration    // [Readonly] The duration of the buffer
@@ -69,8 +66,12 @@ wav.onended = function() {};
 wav.onlooped = function() {};
 
 
-// Scripts to be run when an wav data is loaded
-wav.onloadend = function(res) {};
+// Scripts to be run when the meta data is loaded
+wav.onloadedmetadata = function(res) {};
+
+
+// Scripts to be run when an audio data is loaded
+wav.onloadeddata = function(res) {};
 
 
 // Scripts to be run when an error occurs when the file is being loaded
@@ -91,7 +92,7 @@ wav.slice(280, 280+214).play();
         <a href="audio.html">T("audio")</a>
         
       </div>
-      <div class="navi"><a href=".">index</a></div>
+      <footer></footer>
     </section>
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>

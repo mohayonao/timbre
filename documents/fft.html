@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>timbre: Add</title>
+    <title>timbre: FFT</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -18,70 +18,53 @@
 
       <div class="navi"><a href=".">index</a></div>
       <div id="contents">
-        <h2>Add</h2>
+        <h2>FFT</h2>
         <p class="desc">
-          Add signals
+          Fast Fourier transform
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-add = T("+", ...);
+fft = T("fft", bufferSize=512, window="Hann", onfft=NOP, ...);
 
-// ...   Input objects which will be added
+// ...   Input objects which will be added and processed
         </pre>
         
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
-        </pre>
+fft.window;     // [String / Function]
+fft.interval;   // [Number]    An interval of a FFT processing
+fft.noSpectrum; // [Boolean]   not calcurate spectrum
 
+fft.spectrum;   // [Readonly]  Spectrum (Float32Array(fft.size))
+fft.size;       // [Readonly]
+        </pre>
+        
         <h3>Methods</h3>
         <pre id="ex2" class="prettyprint">
+//           
+fft.listen(...);          
         </pre>
 
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
+//           
+fft.onfft = function(real, imag) {};          
         </pre>
         
-        <h3>Example: Chord</h3>
+        <h3>Example</h3>
         <pre id="ex4" class="prettyprint">
-T("+", T("tri",  783, 0.25),
-       T("tri", 1046, 0.25),
-       T("tri", 1318, 0.25)).play();
-        </pre>
+synth = T("wav", "public/audio/amen.wav", true).load().play();
 
-        <h3>Example: Arrpegio</h3>
-        <pre id="ex5" class="prettyprint">
-add = T("+");
+fft = T("fft");
 
-tones = [ /* loaded piano tones and stored here */ ];
-score = [ [0],[1],[4],[6], [2],[5],[7],[5],
-          [3],[5],[7],[5], [4,6], [], [2,5], [] ];
-
-function play_piano(i) {
-    score[i].forEach(function(x) {
-        add.append(tones[x].clone());
-    });
-    if (add.args.length >= 4) {
-        add.args.shift();
-    }
-}
-
-i = 0, metro = T("interval", 300, function() {
-    if (i < score.length) play_piano(i++);
-});
-
-add.onbang = function() {
-    i = 0;
+fft.onfft = function(real, imag) {
+    // window.background.draw( this.spectrum );
 };
-add.onplay = function() {
-    metro.on();
-};
-add.onpause = function(){
-    metro.off();
-};
+
+fft.listen(synth);          
         </pre>
         
         <h3>See Also: </h3>
-        <a href="mul.html">T("*")</a>
         
       </div>
       <footer></footer>
@@ -93,5 +76,5 @@ add.onpause = function(){
   <script type="text/javascript" src="public/js/waveviewer.js"></script>  
   <script type="text/javascript" src="public/js/main.js"></script>
   <script type="text/javascript" src="../timbre.js"></script>
-  <script type="text/javascript" src="add.js"></script>
+  <script type="text/javascript" src="fft.js"></script>
 </html>

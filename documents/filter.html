@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>doc: Filter</title>
+    <title>timbre: Filter</title>
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
     <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
@@ -20,9 +20,9 @@
       <div id="contents">
         <h2>Filter</h2>
         <p class="desc">
-         Filter
+          Filter
         </p>
-        <div id="p"><canvas id="canvas"></canvas></div>
+        <canvas id="canvas"></canvas>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
 filter = T("filter", type="lpf", freq=3200, band=1, gain=6, ...);
@@ -40,23 +40,14 @@ filter.type // [String] Filter type
 filter.freq // [Object] Frequency
 filter.band // [Object] Bandwidth
 filter.gain // [Object] Gain
-
-filter.mul  // [Number] Output will be multiplied by this value
-filter.add  // [Number]    and will be added to the output
         </pre>
-
+        
         <h3>Methods</h3>
         <pre id="ex2" class="prettyprint">
-// Enable processing
-filter.on();
-
-// Disable processing
-filter.off();
         </pre>
 
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
-// none
         </pre>
 
         <h3>Change the filter type</h3>
@@ -96,9 +87,7 @@ T("filter", "myfilter");
         <a href="rfilter.html">T("rfilter")</a>
         
       </div>
-      <div class="navi"><a href=".">index</a></div>
-      <footer>
-      </footer>
+      <footer></footer>
     </section>
   </body>
   <script type="text/javascript" src="public/js/prettify.js"></script>
