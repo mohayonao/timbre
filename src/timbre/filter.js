@@ -1,15 +1,12 @@
 /**
- * timbre/filters
+ * Filter: 0.1.0
+ * [ar-only]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * Filter: 0.1.0
- * [ar-only]
- */
 var Filter = (function() {
     var Filter = function() {
         initialize.apply(this, arguments);

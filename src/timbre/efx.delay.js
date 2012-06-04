@@ -1,15 +1,12 @@
 /**
- * timbre/efx.delay
+ * EfxDelay: 0.1.0
+ * [ar-only]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * EfxDelay: 0.1.0
- * [ar-only]
- */
 var EfxDelay = (function() {
     var EfxDelay = function() {
         initialize.apply(this, arguments);

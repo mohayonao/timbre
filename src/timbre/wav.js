@@ -1,16 +1,13 @@
 /**
- * timbre/wav
+ * WavDecoder: 0.1.0
+ * Decode wav file and play it
+ * [ar-only]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * WavDecoder: 0.1.0
- * Decode wav file and play it
- * [ar-only]
- */
 var WavDecoder = (function() {
     var WavDecoder = function() {
         initialize.apply(this, arguments);

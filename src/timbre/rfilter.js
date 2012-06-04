@@ -1,15 +1,12 @@
 /**
- * timbre/rfilter
+ * ResonantFilter: 0.1.0
+ * [ar-only]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * ResonantFilter: 0.1.0
- * [ar-only]
- */
 var ResonantFilter = (function() {
     var ResonantFilter = function() {
         initialize.apply(this, arguments);

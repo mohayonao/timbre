@@ -1,16 +1,13 @@
 /**
- * timbre/perc
+ * PercussiveEnvelope: 0.1.0
+ * Percussive envelope generator
+ * [kr-only]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * PercussiveEnvelope: 0.1.0
- * Percussive envelope generator
- * [kr-only]
- */
 var PercussiveEnvelope = (function() {
     var PercussiveEnvelope = function() {
         initialize.apply(this, arguments);

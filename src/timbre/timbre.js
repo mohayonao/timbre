@@ -1,16 +1,13 @@
 /**
- * timbre/timbre
+ * AwesomeTimbre: 0.1.0
+ * Do something fun
+ * [ar-only]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * AwesomeTimbre: 0.1.0
- * Do something fun
- * [ar-only]
- */
 var AwesomeTimbre = (function() {
     var AwesomeTimbre = function() {
         initialize.apply(this, arguments);

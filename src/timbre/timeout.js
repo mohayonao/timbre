@@ -1,16 +1,13 @@
 /**
- * timbre/timeout
+ * Timeout: 0.1.0
+ * Calls a bang() after specified delay
+ * [kr-only]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * Timeout: 0.1.0
- * Calls a bang() after specified delay
- * [kr-only]
- */
 var Timeout = (function() {
     var Timeout = function() {
         initialize.apply(this, arguments);

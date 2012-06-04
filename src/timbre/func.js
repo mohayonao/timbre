@@ -1,16 +1,13 @@
 /**
- * timbre/funcoscillator
+ * FuncOscillator: 0.1.0
+ * Signal generator
+ * [ar-kr] TODO: kr
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * FuncOscillator: 0.1.0
- * Signal generator
- * [ar-kr] TODO: kr
- */
 var FuncOscillator = (function() {
     var FuncOscillator = function() {
         initialize.apply(this, arguments);

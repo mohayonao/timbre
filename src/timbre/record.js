@@ -1,16 +1,13 @@
 /**
- * timbre/record
+ * Record: 0.1.0
+ * Record sound into a buffer
+ * [ar-only]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * Record: 0.1.0
- * Record sound into a buffer
- * [ar-only]
- */
 var Record = (function() {
     var Record = function() {
         initialize.apply(this, arguments);

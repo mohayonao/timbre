@@ -1,16 +1,13 @@
 /**
- * timbre/interval
+ * Interval: 0.1.0
+ * Calls a bang() repeatedly at regular intervals
+ * [kr-only]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * Interval: 0.1.0
- * Calls a bang() repeatedly at regular intervals
- * [kr-only]
- */
 var Interval = (function() {
     var Interval = function() {
         initialize.apply(this, arguments);

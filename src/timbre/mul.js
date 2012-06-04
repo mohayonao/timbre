@@ -1,16 +1,13 @@
 /**
- * timbre/mul
+ * Multiply: 0.1.0
+ * Multiply signals
+ * [ar-kr]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * Multiply: 0.1.0
- * Multiply signals
- * [ar-kr]
- */
 var Multiply = (function() {
     var Multiply = function() {
         initialize.apply(this, arguments);

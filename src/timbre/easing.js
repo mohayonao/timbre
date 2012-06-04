@@ -1,5 +1,6 @@
 /**
- * timbre/easing
+ * Easing: 0.1.1
+ * [kr-only]
  * 'Easing.Functions' refered to https://github.com/sole/tween.js
  */
 "use strict";
@@ -7,10 +8,6 @@
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * Easing: 0.1.1
- * [kr-only]
- */
 var Easing = (function() {
     var Easing = function() {
         initialize.apply(this, arguments);

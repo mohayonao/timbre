@@ -1,16 +1,13 @@
 /**
- * timbre/system
+ * Buddy: 0.1.0
+ * Synchronize arriving data, output them together
+ * [ar-only]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * Buddy: 0.1.0
- * Synchronize arriving data, output them together
- * [ar-only]
- */
 var Buddy = (function() {
     var Buddy = function() {
         initialize.apply(this, arguments);

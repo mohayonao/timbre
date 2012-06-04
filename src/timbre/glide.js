@@ -1,5 +1,6 @@
 /**
- * timbre/glide
+ * Glide: 0.1.1
+ * [kr-only]
  */
 "use strict";
 
@@ -7,10 +8,6 @@ var timbre = require("../timbre");
 require("./easing");
 // __BEGIN__
 
-/**
- * Glide: 0.1.1
- * [kr-only]
- */
 var Glide = (function() {
     var Glide = function() {
         initialize.apply(this, arguments);

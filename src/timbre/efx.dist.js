@@ -1,15 +1,12 @@
 /**
- * timbre/efx.dist
+ * EfxDistortion: 0.1.0
+ * [ar-only]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * EfxDistortion: 0.1.0
- * [ar-only]
- */
 var EfxDistortion = (function() {
     var EfxDistortion = function() {
         initialize.apply(this, arguments);

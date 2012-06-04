@@ -1,5 +1,7 @@
 /**
- * timbre/fft
+ * FFT: 0.1.0
+ * Fast Fourier transform
+ * [ar-only]
  */
 
 "use strict";
@@ -7,11 +9,6 @@
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * FFT: 0.1.0
- * Fast Fourier transform
- * [ar-only]
- */
 var FFT = (function() {
     var FFT = function() {
         initialize.apply(this, arguments);

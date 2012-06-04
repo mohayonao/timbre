@@ -1,16 +1,13 @@
 /**
- * timbre/whitenoise
+ * WhiteNoise: 0.1.0
+ * White noise generator
+ * [ar-kr]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * WhiteNoise: 0.1.0
- * White noise generator
- * [ar-kr]
- */
 var WhiteNoise = (function() {
     var WhiteNoise = function() {
         initialize.apply(this, arguments);

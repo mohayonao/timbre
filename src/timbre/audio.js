@@ -1,16 +1,13 @@
 /**
- * timbre/audio
+ * AudioDecoder: 0.1.0
+ * Store audio samples
+ * [ar-only]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * AudioDecoder: 0.1.0
- * Store audio samples
- * [ar-only]
- */
 var AudioDecoder = {
     initialize: function(_args) {
         var i, _;

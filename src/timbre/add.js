@@ -1,16 +1,13 @@
 /**
- * timbre/add
+ * Add: 0.1.0
+ * Add signals
+ * [ar-kr]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * Add: 0.1.0
- * Add signals
- * [ar-kr]
- */
 var Add = (function() {
     var Add = function() {
         initialize.apply(this, arguments);

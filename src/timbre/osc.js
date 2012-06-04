@@ -1,16 +1,13 @@
 /**
- * timbre/oscillator
+ * Oscillator: 0.1.0
+ * Table lookup oscillator
+ * [ar-kr]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * Oscillator: 0.1.0
- * Table lookup oscillator
- * [ar-kr]
- */
 var Oscillator = (function() {
     var Oscillator = function() {
         initialize.apply(this, arguments);

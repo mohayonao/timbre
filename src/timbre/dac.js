@@ -1,16 +1,13 @@
 /**
- * timbre/dac
+ * Dac: 0.1.0
+ * Audio output
+ * [ar-only]
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-/**
- * Dac: 0.1.0
- * Audio output
- * [ar-only]
- */
 var Dac = (function() {
     var Dac = function() {
         initialize.apply(this, arguments);
