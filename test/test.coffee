@@ -15,11 +15,20 @@ app.get "/timbre.js", (req, res)->
     res.send (fs.readFileSync "#{__dirname}/../timbre.js", "utf-8"),
      {"Content-Type":"text/javascript"}
 
+fetch_source = (filepath)->
+    flg = 0
+    res = for line in fs.readFileSync(filepath, "utf-8").split "\n"
+        if flg is 0
+            flg = 1 if line.trim() is "// __BEGIN__"
+            continue
+        break if line.trim() is "// __END__"
+        line
+    return res.join "\n"
+
 app.get "/draft/:name", (req, res)->
     filepath = "#{__dirname}/../draft/#{req.params.name}";
     if path.existsSync(filepath)
-        res.send (fs.readFileSync filepath, "utf-8"),
-        {"Content-Type":"text/javascript"}
+        res.send fetch_source filepath, {"Content-Type":"text/javascript"}
     else res.send(404)
 
 app.get "/test/:test", (req, res)->
