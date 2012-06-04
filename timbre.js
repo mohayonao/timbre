@@ -1,6 +1,6 @@
 /**
- * timbre 0.1.1 / JavaScript Library for Objective Sound Programming
- * build: Mon, 04 Jun 2012 11:07:38 GMT
+ * timbre 0.2.0 / JavaScript Library for Objective Sound Programming
+ * build: Mon, 04 Jun 2012 12:10:49 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -9,8 +9,8 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "0.1.1";
-    timbre.BUILD      = "Mon, 04 Jun 2012 11:07:38 GMT";
+    timbre.VERSION    = "0.2.0";
+    timbre.BUILD      = "Mon, 04 Jun 2012 12:10:49 GMT";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 44100;
@@ -406,7 +406,7 @@ var timbre = (function(context, timbre) {
         };
         
         fn.init = function() {
-            var args, key, klass, instance, isThrougOut, proto;
+            var args, key, klass, instance, isThrougOut, isUndefined, proto;
             args = Array.prototype.slice.call(arguments);
             key  = args[0];
             
@@ -440,7 +440,13 @@ var timbre = (function(context, timbre) {
                 }
                 break;
             }
-            if (instance === undefined) instance = new NumberWrapper([0]);
+            if (instance === undefined) {
+                instance = new NumberWrapper([0]);
+                isUndefined = true;
+                if (timbre._.verbose) {
+                    console.warn("'" + key + "' is not defined.");
+                }
+            }
             
             // init
             proto = Object.getPrototypeOf(instance);
@@ -453,6 +459,7 @@ var timbre = (function(context, timbre) {
                 timbre.fn.arrayset(instance.args);
                 
                 if (!instance.hasOwnProperty("_")) instance._ = {};
+                instance._.isUndefined = !!isUndefined;
                 
                 if (typeof !instance._.ev !== "object") instance._.ev = {};
                 
@@ -571,6 +578,7 @@ var timbre = (function(context, timbre) {
         defaults.properties.isKr = { get: function() { return  !this._.ar; } };
         defaults.properties.isOn  = { get: function() { return !!this._.ison; } };
         defaults.properties.isOff = { get: function() { return  !this._.ison; } };
+        defaults.properties.isUndefined = { get: function() { return this._.isUndefined; } };
         
         defaults.properties.dac = {
             set: function(value) {
@@ -1930,6 +1938,300 @@ var timbre = (function(context, timbre) {
         return WhiteNoise;
     }());
     timbre.fn.register("noise", WhiteNoise);
+    
+    
+    var PhaseOscillator = (function() {
+        var PhaseOscillator = function() {
+            initialize.apply(this, arguments);
+        }, $this = PhaseOscillator.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "ar-kr");
+        
+        var base = timbre("osc"); base.p = Object.getPrototypeOf(base);
+        var Oscillator = base.constructor;
+        PhaseOscillator.base = Oscillator;
+        
+        Object.defineProperty($this, "wave",
+                              Object.getOwnPropertyDescriptor(base.p, "wave"));
+        
+        Object.defineProperty($this, "phase", {
+            set: function(value) {
+                this._.phase = timbre(value);
+            },
+            get: function() { return this._.phase; }
+        });
+        Object.defineProperty($this, "fb", {
+            set: function(value) {
+                if (typeof value === "number") {
+                    this._.fb = value;
+                }
+            },
+            get: function() { return this._.fb; }
+        });
+        
+        var initialize = function(_args) {
+            var i, _;
+            
+            this._ = _ = {};
+            i = 0;
+            
+            _.wave = new Float32Array(1024);
+            if (typeof _args[i] === "function") {
+                this.wave = _args[i++];
+            } else if (typeof _args[i] === "object" && _args[i] instanceof Float32Array) {
+                this.wave = _args[i++];
+            } else if (typeof _args[i] === "string" && Oscillator.Wavetables[_args[i]]) {
+                this.wave = _args[i++];
+            } else {
+                this.wave = "sin";
+            }
+            if (typeof _args[i] !== "undefined") {
+                this.phase = _args[i++];
+            } else {
+                this.phase = 0;
+            }
+            if (typeof _args[i] === "number") {
+                _.mul = _args[i++];    
+            }
+            if (typeof _args[i] === "number") {
+                _.add = _args[i++];    
+            }
+            _.prevx = 0;
+            _.fb    = 0;
+        };
+    
+        $this.clone = function(deep) {
+            var newone, _ = this._;
+            newone = T("oscx", _.wave);
+            if (deep) {
+                newone._.phase = _.phase.clone(true);
+            } else {
+                newone._.phase = _.phase;
+            }
+            newone._.fb = _.fb;
+            timbre.fn.copy_for_clone(this, newone, deep);
+            return newone;
+        };
+        
+        $this.bang = function() {
+            this._.phase.bang();
+            timbre.fn.do_event(this, "bang");
+            return this;
+        };
+        
+        $this.seq = function(seq_id) {
+            var _ = this._;
+            var cell;
+            var phase, mul, add, wave;
+            var x, prevx, fb;
+            var index, delta, x0, x1, xx;
+            var i, imax;
+            
+            if (!_.ison) return timbre._.none;
+            
+            cell = this.cell;
+            if (seq_id !== this.seq_id) {
+                this.seq_id = seq_id;
+                
+                phase = _.phase.seq(seq_id);
+                fb    = _.fb;
+                mul   = _.mul;
+                add   = _.add;
+                wave  = _.wave;
+                prevx = _.prevx;
+                
+                if (_.ar && _.phase.isAr) {
+                    for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                        x = (phase[i] + prevx) * 1024;
+                        index = x|0;
+                        delta = x - index;
+                        x0 = wave[(index  ) & 1023];
+                        x1 = wave[(index+1) & 1023];
+                        xx = (1.0 - delta) * x0 + delta * x1;
+                        prevx = xx * fb;
+                        cell[i] = xx * mul + add;
+                    }
+                    _.prevx = prevx;
+                } else {
+                    x = phase[0] * 1024;
+                    index = x|0;
+                    delta = x - index;
+                    x0 = wave[(index  ) & 1023];
+                    x1 = wave[(index+1) & 1023];
+                    xx = (1.0 - delta) * x0 + delta * x1;
+                    for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                        cell[i] = xx * mul + add;
+                    }
+                }
+            }
+            
+            return cell;
+        };
+    
+        $this.getWavetable = Oscillator.getWavetable;
+        $this.setWavetable = Oscillator.setWavetable;
+        
+        return PhaseOscillator;
+    }());
+    timbre.fn.register("oscx", PhaseOscillator);
+    
+    timbre.fn.register("sinx", PhaseOscillator, function(_args) {
+        return new PhaseOscillator(["sin"].concat(_args));
+    });
+    timbre.fn.register("cosx", PhaseOscillator, function(_args) {
+        return new PhaseOscillator(["cos"].concat(_args));
+    });
+    timbre.fn.register("pulsex", PhaseOscillator, function(_args) {
+        return new PhaseOscillator(["pulse"].concat(_args));
+    });
+    timbre.fn.register("trix", PhaseOscillator, function(_args) {
+        return new PhaseOscillator(["tri"].concat(_args));
+    });
+    timbre.fn.register("sawx", PhaseOscillator, function(_args) {
+        return new PhaseOscillator(["saw"].concat(_args));
+    });
+    timbre.fn.register("famix", PhaseOscillator, function(_args) {
+        return new PhaseOscillator(["fami"].concat(_args));
+    });
+    timbre.fn.register("konamix", PhaseOscillator, function(_args) {
+        return new PhaseOscillator(["konamix"].concat(_args));
+    });
+    timbre.fn.register("+sinx", PhaseOscillator, function(_args) {
+        return new PhaseOscillator(["+sin"].concat(_args));
+    });
+    timbre.fn.register("+cosx", PhaseOscillator, function(_args) {
+        return new PhaseOscillator(["+cos"].concat(_args));
+    });
+    timbre.fn.register("+trix", PhaseOscillator, function(_args) {
+        return new PhaseOscillator(["+tri"].concat(_args));
+    });
+    timbre.fn.register("+sawx", PhaseOscillator, function(_args) {
+        return new PhaseOscillator(["+saw"].concat(_args));
+    });
+    
+    
+    var Phasor = (function() {
+        var Phasor = function() {
+            initialize.apply(this, arguments);
+        }, $this = Phasor.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "ar-kr");
+        
+        Object.defineProperty($this, "freq", {
+            set: function(value) {
+                this._.freq = timbre(value);
+            },
+            get: function() { return this._.freq; }
+        });
+        Object.defineProperty($this, "fmul", {
+            set: function(value) {
+                if (typeof value === "number" && value >= 0) {
+                    this._.fmul = value;
+                }
+            },
+            get: function() { return this._.fmul; }
+        });
+        Object.defineProperty($this, "phase", {
+            set: function(value) {
+                if (typeof value === "number") {
+                    while (value >= 1.0) value -= 1.0;
+                    while (value <  0.0) value += 1.0;
+                    this._.phase = this._.x = value;
+                }
+            },
+            get: function() { return this._.phase; }
+        });
+        
+        var initialize = function(_args) {
+            var i, _;
+            
+            this._ = _ = {};
+            i = 0;
+            
+            if (typeof _args[i] !== "undefined") {
+                this.freq = _args[i++];
+            } else {
+                this.freq = 440;
+            }
+            _.fmul  = typeof _args[i] === "number" ? _args[i++] : 1;
+            _.phase = typeof _args[i] === "number" ? _args[i++] : 0;
+            if (_.fmul < 0) _.fmul = 0;
+            
+            this.phase = _.phase;
+            _.x     = _.phase;
+            _.coeff = 1 / timbre.samplerate;
+        };
+    
+        $this.clone = function(deep) {
+            var newone, _ = this._;
+            newone = T("phasor");
+            if (deep) {
+                newone._.freq = _.freq.clone(true);
+            } else {
+                newone._.freq = _.freq;
+            }
+            newone._.fmul  = _.fmul;
+            newone._.phase = _.phase;
+            timbre.fn.copy_for_clone(this, newone, deep);
+            return newone;
+        };
+        
+        $this.bang = function() {
+            this._.x = this._.phase;
+            timbre.fn.do_event(this, "bang");
+            return this;
+        };
+        
+        $this.seq = function(seq_id) {
+            var _ = this._;
+            var cell;
+            var freq, mul, add;
+            var x, dx, coeff, xx;
+            var i, imax;
+            
+            if (!_.ison) return timbre._.none;
+            
+            cell = this.cell;
+            if (seq_id !== this.seq_id) {
+                this.seq_id = seq_id;
+                
+                freq  = _.freq.seq(seq_id);
+                mul   = _.mul;
+                add   = _.add;
+                x     = _.x;
+                coeff = _.coeff * _.fmul;
+                
+                if (_.ar) {
+                    if (_.freq.isAr) {
+                        for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                            cell[i] = x * mul + add;
+                            x += freq[i] * coeff;
+                            while (x > 1.0) x -= 1.0;
+                        }
+                    } else {
+                        dx = freq[0] * coeff;
+                        for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                            cell[i] = x * mul + add;
+                            x += dx;
+                            while (x > 1.0) x -= 1.0;
+                        }
+                    }
+                } else {
+                    xx = _.x * _.mul + add;
+                    for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                        cell[i] = xx;
+                    }
+                    x += freq[0] * coeff * imax;
+                    while (x > 1.0) x -= 1.0;
+                }
+                _.x = x;
+            }
+            return cell;
+        };
+        
+        return Phasor;
+    }());
+    timbre.fn.register("phasor", Phasor);
     
     
     var ADSREnvelope = (function() {
