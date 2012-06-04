@@ -22,7 +22,7 @@ var Phasor = (function() {
     });
     Object.defineProperty($this, "fmul", {
         set: function(value) {
-            if (typeof value === "number") {
+            if (typeof value === "number" && value >= 0) {
                 this._.fmul = value;
             }
         },
@@ -52,10 +52,25 @@ var Phasor = (function() {
         }
         _.fmul  = typeof _args[i] === "number" ? _args[i++] : 1;
         _.phase = typeof _args[i] === "number" ? _args[i++] : 0;
+        if (_.fmul < 0) _.fmul = 0;
         
         this.phase = _.phase;
         _.x     = _.phase;
         _.coeff = 1 / timbre.samplerate;
+    };
+
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        newone = T("phasor");
+        if (deep) {
+            newone._.freq = _.freq.clone(true);
+        } else {
+            newone._.freq = _.freq;
+        }
+        newone._.fmul  = _.fmul;
+        newone._.phase = _.phase;
+        timbre.fn.copy_for_clone(this, newone, deep);
+        return newone;
     };
     
     $this.bang = function() {

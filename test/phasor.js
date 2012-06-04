@@ -5,14 +5,20 @@ tests = (function() {
     tests.require = ["/draft/phasor.js"];
     
     tests[i] = function() {
-        var synth = T("phasor", 880, 0.5);
-        return synth;
+        return T("phasor", 440);
     }; tests[i++].desc = "Phasor";
-
+    
     tests[i] = function() {
-        var synth = T("phasor", T("sin", 2, 40, 880), 0.5);
-        return synth;
+        return T("phasor", T("sin", 2, 20, 660));
     }; tests[i++].desc = "Phasor.freq";
+    
+    tests[i] = function() {
+        return T("+", T("phasor", 880), T("phasor", 880, 1.5));
+    }; tests[i++].desc = "Phasor.fmul";
+    
+    tests[i] = function() {
+        return T("+", T("phasor", 880, -10));
+    }; tests[i++].desc = "Phasor.fmul";
     
     return tests;
 }());
