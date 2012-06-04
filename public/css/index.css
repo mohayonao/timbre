@@ -49,3 +49,6 @@ a {
 footer {
     font-size: 24px; color: #999; margin:30px 0px;
 }
+#changelog li {
+    font-size:16px;
+}
