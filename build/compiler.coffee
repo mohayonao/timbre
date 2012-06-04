@@ -27,6 +27,7 @@ TIMBRE_SOURCES = [
 
     "timbre/buddy"
     "timbre/easing"
+    "timbre/glide"
 
     "timbre/record"
     "timbre/buffer"
