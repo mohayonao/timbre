@@ -1,4 +1,5 @@
 fs      = require "fs"
+path    = require "path"
 ejs     = require "ejs"
 express = require "express"
 
@@ -13,6 +14,13 @@ app.configure ->
 app.get "/timbre.js", (req, res)->
     res.send (fs.readFileSync "#{__dirname}/../timbre.js", "utf-8"),
      {"Content-Type":"text/javascript"}
+
+app.get "/draft/:name", (req, res)->
+    filepath = "#{__dirname}/../draft/#{req.params.name}";
+    if path.existsSync(filepath)
+        res.send (fs.readFileSync filepath, "utf-8"),
+        {"Content-Type":"text/javascript"}
+    else res.send(404)
 
 app.get "/test/:test", (req, res)->
     res.send( ejs.render EJS_VIEW, {js:"#{req.params.test}"} )
