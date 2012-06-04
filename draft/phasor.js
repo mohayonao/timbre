@@ -19,7 +19,7 @@
             },
             get: function() { return this._.freq; }
         });
-        Object.defineProperty($this, "initPhase", {
+        Object.defineProperty($this, "phase", {
             set: function(value) {
                 if (typeof value === "number") {
                     while (value >= 1.0) value -= 1.0;
@@ -28,9 +28,6 @@
                 }
             },
             get: function() { return this._.phase; }
-        });
-        Object.defineProperty($this, "phase", {
-            get: function() { return this._.x; }
         });
         
         var initialize = function(_args) {
@@ -44,7 +41,7 @@
             } else {
                 this.freq = 440;
             }
-            this.initPhase = typeof _args[i] === "number" ? _args[i++] : 0;
+            this.phase = typeof _args[i] === "number" ? _args[i++] : 0;
             
             _.x = this._.phase;
             _.coeff = 1 / timbre.samplerate;
