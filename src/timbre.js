@@ -404,7 +404,7 @@ timbre.fn = (function(timbre) {
     };
     
     fn.init = function() {
-        var args, key, klass, instance, isThrougOut, proto;
+        var args, key, klass, instance, isThrougOut, isUndefined, proto;
         args = Array.prototype.slice.call(arguments);
         key  = args[0];
         
@@ -438,7 +438,13 @@ timbre.fn = (function(timbre) {
             }
             break;
         }
-        if (instance === undefined) instance = new NumberWrapper([0]);
+        if (instance === undefined) {
+            instance = new NumberWrapper([0]);
+            isUndefined = true;
+            if (timbre._.verbose) {
+                console.warn("'" + key + "' is not defined.");
+            }
+        }
         
         // init
         proto = Object.getPrototypeOf(instance);
@@ -451,6 +457,7 @@ timbre.fn = (function(timbre) {
             timbre.fn.arrayset(instance.args);
             
             if (!instance.hasOwnProperty("_")) instance._ = {};
+            instance._.isUndefined = !!isUndefined;
             
             if (typeof !instance._.ev !== "object") instance._.ev = {};
             
@@ -569,6 +576,7 @@ timbre.fn = (function(timbre) {
     defaults.properties.isKr = { get: function() { return  !this._.ar; } };
     defaults.properties.isOn  = { get: function() { return !!this._.ison; } };
     defaults.properties.isOff = { get: function() { return  !this._.ison; } };
+    defaults.properties.isUndefined = { get: function() { return this._.isUndefined; } };
     
     defaults.properties.dac = {
         set: function(value) {
