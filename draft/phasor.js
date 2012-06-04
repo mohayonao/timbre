@@ -20,6 +20,14 @@ var Phasor = (function() {
         },
         get: function() { return this._.freq; }
     });
+    Object.defineProperty($this, "fmul", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._.fmul = value;
+            }
+        },
+        get: function() { return this._.fmul; }
+    });
     Object.defineProperty($this, "phase", {
         set: function(value) {
             if (typeof value === "number") {
@@ -42,9 +50,11 @@ var Phasor = (function() {
         } else {
             this.freq = 440;
         }
-        this.phase = typeof _args[i] === "number" ? _args[i++] : 0;
+        _.fmul  = typeof _args[i] === "number" ? _args[i++] : 1;
+        _.phase = typeof _args[i] === "number" ? _args[i++] : 0;
         
-        _.x = this._.phase;
+        this.phase = _.phase;
+        _.x     = _.phase;
         _.coeff = 1 / timbre.samplerate;
     };
     
@@ -71,7 +81,7 @@ var Phasor = (function() {
             mul   = _.mul;
             add   = _.add;
             x     = _.x;
-            coeff = _.coeff;
+            coeff = _.coeff * _.fmul;
             
             if (_.ar) {
                 if (_.freq.isAr) {
