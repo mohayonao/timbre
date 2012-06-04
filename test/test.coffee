@@ -26,10 +26,14 @@ fetch_source = (filepath)->
     return res.join "\n"
 
 app.get "/draft/:name", (req, res)->
-    filepath = "#{__dirname}/../draft/#{req.params.name}";
+    filepath = "#{__dirname}/../draft/#{req.params.name}"
     if path.existsSync(filepath)
         res.send fetch_source filepath, {"Content-Type":"text/javascript"}
-    else res.send(404)
+    else
+        filepath = "#{__dirname}/../src/timbre/#{req.params.name}"
+        if path.existsSync(filepath)
+            res.send fetch_source filepath, {"Content-Type":"text/javascript"}
+        else res.send(404)
 
 app.get "/test/:test", (req, res)->
     res.send( ejs.render EJS_VIEW, {js:"#{req.params.test}"} )
@@ -47,7 +51,7 @@ EJS_VIEW = """
   </head>
   <body>
     <canvas id="waveviewer"></canvas>
-    <section id="body"><h1>test: <%= js %></h1><div id="tests"></div></section>
+    <section id="body"><h1>test: <%= js %></h1><div id="contents"></div></section>
   </body>
   <script type="text/javascript" src="/timbre.js"></script>
   <script type="text/javascript" src="/<%= js %>"></script>

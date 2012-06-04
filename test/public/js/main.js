@@ -3,7 +3,7 @@ var s = [];
 $(function() {
     "use strict";
 
-    if (tests.require) {
+    if (typeof tests !== "undefined" && tests.require) {
         var i = tests.require.length;
         tests.require.forEach(function(x) {
             $.ajax({url:x, dataType:"script",
@@ -30,7 +30,7 @@ $(function() {
         });
         
         timbre.amp = 0.5;
-        tests.forEach(function(x, i) {
+        typeof tests !== "undefined" && tests.forEach(function(x, i) {
             var synth, $pre;
             
             synth = x.call(null);
@@ -67,7 +67,7 @@ $(function() {
                     synth.bang();
                 }))
                 .append($pre)
-                .appendTo("#tests");
+                .appendTo("#contents");
             
             if (synth.$initUI) synth.$initUI();
             
