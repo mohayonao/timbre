@@ -2,7 +2,6 @@ tests = (function() {
     "use strict";
     
     var i = 0, tests = [];
-    tests.require = ["/draft/phasor.js", "/draft/oscx.js"];
     
     tests[i] = function() {
         var synth = T("oscx", "tri", T("phasor", 1340), 0.5);

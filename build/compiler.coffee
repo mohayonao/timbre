@@ -12,6 +12,8 @@ TIMBRE_SOURCES = [
     "timbre/osc"
     "timbre/func"
     "timbre/noise"
+    "timbre/oscx"
+    "timbre/phasor"
 
     "timbre/adsr"
     "timbre/perc"
