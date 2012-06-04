@@ -1,12 +1,12 @@
 /**
- * timbre/math
- */
-
-
-/**
  * MathFunction: <draft>
  * [ar-kr]
  */
+"use strict";
+
+var timbre = require("../src/timbre");
+// __BEGIN__
+
 var MathFunction = (function() {
     var MathFunction = function() {
         initialize.apply(this, arguments);
@@ -214,3 +214,9 @@ MathFunction.Functions["pow"]     = {func:Math.pow    , args: 2};
         }(k)));
     }
 }());
+
+// __END__
+
+describe("math", function() {
+    object_test(MathFunction, "math");
+});

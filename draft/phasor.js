@@ -1,12 +1,12 @@
 /**
- * timbre/phasor
- */
-
-
-/**
  * Phasor: <draft>
  * [ar-kr]
  */
+"use strict";
+
+var timbre = require("../src/timbre");
+// __BEGIN__
+
 var Phasor = (function() {
     var Phasor = function() {
         initialize.apply(this, arguments);
@@ -129,3 +129,8 @@ var Phasor = (function() {
     return Phasor;
 }());
 timbre.fn.register("phasor", Phasor);
+
+// __END__
+describe("phasor", function() {
+    object_test(Phasor, "phasor");
+});

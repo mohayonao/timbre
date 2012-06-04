@@ -1,12 +1,13 @@
 /**
- * timbre/oscx
- */
-
-
-/**
  * PhaseOscillator: <draft>
  * [ar-kr]
  */
+"use strict";
+
+var timbre = require("../src/timbre");
+require("../src/timbre/osc");
+// __BEGIN__
+
 var PhaseOscillator = (function() {
     var PhaseOscillator = function() {
         initialize.apply(this, arguments);
@@ -14,7 +15,7 @@ var PhaseOscillator = (function() {
     
     timbre.fn.setPrototypeOf.call($this, "ar-kr");
     
-    var base = T("osc"); base.p = Object.getPrototypeOf(base);
+    var base = timbre("osc"); base.p = Object.getPrototypeOf(base);
     var Oscillator = base.constructor;
     PhaseOscillator.base = Oscillator;
     
@@ -90,7 +91,7 @@ var PhaseOscillator = (function() {
         var _ = this._;
         var cell;
         var phase, mul, add, wave;
-        var x, fb;
+        var x, prevx, fb;
         var index, delta, x0, x1, xx;
         var i, imax;
         
@@ -174,4 +175,9 @@ timbre.fn.register("+trix", PhaseOscillator, function(_args) {
 });
 timbre.fn.register("+sawx", PhaseOscillator, function(_args) {
     return new PhaseOscillator(["+saw"].concat(_args));
+});
+
+// __END__
+describe("oscx", function() {
+    object_test(PhaseOscillator, "oscx");
 });
