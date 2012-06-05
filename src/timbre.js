@@ -79,7 +79,12 @@ timbre.setup = function(params) {
         }
         timbre.sys.setup();
         Object.freeze(timbre);
+    } else {
+        if (timbre._.verbose) {
+            console.warn("timbre is already configured.");
+        }
     }
+    return timbre;
 };
 
 timbre.on = function() {
