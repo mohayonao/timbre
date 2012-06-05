@@ -82,6 +82,8 @@ var WebKitPlayer = function(sys) {
                 
                 streamsize = self.streamsize;
                 x = self.x;
+                prevL = self.prevL;
+                prevR = self.prevR;
                 for (i = 0, imax = outL.length; i < imax; ++i) {
                     if (x >= streamsize) {
                         sys.process();
@@ -89,7 +91,7 @@ var WebKitPlayer = function(sys) {
                     }
                     
                     index = x|0;
-                    delta = x - index;
+                    delta = 1- (x - index);
                     
                     x1 = inL[index];
                     xx = (1.0 - delta) * prevL + delta * x1;
