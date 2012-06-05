@@ -1,6 +1,6 @@
 /**
- * timbre 0.2.0a / JavaScript Library for Objective Sound Programming
- * build: Tue, 05 Jun 2012 01:39:20 GMT
+ * timbre 0.2.1 / JavaScript Library for Objective Sound Programming
+ * build: Tue, 05 Jun 2012 05:20:20 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -9,8 +9,8 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "0.2.0a";
-    timbre.BUILD      = "Tue, 05 Jun 2012 01:39:20 GMT";
+    timbre.VERSION    = "0.2.1";
+    timbre.BUILD      = "Tue, 05 Jun 2012 05:20:20 GMT";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 44100;
