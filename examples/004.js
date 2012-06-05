@@ -2,6 +2,8 @@
 ex0 = (function() {
     "use strict";
     
+    timbre.setup({samplerate:22050});
+    
     var osc1 = T("osc", "pulse", T("glide", 5, 880), 0.25);
     var osc2 = T("osc", "tri"  , T("glide", 5, 880), 0.50);
     var vco  = T("+", osc1, osc2);

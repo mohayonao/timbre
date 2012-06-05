@@ -3,6 +3,8 @@ ex0 = (function() {
     
     timbre.workerpath = "../timbre.js";
     timbre.utils.exports("converter"); // use atof
+
+    timbre.setup({samplerate:22050});
     
     // dac
     var ex0 = T("dac");
