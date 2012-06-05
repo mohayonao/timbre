@@ -11,15 +11,11 @@ var SoundSystem = (function() {
         initialize.apply(this, arguments);
     }, $this = SoundSystem.prototype;
     
-    var initialize = function(streamsize, channels) {
-        streamsize = streamsize || timbre.streamsize;
-        channels   = channels   || timbre.channels;
-        channels   = (channels === 1) ? 1 : 2;
-        
-        this.streamsize = streamsize;
-        this.channels   = channels;
-        this.L = new Float32Array(streamsize);
-        this.R = new Float32Array(streamsize);
+    var initialize = function() {
+        this.streamsize = timbre.streamsize;
+        this.channels   = timbre.channels;
+        this.L = new Float32Array(timbre.streamsize);
+        this.R = new Float32Array(timbre.streamsize);
         this.cell = new Float32Array(timbre.cellsize);
         this.seq_id = 0;
         
@@ -33,6 +29,17 @@ var SoundSystem = (function() {
         this._.impl = new PlayerKlass(this);
     };
 
+    $this.setup = function() {
+        if (this._.impl) this._.impl.setup();
+        this.streamsize = timbre.streamsize;
+        this.channels   = timbre.channels;
+        this.L = new Float32Array(timbre.streamsize);
+        this.R = new Float32Array(timbre.streamsize);
+        this.cell = new Float32Array(timbre.cellsize);
+        this._.cellsize = timbre.cellsize;
+        if (timbre.samplerate === 0) timbre.samplerate = 44100;
+    };
+    
     $this.on = function() {
         if (this._.impl) {
             this._.ison = true;

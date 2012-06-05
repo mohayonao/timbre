@@ -23,6 +23,6 @@ timbre.context  = window;
     console.log(x.join(""));
 }());
 
-window.T = timbre;
+window.timbre = window.T = timbre;
 
 // __END__
