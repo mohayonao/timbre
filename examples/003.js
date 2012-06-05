@@ -58,6 +58,7 @@ ex0 = (function() {
         });
         
         function play_chord(chord, amp) {
+            if (!chord) return;
             if (_synth) _synth.dac.remove(_synth);
             _synth = synth;
             

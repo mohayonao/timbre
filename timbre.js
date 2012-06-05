@@ -1,6 +1,6 @@
 /**
- * timbre 0.2.0 / JavaScript Library for Objective Sound Programming
- * build: Mon, 04 Jun 2012 12:10:49 GMT
+ * timbre 0.2.1a / JavaScript Library for Objective Sound Programming
+ * build: Tue, 05 Jun 2012 11:41:31 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -9,11 +9,11 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "0.2.0";
-    timbre.BUILD      = "Mon, 04 Jun 2012 12:10:49 GMT";
+    timbre.VERSION    = "0.2.1a";
+    timbre.BUILD      = "Tue, 05 Jun 2012 11:41:31 GMT";
     timbre.env        = "";
     timbre.platform   = "";
-    timbre.samplerate = 44100;
+    timbre.samplerate = 0;
     timbre.channels   = 2;
     timbre.cellsize   = 128;
     timbre.streamsize = 1024;
@@ -25,142 +25,6 @@ var timbre = (function(context, timbre) {
     timbre._ = { ev:{}, amp:0.8,
                  autorun:true, verbose:true, workerpath:"",
                  none: new Float32Array(timbre.cellsize) };
-    
-    var TimbreObject = function() {};
-    
-    /**
-     * SoundSystem: 0.1.0
-     */
-    var SoundSystem = (function() {
-        var SoundSystem = function() {
-            initialize.apply(this, arguments);
-        }, $this = SoundSystem.prototype;
-        
-        var initialize = function(streamsize, channels) {
-            streamsize = streamsize || timbre.streamsize;
-            channels   = channels   || timbre.channels;
-            channels   = (channels === 1) ? 1 : 2;
-            
-            this.streamsize = streamsize;
-            this.channels   = channels;
-            this.L = new Float32Array(streamsize);
-            this.R = new Float32Array(streamsize);
-            this.cell = new Float32Array(timbre.cellsize);
-            this.seq_id = 0;
-            
-            this._ = {};
-            this._.impl = null;
-            this._.ison = false;
-            this._.cellsize = timbre.cellsize;
-        };
-        
-        $this.bind = function(PlayerKlass) {
-            this._.impl = new PlayerKlass(this);
-        };
-    
-        $this.on = function() {
-            if (this._.impl) {
-                this._.ison = true;
-                this._.impl.on();
-            }
-        };
-        
-        $this.off = function() {
-            if (this._.impl) {
-                this._.impl.off();
-                this._.ison = false;
-            }
-        };
-        
-        $this.process = function() {
-            var cell, L, R;
-            var seq_id, dacs, dac, timers, timer, listeners, listener;
-            var i, imax, j, jmax, k, kmax, n, nmax;
-            var saved_i, tmpL, tmpR, amp, x;
-            
-            cell = this.cell;
-            L = this.L;
-            R = this.R;
-            amp = timbre._.amp;
-            
-            seq_id = this.seq_id;
-            
-            imax = L.length;
-            kmax = this._.cellsize;
-            nmax = this.streamsize / kmax;
-            saved_i = 0;
-            
-            // clear
-            for (i = imax; i--; ) {
-                L[i] = R[i] = 0.0;
-            }
-            
-            // signal process
-            for (n = nmax; n--; ) {
-                ++seq_id;
-                timers = timbre.timers.slice(0);
-                for (j = 0, jmax = timers.length; j < jmax; ++j) {
-                    if ((timer = timers[j]) !== undefined) {
-                        timer.seq(seq_id);
-                    }
-                }
-                dacs = timbre.dacs.slice(0);
-                for (j = 0, jmax = dacs.length; j < jmax; ++j) {
-                    if ((dac = dacs[j]) !== undefined) {
-                        dac.seq(seq_id);
-                        tmpL = dac.L;
-                        tmpR = dac.R;
-                        for (k = 0, i = saved_i; k < kmax; ++k, ++i) {
-                            L[i] += tmpL[k];
-                            R[i] += tmpR[k];
-                        }
-                    }
-                }
-                saved_i = i;
-                listeners = timbre.listeners.slice(0);
-                for (j = 0, jmax = listeners.length; j < jmax; ++j) {
-                    if ((listener = listeners[j]) !== undefined) {
-                        listener.seq(seq_id);
-                    }
-                }
-            }
-            
-            // clip
-            for (i = imax = L.length; i--; ) {
-                x = L[i] * amp;
-                if (x < -1.0) {
-                    x = -1.0;
-                } else if (1.0 < x) {
-                    x = 1.0;
-                }
-                L[i] = x;
-                
-                x = R[i] * amp;
-                if (x < -1.0) {
-                    x = -1.0;
-                } else if (1.0 < x) {
-                    x = 1.0;
-                }
-                R[i] = x;
-            }
-            
-            for (k = kmax; k--; ) {
-                cell[k] = L[k] + R[k];
-                x = cell[k] * amp * 0.5;
-                if (x < -1.0) {
-                    x = -1.0;
-                } else if (1.0 < x) {
-                    x = 1.0;
-                }
-                cell[k] = x;
-            }
-            
-            this.seq_id = seq_id;
-        };
-        
-        return SoundSystem;
-    }());
-    timbre.sys = new SoundSystem();
     
     Object.defineProperty(timbre, "amp", {
         set: function(value) {
@@ -197,8 +61,31 @@ var timbre = (function(context, timbre) {
         get: function() { return !timbre.sys._.ison; }
     });
     
+    timbre.setup = function(params) {
+        var samplerate, channels, cellsize, streamsize;
+        
+        if (!Object.isFrozen(timbre)) {
+            params = params || {};
+            if (typeof params.samplerate === "number") {
+                timbre.samplerate = params.samplerate;
+            }
+            if (typeof params.channels === "number") {
+                timbre.channels = params.channels;
+            }
+            if (typeof params.cellsize === "number") {
+                timbre.cellsize = params.cellsize;
+            }
+            if (typeof params.streamsize === "number") {
+                timbre.cellsize = params.streamsize;
+            }
+            timbre.sys.setup();
+            Object.freeze(timbre);
+        }
+    };
+    
     timbre.on = function() {
         if (!timbre.sys._.ison) {
+            timbre.setup();
             timbre.sys.on();
             timbre.fn.do_event(this, "on");
         }
@@ -301,11 +188,11 @@ var timbre = (function(context, timbre) {
     timbre.listeners.type = 3;
     
     
-    // timbre.functions
     timbre.fn = (function(timbre) {
         var fn = {};
-    
         var klasses = {};
+        var TimbreObject = function() {};
+        
         klasses.find = function(key) {
             if (typeof klasses[key] === "function") {
                 return klasses[key];
@@ -813,11 +700,149 @@ var timbre = (function(context, timbre) {
     }(timbre));
     
     
-    /**
-     * NumberWrapper: 0.1.0
-     * Constant signal of a number
-     * [kr-only]
-     */
+    var SoundSystem = (function() {
+        var SoundSystem = function() {
+            initialize.apply(this, arguments);
+        }, $this = SoundSystem.prototype;
+        
+        var initialize = function() {
+            this.streamsize = timbre.streamsize;
+            this.channels   = timbre.channels;
+            this.L = new Float32Array(timbre.streamsize);
+            this.R = new Float32Array(timbre.streamsize);
+            this.cell = new Float32Array(timbre.cellsize);
+            this.seq_id = 0;
+            
+            this._ = {};
+            this._.impl = null;
+            this._.ison = false;
+            this._.cellsize = timbre.cellsize;
+        };
+        
+        $this.bind = function(PlayerKlass) {
+            this._.impl = new PlayerKlass(this);
+        };
+        
+        $this.setup = function() {
+            if (this._.impl) this._.impl.setup();
+            this.streamsize = timbre.streamsize;
+            this.channels   = timbre.channels;
+            if (timbre.streamsize !== this.L.length) {
+                this.L = new Float32Array(timbre.streamsize);
+                this.R = new Float32Array(timbre.streamsize);
+            }
+            if (timbre.cellsize !== this.cell.length) {
+                this.cell = new Float32Array(timbre.cellsize);
+                this._.cellsize = timbre.cellsize;
+            }
+            if (timbre.samplerate === 0) timbre.samplerate = 44100;
+        };
+        
+        $this.on = function() {
+            if (this._.impl) {
+                this._.ison = true;
+                this._.impl.on();
+            }
+        };
+        
+        $this.off = function() {
+            if (this._.impl) {
+                this._.impl.off();
+                this._.ison = false;
+            }
+        };
+        
+        $this.process = function() {
+            var cell, L, R;
+            var seq_id, dacs, dac, timers, timer, listeners, listener;
+            var i, imax, j, jmax, k, kmax, n, nmax;
+            var saved_i, tmpL, tmpR, amp, x;
+            
+            cell = this.cell;
+            L = this.L;
+            R = this.R;
+            amp = timbre._.amp;
+            
+            seq_id = this.seq_id;
+            
+            imax = L.length;
+            kmax = this._.cellsize;
+            nmax = this.streamsize / kmax;
+            saved_i = 0;
+            
+            // clear
+            for (i = imax; i--; ) {
+                L[i] = R[i] = 0.0;
+            }
+            
+            // signal process
+            for (n = nmax; n--; ) {
+                ++seq_id;
+                timers = timbre.timers.slice(0);
+                for (j = 0, jmax = timers.length; j < jmax; ++j) {
+                    if ((timer = timers[j]) !== undefined) {
+                        timer.seq(seq_id);
+                    }
+                }
+                dacs = timbre.dacs.slice(0);
+                for (j = 0, jmax = dacs.length; j < jmax; ++j) {
+                    if ((dac = dacs[j]) !== undefined) {
+                        dac.seq(seq_id);
+                        tmpL = dac.L;
+                        tmpR = dac.R;
+                        for (k = 0, i = saved_i; k < kmax; ++k, ++i) {
+                            L[i] += tmpL[k];
+                            R[i] += tmpR[k];
+                        }
+                    }
+                }
+                saved_i = i;
+                listeners = timbre.listeners.slice(0);
+                for (j = 0, jmax = listeners.length; j < jmax; ++j) {
+                    if ((listener = listeners[j]) !== undefined) {
+                        listener.seq(seq_id);
+                    }
+                }
+            }
+            
+            // clip
+            for (i = imax = L.length; i--; ) {
+                x = L[i] * amp;
+                if (x < -1.0) {
+                    x = -1.0;
+                } else if (1.0 < x) {
+                    x = 1.0;
+                }
+                L[i] = x;
+                
+                x = R[i] * amp;
+                if (x < -1.0) {
+                    x = -1.0;
+                } else if (1.0 < x) {
+                    x = 1.0;
+                }
+                R[i] = x;
+            }
+            
+            for (k = kmax; k--; ) {
+                cell[k] = L[k] + R[k];
+                x = cell[k] * amp * 0.5;
+                if (x < -1.0) {
+                    x = -1.0;
+                } else if (1.0 < x) {
+                    x = 1.0;
+                }
+                cell[k] = x;
+            }
+            
+            this.seq_id = seq_id;
+        };
+        
+        return SoundSystem;
+    }());
+    timbre.sys = new SoundSystem();
+    
+    
     var NumberWrapper = (function() {
         var NumberWrapper = function() {
             initialize.apply(this, arguments);
@@ -887,11 +912,7 @@ var timbre = (function(context, timbre) {
     }());
     timbre.fn.register("number", NumberWrapper);
     
-    /**
-     * BooleanWrapper: 0.1.0
-     * Constant signal of 0 or 1
-     * [kr-only]
-     */
+    
     var BooleanWrapper = (function() {
         var BooleanWrapper = function() {
             initialize.apply(this, arguments);
@@ -967,10 +988,6 @@ var timbre = (function(context, timbre) {
     timbre.fn.register("boolean", BooleanWrapper);
     
     
-    /**
-     * ArrayWrapper: 0.1.0
-     * [kr-only]
-     */
     var ArrayWrapper = (function() {
         var ArrayWrapper = function() {
             initialize.apply(this, arguments);
@@ -1086,10 +1103,6 @@ var timbre = (function(context, timbre) {
     timbre.fn.register("array", ArrayWrapper);
     
     
-    /**
-     * FunctionWrapper: 0.1.0
-     * [kr-only]
-     */
     var FunctionWrapper = (function() {
         var FunctionWrapper = function() {
             initialize.apply(this, arguments);
@@ -6064,84 +6077,177 @@ var timbre = (function(context, timbre) {
         }());
         
         
+        var setupTimbre = function(defaultSamplerate) {
+            switch (timbre.samplerate) {
+            case 11025: case 12000:
+            case 22050: case 24000:
+            case 44100: case 48000:
+                break;
+            default:
+                timbre.samplerate = defaultSamplerate;
+            }
+            
+            switch (timbre.channels) {
+            default:
+                timbre.channels = 2;
+            }
+            
+            switch (timbre.cellsize) {
+            case 64: case 128:
+            case 256: case 512:
+                break;
+            default:
+                timbre.cellsize = 128;
+            }
+            
+            switch (timbre.streamsize) {
+            case  512: case 1024: case 2048:
+            case 4096: case 8192:
+                break;
+            default:
+                timbre.streamsize = 1024;
+            }
+        };
+        
+        
         var WebKitPlayer = function(sys) {
-            var ctx, node, onaudioprocess;
+            var self = this;
+            var ctx, onaudioprocess;
+            var samplerate, dx;
             
             ctx = new webkitAudioContext();
-            timbre.samplerate = ctx.sampleRate;
+            samplerate = ctx.sampleRate;
             
-            node = ctx.createJavaScriptNode(sys.streamsize, 1, sys.channels);
-            
-            onaudioprocess = function(e) {
-                var inL, inR, outL, outR, i;
-                sys.process();
+            this.setup = function() {
+                setupTimbre(samplerate);
+                this.streamsize = timbre.streamsize;
                 
-                inL  = sys.L;
-                inR  = sys.R;
-                outL = e.outputBuffer.getChannelData(0);
-                outR = e.outputBuffer.getChannelData(1);
-                for (i = outL.length; i--; ) {
-                    outL[i] = inL[i];
-                    outR[i] = inR[i];
+                if (timbre.samplerate === samplerate) {
+                    onaudioprocess = function(e) {
+                        var inL, inR, outL, outR, i;
+                        sys.process();
+                        
+                        inL  = sys.L;
+                        inR  = sys.R;
+                        outL = e.outputBuffer.getChannelData(0);
+                        outR = e.outputBuffer.getChannelData(1);
+                        for (i = outL.length; i--; ) {
+                            outL[i] = inL[i];
+                            outR[i] = inR[i];
+                        }
+                    };
+                } else {
+                    dx = timbre.samplerate / samplerate;
+                    onaudioprocess = function(e) {
+                        var inL, inR, outL, outR, outLen;
+                        var streamsize, x, prevL, prevR;
+                        var index, delta, x0, x1, xx;
+                        var i, imax;
+                        
+                        inL = sys.L;
+                        inR = sys.R;
+                        outL = e.outputBuffer.getChannelData(0);
+                        outR = e.outputBuffer.getChannelData(1);
+                        outLen = outL.length;
+                        
+                        streamsize = self.streamsize;
+                        x = self.x;
+                        for (i = 0, imax = outL.length; i < imax; ++i) {
+                            if (x >= streamsize) {
+                                sys.process();
+                                x -= streamsize;
+                            }
+                            
+                            index = x|0;
+                            delta = x - index;
+                            
+                            x1 = inL[index];
+                            xx = (1.0 - delta) * prevL + delta * x1;
+                            prevL = x1;
+                            outL[i] = xx;
+                            
+                            x1 = inR[index];
+                            xx = (1.0 - delta) * prevR + delta * x1;
+                            prevR = x1;
+                            outR[i] = xx;
+                            
+                            x += dx;
+                        }
+                        self.x = x;
+                        self.prevL = prevL;
+                        self.prevR = prevR;
+                    };
                 }
+                
+                return this;
             };
             
-            return {
-                on : function() {
-                    this.node = ctx.createJavaScriptNode(sys.streamsize, 1, sys.channels);
-                    this.node.onaudioprocess = onaudioprocess;
-                    this.node.connect(ctx.destination);
-                },
-                off: function() {
-                    this.node.disconnect();
-                    this.node = null;
-                }
+            this.on = function() {
+                this.x = this.streamsize;
+                this.prevL = this.prevR = 0;
+                this.node = ctx.createJavaScriptNode(sys.streamsize, 1, sys.channels);
+                this.node.onaudioprocess = onaudioprocess;
+                this.node.connect(ctx.destination);
             };
+            this.off = function() {
+                this.node.disconnect();
+                this.node = null;
+            };
+            
+            return this.setup();
         };
         
         var MozPlayer = function(sys) {
-            var self = this;
-            var audio, timer;
-            var interval, interleaved;
-            var onaudioprocess;
+            var timer = new MutekiTimer();
             
-            audio = new Audio();
-            audio.mozSetup(sys.channels, timbre.samplerate);
-            timbre.samplerate = audio.mozSampleRate;
-            timbre.channels   = audio.mozChannels;
-            
-            timer = new MutekiTimer();
-            interval    = (sys.streamsize / timbre.samplerate) * 1000;
-            
-            interleaved = new Float32Array(sys.streamsize * sys.channels);
-            
-            onaudioprocess = function() {
-                var inL, inR, i, j;
-                audio.mozWriteAudio(interleaved);
-                sys.process();
+            this.setup = function() {
+                var self = this;
                 
-                inL  = sys.L;
-                inR  = sys.R;
+                setupTimbre(44100);
                 
-                i = interleaved.length;
-                j = inL.length;
-                while (j--) {
-                    interleaved[--i] = inR[j];            
-                    interleaved[--i] = inL[j];
-                }
-            };
-            
-            return {
-                on : function() {
-                    timer.setInterval(onaudioprocess, interval);
-                },
-                off: function() {
-                    timer.clearInterval();
-                    for (var i = interleaved.length; i--; ) {
-                        interleaved[i] = 0.0;
+                this.audio = new Audio();
+                this.audio.mozSetup(timbre.channels, timbre.samplerate);
+                timbre.samplerate = this.audio.mozSampleRate;
+                timbre.channels   = this.audio.mozChannels;
+                
+                this.interval = (timbre.streamsize / timbre.samplerate) * 1000;
+                this.interleaved = new Float32Array(timbre.streamsize * timbre.channels);
+                
+                this.onaudioprocess = function() {
+                    var interleaved;
+                    var inL, inR, i, j;
+                    
+                    interleaved = self.interleaved;
+                    self.audio.mozWriteAudio(interleaved);
+                    sys.process();
+                    
+                    inL  = sys.L;
+                    inR  = sys.R;
+                    
+                    i = interleaved.length;
+                    j = inL.length;
+                    while (j--) {
+                        interleaved[--i] = inR[j];            
+                        interleaved[--i] = inL[j];
                     }
-                }
+                };
+                
+                return this;
             };
+            
+            this.on = function() {
+                timer.setInterval(this.onaudioprocess, this.interval);
+            };
+            
+            this.off = function() {
+                var interleaved = this.interleaved;
+                for (var i = interleaved.length; i--; ) {
+                    interleaved[i] = 0.0;
+                }
+                timer.clearInterval();
+            }
+            
+            return this.setup();
         };
         
         if (typeof webkitAudioContext === "function") {
@@ -6193,7 +6299,7 @@ var timbre = (function(context, timbre) {
             console.log(x.join(""));
         }());
         
-        window.T = timbre;
+        window.timbre = window.T = timbre;
     }(context, timbre));
     
     typeof importScripts === "function" && (function(worker, timbre) {
@@ -6242,7 +6348,6 @@ var timbre = (function(context, timbre) {
     }(context, timbre));
     
     timbre.isEnabled = !!timbre.sys._.impl;
-    Object.freeze(timbre);
-        
+            
     return timbre;
 }(this));
