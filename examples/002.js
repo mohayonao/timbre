@@ -13,6 +13,8 @@ var p = [
 
 ex0 = (function() {
     "use strict";
+
+    timbre.setup({samplerate:24000});
     
     var bpm = 132;
     var s1, s2, hh, hh_env, sd, sd_env, bd, bd_env;
