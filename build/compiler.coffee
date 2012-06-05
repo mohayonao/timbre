@@ -4,6 +4,14 @@ exec = require("child_process").exec
 
 TIMBRE_SOURCES = [
     "timbre"
+    "core/fn"
+    "core/soundsystem"
+
+    "timbre/number"
+    "timbre/boolean"
+    "timbre/array"
+    "timbre/function"
+
     "timbre/dac"
 
     "timbre/add"
