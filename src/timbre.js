@@ -4,6 +4,7 @@
 "use strict";
 
 // __BEGIN__
+
 var timbre = function() {
     return timbre.fn.init.apply(timbre, arguments);
 };
@@ -59,8 +60,31 @@ Object.defineProperty(timbre, "isOff", {
     get: function() { return !timbre.sys._.ison; }
 });
 
+timbre.setup = function(params) {
+    var samplerate, channels, cellsize, streamsize;
+    
+    if (!Object.isFrozen(timbre)) {
+        params = params || {};
+        if (typeof params.samplerate === "number") {
+            timbre.samplerate = params.samplerate;
+        }
+        if (typeof params.channels === "number") {
+            timbre.channels = params.channels;
+        }
+        if (typeof params.cellsize === "number") {
+            timbre.cellsize = params.cellsize;
+        }
+        if (typeof params.streamsize === "number") {
+            timbre.cellsize = params.streamsize;
+        }
+        timbre.sys.setup();
+        Object.freeze(timbre);
+    }
+};
+
 timbre.on = function() {
     if (!timbre.sys._.ison) {
+        timbre.setup();
         timbre.sys.on();
         timbre.fn.do_event(this, "on");
     }
