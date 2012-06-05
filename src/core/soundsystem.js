@@ -28,15 +28,19 @@ var SoundSystem = (function() {
     $this.bind = function(PlayerKlass) {
         this._.impl = new PlayerKlass(this);
     };
-
+    
     $this.setup = function() {
         if (this._.impl) this._.impl.setup();
         this.streamsize = timbre.streamsize;
         this.channels   = timbre.channels;
-        this.L = new Float32Array(timbre.streamsize);
-        this.R = new Float32Array(timbre.streamsize);
-        this.cell = new Float32Array(timbre.cellsize);
-        this._.cellsize = timbre.cellsize;
+        if (timbre.streamsize !== this.L.length) {
+            this.L = new Float32Array(timbre.streamsize);
+            this.R = new Float32Array(timbre.streamsize);
+        }
+        if (timbre.cellsize !== this.cell.length) {
+            this.cell = new Float32Array(timbre.cellsize);
+            this._.cellsize = timbre.cellsize;
+        }
         if (timbre.samplerate === 0) timbre.samplerate = 44100;
     };
     
