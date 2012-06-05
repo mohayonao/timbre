@@ -1,0 +1,97 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>timbre: PhaoseOscillator</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">timbre</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+
+      <div class="navi"><a href=".">index</a></div>
+      <div id="contents">
+        <h2>PhaseOscillator</h2>
+        <p class="desc">
+          Linear interpolating wavetable lookup oscillator with phase input
+        </p>
+        <h3>Constructor</h3>
+        <pre id="ex0" class="prettyprint">
+oscx = T("oscx", wave="sin", phase=0, mul=1, add=0);
+
+// wave  [String / Function / Float32Array]
+// phase [Object] Phase
+// mul   [Number] Multiply the output  (default is 1)
+// add   [Number]   and add the output (default is 0)
+
+oscx.set("phase", T("phasor", 440)).play();
+        </pre>
+        
+        <h3>Properties</h3>
+        <pre id="ex1" class="prettyprint">
+oscx.wave   // [String / Function / Float32Array]
+oscx.phase  // [Object] Phase
+oscx.mul    // [Number] Output will be multiplied by this value
+oscx.add    // [Number]    and will be added to the output
+oscx.fb     // [Number] Feedback
+        </pre>
+        
+        <h3>Methods</h3>
+        <pre id="ex2" class="prettyprint">
+// Reset phase          
+oscx.bang(); // == oscx.phase.bang();
+        </pre>
+
+        <h3>Events</h3>
+        <pre id="ex3" class="prettyprint">
+        </pre>
+        
+        <h3>Example: Feedback</h3>
+        <pre id="ex4" class="prettyprint">
+T("sinx", T("phasor", 440)).set("fb", 0.25).play();
+        </pre>
+        
+        <h3>Example: FM-Synth</h3>
+        <pre id="ex5" class="prettyprint">
+freq = T("phasor", 440);
+op1 = T("*", T("oscx", freq),              // modulator
+             T("adsr", 100, 4900));
+op2 = T("*", T("oscx", T("+", freq, op1)), // carrier
+             T("adsr", 0, 10000, 0.6));
+
+synth = op2;
+synth.onplay = function() {
+    op1.args[1].bang();
+    op2.args[1].bang();
+};
+synth.onbang = function() {
+    op1.args[1].bang();
+    op2.args[1].bang();
+};
+synth.play();
+        </pre>
+        
+        <h3>See Also: </h3>
+        <a href="osc.html">T("osc")</a>
+        <a href="phasor.html">T("phasor")</a>
+        <a href="cook.fmbell.html">FM Synthesis</a>
+        
+      </div>
+      <footer></footer>
+    </section>
+  </body>
+  <script type="text/javascript" src="public/js/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>  
+  <script type="text/javascript" src="public/js/main.js"></script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="oscx.js"></script>
+</html>
