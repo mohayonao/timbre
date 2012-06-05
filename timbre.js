@@ -1,6 +1,6 @@
 /**
- * timbre 0.2.1 / JavaScript Library for Objective Sound Programming
- * build: Tue, 05 Jun 2012 05:21:40 GMT
+ * timbre 0.2.1a / JavaScript Library for Objective Sound Programming
+ * build: Tue, 05 Jun 2012 06:40:56 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -9,11 +9,11 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "0.2.1";
-    timbre.BUILD      = "Tue, 05 Jun 2012 05:21:40 GMT";
+    timbre.VERSION    = "0.2.1a";
+    timbre.BUILD      = "Tue, 05 Jun 2012 06:40:56 GMT";
     timbre.env        = "";
     timbre.platform   = "";
-    timbre.samplerate = 44100;
+    timbre.samplerate = 0;
     timbre.channels   = 2;
     timbre.cellsize   = 128;
     timbre.streamsize = 1024;
@@ -722,15 +722,19 @@ var timbre = (function(context, timbre) {
         $this.bind = function(PlayerKlass) {
             this._.impl = new PlayerKlass(this);
         };
-    
+        
         $this.setup = function() {
             if (this._.impl) this._.impl.setup();
             this.streamsize = timbre.streamsize;
             this.channels   = timbre.channels;
-            this.L = new Float32Array(timbre.streamsize);
-            this.R = new Float32Array(timbre.streamsize);
-            this.cell = new Float32Array(timbre.cellsize);
-            this._.cellsize = timbre.cellsize;
+            if (timbre.streamsize !== this.L.length) {
+                this.L = new Float32Array(timbre.streamsize);
+                this.R = new Float32Array(timbre.streamsize);
+            }
+            if (timbre.cellsize !== this.cell.length) {
+                this.cell = new Float32Array(timbre.cellsize);
+                this._.cellsize = timbre.cellsize;
+            }
             if (timbre.samplerate === 0) timbre.samplerate = 44100;
         };
         
