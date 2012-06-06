@@ -195,13 +195,17 @@ timbre.fn = (function(timbre) {
     };
     
     defaults.play = function() {
-        var _ = this._;
+        var p, _ = this._;
         if (_.ar) {
             if (_.dac === null) {
                 _.dac = timbre("dac", this);
+                p = Object.getPrototypeOf(this);
+                if (p._.play) p._.play.call(this);
                 timbre.fn.doEvent(this, "play");
             } else if (this.dac.args.indexOf(this) === -1) {
                 _.dac.append(this);
+                p = Object.getPrototypeOf(this);
+                if (p._.play) p._.play.call(this);
                 timbre.fn.doEvent(this, "play");
             }
             if (_.dac.isOff) _.dac.on();
@@ -209,9 +213,11 @@ timbre.fn = (function(timbre) {
         return this;
     };
     defaults.pause = function() {
-        var _ = this._;
+        var p, _ = this._;
         if (_.dac && _.dac.args.indexOf(this) !== -1) {
             _.dac.remove(this);
+            p = Object.getPrototypeOf(this);
+            if (p._.pause) p._.pause.call(this);
             timbre.fn.doEvent(this, "pause");
             if (_.dac.isOn && _.dac.args.length === 0) _.dac.off();
         }
@@ -226,11 +232,15 @@ timbre.fn = (function(timbre) {
     };
     defaults.on = function() {
         this._.ison = true;
+        var p = Object.getPrototypeOf(this);
+        if (p._.on) p._.on.call(this);
         timbre.fn.doEvent(this, "on");
         return this;
     };
     defaults.off = function() {
         this._.ison = false;
+        var p = Object.getPrototypeOf(this);
+        if (p._.off) p._.off.call(this);
         timbre.fn.doEvent(this, "off");
         return this;
     };
@@ -241,14 +251,20 @@ timbre.fn = (function(timbre) {
     };
     defaults.append = function() {
         this.args.append.apply(this.args, arguments);
+        var p = Object.getPrototypeOf(this);
+        if (p._.append) p._.append.call(this);
         return this;
     };
     defaults.remove = function() {
         this.args.remove.apply(this.args, arguments);
+        var p = Object.getPrototypeOf(this);
+        if (p._.remove) p._.remove.call(this);
         return this;
     };
     defaults.removeAll = function() {
         this.args.removeAll.apply(this.args, arguments);
+        var p = Object.getPrototypeOf(this);
+        if (p._.remove) p._.remove.call(this);
         return this;
     };
     defaults.set = function(key, value) {
@@ -397,28 +413,33 @@ timbre.fn = (function(timbre) {
     };
     
     fn.valist = function(_args) {
-        var args;
+        var args, instance;
         var i, imax;
         
         args = [];
         for(i = 0, imax = _args.length; i < imax; ++i) {
+            instance = null;
             switch (typeof _args[i]) {
             case "number":
             case "boolean":
             case "function":
             case "undefined":
-                args.push(timbre(_args[i]));
+                instance = timbre(_args[i]);
                 break;
             case "object":
                 if (_args[i] === null) {
-                    args.push(timbre(null));
+                    instance = timbre(null);
                 } else {
-                    args.push(_args[i]);
+                    instance = _args[i];
                 }
                 break;
             default:
-                args.push(timbre(undefined));
+                instance = timbre(undefined);
                 break;
+            }
+            if (instance !== null) {
+                args.push(instance);
+                if (instance.beAppended) instance.beAppended.call(instance);
             }
         }
         
@@ -427,20 +448,23 @@ timbre.fn = (function(timbre) {
     
     fn.arrayset = (function() {
         var append = function() {
-            var args, i, imax;
+            var args, i, imax, instance;
             args = fn.valist(arguments);
             for (i = 0, imax = args.length; i < imax; ++i) {
-                if (this.indexOf(args[i]) === -1) {
-                    this.push(args[i]);
+                instance = args[i];
+                if (this.indexOf(instance) === -1) {
+                    this.push(instance);
+                    if (instance.beAppended) instance.beAppended.call(instance);
                 }
             }
             return this;
         };
         var remove = function() {
-            var i, j;
+            var i, j, instance;
             for (i = arguments.length; i--; ) {
                 if ((j = this.indexOf(arguments[i])) !== -1) {
-                    this.splice(j, 1);
+                    instance = this.splice(j, 1)[0];
+                    if (instance.beRemoved) instance.beRemoved.call(instance);
                 }
             }
             return this;
