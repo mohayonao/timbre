@@ -1,6 +1,6 @@
 /**
  * timbre 0.2.1a / JavaScript Library for Objective Sound Programming
- * build: Tue, 05 Jun 2012 12:58:40 GMT
+ * build: Wed, 06 Jun 2012 08:21:00 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,7 +10,7 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.2.1a";
-    timbre.BUILD      = "Tue, 05 Jun 2012 12:58:40 GMT";
+    timbre.BUILD      = "Wed, 06 Jun 2012 08:21:00 GMT";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 0;
@@ -87,7 +87,7 @@ var timbre = (function(context, timbre) {
         if (!timbre.sys._.ison) {
             timbre.setup();
             timbre.sys.on();
-            timbre.fn.do_event(this, "on");
+            timbre.fn.doEvent(this, "on");
         }
         return timbre;
     };
@@ -95,7 +95,7 @@ var timbre = (function(context, timbre) {
     timbre.off = function() {
         if (timbre.sys._.ison) {
             timbre.sys.off();
-            timbre.fn.do_event(this, "off");
+            timbre.fn.doEvent(this, "off");
         }
         return timbre;
     };
@@ -236,7 +236,7 @@ var timbre = (function(context, timbre) {
         defaults.optional.dac.on = function() {
             this._.ison = true;
             timbre.dacs.append(this);
-            timbre.fn.do_event(this, "on");
+            timbre.fn.doEvent(this, "on");
             var p = Object.getPrototypeOf(this);
             if (p._.on) p._.on.call(this);
             return this;
@@ -244,7 +244,7 @@ var timbre = (function(context, timbre) {
         defaults.optional.dac.off = function() {
             this._.ison = false;
             timbre.dacs.remove(this);
-            timbre.fn.do_event(this, "off");
+            timbre.fn.doEvent(this, "off");
             var p = Object.getPrototypeOf(this);
             if (p._.off) p._.off.call(this);
             return this;
@@ -252,7 +252,7 @@ var timbre = (function(context, timbre) {
         defaults.optional.dac.play = function() {
             this._.ison = true;
             timbre.dacs.append(this);
-            timbre.fn.do_event(this, "play");
+            timbre.fn.doEvent(this, "play");
             var p = Object.getPrototypeOf(this);
             if (p._.play) p._.play.call(this);
             return this;
@@ -260,7 +260,7 @@ var timbre = (function(context, timbre) {
         defaults.optional.dac.pause = function() {
             this._.ison = false;
             timbre.dacs.remove(this);
-            timbre.fn.do_event(this, "pause");
+            timbre.fn.doEvent(this, "pause");
             var p = Object.getPrototypeOf(this);
             if (p._.pause) p._.pause.call(this);
             return this;
@@ -270,7 +270,7 @@ var timbre = (function(context, timbre) {
         defaults.optional.timer.on = function() {
             this._.ison = true;
             timbre.timers.append(this);
-            timbre.fn.do_event(this, "on");
+            timbre.fn.doEvent(this, "on");
             var p = Object.getPrototypeOf(this);
             if (p._.on) p._.on.call(this);
             return this;
@@ -278,17 +278,17 @@ var timbre = (function(context, timbre) {
         defaults.optional.timer.off = function() {
             this._.ison = false;
             timbre.timers.remove(this);
-            timbre.fn.do_event(this, "off");
+            timbre.fn.doEvent(this, "off");
             var p = Object.getPrototypeOf(this);
             if (p._.off) p._.off.call(this);
             return this;
         };
         defaults.optional.timer.play = function() {
-            timbre.fn.do_event(this, "play");
+            timbre.fn.doEvent(this, "play");
             return this;
         };
         defaults.optional.timer.pause = function() {
-            timbre.fn.do_event(this, "pause");
+            timbre.fn.doEvent(this, "pause");
             return this;
         };
         
@@ -377,30 +377,36 @@ var timbre = (function(context, timbre) {
         };
         
         defaults.play = function() {
-            var _ = this._;
+            var p, _ = this._;
             if (_.ar) {
                 if (_.dac === null) {
                     _.dac = timbre("dac", this);
-                    timbre.fn.do_event(this, "play");
+                    p = Object.getPrototypeOf(this);
+                    if (p._.play) p._.play.call(this);
+                    timbre.fn.doEvent(this, "play");
                 } else if (this.dac.args.indexOf(this) === -1) {
                     _.dac.append(this);
-                    timbre.fn.do_event(this, "play");
+                    p = Object.getPrototypeOf(this);
+                    if (p._.play) p._.play.call(this);
+                    timbre.fn.doEvent(this, "play");
                 }
                 if (_.dac.isOff) _.dac.on();
             }
             return this;
         };
         defaults.pause = function() {
-            var _ = this._;
+            var p, _ = this._;
             if (_.dac && _.dac.args.indexOf(this) !== -1) {
                 _.dac.remove(this);
-                timbre.fn.do_event(this, "pause");
+                p = Object.getPrototypeOf(this);
+                if (p._.pause) p._.pause.call(this);
+                timbre.fn.doEvent(this, "pause");
                 if (_.dac.isOn && _.dac.args.length === 0) _.dac.off();
             }
             return this;
         };
         defaults.bang = function() {
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         defaults.seq = function() {
@@ -408,52 +414,63 @@ var timbre = (function(context, timbre) {
         };
         defaults.on = function() {
             this._.ison = true;
-            timbre.fn.do_event(this, "on");
+            var p = Object.getPrototypeOf(this);
+            if (p._.on) p._.on.call(this);
+            timbre.fn.doEvent(this, "on");
             return this;
         };
         defaults.off = function() {
             this._.ison = false;
-            timbre.fn.do_event(this, "off");
+            var p = Object.getPrototypeOf(this);
+            if (p._.off) p._.off.call(this);
+            timbre.fn.doEvent(this, "off");
             return this;
         };
         defaults.clone = function(deep) {
             var newone = timbre(Object.getPrototypeOf(this)._.klassname);
-            timbre.fn.copy_for_clone(this, newone, deep);
+            timbre.fn.copyBaseArguments(this, newone, deep);
             return newone;
         };
         defaults.append = function() {
             this.args.append.apply(this.args, arguments);
+            var p = Object.getPrototypeOf(this);
+            if (p._.append) p._.append.call(this);
             return this;
         };
         defaults.remove = function() {
             this.args.remove.apply(this.args, arguments);
+            var p = Object.getPrototypeOf(this);
+            if (p._.remove) p._.remove.call(this);
             return this;
         };
         defaults.removeAll = function() {
             this.args.removeAll.apply(this.args, arguments);
+            var p = Object.getPrototypeOf(this);
+            if (p._.remove) p._.remove.call(this);
             return this;
         };
         defaults.set = function(key, value) {
-            var self;
-            self = this;
-            while (self !== null) {
+            var self, k;
+            if (typeof key === "string") {
+                self = Object.getPrototypeOf(this);
                 if (Object.getOwnPropertyDescriptor(self, key)) {
                     this[key] = value;
-                    break;
                 }
-                self = Object.getPrototypeOf(self);
+            } else if (typeof key === "object") {
+                self = Object.getPrototypeOf(this);
+                for (k in key) {
+                    if (Object.getOwnPropertyDescriptor(self, k)) {
+                        this[k] = key[k];
+                    }
+                }
             }
             return this;
         };
         defaults.get = function(key) {
             var self, res;
-            self = this;
-            while (self !== null) {
-                if (Object.getOwnPropertyDescriptor(self, key)) {
-                    res = this[key];
-                    break;
-                }
-                self = Object.getPrototypeOf(self);
+            self = Object.getPrototypeOf(this);
+            if (Object.getOwnPropertyDescriptor(self, key)) {
+                res = this[key];
             }
             return res;
         };
@@ -579,28 +596,33 @@ var timbre = (function(context, timbre) {
         };
         
         fn.valist = function(_args) {
-            var args;
+            var args, instance;
             var i, imax;
             
             args = [];
             for(i = 0, imax = _args.length; i < imax; ++i) {
+                instance = null;
                 switch (typeof _args[i]) {
                 case "number":
                 case "boolean":
                 case "function":
                 case "undefined":
-                    args.push(timbre(_args[i]));
+                    instance = timbre(_args[i]);
                     break;
                 case "object":
                     if (_args[i] === null) {
-                        args.push(timbre(null));
+                        instance = timbre(null);
                     } else {
-                        args.push(_args[i]);
+                        instance = _args[i];
                     }
                     break;
                 default:
-                    args.push(timbre(undefined));
+                    instance = timbre(undefined);
                     break;
+                }
+                if (instance !== null) {
+                    args.push(instance);
+                    if (instance.beAppended) instance.beAppended.call(instance);
                 }
             }
             
@@ -609,20 +631,23 @@ var timbre = (function(context, timbre) {
         
         fn.arrayset = (function() {
             var append = function() {
-                var args, i, imax;
+                var args, i, imax, instance;
                 args = fn.valist(arguments);
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (this.indexOf(args[i]) === -1) {
-                        this.push(args[i]);
+                    instance = args[i];
+                    if (this.indexOf(instance) === -1) {
+                        this.push(instance);
+                        if (instance.beAppended) instance.beAppended.call(instance);
                     }
                 }
                 return this;
             };
             var remove = function() {
-                var i, j;
+                var i, j, instance;
                 for (i = arguments.length; i--; ) {
                     if ((j = this.indexOf(arguments[i])) !== -1) {
-                        this.splice(j, 1);
+                        instance = this.splice(j, 1)[0];
+                        if (instance.beRemoved) instance.beRemoved.call(instance);
                     }
                 }
                 return this;
@@ -652,7 +677,7 @@ var timbre = (function(context, timbre) {
             };
         }());
         
-        fn.do_event = function(obj, name, args) {
+        fn.doEvent = function(obj, name, args) {
             var func, list, i, imax;
             func = obj["on" + name];
             if (typeof func === "function") {
@@ -668,8 +693,9 @@ var timbre = (function(context, timbre) {
                 }
             }
         };
+        fn.do_event = fn.doEvent;
         
-        fn.copy_for_clone = function(src, dst, deep) {
+        fn.copyBaseArguments = function(src, dst, deep) {
             var src_args, i, imax;
             
             dst._.ar = src._.ar;
@@ -690,11 +716,38 @@ var timbre = (function(context, timbre) {
             
             return dst;
         };
+        fn.copy_for_clone = fn.copyBaseArguments;
         
         fn.isTimbreObject = function(object) {
             return (typeof object === "object") &&
                     (Object.getPrototypeOf(object)._ instanceof TimbreObject);
-        }
+        };
+        
+        fn.getClass = function(name) {
+            return klasses[name];
+        };
+        
+        fn.copyPropertyDescriptors = function(self, base, names) {
+            var i, d;
+            for (i = names.length; i--; ) {
+                d = Object.getOwnPropertyDescriptor(base, names[i]);
+                if (d !== undefined) {
+                    Object.defineProperty(self, names[i], d);
+                }
+            }
+            return self;
+        };
+        
+        fn.copyFunctions = function(self, base, names) {
+            var i, f;
+            for (i = names.length; i--; ) {
+                f = base[names[i]];
+                if (typeof f === "function") {
+                    self[names[i]] = f;
+                }
+            }
+            return self;
+        };
         
         return fn;
     }(timbre));
@@ -900,12 +953,12 @@ var timbre = (function(context, timbre) {
             this.value = this._.value;
         };
         
-        $this.clone = function() {
+        $this.clone = function(deep) {
             var newone = timbre(this._.value);
             newone._.mul = this._.mul;
             newone._.add = this._.add;
             changeTheValue.call(newone);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         return NumberWrapper;
@@ -968,18 +1021,18 @@ var timbre = (function(context, timbre) {
             this.value = this._.value;
         };
         
-        $this.clone = function() {
+        $this.clone = function(deep) {
             var newone = timbre(this._.value);
             newone._.mul = this._.mul;
             newone._.add = this._.add;
             changeTheValue.call(newone);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.bang = function() {
             this._.value = !this._.value;
             changeTheValue.call(this);
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -1068,18 +1121,18 @@ var timbre = (function(context, timbre) {
             this.index = 0;
         };
         
-        $this.clone = function() {
+        $this.clone = function(deep) {
             var newone = timbre(this._.value);
             newone._.mul = this._.mul;
             newone._.add = this._.add;
             changeTheValue.call(newone);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.bang = function() {
             var _ = this._;
             this.index = (_.index + 1) % _.value.length;
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -1145,7 +1198,8 @@ var timbre = (function(context, timbre) {
         };
         
         $this.clone = function(deep) {
-            return timbre("function", this._.value, this._.args);
+            var newone = timbre("function", this._.value, this._.args);
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.bang = function() {
@@ -1153,7 +1207,7 @@ var timbre = (function(context, timbre) {
             if (_.value !== null) {
                 _.value.apply(this, _.args);
             }
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -1201,8 +1255,7 @@ var timbre = (function(context, timbre) {
         $this.clone = function(deep) {
             var newone = timbre("dac");
             newone._.pan = (deep) ? this._.pan.clone(true) : this._.pan;
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.seq = function(seq_id) {
@@ -1267,10 +1320,7 @@ var timbre = (function(context, timbre) {
         };
         
         $this.clone = function(deep) {
-            var newone;
-            newone = timbre("+");
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, timbre("+"), deep);
         };
         
         $this.seq = function(seq_id) {
@@ -1331,10 +1381,7 @@ var timbre = (function(context, timbre) {
         };
         
         $this.clone = function(deep) {
-            var newone;
-            newone = timbre("*");
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, timbre("*"), deep);
         };
         
         $this.seq = function(seq_id) {
@@ -1486,13 +1533,12 @@ var timbre = (function(context, timbre) {
                 newone._.freq = _.freq;
             }
             newone._.phase = _.phase;
-            timbre.fn.copy_for_clone(this, newone, deep);        
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);        
         };
         
         $this.bang = function() {
             this._.x = 1024 * this._.phase;
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -1842,13 +1888,12 @@ var timbre = (function(context, timbre) {
                 newone._.freq = _.freq;
             }
             newone._.phase = _.phase;
-            timbre.fn.copy_for_clone(this, newone, deep);        
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);        
         };
         
         $this.bang = function() {
             this._.x = this._.phase;
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -1916,10 +1961,7 @@ var timbre = (function(context, timbre) {
         };
         
         $this.clone = function(deep) {
-            var newone, _ = this._;
-            newone = timbre("noise");
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, timbre("noise"), deep);
         };
         
         $this.seq = function(seq_id) {
@@ -1960,12 +2002,11 @@ var timbre = (function(context, timbre) {
         
         timbre.fn.setPrototypeOf.call($this, "ar-kr");
         
-        var base = timbre("osc"); base.p = Object.getPrototypeOf(base);
-        var Oscillator = base.constructor;
-        PhaseOscillator.base = Oscillator;
+        var Oscillator = timbre.fn.getClass("osc");
         
-        Object.defineProperty($this, "wave",
-                              Object.getOwnPropertyDescriptor(base.p, "wave"));
+        timbre.fn.copyPropertyDescriptors($this,
+                                          Oscillator.prototype,
+                                          ["wave"]);
         
         Object.defineProperty($this, "phase", {
             set: function(value) {
@@ -2022,13 +2063,12 @@ var timbre = (function(context, timbre) {
                 newone._.phase = _.phase;
             }
             newone._.fb = _.fb;
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.bang = function() {
             this._.phase.bang();
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -2185,13 +2225,12 @@ var timbre = (function(context, timbre) {
             }
             newone._.fmul  = _.fmul;
             newone._.phase = _.phase;
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.bang = function() {
             this._.x = this._.phase;
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -2374,8 +2413,7 @@ var timbre = (function(context, timbre) {
             newone._.delay = _.delay;
             newone._.s = _.s;
             newone._.reversed = _.reversed;
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.bang = function(mode) {
@@ -2388,7 +2426,7 @@ var timbre = (function(context, timbre) {
             _.dx = (timbre.cellsize * _.al) / _.samples;
             _.currentTime = 0;
             
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
     
@@ -2401,7 +2439,7 @@ var timbre = (function(context, timbre) {
                 _.samples = (timbre.samplerate * (_.r / 1000))|0;
                 _.x1 = _.x0; _.x0 = 1;
                 _.dx = -timbre.cellsize * (1 - _.rl) / _.samples;
-                timbre.fn.do_event(this, "R");
+                timbre.fn.doEvent(this, "R");
             }
         };
         
@@ -2421,7 +2459,7 @@ var timbre = (function(context, timbre) {
                         _.samples += (timbre.samplerate * (_.a / 1000))|0;
                         _.x0 = _.al;
                         _.dx = (timbre.cellsize * (_.dl -_.al)) / _.samples;
-                        timbre.fn.do_event(this, "A");
+                        timbre.fn.doEvent(this, "A");
                         continue;
                     }
                     if (_.status === 1) { // A -> D
@@ -2429,7 +2467,7 @@ var timbre = (function(context, timbre) {
                         _.samples += (timbre.samplerate * (_.d / 1000))|0;
                         _.x0 = _.dl;
                         _.dx = -timbre.cellsize * (_.dl - _.sl) / _.samples;
-                        timbre.fn.do_event(this, "D");
+                        timbre.fn.doEvent(this, "D");
                         continue;
                     }
                     if (_.status === 2) { // D -> S
@@ -2446,14 +2484,14 @@ var timbre = (function(context, timbre) {
                             _.samples += (timbre.samplerate * (_.s / 1000))|0;
                             _.dx = -timbre.cellsize * (_.sl - _.rl) / _.samples;
                         }
-                        timbre.fn.do_event(this, "S");
+                        timbre.fn.doEvent(this, "S");
                         continue;
                     }
                     if (_.status <= 4) { // (S, R) -> end
                         _.status  = -1;
                         _.samples = Infinity;
                         _.x0 = _.x1 = _.dx = 0;
-                        timbre.fn.do_event(this, "ended");
+                        timbre.fn.doEvent(this, "ended");
                         continue;
                     }
                 }
@@ -2565,8 +2603,7 @@ var timbre = (function(context, timbre) {
             newone._.a     = _.a;
             newone._.al    = _.al;
             newone._.reversed = _.reversed;
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.bang = function() {
@@ -2579,7 +2616,7 @@ var timbre = (function(context, timbre) {
             _.dx = -(timbre.cellsize * _.al) / _.samples;
             _.currentTime = 0;
             
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -2599,7 +2636,7 @@ var timbre = (function(context, timbre) {
                         _.samples += (timbre.samplerate * (_.a / 1000))|0;
                         _.x0 = _.al;
                         _.dx = -(timbre.cellsize * (1 -_.al)) / _.samples;
-                        timbre.fn.do_event(this, "A");
+                        timbre.fn.doEvent(this, "A");
                         continue;
                     }
                     if (_.status === 1) {
@@ -2608,7 +2645,7 @@ var timbre = (function(context, timbre) {
                         _.samples = (timbre.samplerate * (_.r / 1000))|0;
                         _.x0 = 1;
                         _.dx = timbre.cellsize / _.samples;
-                        timbre.fn.do_event(this, "R");
+                        timbre.fn.doEvent(this, "R");
                         continue;
                     }
                     if (_.status === 2) {
@@ -2616,7 +2653,7 @@ var timbre = (function(context, timbre) {
                         _.status  = -1;
                         _.samples = Infinity;
                         _.x0 = _.dx = 0;
-                        timbre.fn.do_event(this, "ended");
+                        timbre.fn.doEvent(this, "ended");
                         continue;
                     }
                 }
@@ -2739,8 +2776,7 @@ var timbre = (function(context, timbre) {
                 newone.band = _.band;
                 newone.gain = _.gain;
             }
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.seq = function(seq_id) {
@@ -3135,8 +3171,7 @@ var timbre = (function(context, timbre) {
                 newone.Q      = _.Q;
                 newone.depth  = _.depth;
             }
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         var set_params = function(cutoff, Q) {
@@ -3320,10 +3355,8 @@ var timbre = (function(context, timbre) {
         
         $this.clone = function(deep) {
             var newone, _ = this._;
-            var args, i, imax;
             newone = timbre("efx.delay", _.delayTime, _.feedback, _.wet);
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         var set_params = function(delayTime, feedback, wet) {
@@ -3481,10 +3514,8 @@ var timbre = (function(context, timbre) {
         
         $this.clone = function(deep) {
             var newone, _ = this._;
-            var args, i, imax;
             newone = timbre("efx.dist", _.preGain, _.postGain, _.lpfFreq);
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         var THRESHOLD = 0.0000152587890625;
@@ -3682,8 +3713,7 @@ var timbre = (function(context, timbre) {
         $this.clone = function(deep) {
             var newone, _ = this._;
             newone = timbre("efx.chorus", _.depth, _.rate, _.wet);
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.seq = function(seq_id) {
@@ -3836,8 +3866,7 @@ var timbre = (function(context, timbre) {
                 newone._.buffer   = _.buffer;
                 newone._.duration = _.duration;
                 newone._.phase = (_.reversed) ? Math.max(0, _.buffer.length - 1) : 0;
-                timbre.fn.copy_for_clone(this, newone, deep);
-                return newone;
+                return timbre.fn.copyBaseArguments(this, newone, deep);
             };
             
             this.slice = function(begin, end) {
@@ -3864,14 +3893,13 @@ var timbre = (function(context, timbre) {
                 newone._.buffer   = _.buffer.subarray(begin, end);
                 newone._.duration = (end - begin / timbre.samplerate) * 1000;
                 newone._.phase = (reversed) ? Math.max(0, newone._.buffer.length - 1) : 0;
-                timbre.fn.copy_for_clone(this, newone);
-                return newone;
+                return timbre.fn.copyBaseArguments(this, newone);
             };
             
             this.bang = function() {
                 var _ = this._;
                 _.phase = (_.reversed) ? Math.max(0, _.buffer.length - 1) : 0;
-                timbre.fn.do_event(this, "bang");
+                timbre.fn.doEvent(this, "bang");
                 return this;
             };
             
@@ -3894,9 +3922,9 @@ var timbre = (function(context, timbre) {
                             if (_.phase < 0) {
                                 if (_.loop) {
                                     _.phase = Math.max(0, _.buffer.length - 1);
-                                    timbre.fn.do_event(this, "looped");
+                                    timbre.fn.doEvent(this, "looped");
                                 } else {
-                                    timbre.fn.do_event(this, "ended");
+                                    timbre.fn.doEvent(this, "ended");
                                 }
                             }
                         }
@@ -3906,9 +3934,9 @@ var timbre = (function(context, timbre) {
                             if (_.phase >= buffer.length) {
                                 if (_.loop) {
                                     _.phase = 0;
-                                    timbre.fn.do_event(this, "looped");
+                                    timbre.fn.doEvent(this, "looped");
                                 } else {
-                                    timbre.fn.do_event(this, "ended");
+                                    timbre.fn.doEvent(this, "ended");
                                 }
                             }
                         }
@@ -3948,7 +3976,7 @@ var timbre = (function(context, timbre) {
                 xhr.onreadystatechange = function(event) {
                     if (xhr.readyState === 4) {
                         if (xhr.status !== 200) {
-                            timbre.fn.do_event(self, "error", [xhr]);
+                            timbre.fn.doEvent(self, "error", [xhr]);
                         }
                     }
                 };
@@ -3957,13 +3985,13 @@ var timbre = (function(context, timbre) {
                     _.duration  = _.buffer.length / timbre.samplerate * 1000;
                     opts.buffer = _.buffer;
                     
-                    timbre.fn.do_event(self, "loadedmetadata", [opts]);
+                    timbre.fn.doEvent(self, "loadedmetadata", [opts]);
                     _.isloaded = true;
-                    timbre.fn.do_event(self, "loadeddata", [opts]);
+                    timbre.fn.doEvent(self, "loadeddata", [opts]);
                 };
                 xhr.send();
             } else {
-                timbre.fn.do_event(self, "error", [xhr]);
+                timbre.fn.doEvent(self, "error", [xhr]);
             }
             _.isloaded = false;
             _.buffer   = new Float32Array(0);
@@ -3998,7 +4026,7 @@ var timbre = (function(context, timbre) {
                 audio = new Audio(_.src);
                 audio.loop = false;
                 audio.addEventListener("error", function(e) {
-                    timbre.fn.do_event(self, "error", [e]);
+                    timbre.fn.doEvent(self, "error", [e]);
                 }, false);
                 audio.addEventListener("loadedmetadata", function(e) {
                     audio.volume = 0.0;
@@ -4009,7 +4037,7 @@ var timbre = (function(context, timbre) {
                     audio.play();
                     opts.buffer = _.buffer;
                     opts.samplerate = audio.mozSampleRate;
-                    timbre.fn.do_event(self, "loadedmetadata", [opts]);
+                    timbre.fn.doEvent(self, "loadedmetadata", [opts]);
                 }, false);
                 audio.addEventListener("MozAudioAvailable", function(e) {
                     var samples, buffer, i, imax;
@@ -4021,7 +4049,7 @@ var timbre = (function(context, timbre) {
                 }, false);
                 audio.addEventListener("ended", function(e) {
                     _.isloaded = true;
-                    timbre.fn.do_event(self, "loadeddata", [opts]);
+                    timbre.fn.doEvent(self, "loadeddata", [opts]);
                 }, false);
                 audio.load();
             }
@@ -4116,8 +4144,7 @@ var timbre = (function(context, timbre) {
             newone._.duration   = _.duration;
             newone._.phaseStep  = _.phaseStep;
             newone._.phase = 0;
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.slice = function(begin, end) {
@@ -4145,13 +4172,12 @@ var timbre = (function(context, timbre) {
             newone._.duration   = (end - begin / _.samplerate) * 1000;
             newone._.phaseStep  = _.phaseStep;
             newone._.phase = (reversed) ? Math.max(0, newone._.buffer.length - 1) : 0;
-            timbre.fn.copy_for_clone(this, newone);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone);
         };
         
         var send = function(type, result, callback) {
             if (type === "loadedmetadata") {
-                timbre.fn.do_event(this, "loadedmetadata", [result]);
+                timbre.fn.doEvent(this, "loadedmetadata", [result]);
             } else if (type === "loadeddata") {
                 if (typeof callback === "function") {
                     callback.call(this, result);
@@ -4164,14 +4190,14 @@ var timbre = (function(context, timbre) {
                         console.log("wav.load: done.");
                     }
                 }
-                timbre.fn.do_event(this, "loadeddata", [result]);
+                timbre.fn.doEvent(this, "loadeddata", [result]);
             } else if (type === "error") {
                 if (typeof callback === "function") {
                     callback.call(this, "error");
                 } else if (typeof callback === "object") {
                     console.log("wav.load: error.");
                 }
-                timbre.fn.do_event(this, "error");
+                timbre.fn.doEvent(this, "error");
             }
         };
         
@@ -4190,7 +4216,7 @@ var timbre = (function(context, timbre) {
                                buffer    :_.buffer}, callback);    
                 }
             } else if (_.src !== "") {
-                timbre.fn.do_event(this, "loading");
+                timbre.fn.doEvent(this, "loading");
                 if (timbre.platform === "web" && timbre._.workerpath) {
                     src = timbre.utils.relpath2rootpath(_.src);
                     worker = new Worker(timbre._.workerpath);
@@ -4271,7 +4297,7 @@ var timbre = (function(context, timbre) {
         
         $this.bang = function() {
             this._.phase = 0;
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -4305,9 +4331,9 @@ var timbre = (function(context, timbre) {
                         if (_.phase < 0) {
                             if (_.loop) {
                                 _.phase = Math.max(0, _.buffer.length - 1);
-                                timbre.fn.do_event(this, "looped");
+                                timbre.fn.doEvent(this, "looped");
                             } else {
-                                timbre.fn.do_event(this, "ended");
+                                timbre.fn.doEvent(this, "ended");
                             }
                         }
                     }
@@ -4324,9 +4350,9 @@ var timbre = (function(context, timbre) {
                         if (_.phase >= buffer.length) {
                             if (_.loop) {
                                 _.phase = 0;
-                                timbre.fn.do_event(this, "looped");
+                                timbre.fn.doEvent(this, "looped");
                             } else {
-                                timbre.fn.do_event(this, "ended");
+                                timbre.fn.doEvent(this, "ended");
                             }
                         }
                     }
@@ -4366,16 +4392,14 @@ var timbre = (function(context, timbre) {
         };
         
         $this.clone = function(deep) {
-            var newone = timbre("buddy");
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, timbre("buddy"), deep);
         };
         
         $this._.play = function() {
             var args, i, imax;
             args = this.args.slice(0);
             for (i = 0, imax = args.length; i < imax; ++i) {
-                timbre.fn.do_event(args[i], "play");
+                timbre.fn.doEvent(args[i], "play");
             }
             return $this._._play.call(this);
         };
@@ -4383,7 +4407,7 @@ var timbre = (function(context, timbre) {
             var args, i, imax;
             args = this.args.slice(0);
             for (i = 0, imax = args.length; i < imax; ++i) {
-                timbre.fn.do_event(args[i], "pause");
+                timbre.fn.doEvent(args[i], "pause");
             }
             return $this._._pause.call(this);
         };
@@ -4569,8 +4593,7 @@ var timbre = (function(context, timbre) {
             newone._.value = _.value;
             newone._.start = _.start;
             newone._.stop  = _.stop;
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.bang = function() {
@@ -4582,7 +4605,7 @@ var timbre = (function(context, timbre) {
             _.x0 = 0; _.dx = 0;
             _.currentTime = 0;
             
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
     
@@ -4610,7 +4633,7 @@ var timbre = (function(context, timbre) {
                         _.dx = 0;
                         x = _.func(1);
                         _.value = (x * (_.stop-_.start) + _.start) * _.mul + _.add;
-                        timbre.fn.do_event(this, "ended");
+                        timbre.fn.doEvent(this, "ended");
                         continue;
                     }
                 }
@@ -4621,7 +4644,7 @@ var timbre = (function(context, timbre) {
                         cell[i] = value;
                     }
                     if (_.status === 1) {
-                        timbre.fn.do_event(this, "changed", [value]);
+                        timbre.fn.doEvent(this, "changed", [value]);
                     }
                     _.value = value;
                     _.x0 += _.dx;
@@ -4791,18 +4814,15 @@ var timbre = (function(context, timbre) {
         }, $this = Glide.prototype;
         
         timbre.fn.setPrototypeOf.call($this, "kr-only");
-    
-        var base = timbre("ease"), p = Object.getPrototypeOf(base);
-        var Easing = base.constructor;
         
-        Object.defineProperty($this, "type",
-                              Object.getOwnPropertyDescriptor(p, "type"));
-        Object.defineProperty($this, "delay",
-                              Object.getOwnPropertyDescriptor(p, "delay"));
-        Object.defineProperty($this, "duration",
-                              Object.getOwnPropertyDescriptor(p, "duration"));
-        Object.defineProperty($this, "currentTime",
-                              Object.getOwnPropertyDescriptor(p, "currentTime"));
+        var Easing = timbre.fn.getClass("ease");
+        
+        timbre.fn.copyPropertyDescriptors($this,
+                                         Easing.prototype,
+                                         ["type","delay","duration","currentTime"]);
+        timbre.fn.copyFunctions($this,
+                                Easing.prototype,
+                                ["seq","getFunction","setFunction"]);
         
         Object.defineProperty($this, "value", {
             set: function(value) {
@@ -4858,8 +4878,7 @@ var timbre = (function(context, timbre) {
             newone._.value = _.value;
             newone._.start = _.value;
             newone._.stop  = _.value;
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.bang = function() {
@@ -4872,13 +4891,9 @@ var timbre = (function(context, timbre) {
             _.x0 = 0; _.dx = 0;
             _.currentTime = 0;
             
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
-        
-        $this.seq = p.seq;
-        $this.getFunction = p.getFunction;
-        $this.setFunction = p.setFunction;
         
         return Glide;
     }());
@@ -4937,6 +4952,13 @@ var timbre = (function(context, timbre) {
             _.index  = _.currentTime = 0;
             _.overwrite = false;
         };
+    
+        $this.clone = function(deep) {
+            var newone, _ = this._;
+            newone = timbre("rec", _.recTime);
+            newone._.overwrite = _.overwrite;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
+        };
         
         $this.on = function() {
             var buffer, i, _ = this._;
@@ -4950,7 +4972,7 @@ var timbre = (function(context, timbre) {
                     }
                 }
             }
-            timbre.fn.do_event(this, "on");
+            timbre.fn.doEvent(this, "on");
             return this;
         };
         $this.off = function() {
@@ -4958,7 +4980,7 @@ var timbre = (function(context, timbre) {
                 onrecorded.call(this);
             }
             this._.ison = false;
-            timbre.fn.do_event(this, "off");
+            timbre.fn.doEvent(this, "off");
             return this;
         };
         $this.bang = function() {
@@ -4970,13 +4992,13 @@ var timbre = (function(context, timbre) {
                     buffer[i] = 0;
                 }
             }
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
         var onrecorded = function() {
             var _ = this._;
-            timbre.fn.do_event(this, "recorded",
+            timbre.fn.doEvent(this, "recorded",
                                [_.buffer.subarray(0, _.index)]);
         };
         
@@ -5013,7 +5035,7 @@ var timbre = (function(context, timbre) {
                     if (_.index >= buffer.length) {
                         _.ison = false;
                         onrecorded.call(this);
-                        timbre.fn.do_event(this, "ended");
+                        timbre.fn.doEvent(this, "ended");
                     }
                 } else {
                     for (j = jmax; j--; ) {
@@ -5121,10 +5143,9 @@ var timbre = (function(context, timbre) {
             newone = timbre("buffer", _.buffer, _.loop);
             newone._.reversed = _.reversed;
             newone._.phase = (_.reversed) ? Math.max(0, _.buffer.length - 1) : 0;
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
-    
+        
         $this.slice = function(begin, end) {
             var newone, _ = this._, tmp, reversed;
             
@@ -5155,7 +5176,7 @@ var timbre = (function(context, timbre) {
         $this.bang = function() {
             var _ = this._;
             _.phase = (_.reversed) ? Math.max(0, _.buffer.length - 1) : 0;
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -5178,9 +5199,9 @@ var timbre = (function(context, timbre) {
                         if (_.phase < 0) {
                             if (_.loop) {
                                 _.phase = Math.max(0, _.buffer.length - 1);
-                                timbre.fn.do_event(this, "looped");
+                                timbre.fn.doEvent(this, "looped");
                             } else {
-                                timbre.fn.do_event(this, "ended");
+                                timbre.fn.doEvent(this, "ended");
                             }
                         }
                     }
@@ -5190,9 +5211,9 @@ var timbre = (function(context, timbre) {
                         if (_.phase >= buffer.length) {
                             if (_.loop) {
                                 _.phase = 0;
-                                timbre.fn.do_event(this, "looped");
+                                timbre.fn.doEvent(this, "looped");
                             } else {
-                                timbre.fn.do_event(this, "ended");
+                                timbre.fn.doEvent(this, "ended");
                             }
                         }
                     }
@@ -5330,7 +5351,7 @@ var timbre = (function(context, timbre) {
             newone._.windowfunc = _.windowfunc;
             newone._.interval   = _.interval;
             newone._.interval_samples = _.interval_samples;
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.seq = function(seq_id) {
@@ -5432,7 +5453,7 @@ var timbre = (function(context, timbre) {
                 }
             }
             
-            timbre.fn.do_event(this, "fft", [real, imag]);
+            timbre.fn.doEvent(this, "fft", [real, imag]);
         };
         
         $this.getWindowFunction = function(name) {
@@ -5476,8 +5497,13 @@ var timbre = (function(context, timbre) {
             get: function() { return this._.interval; }
         });
         Object.defineProperty($this, "count", {
+            set: function(value) {
+                var _ = this._;
+                if (typeof value === "number") {
+                    _.count = value;
+                }
+            },
             get: function() { return this._.count; }
-            // TODO: implement 'set'
         });
         Object.defineProperty($this, "currentTime", {
             get: function() { return this._.currentTime; }
@@ -5512,7 +5538,7 @@ var timbre = (function(context, timbre) {
             _.samples = 0;
             _.count =  0;
             _.currentTime = 0;
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             
             return this;
         };
@@ -5594,7 +5620,7 @@ var timbre = (function(context, timbre) {
             
             _.samples = _.timeout_samples;
             _.currentTime = 0;
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             
             return this;
         };
@@ -5664,13 +5690,12 @@ var timbre = (function(context, timbre) {
         $this.clone = function(deep) {
             var newone;
             newone = timbre("timbre", this._.version);
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         $this.bang = function() {
             if (this._.synth) this._.synth.bang();
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
