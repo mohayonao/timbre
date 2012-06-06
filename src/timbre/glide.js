@@ -14,18 +14,15 @@ var Glide = (function() {
     }, $this = Glide.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "kr-only");
-
-    var base = timbre("ease"), p = Object.getPrototypeOf(base);
-    var Easing = base.constructor;
     
-    Object.defineProperty($this, "type",
-                          Object.getOwnPropertyDescriptor(p, "type"));
-    Object.defineProperty($this, "delay",
-                          Object.getOwnPropertyDescriptor(p, "delay"));
-    Object.defineProperty($this, "duration",
-                          Object.getOwnPropertyDescriptor(p, "duration"));
-    Object.defineProperty($this, "currentTime",
-                          Object.getOwnPropertyDescriptor(p, "currentTime"));
+    var Easing = timbre.fn.getClass("ease");
+    
+    timbre.fn.copyPropertyDescriptors($this,
+                                     Easing.prototype,
+                                     ["type","delay","duration","currentTime"]);
+    timbre.fn.copyFunctions($this,
+                            Easing.prototype,
+                            ["seq","getFunction","setFunction"]);
     
     Object.defineProperty($this, "value", {
         set: function(value) {
@@ -98,10 +95,6 @@ var Glide = (function() {
         timbre.fn.do_event(this, "bang");
         return this;
     };
-    
-    $this.seq = p.seq;
-    $this.getFunction = p.getFunction;
-    $this.setFunction = p.setFunction;
     
     return Glide;
 }());

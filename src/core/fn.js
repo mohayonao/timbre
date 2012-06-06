@@ -512,7 +512,33 @@ timbre.fn = (function(timbre) {
     fn.isTimbreObject = function(object) {
         return (typeof object === "object") &&
                 (Object.getPrototypeOf(object)._ instanceof TimbreObject);
-    }
+    };
+    
+    fn.getClass = function(name) {
+        return klasses[name];
+    };
+    
+    fn.copyPropertyDescriptors = function(self, base, names) {
+        var i, d;
+        for (i = names.length; i--; ) {
+            d = Object.getOwnPropertyDescriptor(base, names[i]);
+            if (d !== undefined) {
+                Object.defineProperty(self, names[i], d);
+            }
+        }
+        return self;
+    };
+    
+    fn.copyFunctions = function(self, base, names) {
+        var i, f;
+        for (i = names.length; i--; ) {
+            f = base[names[i]];
+            if (typeof f === "function") {
+                self[names[i]] = f;
+            }
+        }
+        return self;
+    };
     
     return fn;
 }(timbre));

@@ -15,12 +15,11 @@ var PhaseOscillator = (function() {
     
     timbre.fn.setPrototypeOf.call($this, "ar-kr");
     
-    var base = timbre("osc"); base.p = Object.getPrototypeOf(base);
-    var Oscillator = base.constructor;
-    PhaseOscillator.base = Oscillator;
+    var Oscillator = timbre.fn.getClass("osc");
     
-    Object.defineProperty($this, "wave",
-                          Object.getOwnPropertyDescriptor(base.p, "wave"));
+    timbre.fn.copyPropertyDescriptors($this,
+                                      Oscillator.prototype,
+                                      ["wave"]);
     
     Object.defineProperty($this, "phase", {
         set: function(value) {
