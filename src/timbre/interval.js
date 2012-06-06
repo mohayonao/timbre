@@ -1,5 +1,5 @@
 /**
- * Interval: 0.1.0
+ * Interval: 0.2.2
  * Calls a bang() repeatedly at regular intervals
  * [kr-only]
  */
@@ -26,8 +26,13 @@ var Interval = (function() {
         get: function() { return this._.interval; }
     });
     Object.defineProperty($this, "count", {
+        set: function(value) {
+            var _ = this._;
+            if (typeof value === "number") {
+                _.count = value;
+            }
+        },
         get: function() { return this._.count; }
-        // TODO: implement 'set'
     });
     Object.defineProperty($this, "currentTime", {
         get: function() { return this._.currentTime; }
