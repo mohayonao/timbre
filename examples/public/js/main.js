@@ -47,7 +47,7 @@ $(function() {
                     btn.attr("disabled", false).text("play");
                     clearInterval(timerId);
                 }
-            });
+            }, 100);
         }
         
         s[i] = synth;
