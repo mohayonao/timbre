@@ -60,6 +60,13 @@ var Record = (function() {
         _.index  = _.currentTime = 0;
         _.overwrite = false;
     };
+
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        newone = timbre("rec", _.recTime);
+        newone._.overwrite = _.overwrite;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
+    };
     
     $this.on = function() {
         var buffer, i, _ = this._;
