@@ -196,6 +196,7 @@ require("./timbre/number");
 require("./timbre/boolean");
 require("./timbre/array");
 require("./timbre/function");
+require("./timbre/dac");
 
 // setting for tests
 timbre.samplerate = 1000;
@@ -297,43 +298,114 @@ global.object_test = function(klass) {
 };
 
 if (module.parent && !module.parent.parent) {
-    describe("Through out", function() {
-        var instance = timbre();
-        instance.should.equal(timbre(instance));
-    });
-    describe("EventListener", function() {
-        it("onbang", function(done) {
-            var x = 0, instance = timbre();
-            instance.onbang = function() {
-                if (++x === 2) done();
-            };
-            instance.bang();
-            instance.bang();
-        });
-        it("addEventListener", function(done) {
-            var x = 0, instance = timbre();
-            instance.addEventListener("bang", function() {
-                if (++x === 2) done();
+    
+    var TestObject = (function() {
+        var TestObject = function() {
+            initialize.apply(this, arguments);
+        }, $this = TestObject.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "ar-kr");
+        
+        var initialize = function() {
+            this._ = {done:{}};
+            this._.done.init  = false;
+            this._.done.play  = false;
+            this._.done.pause = false;
+            this._.done.on    = false;
+            this._.done.off   = false;
+            this._.done.appended = false;
+            this._.done.removed  = false;
+        };
+        
+        $this._.init = function() {
+            this._.done.init = true;
+        };
+        $this._.play = function() {
+            this._.done.play = true;
+        };
+        $this._.pause = function() {
+            this._.done.pause = true;
+        };
+        $this._.on = function() {
+            this._.done.on = true;
+        };
+        $this._.off = function() {
+            this._.done.off = true;
+        };
+        return TestObject;
+    }());
+    timbre.fn.register("test-object", TestObject);
+    
+    describe("test-object", function() {
+        object_test(TestObject, "test-object");
+        describe("#init", function() {
+            it("postInit", function() {
+                var instance = timbre("test-object");
+                instance._.done.init.should.be.equal(true);
             });
-            instance.bang();
-            instance.bang();
         });
-        it("onbang & addEventListener", function(done) {
-            var x = 0, instance = timbre();
-            instance.onbang = function() {
-                ++x;
-            };
-            instance.addEventListener("bang", function() {
-                if (++x === 4) done();
+        describe("#play", function() {
+            it("postPlay", function() {
+                var instance = timbre("test-object");
+                instance.play()._.done.play.should.be.equal(true);
             });
-            instance.bang();
-            instance.bang();
         });
-        it("Once Time", function(done) {
-            var instance = timbre();
-            instance.addEventListener("~bang", done);
-            instance.bang();
-            instance.bang();
+        describe("#pause", function() {
+            it("postPause", function() {
+                var instance = timbre("test-object");
+                instance.play().pause()._.done.pause.should.be.equal(true);
+            });
+        });
+        describe("#on", function() {
+            it("postOn", function() {
+                var instance = timbre("test-object");
+                instance.on()._.done.on.should.be.equal(true);
+            });
+        });
+        describe("#off", function() {
+            it("postOff", function() {
+                var instance = timbre("test-object");
+                instance.off()._.done.off.should.be.equal(true);
+            });
+        });
+        describe("EventListener", function() {
+            it("onbang", function(done) {
+                var x = 0, instance = timbre("test-object");
+                instance.onbang = function() {
+                    if (++x === 2) done();
+                };
+                instance.bang();
+                instance.bang();
+            });
+            it("addEventListener", function(done) {
+                var x = 0, instance = timbre("test-object");
+                instance.addEventListener("bang", function() {
+                    if (++x === 2) done();
+                });
+                instance.bang();
+                instance.bang();
+            });
+            it("onbang & addEventListener", function(done) {
+                var x = 0, instance = timbre("test-object");
+                instance.onbang = function() {
+                    ++x;
+                };
+                instance.addEventListener("bang", function() {
+                    if (++x === 4) done();
+                });
+                instance.bang();
+                instance.bang();
+            });
+            it("Once Time", function(done) {
+                var instance = timbre("test-object");
+                instance.addEventListener("~bang", done);
+                instance.bang();
+                instance.bang();
+            });
+        });
+        describe("Through out", function() {
+            var instance = timbre("test-object");
+            instance.should.equal(timbre(instance));
         });
     });
 }

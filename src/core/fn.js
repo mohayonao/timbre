@@ -438,7 +438,6 @@ timbre.fn = (function(timbre) {
             }
             if (instance !== null) {
                 args.push(instance);
-                if (instance.beAppended) instance.beAppended.call(instance);
             }
         }
         
@@ -453,7 +452,6 @@ timbre.fn = (function(timbre) {
                 instance = args[i];
                 if (this.indexOf(instance) === -1) {
                     this.push(instance);
-                    if (instance.beAppended) instance.beAppended.call(instance);
                 }
             }
             return this;
@@ -463,7 +461,6 @@ timbre.fn = (function(timbre) {
             for (i = arguments.length; i--; ) {
                 if ((j = this.indexOf(arguments[i])) !== -1) {
                     instance = this.splice(j, 1)[0];
-                    if (instance.beRemoved) instance.beRemoved.call(instance);
                 }
             }
             return this;
