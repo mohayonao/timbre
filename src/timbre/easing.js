@@ -327,7 +327,8 @@ Easing.Functions = {
 };
 
 // __END__
-
-describe("ease", function() {
-    object_test(Easing, "ease");
-});
+if (module.parent && !module.parent.parent) {
+    describe("ease", function() {
+        object_test(Easing, "ease");
+    });
+}

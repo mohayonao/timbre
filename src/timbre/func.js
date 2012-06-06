@@ -149,7 +149,8 @@ var FuncOscillator = (function() {
 timbre.fn.register("func", FuncOscillator);
 
 // __END__
-
-describe("func", function() {
-    object_test(FuncOscillator, "func");
-});
+if (module.parent && !module.parent.parent) {
+    describe("func", function() {
+        object_test(FuncOscillator, "func");
+    });
+}

@@ -184,7 +184,8 @@ var Buffer = (function() {
 timbre.fn.register("buffer", Buffer);
 
 // __END__
-
-describe("buffer", function() {
-    object_test(Buffer, "buffer");
-});
+if (module.parent && !module.parent.parent) {
+    describe("buffer", function() {
+        object_test(Buffer, "buffer");
+    });
+}

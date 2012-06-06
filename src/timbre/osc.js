@@ -378,7 +378,8 @@ timbre.fn.register("+saw", Oscillator, function(_args) {
 });
 
 // __END__
-
-describe("osc", function() {
-    object_test(Oscillator, "osc");
-});
+if (module.parent && !module.parent.parent) {
+    describe("osc", function() {
+        object_test(Oscillator, "osc");
+    });
+}

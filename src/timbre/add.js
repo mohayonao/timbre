@@ -69,7 +69,8 @@ var Add = (function() {
 timbre.fn.register("+", Add);
 
 // __END__
-
-describe("+", function() {
-    object_test(Add, "+");
-});
+if (module.parent && !module.parent.parent) {
+    describe("+", function() {
+        object_test(Add, "+");
+    });
+}

@@ -261,7 +261,8 @@ FFT.WindowFunctions = {};
 }());
 
 // __END__
-
-describe("fft", function() {
-    object_test(FFT, "fft", 128);
-});
+if (module.parent && !module.parent.parent) {
+    describe("fft", function() {
+        object_test(FFT, "fft", 128);
+    });
+}

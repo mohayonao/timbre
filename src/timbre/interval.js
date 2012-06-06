@@ -97,7 +97,8 @@ var Interval = (function() {
 timbre.fn.register("interval", Interval);
 
 // __END__
-
-describe("interval", function() {
-    object_test(Interval, "interval");
-});
+if (module.parent && !module.parent.parent) {
+    describe("interval", function() {
+        object_test(Interval, "interval");
+    });
+}

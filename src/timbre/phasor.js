@@ -130,6 +130,8 @@ var Phasor = (function() {
 timbre.fn.register("phasor", Phasor);
 
 // __END__
-describe("phasor", function() {
-    object_test(Phasor, "phasor");
-});
+if (module.parent && !module.parent.parent) {
+    describe("phasor", function() {
+        object_test(Phasor, "phasor");
+    });
+}

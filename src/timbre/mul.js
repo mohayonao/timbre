@@ -77,7 +77,8 @@ var Multiply = (function() {
 timbre.fn.register("*", Multiply);
 
 // __END__
-
-describe("*", function() {
-    object_test(Multiply, "*");
-});
+if (module.parent && !module.parent.parent) {
+    describe("*", function() {
+        object_test(Multiply, "*");
+    });
+}

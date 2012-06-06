@@ -176,6 +176,8 @@ timbre.fn.register("+sawx", PhaseOscillator, function(_args) {
 });
 
 // __END__
-describe("oscx", function() {
-    object_test(PhaseOscillator, "oscx");
-});
+if (module.parent && !module.parent.parent) {
+    describe("oscx", function() {
+        object_test(PhaseOscillator, "oscx");
+    });
+}

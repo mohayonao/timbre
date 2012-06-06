@@ -310,7 +310,8 @@ var WavDecoder = (function() {
 timbre.fn.register("wav", WavDecoder);
 
 // __END__
-
-describe("wav", function() {
-    object_test(WavDecoder, "wav");
-});
+if (module.parent && !module.parent.parent) {
+    describe("wav", function() {
+        object_test(WavDecoder, "wav");
+    });
+}

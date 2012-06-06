@@ -238,7 +238,8 @@ var ADSREnvelope = (function() {
 timbre.fn.register("adsr", ADSREnvelope);
 
 // __END__
-
-describe("adsr", function() {
-    object_test(ADSREnvelope, "adsr");
-});
+if (module.parent && !module.parent.parent) {
+    describe("adsr", function() {
+        object_test(ADSREnvelope, "adsr");
+    });
+}

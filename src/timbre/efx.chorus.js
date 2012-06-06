@@ -154,7 +154,8 @@ var EfxChorus = (function() {
 timbre.fn.register("efx.chorus", EfxChorus);
 
 // __END__
-
-describe("efx.chorus", function() {
-    object_test(EfxChorus, "efx.chorus", 0);
-});
+if (module.parent && !module.parent.parent) {
+    describe("efx.chorus", function() {
+        object_test(EfxChorus, "efx.chorus", 0);
+    });
+}

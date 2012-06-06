@@ -159,7 +159,8 @@ var Record = (function() {
 timbre.fn.register("rec", Record);
 
 // __END__
-
-describe("rec", function() {
-    object_test(Record, "rec");
-});
+if (module.parent && !module.parent.parent) {
+    describe("rec", function() {
+        object_test(Record, "rec");
+    });
+}

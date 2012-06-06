@@ -229,7 +229,8 @@ timbre.fn.register("rbrf", ResonantFilter, function(_args) {
 });
 
 // __END__
-
-describe("rfilter", function() {
-    object_test(ResonantFilter, "rfilter");
-});
+if (module.parent && !module.parent.parent) {
+    describe("rfilter", function() {
+        object_test(ResonantFilter, "rfilter");
+    });
+}

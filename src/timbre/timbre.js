@@ -108,7 +108,8 @@ AwesomeTimbre.Versions["0.1"] = function(parent) {
 };
 
 // __END__
-
-describe("timbre", function() {
-    object_test(AwesomeTimbre, "timbre");
-});
+if (module.parent && !module.parent.parent) {
+    describe("timbre", function() {
+        object_test(AwesomeTimbre, "timbre");
+    });
+}

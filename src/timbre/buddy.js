@@ -26,10 +26,10 @@ var Buddy = (function() {
         $this._._off   = this.off;
         $this._._bang  = this.bang;
         
-        this.play  = $this._.play;
-        this.pause = $this._.pause;
-        this.on    = $this._.on;
-        this.off   = $this._.off;
+        this.play  = $this._.$play;
+        this.pause = $this._.$pause;
+        this.on    = $this._.$on;
+        this.off   = $this._.$off;
         this.bang  = $this._.$bang;
     };
     
@@ -37,7 +37,7 @@ var Buddy = (function() {
         return timbre.fn.copyBaseArguments(this, timbre("buddy"), deep);
     };
     
-    $this._.play = function() {
+    $this._.$play = function() {
         var args, i, imax;
         args = this.args.slice(0);
         for (i = 0, imax = args.length; i < imax; ++i) {
@@ -45,7 +45,7 @@ var Buddy = (function() {
         }
         return $this._._play.call(this);
     };
-    $this._.pause = function() {
+    $this._.$pause = function() {
         var args, i, imax;
         args = this.args.slice(0);
         for (i = 0, imax = args.length; i < imax; ++i) {
@@ -53,7 +53,7 @@ var Buddy = (function() {
         }
         return $this._._pause.call(this);
     };
-    $this._.on = function() {
+    $this._.$on = function() {
         var args, i, imax;
         args = this.args.slice(0);
         for (i = 0, imax = args.length; i < imax; ++i) {
@@ -61,7 +61,7 @@ var Buddy = (function() {
         }
         return $this._._on.call(this);
     };
-    $this._.off = function() {
+    $this._.$off = function() {
         var args, i, imax;
         args = this.args.slice(0);
         for (i = 0, imax = args.length; i < imax; ++i) {
@@ -131,69 +131,70 @@ var Buddy = (function() {
 }());
 timbre.fn.register("buddy", Buddy);
 // __END__
-
-describe("buddy", function() {
-    object_test(Buddy, "buddy", 0);
-    describe("wrapping event", function() {
-        it("should send on when on()", function(done) {
-            var instance = timbre("buddy");
-            var a = timbre(10);
-            var b = timbre(20);
-            var i = 0;
-            instance.append(a, b)
-            a.onon = function() { i++; };
-            b.onon = function() { i++; };
-            instance.onon = function() {
-                if (i === 2) done();
-            };
-            instance.on();
+if (module.parent && !module.parent.parent) {
+    describe("buddy", function() {
+        object_test(Buddy, "buddy", 0);
+        describe("wrapping event", function() {
+            it("should send on when on()", function(done) {
+                var instance = timbre("buddy");
+                var a = timbre(10);
+                var b = timbre(20);
+                var i = 0;
+                instance.append(a, b)
+                a.onon = function() { i++; };
+                b.onon = function() { i++; };
+                instance.onon = function() {
+                    if (i === 2) done();
+                };
+                instance.on();
+            });
+            it("should send off when off()", function(done) {
+                var instance = timbre("buddy");
+                var a = timbre(10);
+                var b = timbre(20);
+                var i = 0;
+                instance.append(a, b)
+                a.onoff = function() { i++; };
+                b.onoff = function() { i++; };
+                instance.onoff = function() {
+                    if (i === 2) done();
+                };
+                instance.off();
+            });
+            it("should send bang when bang()", function(done) {
+                var instance = timbre("buddy");
+                var a = timbre(10);
+                var b = timbre(20);
+                var i = 0;
+                instance.append(a, b)
+                a.onbang = function() { i++; };
+                b.onbang = function() { i++; };
+                instance.onbang = function() {
+                    if (i === 2) done();
+                };
+                instance.bang();
+            });
         });
-        it("should send off when off()", function(done) {
-            var instance = timbre("buddy");
-            var a = timbre(10);
-            var b = timbre(20);
-            var i = 0;
-            instance.append(a, b)
-            a.onoff = function() { i++; };
-            b.onoff = function() { i++; };
-            instance.onoff = function() {
-                if (i === 2) done();
-            };
-            instance.off();
+        describe("#send()", function() {
+            it("should add signals", function() {
+                var instance = timbre("buddy");
+                var a = timbre(10);
+                var b = timbre(20);
+                instance.append(a, b)
+                instance.send("set", ["value", 5]);
+                instance.seq(0);
+                instance.cell.should.eql(timbre(10).cell);
+            })
         });
-        it("should send bang when bang()", function(done) {
-            var instance = timbre("buddy");
-            var a = timbre(10);
-            var b = timbre(20);
-            var i = 0;
-            instance.append(a, b)
-            a.onbang = function() { i++; };
-            b.onbang = function() { i++; };
-            instance.onbang = function() {
-                if (i === 2) done();
-            };
-            instance.bang();
+        describe("processing", function() {
+            it("should add signals", function() {
+                var instance = timbre("buddy");
+                var a = timbre(10);
+                var b = timbre(20);
+                instance.append(a, b)
+                instance.seq(0);
+                instance.cell.should.eql(timbre(30).cell);
+            })
         });
     });
-    describe("#send()", function() {
-        it("should add signals", function() {
-            var instance = timbre("buddy");
-            var a = timbre(10);
-            var b = timbre(20);
-            instance.append(a, b)
-            instance.send("set", ["value", 5]);
-            instance.seq(0);
-            instance.cell.should.eql(timbre(10).cell);
-        })
-    });
-    describe("processing", function() {
-        it("should add signals", function() {
-            var instance = timbre("buddy");
-            var a = timbre(10);
-            var b = timbre(20);
-            instance.append(a, b)
-            instance.seq(0);
-            instance.cell.should.eql(timbre(30).cell);
-        })
-    });
-});
+}

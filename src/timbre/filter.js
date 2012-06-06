@@ -398,7 +398,8 @@ timbre.fn.register("highboost", Filter, function(_args) {
 });
 
 // __END__
-
-describe("filter", function() {
-    object_test(Filter, "filter");
-});
+if (module.parent && !module.parent.parent) {
+    describe("filter", function() {
+        object_test(Filter, "filter");
+    });
+}

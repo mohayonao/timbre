@@ -101,54 +101,56 @@ timbre.fn.register("pandac", Dac, function(_args) {
 
 // __END__
 
-describe("dac", function() {
-    object_test(Dac, "dac");
-    describe("#play()", function() {
-        it("should append self from dacs", function() {
-            var i, instance = timbre("dac");
-            i = timbre.dacs.length;
-            instance.play();
-            timbre.dacs.length.should.equal(i + 1);
-            instance.should.equal(timbre.dacs[timbre.dacs.length-1]);
+if (module.parent && !module.parent.parent) {
+    describe("dac", function() {
+        object_test(Dac, "dac");
+        describe("#play()", function() {
+            it("should append self from dacs", function() {
+                var i, instance = timbre("dac");
+                i = timbre.dacs.length;
+                instance.play();
+                timbre.dacs.length.should.equal(i + 1);
+                instance.should.equal(timbre.dacs[timbre.dacs.length-1]);
+            });
+        });
+        describe("#pause()", function() {
+            it("should remove self from dacs", function() {
+                var i, instance = timbre("dac");
+                i = timbre.dacs.length;
+                instance.play();
+                timbre.dacs.length.should.equal(i + 1);
+                instance.pause();
+                timbre.dacs.length.should.equal(i);
+            });
+        });
+        describe("#on()", function() {
+            it("should append self from dacs", function() {
+                var i, instance = timbre("dac");
+                i = timbre.dacs.length;
+                instance.play();
+                timbre.dacs.length.should.equal(i + 1);
+                instance.should.equal(timbre.dacs[timbre.dacs.length-1]);
+            });
+        });
+        describe("#off()", function() {
+            it("should remove self from dacs", function() {
+                var i, instance = timbre("dac");
+                i = timbre.dacs.length;
+                instance.play();
+                timbre.dacs.length.should.equal(i + 1);
+                instance.pause();
+                timbre.dacs.length.should.equal(i);
+            });
+        });
+        describe("processing", function() {
+            it("should add signals", function() {
+                var instance = timbre("dac");
+                var a = timbre(10);
+                var b = timbre(20);
+                instance.append(a, b)
+                instance.seq(0);
+                instance.cell.should.eql(timbre(30).cell);
+            })
         });
     });
-    describe("#pause()", function() {
-        it("should remove self from dacs", function() {
-            var i, instance = timbre("dac");
-            i = timbre.dacs.length;
-            instance.play();
-            timbre.dacs.length.should.equal(i + 1);
-            instance.pause();
-            timbre.dacs.length.should.equal(i);
-        });
-    });
-    describe("#on()", function() {
-        it("should append self from dacs", function() {
-            var i, instance = timbre("dac");
-            i = timbre.dacs.length;
-            instance.play();
-            timbre.dacs.length.should.equal(i + 1);
-            instance.should.equal(timbre.dacs[timbre.dacs.length-1]);
-        });
-    });
-    describe("#off()", function() {
-        it("should remove self from dacs", function() {
-            var i, instance = timbre("dac");
-            i = timbre.dacs.length;
-            instance.play();
-            timbre.dacs.length.should.equal(i + 1);
-            instance.pause();
-            timbre.dacs.length.should.equal(i);
-        });
-    });
-    describe("processing", function() {
-        it("should add signals", function() {
-            var instance = timbre("dac");
-            var a = timbre(10);
-            var b = timbre(20);
-            instance.append(a, b)
-            instance.seq(0);
-            instance.cell.should.eql(timbre(30).cell);
-        })
-    });
-});
+}

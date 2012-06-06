@@ -170,7 +170,8 @@ var PercussiveEnvelope = (function() {
 timbre.fn.register("perc", PercussiveEnvelope);
 
 // __END__
-
-describe("perc", function() {
-    object_test(PercussiveEnvelope, "perc");
-});
+if (module.parent && !module.parent.parent) {
+    describe("perc", function() {
+        object_test(PercussiveEnvelope, "perc");
+    });
+}

@@ -100,7 +100,8 @@ var Glide = (function() {
 timbre.fn.register("glide", Glide);
 
 // __END__
-
-describe("glide", function() {
-    object_test(Glide, "glide");
-});
+if (module.parent && !module.parent.parent) {
+    describe("glide", function() {
+        object_test(Glide, "glide");
+    });
+}

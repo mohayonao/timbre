@@ -283,3 +283,5 @@ var MozAudio = (function() {
 timbre.fn.register("-moz-audio", MozAudio);
 
 // __END__
+if (module.parent && !module.parent.parent) {
+}

@@ -89,7 +89,8 @@ var Timeout = (function() {
 timbre.fn.register("timeout", Timeout);
 
 // __END__
-
-describe("timeout", function() {
-    object_test(Timeout, "timeout");
-});
+if (module.parent && !module.parent.parent) {
+    describe("timeout", function() {
+        object_test(Timeout, "timeout");
+    });
+}

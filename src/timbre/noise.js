@@ -54,7 +54,8 @@ var WhiteNoise = (function() {
 timbre.fn.register("noise", WhiteNoise);
 
 // __END__
-
-describe("noise", function() {
-    object_test(WhiteNoise, "noise");
-});
+if (module.parent && !module.parent.parent) {
+    describe("noise", function() {
+        object_test(WhiteNoise, "noise");
+    });
+}
