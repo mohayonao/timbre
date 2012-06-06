@@ -113,6 +113,10 @@ ex0 = (function() {
         });
     }());
     
+    ex0.onbang  = function() {
+        dist.isOn  ? dist.off()  : dist.on();
+        delay.isOn ? delay.off() : delay.off();
+    };
     ex0.onplay  = function() {
         metronome.measure = -1;
         metronome.on();

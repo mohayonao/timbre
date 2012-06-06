@@ -60,15 +60,19 @@ var metro = T("interval", timbre.utils.bpm2msec(80, 16), function() {
     env2.bang();
 });
 
-var ex1 = efx3;
-ex1.onplay = function() {
+var ex0 = efx3;
+ex0.onbang = function() {
+    osc1.freq.value *= 2;
+    osc2.freq.value *= 2;
+};
+ex0.onplay = function() {
     metro.on().bang();
 };
-ex1.onpause = function() {
+ex0.onpause = function() {
     metro.off();
 };
 
-ex1.play();
+ex0.play();
         </pre>
       </div>
     </section>

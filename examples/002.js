@@ -18,7 +18,7 @@ ex0 = (function() {
     
     var bpm = 132;
     var s1, s2, hh, hh_env, sd, sd_env, bd, bd_env;
-    var metro, drumkit;
+    var metro, drumkit, beam;
     
     // sequence(1)
     s1 = function(freq) {
@@ -63,7 +63,8 @@ ex0 = (function() {
         var i = metro.count % p[0].length;
         
         if (p[s1.i][i]) s1(s1.freqs[i & 7]);
-        if (p[s2.i][i]) s2();
+        if (p[s2.i][i] || beam) s2();
+        beam = false;
         
         if (p[hh.i][i]) {
             hh_env.mul = [0.2, 0.4][i & 1];
@@ -81,6 +82,10 @@ ex0 = (function() {
     
     // drumkit
     drumkit = T("dac", hh, sd, bd);
+
+    drumkit.onbang = function() {
+        beam = true;
+    };
     
     drumkit.onplay = function() {
         metro.on();
