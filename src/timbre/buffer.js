@@ -100,10 +100,9 @@ var Buffer = (function() {
         newone = timbre("buffer", _.buffer, _.loop);
         newone._.reversed = _.reversed;
         newone._.phase = (_.reversed) ? Math.max(0, _.buffer.length - 1) : 0;
-        timbre.fn.copy_for_clone(this, newone, deep);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
     };
-
+    
     $this.slice = function(begin, end) {
         var newone, _ = this._, tmp, reversed;
         

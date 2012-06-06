@@ -20,10 +20,7 @@ var Multiply = (function() {
     };
     
     $this.clone = function(deep) {
-        var newone;
-        newone = timbre("*");
-        timbre.fn.copy_for_clone(this, newone, deep);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, timbre("*"), deep);
     };
     
     $this.seq = function(seq_id) {

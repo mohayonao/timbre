@@ -85,8 +85,7 @@ var AudioDecoder = {
             newone._.buffer   = _.buffer;
             newone._.duration = _.duration;
             newone._.phase = (_.reversed) ? Math.max(0, _.buffer.length - 1) : 0;
-            timbre.fn.copy_for_clone(this, newone, deep);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone, deep);
         };
         
         this.slice = function(begin, end) {
@@ -113,8 +112,7 @@ var AudioDecoder = {
             newone._.buffer   = _.buffer.subarray(begin, end);
             newone._.duration = (end - begin / timbre.samplerate) * 1000;
             newone._.phase = (reversed) ? Math.max(0, newone._.buffer.length - 1) : 0;
-            timbre.fn.copy_for_clone(this, newone);
-            return newone;
+            return timbre.fn.copyBaseArguments(this, newone);
         };
         
         this.bang = function() {

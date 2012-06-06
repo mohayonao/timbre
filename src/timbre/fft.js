@@ -133,7 +133,7 @@ var FFT = (function() {
         newone._.windowfunc = _.windowfunc;
         newone._.interval   = _.interval;
         newone._.interval_samples = _.interval_samples;
-        return newone;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
     $this.seq = function(seq_id) {

@@ -112,8 +112,7 @@ var Easing = (function() {
         newone._.value = _.value;
         newone._.start = _.start;
         newone._.stop  = _.stop;
-        timbre.fn.copy_for_clone(this, newone, deep);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
     $this.bang = function() {

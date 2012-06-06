@@ -95,8 +95,7 @@ var PercussiveEnvelope = (function() {
         newone._.a     = _.a;
         newone._.al    = _.al;
         newone._.reversed = _.reversed;
-        timbre.fn.copy_for_clone(this, newone, deep);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
     $this.bang = function() {

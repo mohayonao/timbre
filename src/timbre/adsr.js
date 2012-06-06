@@ -135,8 +135,7 @@ var ADSREnvelope = (function() {
         newone._.delay = _.delay;
         newone._.s = _.s;
         newone._.reversed = _.reversed;
-        timbre.fn.copy_for_clone(this, newone, deep);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
     $this.bang = function(mode) {

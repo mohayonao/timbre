@@ -69,8 +69,7 @@ var Phasor = (function() {
         }
         newone._.fmul  = _.fmul;
         newone._.phase = _.phase;
-        timbre.fn.copy_for_clone(this, newone, deep);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
     $this.bang = function() {

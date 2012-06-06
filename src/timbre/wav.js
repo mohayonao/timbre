@@ -88,8 +88,7 @@ var WavDecoder = (function() {
         newone._.duration   = _.duration;
         newone._.phaseStep  = _.phaseStep;
         newone._.phase = 0;
-        timbre.fn.copy_for_clone(this, newone, deep);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
     $this.slice = function(begin, end) {
@@ -117,8 +116,7 @@ var WavDecoder = (function() {
         newone._.duration   = (end - begin / _.samplerate) * 1000;
         newone._.phaseStep  = _.phaseStep;
         newone._.phase = (reversed) ? Math.max(0, newone._.buffer.length - 1) : 0;
-        timbre.fn.copy_for_clone(this, newone);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, newone);
     };
     
     var send = function(type, result, callback) {

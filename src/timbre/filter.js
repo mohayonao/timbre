@@ -105,8 +105,7 @@ var Filter = (function() {
             newone.band = _.band;
             newone.gain = _.gain;
         }
-        timbre.fn.copy_for_clone(this, newone, deep);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
     $this.seq = function(seq_id) {

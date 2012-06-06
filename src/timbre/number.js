@@ -65,12 +65,12 @@ var NumberWrapper = (function() {
         this.value = this._.value;
     };
     
-    $this.clone = function() {
+    $this.clone = function(deep) {
         var newone = timbre(this._.value);
         newone._.mul = this._.mul;
         newone._.add = this._.add;
         changeTheValue.call(newone);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
     return NumberWrapper;

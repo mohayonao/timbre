@@ -236,7 +236,7 @@ timbre.fn = (function(timbre) {
     };
     defaults.clone = function(deep) {
         var newone = timbre(Object.getPrototypeOf(this)._.klassname);
-        timbre.fn.copy_for_clone(this, newone, deep);
+        timbre.fn.copyBaseArguments(this, newone, deep);
         return newone;
     };
     defaults.append = function() {
@@ -470,7 +470,7 @@ timbre.fn = (function(timbre) {
         };
     }());
     
-    fn.do_event = function(obj, name, args) {
+    fn.doEvent = function(obj, name, args) {
         var func, list, i, imax;
         func = obj["on" + name];
         if (typeof func === "function") {
@@ -486,8 +486,9 @@ timbre.fn = (function(timbre) {
             }
         }
     };
+    fn.do_event = fn.doEvent;
     
-    fn.copy_for_clone = function(src, dst, deep) {
+    fn.copyBaseArguments = function(src, dst, deep) {
         var src_args, i, imax;
         
         dst._.ar = src._.ar;
@@ -508,6 +509,7 @@ timbre.fn = (function(timbre) {
         
         return dst;
     };
+    fn.copy_for_clone = fn.copyBaseArguments;
     
     fn.isTimbreObject = function(object) {
         return (typeof object === "object") &&

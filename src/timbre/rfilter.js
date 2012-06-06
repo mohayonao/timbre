@@ -109,8 +109,7 @@ var ResonantFilter = (function() {
             newone.Q      = _.Q;
             newone.depth  = _.depth;
         }
-        timbre.fn.copy_for_clone(this, newone, deep);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
     var set_params = function(cutoff, Q) {

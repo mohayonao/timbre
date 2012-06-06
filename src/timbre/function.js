@@ -49,7 +49,8 @@ var FunctionWrapper = (function() {
     };
     
     $this.clone = function(deep) {
-        return timbre("function", this._.value, this._.args);
+        var newone = timbre("function", this._.value, this._.args);
+        return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
     $this.bang = function() {

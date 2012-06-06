@@ -47,8 +47,7 @@ var Dac = (function() {
     $this.clone = function(deep) {
         var newone = timbre("dac");
         newone._.pan = (deep) ? this._.pan.clone(true) : this._.pan;
-        timbre.fn.copy_for_clone(this, newone, deep);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
     $this.seq = function(seq_id) {

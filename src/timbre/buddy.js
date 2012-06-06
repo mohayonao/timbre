@@ -34,9 +34,7 @@ var Buddy = (function() {
     };
     
     $this.clone = function(deep) {
-        var newone = timbre("buddy");
-        timbre.fn.copy_for_clone(this, newone, deep);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, timbre("buddy"), deep);
     };
     
     $this._.play = function() {

@@ -78,8 +78,7 @@ var EfxChorus = (function() {
     $this.clone = function(deep) {
         var newone, _ = this._;
         newone = timbre("efx.chorus", _.depth, _.rate, _.wet);
-        timbre.fn.copy_for_clone(this, newone, deep);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
     $this.seq = function(seq_id) {

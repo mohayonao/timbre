@@ -49,8 +49,7 @@ var AwesomeTimbre = (function() {
     $this.clone = function(deep) {
         var newone;
         newone = timbre("timbre", this._.version);
-        timbre.fn.copy_for_clone(this, newone, deep);
-        return newone;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
     $this.bang = function() {
