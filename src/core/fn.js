@@ -268,26 +268,27 @@ timbre.fn = (function(timbre) {
         return this;
     };
     defaults.set = function(key, value) {
-        var self;
-        self = this;
-        while (self !== null) {
+        var self, k;
+        if (typeof key === "string") {
+            self = Object.getPrototypeOf(this);
             if (Object.getOwnPropertyDescriptor(self, key)) {
                 this[key] = value;
-                break;
             }
-            self = Object.getPrototypeOf(self);
+        } else if (typeof key === "object") {
+            self = Object.getPrototypeOf(this);
+            for (k in key) {
+                if (Object.getOwnPropertyDescriptor(self, k)) {
+                    this[k] = key[k];
+                }
+            }
         }
         return this;
     };
     defaults.get = function(key) {
         var self, res;
-        self = this;
-        while (self !== null) {
-            if (Object.getOwnPropertyDescriptor(self, key)) {
-                res = this[key];
-                break;
-            }
-            self = Object.getPrototypeOf(self);
+        self = Object.getPrototypeOf(this);
+        if (Object.getOwnPropertyDescriptor(self, key)) {
+            res = this[key];
         }
         return res;
     };
