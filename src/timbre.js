@@ -201,6 +201,7 @@ require("./timbre/function");
 timbre.samplerate = 1000;
 timbre.streamsize =   32;
 timbre.cellsize   =    8;
+timbre.verbose    = false;
 
 var should = require("should");
 global.object_test = function(klass) {
