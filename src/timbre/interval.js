@@ -62,7 +62,7 @@ var Interval = (function() {
         _.samples = 0;
         _.count =  0;
         _.currentTime = 0;
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         
         return this;
     };

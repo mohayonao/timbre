@@ -133,7 +133,7 @@ var Buffer = (function() {
     $this.bang = function() {
         var _ = this._;
         _.phase = (_.reversed) ? Math.max(0, _.buffer.length - 1) : 0;
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
     
@@ -156,9 +156,9 @@ var Buffer = (function() {
                     if (_.phase < 0) {
                         if (_.loop) {
                             _.phase = Math.max(0, _.buffer.length - 1);
-                            timbre.fn.do_event(this, "looped");
+                            timbre.fn.doEvent(this, "looped");
                         } else {
-                            timbre.fn.do_event(this, "ended");
+                            timbre.fn.doEvent(this, "ended");
                         }
                     }
                 }
@@ -168,9 +168,9 @@ var Buffer = (function() {
                     if (_.phase >= buffer.length) {
                         if (_.loop) {
                             _.phase = 0;
-                            timbre.fn.do_event(this, "looped");
+                            timbre.fn.doEvent(this, "looped");
                         } else {
-                            timbre.fn.do_event(this, "ended");
+                            timbre.fn.doEvent(this, "ended");
                         }
                     }
                 }

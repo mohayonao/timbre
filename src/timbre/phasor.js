@@ -74,7 +74,7 @@ var Phasor = (function() {
     
     $this.bang = function() {
         this._.x = this._.phase;
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
     

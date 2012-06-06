@@ -108,7 +108,7 @@ var PercussiveEnvelope = (function() {
         _.dx = -(timbre.cellsize * _.al) / _.samples;
         _.currentTime = 0;
         
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
     
@@ -128,7 +128,7 @@ var PercussiveEnvelope = (function() {
                     _.samples += (timbre.samplerate * (_.a / 1000))|0;
                     _.x0 = _.al;
                     _.dx = -(timbre.cellsize * (1 -_.al)) / _.samples;
-                    timbre.fn.do_event(this, "A");
+                    timbre.fn.doEvent(this, "A");
                     continue;
                 }
                 if (_.status === 1) {
@@ -137,7 +137,7 @@ var PercussiveEnvelope = (function() {
                     _.samples = (timbre.samplerate * (_.r / 1000))|0;
                     _.x0 = 1;
                     _.dx = timbre.cellsize / _.samples;
-                    timbre.fn.do_event(this, "R");
+                    timbre.fn.doEvent(this, "R");
                     continue;
                 }
                 if (_.status === 2) {
@@ -145,7 +145,7 @@ var PercussiveEnvelope = (function() {
                     _.status  = -1;
                     _.samples = Infinity;
                     _.x0 = _.dx = 0;
-                    timbre.fn.do_event(this, "ended");
+                    timbre.fn.doEvent(this, "ended");
                     continue;
                 }
             }

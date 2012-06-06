@@ -91,7 +91,7 @@ var Glide = (function() {
         _.x0 = 0; _.dx = 0;
         _.currentTime = 0;
         
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
     

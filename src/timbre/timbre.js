@@ -54,7 +54,7 @@ var AwesomeTimbre = (function() {
     
     $this.bang = function() {
         if (this._.synth) this._.synth.bang();
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
     

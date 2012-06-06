@@ -86,7 +86,7 @@ timbre.on = function() {
     if (!timbre.sys._.ison) {
         timbre.setup();
         timbre.sys.on();
-        timbre.fn.do_event(this, "on");
+        timbre.fn.doEvent(this, "on");
     }
     return timbre;
 };
@@ -94,7 +94,7 @@ timbre.on = function() {
 timbre.off = function() {
     if (timbre.sys._.ison) {
         timbre.sys.off();
-        timbre.fn.do_event(this, "off");
+        timbre.fn.doEvent(this, "off");
     }
     return timbre;
 };

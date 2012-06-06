@@ -60,7 +60,7 @@ var Timeout = (function() {
         
         _.samples = _.timeout_samples;
         _.currentTime = 0;
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         
         return this;
     };

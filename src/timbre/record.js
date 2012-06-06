@@ -80,7 +80,7 @@ var Record = (function() {
                 }
             }
         }
-        timbre.fn.do_event(this, "on");
+        timbre.fn.doEvent(this, "on");
         return this;
     };
     $this.off = function() {
@@ -88,7 +88,7 @@ var Record = (function() {
             onrecorded.call(this);
         }
         this._.ison = false;
-        timbre.fn.do_event(this, "off");
+        timbre.fn.doEvent(this, "off");
         return this;
     };
     $this.bang = function() {
@@ -100,13 +100,13 @@ var Record = (function() {
                 buffer[i] = 0;
             }
         }
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
     
     var onrecorded = function() {
         var _ = this._;
-        timbre.fn.do_event(this, "recorded",
+        timbre.fn.doEvent(this, "recorded",
                            [_.buffer.subarray(0, _.index)]);
     };
     
@@ -143,7 +143,7 @@ var Record = (function() {
                 if (_.index >= buffer.length) {
                     _.ison = false;
                     onrecorded.call(this);
-                    timbre.fn.do_event(this, "ended");
+                    timbre.fn.doEvent(this, "ended");
                 }
             } else {
                 for (j = jmax; j--; ) {

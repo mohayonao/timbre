@@ -58,7 +58,7 @@ var FunctionWrapper = (function() {
         if (_.value !== null) {
             _.value.apply(this, _.args);
         }
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
     

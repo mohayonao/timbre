@@ -74,7 +74,7 @@ var BooleanWrapper = (function() {
     $this.bang = function() {
         this._.value = !this._.value;
         changeTheValue.call(this);
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
     

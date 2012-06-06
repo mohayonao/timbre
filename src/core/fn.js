@@ -54,7 +54,7 @@ timbre.fn = (function(timbre) {
     defaults.optional.dac.on = function() {
         this._.ison = true;
         timbre.dacs.append(this);
-        timbre.fn.do_event(this, "on");
+        timbre.fn.doEvent(this, "on");
         var p = Object.getPrototypeOf(this);
         if (p._.on) p._.on.call(this);
         return this;
@@ -62,7 +62,7 @@ timbre.fn = (function(timbre) {
     defaults.optional.dac.off = function() {
         this._.ison = false;
         timbre.dacs.remove(this);
-        timbre.fn.do_event(this, "off");
+        timbre.fn.doEvent(this, "off");
         var p = Object.getPrototypeOf(this);
         if (p._.off) p._.off.call(this);
         return this;
@@ -70,7 +70,7 @@ timbre.fn = (function(timbre) {
     defaults.optional.dac.play = function() {
         this._.ison = true;
         timbre.dacs.append(this);
-        timbre.fn.do_event(this, "play");
+        timbre.fn.doEvent(this, "play");
         var p = Object.getPrototypeOf(this);
         if (p._.play) p._.play.call(this);
         return this;
@@ -78,7 +78,7 @@ timbre.fn = (function(timbre) {
     defaults.optional.dac.pause = function() {
         this._.ison = false;
         timbre.dacs.remove(this);
-        timbre.fn.do_event(this, "pause");
+        timbre.fn.doEvent(this, "pause");
         var p = Object.getPrototypeOf(this);
         if (p._.pause) p._.pause.call(this);
         return this;
@@ -88,7 +88,7 @@ timbre.fn = (function(timbre) {
     defaults.optional.timer.on = function() {
         this._.ison = true;
         timbre.timers.append(this);
-        timbre.fn.do_event(this, "on");
+        timbre.fn.doEvent(this, "on");
         var p = Object.getPrototypeOf(this);
         if (p._.on) p._.on.call(this);
         return this;
@@ -96,17 +96,17 @@ timbre.fn = (function(timbre) {
     defaults.optional.timer.off = function() {
         this._.ison = false;
         timbre.timers.remove(this);
-        timbre.fn.do_event(this, "off");
+        timbre.fn.doEvent(this, "off");
         var p = Object.getPrototypeOf(this);
         if (p._.off) p._.off.call(this);
         return this;
     };
     defaults.optional.timer.play = function() {
-        timbre.fn.do_event(this, "play");
+        timbre.fn.doEvent(this, "play");
         return this;
     };
     defaults.optional.timer.pause = function() {
-        timbre.fn.do_event(this, "pause");
+        timbre.fn.doEvent(this, "pause");
         return this;
     };
     
@@ -199,10 +199,10 @@ timbre.fn = (function(timbre) {
         if (_.ar) {
             if (_.dac === null) {
                 _.dac = timbre("dac", this);
-                timbre.fn.do_event(this, "play");
+                timbre.fn.doEvent(this, "play");
             } else if (this.dac.args.indexOf(this) === -1) {
                 _.dac.append(this);
-                timbre.fn.do_event(this, "play");
+                timbre.fn.doEvent(this, "play");
             }
             if (_.dac.isOff) _.dac.on();
         }
@@ -212,13 +212,13 @@ timbre.fn = (function(timbre) {
         var _ = this._;
         if (_.dac && _.dac.args.indexOf(this) !== -1) {
             _.dac.remove(this);
-            timbre.fn.do_event(this, "pause");
+            timbre.fn.doEvent(this, "pause");
             if (_.dac.isOn && _.dac.args.length === 0) _.dac.off();
         }
         return this;
     };
     defaults.bang = function() {
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
     defaults.seq = function() {
@@ -226,12 +226,12 @@ timbre.fn = (function(timbre) {
     };
     defaults.on = function() {
         this._.ison = true;
-        timbre.fn.do_event(this, "on");
+        timbre.fn.doEvent(this, "on");
         return this;
     };
     defaults.off = function() {
         this._.ison = false;
-        timbre.fn.do_event(this, "off");
+        timbre.fn.doEvent(this, "off");
         return this;
     };
     defaults.clone = function(deep) {

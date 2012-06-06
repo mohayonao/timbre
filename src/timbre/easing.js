@@ -124,7 +124,7 @@ var Easing = (function() {
         _.x0 = 0; _.dx = 0;
         _.currentTime = 0;
         
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
 
@@ -152,7 +152,7 @@ var Easing = (function() {
                     _.dx = 0;
                     x = _.func(1);
                     _.value = (x * (_.stop-_.start) + _.start) * _.mul + _.add;
-                    timbre.fn.do_event(this, "ended");
+                    timbre.fn.doEvent(this, "ended");
                     continue;
                 }
             }
@@ -163,7 +163,7 @@ var Easing = (function() {
                     cell[i] = value;
                 }
                 if (_.status === 1) {
-                    timbre.fn.do_event(this, "changed", [value]);
+                    timbre.fn.doEvent(this, "changed", [value]);
                 }
                 _.value = value;
                 _.x0 += _.dx;

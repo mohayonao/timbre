@@ -121,7 +121,7 @@ var WavDecoder = (function() {
     
     var send = function(type, result, callback) {
         if (type === "loadedmetadata") {
-            timbre.fn.do_event(this, "loadedmetadata", [result]);
+            timbre.fn.doEvent(this, "loadedmetadata", [result]);
         } else if (type === "loadeddata") {
             if (typeof callback === "function") {
                 callback.call(this, result);
@@ -134,14 +134,14 @@ var WavDecoder = (function() {
                     console.log("wav.load: done.");
                 }
             }
-            timbre.fn.do_event(this, "loadeddata", [result]);
+            timbre.fn.doEvent(this, "loadeddata", [result]);
         } else if (type === "error") {
             if (typeof callback === "function") {
                 callback.call(this, "error");
             } else if (typeof callback === "object") {
                 console.log("wav.load: error.");
             }
-            timbre.fn.do_event(this, "error");
+            timbre.fn.doEvent(this, "error");
         }
     };
     
@@ -160,7 +160,7 @@ var WavDecoder = (function() {
                            buffer    :_.buffer}, callback);    
             }
         } else if (_.src !== "") {
-            timbre.fn.do_event(this, "loading");
+            timbre.fn.doEvent(this, "loading");
             if (timbre.platform === "web" && timbre._.workerpath) {
                 src = timbre.utils.relpath2rootpath(_.src);
                 worker = new Worker(timbre._.workerpath);
@@ -241,7 +241,7 @@ var WavDecoder = (function() {
     
     $this.bang = function() {
         this._.phase = 0;
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
     
@@ -275,9 +275,9 @@ var WavDecoder = (function() {
                     if (_.phase < 0) {
                         if (_.loop) {
                             _.phase = Math.max(0, _.buffer.length - 1);
-                            timbre.fn.do_event(this, "looped");
+                            timbre.fn.doEvent(this, "looped");
                         } else {
-                            timbre.fn.do_event(this, "ended");
+                            timbre.fn.doEvent(this, "ended");
                         }
                     }
                 }
@@ -294,9 +294,9 @@ var WavDecoder = (function() {
                     if (_.phase >= buffer.length) {
                         if (_.loop) {
                             _.phase = 0;
-                            timbre.fn.do_event(this, "looped");
+                            timbre.fn.doEvent(this, "looped");
                         } else {
-                            timbre.fn.do_event(this, "ended");
+                            timbre.fn.doEvent(this, "ended");
                         }
                     }
                 }

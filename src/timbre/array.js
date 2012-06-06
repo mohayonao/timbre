@@ -98,7 +98,7 @@ var ArrayWrapper = (function() {
     $this.bang = function() {
         var _ = this._;
         this.index = (_.index + 1) % _.value.length;
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
     

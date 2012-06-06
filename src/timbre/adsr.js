@@ -148,7 +148,7 @@ var ADSREnvelope = (function() {
         _.dx = (timbre.cellsize * _.al) / _.samples;
         _.currentTime = 0;
         
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
 
@@ -161,7 +161,7 @@ var ADSREnvelope = (function() {
             _.samples = (timbre.samplerate * (_.r / 1000))|0;
             _.x1 = _.x0; _.x0 = 1;
             _.dx = -timbre.cellsize * (1 - _.rl) / _.samples;
-            timbre.fn.do_event(this, "R");
+            timbre.fn.doEvent(this, "R");
         }
     };
     
@@ -181,7 +181,7 @@ var ADSREnvelope = (function() {
                     _.samples += (timbre.samplerate * (_.a / 1000))|0;
                     _.x0 = _.al;
                     _.dx = (timbre.cellsize * (_.dl -_.al)) / _.samples;
-                    timbre.fn.do_event(this, "A");
+                    timbre.fn.doEvent(this, "A");
                     continue;
                 }
                 if (_.status === 1) { // A -> D
@@ -189,7 +189,7 @@ var ADSREnvelope = (function() {
                     _.samples += (timbre.samplerate * (_.d / 1000))|0;
                     _.x0 = _.dl;
                     _.dx = -timbre.cellsize * (_.dl - _.sl) / _.samples;
-                    timbre.fn.do_event(this, "D");
+                    timbre.fn.doEvent(this, "D");
                     continue;
                 }
                 if (_.status === 2) { // D -> S
@@ -206,14 +206,14 @@ var ADSREnvelope = (function() {
                         _.samples += (timbre.samplerate * (_.s / 1000))|0;
                         _.dx = -timbre.cellsize * (_.sl - _.rl) / _.samples;
                     }
-                    timbre.fn.do_event(this, "S");
+                    timbre.fn.doEvent(this, "S");
                     continue;
                 }
                 if (_.status <= 4) { // (S, R) -> end
                     _.status  = -1;
                     _.samples = Infinity;
                     _.x0 = _.x1 = _.dx = 0;
-                    timbre.fn.do_event(this, "ended");
+                    timbre.fn.doEvent(this, "ended");
                     continue;
                 }
             }

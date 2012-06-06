@@ -235,7 +235,7 @@ var FFT = (function() {
             }
         }
         
-        timbre.fn.do_event(this, "fft", [real, imag]);
+        timbre.fn.doEvent(this, "fft", [real, imag]);
     };
     
     $this.getWindowFunction = function(name) {

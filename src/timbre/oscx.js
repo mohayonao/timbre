@@ -81,7 +81,7 @@ var PhaseOscillator = (function() {
     
     $this.bang = function() {
         this._.phase.bang();
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
     

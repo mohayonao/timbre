@@ -118,7 +118,7 @@ var AudioDecoder = {
         this.bang = function() {
             var _ = this._;
             _.phase = (_.reversed) ? Math.max(0, _.buffer.length - 1) : 0;
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -141,9 +141,9 @@ var AudioDecoder = {
                         if (_.phase < 0) {
                             if (_.loop) {
                                 _.phase = Math.max(0, _.buffer.length - 1);
-                                timbre.fn.do_event(this, "looped");
+                                timbre.fn.doEvent(this, "looped");
                             } else {
-                                timbre.fn.do_event(this, "ended");
+                                timbre.fn.doEvent(this, "ended");
                             }
                         }
                     }
@@ -153,9 +153,9 @@ var AudioDecoder = {
                         if (_.phase >= buffer.length) {
                             if (_.loop) {
                                 _.phase = 0;
-                                timbre.fn.do_event(this, "looped");
+                                timbre.fn.doEvent(this, "looped");
                             } else {
-                                timbre.fn.do_event(this, "ended");
+                                timbre.fn.doEvent(this, "ended");
                             }
                         }
                     }
@@ -195,7 +195,7 @@ var WebKitAudio = (function() {
             xhr.onreadystatechange = function(event) {
                 if (xhr.readyState === 4) {
                     if (xhr.status !== 200) {
-                        timbre.fn.do_event(self, "error", [xhr]);
+                        timbre.fn.doEvent(self, "error", [xhr]);
                     }
                 }
             };
@@ -204,13 +204,13 @@ var WebKitAudio = (function() {
                 _.duration  = _.buffer.length / timbre.samplerate * 1000;
                 opts.buffer = _.buffer;
                 
-                timbre.fn.do_event(self, "loadedmetadata", [opts]);
+                timbre.fn.doEvent(self, "loadedmetadata", [opts]);
                 _.isloaded = true;
-                timbre.fn.do_event(self, "loadeddata", [opts]);
+                timbre.fn.doEvent(self, "loadeddata", [opts]);
             };
             xhr.send();
         } else {
-            timbre.fn.do_event(self, "error", [xhr]);
+            timbre.fn.doEvent(self, "error", [xhr]);
         }
         _.isloaded = false;
         _.buffer   = new Float32Array(0);
@@ -245,7 +245,7 @@ var MozAudio = (function() {
             audio = new Audio(_.src);
             audio.loop = false;
             audio.addEventListener("error", function(e) {
-                timbre.fn.do_event(self, "error", [e]);
+                timbre.fn.doEvent(self, "error", [e]);
             }, false);
             audio.addEventListener("loadedmetadata", function(e) {
                 audio.volume = 0.0;
@@ -256,7 +256,7 @@ var MozAudio = (function() {
                 audio.play();
                 opts.buffer = _.buffer;
                 opts.samplerate = audio.mozSampleRate;
-                timbre.fn.do_event(self, "loadedmetadata", [opts]);
+                timbre.fn.doEvent(self, "loadedmetadata", [opts]);
             }, false);
             audio.addEventListener("MozAudioAvailable", function(e) {
                 var samples, buffer, i, imax;
@@ -268,7 +268,7 @@ var MozAudio = (function() {
             }, false);
             audio.addEventListener("ended", function(e) {
                 _.isloaded = true;
-                timbre.fn.do_event(self, "loadeddata", [opts]);
+                timbre.fn.doEvent(self, "loadeddata", [opts]);
             }, false);
             audio.load();
         }

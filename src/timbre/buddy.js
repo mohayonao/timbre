@@ -41,7 +41,7 @@ var Buddy = (function() {
         var args, i, imax;
         args = this.args.slice(0);
         for (i = 0, imax = args.length; i < imax; ++i) {
-            timbre.fn.do_event(args[i], "play");
+            timbre.fn.doEvent(args[i], "play");
         }
         return $this._._play.call(this);
     };
@@ -49,7 +49,7 @@ var Buddy = (function() {
         var args, i, imax;
         args = this.args.slice(0);
         for (i = 0, imax = args.length; i < imax; ++i) {
-            timbre.fn.do_event(args[i], "pause");
+            timbre.fn.doEvent(args[i], "pause");
         }
         return $this._._pause.call(this);
     };

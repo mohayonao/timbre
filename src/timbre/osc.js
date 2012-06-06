@@ -108,7 +108,7 @@ var Oscillator = (function() {
     
     $this.bang = function() {
         this._.x = 1024 * this._.phase;
-        timbre.fn.do_event(this, "bang");
+        timbre.fn.doEvent(this, "bang");
         return this;
     };
     
