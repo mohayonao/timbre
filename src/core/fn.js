@@ -52,53 +52,53 @@ timbre.fn = (function(timbre) {
 
     defaults.optional.dac = {};
     defaults.optional.dac.on = function() {
+        var f;
         this._.ison = true;
         timbre.dacs.append(this);
         timbre.fn.doEvent(this, "on");
-        var p = Object.getPrototypeOf(this);
-        if (p._.on) p._.on.call(this);
+        if ((f = this._.proto._.on)) f.call(this);
         return this;
     };
     defaults.optional.dac.off = function() {
+        var f;
         this._.ison = false;
         timbre.dacs.remove(this);
         timbre.fn.doEvent(this, "off");
-        var p = Object.getPrototypeOf(this);
-        if (p._.off) p._.off.call(this);
+        if ((f = this._.proto._.off)) f.call(this);
         return this;
     };
     defaults.optional.dac.play = function() {
+        var f;
         this._.ison = true;
         timbre.dacs.append(this);
         timbre.fn.doEvent(this, "play");
-        var p = Object.getPrototypeOf(this);
-        if (p._.play) p._.play.call(this);
+        if ((f = this._.proto._.play)) f.call(this);
         return this;
     };
     defaults.optional.dac.pause = function() {
+        var f;
         this._.ison = false;
         timbre.dacs.remove(this);
         timbre.fn.doEvent(this, "pause");
-        var p = Object.getPrototypeOf(this);
-        if (p._.pause) p._.pause.call(this);
+        if ((f = this._.proto._.pause)) f.call(this);
         return this;
     };
     
     defaults.optional.timer = {};
     defaults.optional.timer.on = function() {
+        var f;
         this._.ison = true;
         timbre.timers.append(this);
         timbre.fn.doEvent(this, "on");
-        var p = Object.getPrototypeOf(this);
-        if (p._.on) p._.on.call(this);
+        if ((f = this._.proto._.on)) f.call(this);
         return this;
     };
     defaults.optional.timer.off = function() {
+        var f;
         this._.ison = false;
         timbre.timers.remove(this);
         timbre.fn.doEvent(this, "off");
-        var p = Object.getPrototypeOf(this);
-        if (p._.off) p._.off.call(this);
+        if ((f = this._.proto._.off)) f.call(this);
         return this;
     };
     defaults.optional.timer.play = function() {
@@ -164,6 +164,7 @@ timbre.fn = (function(timbre) {
             timbre.fn.arrayset(instance.args);
             
             if (!instance.hasOwnProperty("_")) instance._ = {};
+            instance._.proto = proto;
             instance._.isUndefined = !!isUndefined;
             
             if (typeof !instance._.ev !== "object") instance._.ev = {};
@@ -195,17 +196,15 @@ timbre.fn = (function(timbre) {
     };
     
     defaults.play = function() {
-        var p, _ = this._;
+        var f, _ = this._;
         if (_.ar) {
             if (_.dac === null) {
                 _.dac = timbre("dac", this);
-                p = Object.getPrototypeOf(this);
-                if (p._.play) p._.play.call(this);
+                if ((f = _.proto._.play)) f.call(this);
                 timbre.fn.doEvent(this, "play");
             } else if (this.dac.args.indexOf(this) === -1) {
                 _.dac.append(this);
-                p = Object.getPrototypeOf(this);
-                if (p._.play) p._.play.call(this);
+                if ((f = _.proto._.play)) f.call(this);
                 timbre.fn.doEvent(this, "play");
             }
             if (_.dac.isOff) _.dac.on();
@@ -213,11 +212,10 @@ timbre.fn = (function(timbre) {
         return this;
     };
     defaults.pause = function() {
-        var p, _ = this._;
+        var f, _ = this._;
         if (_.dac && _.dac.args.indexOf(this) !== -1) {
             _.dac.remove(this);
-            p = Object.getPrototypeOf(this);
-            if (p._.pause) p._.pause.call(this);
+            if ((f = _.proto._.pause)) f.call(this);
             timbre.fn.doEvent(this, "pause");
             if (_.dac.isOn && _.dac.args.length === 0) _.dac.off();
         }
@@ -231,51 +229,51 @@ timbre.fn = (function(timbre) {
         return this.cell;
     };
     defaults.on = function() {
+        var f;
         this._.ison = true;
-        var p = Object.getPrototypeOf(this);
-        if (p._.on) p._.on.call(this);
+        if ((f = this._.proto._.on)) f.call(this);
         timbre.fn.doEvent(this, "on");
         return this;
     };
     defaults.off = function() {
+        var f;
         this._.ison = false;
-        var p = Object.getPrototypeOf(this);
-        if (p._.off) p._.off.call(this);
+        if ((f = this._.proto._.off)) f.call(this);
         timbre.fn.doEvent(this, "off");
         return this;
     };
     defaults.clone = function(deep) {
-        var newone = timbre(Object.getPrototypeOf(this)._.klassname);
+        var newone = timbre(this._.proto._.klassname);
         timbre.fn.copyBaseArguments(this, newone, deep);
         return newone;
     };
     defaults.append = function() {
+        var f;
         this.args.append.apply(this.args, arguments);
-        var p = Object.getPrototypeOf(this);
-        if (p._.append) p._.append.call(this);
+        if ((f = this._.proto._.append)) f.call(this);
         return this;
     };
     defaults.remove = function() {
+        var f;
         this.args.remove.apply(this.args, arguments);
-        var p = Object.getPrototypeOf(this);
-        if (p._.remove) p._.remove.call(this);
+        if ((f = this._.proto._.remove)) f.call(this);
         return this;
     };
     defaults.removeAll = function() {
+        var f;
         this.args.removeAll.apply(this.args, arguments);
-        var p = Object.getPrototypeOf(this);
-        if (p._.remove) p._.remove.call(this);
+        if ((f = this._.proto._.remove)) f.call(this);
         return this;
     };
     defaults.set = function(key, value) {
         var self, k;
         if (typeof key === "string") {
-            self = Object.getPrototypeOf(this);
+            self = this._.proto;
             if (Object.getOwnPropertyDescriptor(self, key)) {
                 this[key] = value;
             }
         } else if (typeof key === "object") {
-            self = Object.getPrototypeOf(this);
+            self = this._.proto;
             for (k in key) {
                 if (Object.getOwnPropertyDescriptor(self, k)) {
                     this[k] = key[k];
@@ -286,7 +284,7 @@ timbre.fn = (function(timbre) {
     };
     defaults.get = function(key) {
         var self, res;
-        self = Object.getPrototypeOf(this);
+        self = this._.proto;
         if (Object.getOwnPropertyDescriptor(self, key)) {
             res = this[key];
         }
@@ -536,9 +534,9 @@ timbre.fn = (function(timbre) {
     };
     fn.copy_for_clone = fn.copyBaseArguments;
     
-    fn.isTimbreObject = function(object) {
-        return (typeof object === "object") &&
-                (Object.getPrototypeOf(object)._ instanceof TimbreObject);
+    fn.isTimbreObject = function(o) {
+        return (typeof o === "object") &&
+            ((o._||{}).proto||{})._ instanceof TimbreObject;
     };
     
     fn.getClass = function(name) {

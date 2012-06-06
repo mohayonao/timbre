@@ -142,7 +142,7 @@ timbre.removeAllEventListeners = function(name) {
         var args, p, b, i, imax;
         args = timbre.fn.valist(arguments);
         for (i = 0, imax = args.length, b = false; i < imax; ++i) {
-            p = Object.getPrototypeOf(args[i]);
+            p = args[i]._.proto;
             if (p._.type === this.type) {
                 if (this.indexOf(args[i]) === -1) {
                     this.push(args[i]);

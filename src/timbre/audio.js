@@ -78,7 +78,7 @@ var AudioDecoder = {
         
         this.clone = function(deep) {
             var klassname, newone, _ = this._;
-            klassname = Object.getPrototypeOf(this)._.klassname;
+            klassname = this._.proto._.klassname;
             newone = timbre(klassname, _.src, _.loop);
             newone._.reversed = _.reversed;
             newone._.isloaded = _.isloaded;
@@ -90,7 +90,7 @@ var AudioDecoder = {
         
         this.slice = function(begin, end) {
             var klassname, newone, _ = this._, tmp, reversed;
-            klassname = Object.getPrototypeOf(this)._.klassname;
+            klassname = this._.proto._.klassname;
             
             reversed = _.reversed;
             if (typeof begin === "number") {
