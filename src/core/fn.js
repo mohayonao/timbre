@@ -55,32 +55,32 @@ timbre.fn = (function(timbre) {
         var f;
         this._.ison = true;
         timbre.dacs.append(this);
-        timbre.fn.doEvent(this, "on");
         if ((f = this._.proto._.on)) f.call(this);
+        timbre.fn.doEvent(this, "on");
         return this;
     };
     defaults.optional.dac.off = function() {
         var f;
         this._.ison = false;
         timbre.dacs.remove(this);
-        timbre.fn.doEvent(this, "off");
         if ((f = this._.proto._.off)) f.call(this);
+        timbre.fn.doEvent(this, "off");
         return this;
     };
     defaults.optional.dac.play = function() {
         var f;
         this._.ison = true;
         timbre.dacs.append(this);
-        timbre.fn.doEvent(this, "play");
         if ((f = this._.proto._.play)) f.call(this);
+        timbre.fn.doEvent(this, "play");
         return this;
     };
     defaults.optional.dac.pause = function() {
         var f;
         this._.ison = false;
         timbre.dacs.remove(this);
-        timbre.fn.doEvent(this, "pause");
         if ((f = this._.proto._.pause)) f.call(this);
+        timbre.fn.doEvent(this, "pause");
         return this;
     };
     
@@ -89,29 +89,35 @@ timbre.fn = (function(timbre) {
         var f;
         this._.ison = true;
         timbre.timers.append(this);
-        timbre.fn.doEvent(this, "on");
         if ((f = this._.proto._.on)) f.call(this);
+        timbre.fn.doEvent(this, "on");
         return this;
     };
     defaults.optional.timer.off = function() {
         var f;
         this._.ison = false;
         timbre.timers.remove(this);
-        timbre.fn.doEvent(this, "off");
         if ((f = this._.proto._.off)) f.call(this);
+        timbre.fn.doEvent(this, "off");
         return this;
     };
     defaults.optional.timer.play = function() {
+        var f;
+        if ((f = this._.proto._.play)) f.call(this);
         timbre.fn.doEvent(this, "play");
         return this;
     };
     defaults.optional.timer.pause = function() {
+        var f;
+        if ((f = this._.proto._.pause)) f.call(this);
         timbre.fn.doEvent(this, "pause");
         return this;
     };
     
     fn.init = function() {
-        var args, key, klass, instance, isThrougOut, isUndefined, proto;
+        var args, key, klass, instance;
+        var isThrougOut, isUndefined, proto, f;
+        
         args = Array.prototype.slice.call(arguments);
         key  = args[0];
         
@@ -190,7 +196,7 @@ timbre.fn = (function(timbre) {
             }
         }
         
-        if (proto._.init) proto._.init.call(instance);
+        if ((f = proto._.init)) f.call(instance);
         
         return instance;
     };
