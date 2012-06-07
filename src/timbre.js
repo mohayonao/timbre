@@ -64,23 +64,24 @@ timbre.setup = function(params) {
     var samplerate, channels, cellsize, streamsize;
     
     if (!Object.isFrozen(timbre)) {
-        params = params || {};
-        if (typeof params.samplerate === "number") {
-            timbre.samplerate = params.samplerate;
+        if (typeof params === "object") {
+            if (typeof params.samplerate === "number") {
+                timbre.samplerate = params.samplerate;
+            }
+            if (typeof params.channels === "number") {
+                timbre.channels = params.channels;
+            }
+            if (typeof params.cellsize === "number") {
+                timbre.cellsize = params.cellsize;
+            }
+            if (typeof params.streamsize === "number") {
+                timbre.cellsize = params.streamsize;
+            }
+            timbre.sys.setup();
         }
-        if (typeof params.channels === "number") {
-            timbre.channels = params.channels;
-        }
-        if (typeof params.cellsize === "number") {
-            timbre.cellsize = params.cellsize;
-        }
-        if (typeof params.streamsize === "number") {
-            timbre.cellsize = params.streamsize;
-        }
-        timbre.sys.setup();
         Object.freeze(timbre);
     } else {
-        if (timbre._.verbose) {
+        if (timbre._.verbose && params) {
             console.warn("timbre is already configured.");
         }
     }

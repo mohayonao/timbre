@@ -9,9 +9,9 @@ var window = {};
 
 var setupTimbre = function(defaultSamplerate) {
     switch (timbre.samplerate) {
-    case 11025: case 12000:
-    case 22050: case 24000:
-    case 44100: case 48000:
+    case  8000: case 11025: case 12000:
+    case 16000: case 22050: case 24000:
+    case 32000: case 44100: case 48000:
         break;
     default:
         timbre.samplerate = defaultSamplerate;

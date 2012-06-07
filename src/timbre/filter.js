@@ -232,6 +232,7 @@ Filter.Types.lpf = {
         sin = Math.sin(omg);
         n = 0.34657359027997264 * band * omg / sin;
         alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
+        if (alp === Infinity) alp = 0;
         ia0 = 1 / (1 + alp);
         _.a1 = -2 * cos  * ia0;
         _.a2 = (1 - alp) * ia0;
@@ -250,6 +251,7 @@ Filter.Types.hpf = {
         sin = Math.sin(omg);
         n = 0.34657359027997264 * band * omg / sin;
         alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
+        if (alp === Infinity) alp = 0;
         ia0 = 1 / (1 + alp);
         _.a1 = -2 * cos  * ia0;
         _.a2 = +(1 - alp) * ia0;
@@ -268,6 +270,7 @@ Filter.Types.bpf = {
         sin = Math.sin(omg);
         n = 0.34657359027997264 * band * omg / sin;
         alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
+        if (alp === Infinity) alp = 0;
         ia0 = 1 / (1 + alp);
         _.a1 = -2 * cos  * ia0;
         _.a2 = (1 - alp) * ia0;
@@ -286,6 +289,7 @@ Filter.Types.brf = {
         sin = Math.sin(omg);
         n = 0.34657359027997264 * band * omg / sin;
         alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
+        if (alp === Infinity) alp = 0;
         ia0 = 1 / (1 + alp);
         _.a1 = -2 * cos * ia0;
         _.a2 = +(1 - alp) * ia0;
@@ -304,6 +308,7 @@ Filter.Types.allpass = {
         sin = Math.sin(omg);
         n = 0.34657359027997264 * band * omg / sin;
         alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
+        if (alp === Infinity) alp = 0;
         ia0 = 1 / (1 + alp);
         _.a1 = -2 * cos * ia0;
         _.a2 = +(1 - alp) * ia0;
@@ -323,6 +328,7 @@ Filter.Types.peaking = {
         sin = Math.sin(omg);
         n = 0.34657359027997264 * band * omg / sin;
         alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
+        if (alp === Infinity) alp = 0;
         alpA  = alp * A;
         alpiA = alp / A;
         ia0 = 1 / (1 + alpiA);
