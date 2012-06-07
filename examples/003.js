@@ -13,9 +13,8 @@ ex0 = (function() {
     
     // metronome
     var metronome = T("interval", function() {
-        metronome.beat = metronome.count % 16;
-        if (metronome.beat === 0) metronome.measure += 1;
-    }); metronome.measure = 0; metronome.beat = 0;
+        metronome.count %= 16 * 4;
+    });
     
     // amen (load a wav file and decode it)
     var amen = T("wav", "./public/audio/amen.wav", true).load(function(res) {
@@ -47,7 +46,7 @@ ex0 = (function() {
     
     // piano chord (load s wav file and decode it)
     var piano = 4, pianotimer = (function() {
-        var synth, _synth, prev_chord, chordtable = [
+        var synth, prev_chord, chordtable = [
             [1, 6, 8], [2, 5, 8], [1, 4, 8], [0, 2, 6],
         ], amptable = [ 0.9, 0.5, 0.8, 0.6 ], pianotones = [];
         
@@ -59,25 +58,25 @@ ex0 = (function() {
             if (ready === 1) ex0.$ready = true; else ready = 1;
         });
         
+        synth = T("+");
+        ex0.append(synth);
+        
         function play_chord(chord, amp) {
             if (!chord) return;
-            if (_synth) _synth.dac.remove(_synth);
-            _synth = synth;
-            
-            synth = T("+");
             for (var i = 0; i < chord.length; i++) {
-                synth.append(pianotones[chord[i]].clone());
+                synth.append(pianotones[chord[i]].clone().set("mul", amp));
             }
-            synth.mul = amp * 0.5;
-            synth.dac = ex0;
+            while (synth.args.length > 3) {
+                synth.args.shift();
+            }
         }
         
         return T("interval", function() {
             var chord, amp;
-            chord = metronome.measure % 4;
+            chord = (metronome.count / 16)|0;
             if (chord !== prev_chord) {
                 amp = 1.0; prev_chord = chord;
-            } else amp = amptable[metronome.beat % 4];
+            } else amp = amptable[(metronome.count-1) % 4];
             play_chord(chordtable[chord], amp);
         });
     }());
@@ -113,8 +112,11 @@ ex0 = (function() {
         });
     }());
     
+    ex0.onbang  = function() {
+        dist.isOn  ? dist.off()  : dist.on();
+        delay.isOn ? delay.off() : delay.off();
+    };
     ex0.onplay  = function() {
-        metronome.measure = -1;
         metronome.on();
         beattimer.interval  = (amen.duration / 3) / beat;
         beattimer.on();

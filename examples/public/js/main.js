@@ -1,4 +1,4 @@
-// main.js 0.0.3
+// main.js 0.0.4
 var s = [];
 $(function() {
     if (!timbre.isEnabled) $("#caution").show();
@@ -18,10 +18,10 @@ $(function() {
         var $pre = $(pre);
         var $elem = $(pre).prev();
         var synth = window[$pre.attr("id")];
+        var btn, timerId;
         if (!synth || synth instanceof HTMLElement) return;
         
-        $("<button>").text("play").on("click", function() {
-            if (synth.$ready === false) return;
+        btn = $("<button>").text("play").on("click", function() {
             $pre.css("background", "rgba(255,224,224,0.75)");
             if (!synth.dac || synth.dac.isOff) {
                 if (synth.$listener) synth.$listener.on().bang();
@@ -39,6 +39,16 @@ $(function() {
         }).css("float", "right").insertAfter($elem);
         
         if (synth.$initUI) synth.$initUI();
+        
+        if (synth.$ready === false) {
+            btn.attr("disabled", true).text("loading..");
+            timerId = setInterval(function() {
+                if (synth.$ready) {
+                    btn.attr("disabled", false).text("play");
+                    clearInterval(timerId);
+                }
+            }, 100);
+        }
         
         s[i] = synth;
     });

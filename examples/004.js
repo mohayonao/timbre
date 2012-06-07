@@ -38,6 +38,11 @@ ex0 = (function() {
     });
     
     var ex0 = efx3;
+
+    ex0.onbang = function() {
+        osc1.freq.value *= 2;
+        osc2.freq.value *= 2;
+    };
     ex0.onplay = function() {
         metro.on().bang();
     };
