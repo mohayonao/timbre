@@ -12,7 +12,7 @@ timbre.VERSION    = "${VERSION}";
 timbre.BUILD      = "${DATE}";
 timbre.env        = "";
 timbre.platform   = "";
-timbre.samplerate = 0;
+timbre.samplerate = 44100;
 timbre.channels   = 2;
 timbre.cellsize   = 128;
 timbre.streamsize = 1024;
@@ -77,8 +77,9 @@ timbre.setup = function(params) {
             if (typeof params.streamsize === "number") {
                 timbre.cellsize = params.streamsize;
             }
-            timbre.sys.setup();
         }
+        timbre.sys.setup();
+        Object.freeze(timbre);
     } else {
         if (timbre._.verbose && params) {
             console.warn("timbre is already configured.");
@@ -86,11 +87,6 @@ timbre.setup = function(params) {
     }
     return timbre;
 };
-
-timbre.freeze = function() {
-    Object.freeze(timbre);
-};
-
 timbre.on = function() {
     if (!timbre.sys._.ison) {
         timbre.setup();
@@ -99,7 +95,6 @@ timbre.on = function() {
     }
     return timbre;
 };
-
 timbre.off = function() {
     if (timbre.sys._.ison) {
         timbre.sys.off();
@@ -107,7 +102,6 @@ timbre.off = function() {
     }
     return timbre;
 };
-
 timbre.addEventListener = function(name, func) {
     var list, rm, i;
     if (typeof func === "function") {

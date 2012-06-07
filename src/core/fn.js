@@ -10,6 +10,7 @@ timbre.fn = (function(timbre) {
     var fn = {};
     var klasses = {};
     var TimbreObject = function() {};
+    var objectId = 0;
     
     klasses.find = function(key) {
         if (typeof klasses[key] === "function") {
@@ -172,6 +173,8 @@ timbre.fn = (function(timbre) {
             if (!instance.hasOwnProperty("_")) instance._ = {};
             instance._.proto = proto;
             instance._.isUndefined = !!isUndefined;
+            if (objectId === 0) timbre.setup();
+            instance._.id = objectId++;
             
             if (typeof !instance._.ev !== "object") instance._.ev = {};
             

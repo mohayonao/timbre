@@ -126,7 +126,7 @@ var WebKitPlayer = function(sys) {
         this.node = null;
     };
     
-    return this.setup();
+    return this;
 };
 
 var MozPlayer = function(sys) {
@@ -179,7 +179,7 @@ var MozPlayer = function(sys) {
         timer.clearInterval();
     }
     
-    return this.setup();
+    return this;
 };
 
 if (typeof webkitAudioContext === "function") {
