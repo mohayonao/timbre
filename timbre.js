@@ -1,6 +1,6 @@
 /**
- * timbre 0.2.1a / JavaScript Library for Objective Sound Programming
- * build: Wed, 06 Jun 2012 22:18:18 GMT
+ * Timbre.js 0.2.1a / JavaScript Library for Objective Sound Programming
+ * build: Thu, 07 Jun 2012 08:15:43 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,10 +10,10 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.2.1a";
-    timbre.BUILD      = "Wed, 06 Jun 2012 22:18:18 GMT";
+    timbre.BUILD      = "Thu, 07 Jun 2012 08:15:43 GMT";
     timbre.env        = "";
     timbre.platform   = "";
-    timbre.samplerate = 0;
+    timbre.samplerate = 44100;
     timbre.channels   = 2;
     timbre.cellsize   = 128;
     timbre.streamsize = 1024;
@@ -65,24 +65,29 @@ var timbre = (function(context, timbre) {
         var samplerate, channels, cellsize, streamsize;
         
         if (!Object.isFrozen(timbre)) {
-            params = params || {};
-            if (typeof params.samplerate === "number") {
-                timbre.samplerate = params.samplerate;
-            }
-            if (typeof params.channels === "number") {
-                timbre.channels = params.channels;
-            }
-            if (typeof params.cellsize === "number") {
-                timbre.cellsize = params.cellsize;
-            }
-            if (typeof params.streamsize === "number") {
-                timbre.cellsize = params.streamsize;
+            if (typeof params === "object") {
+                if (typeof params.samplerate === "number") {
+                    timbre.samplerate = params.samplerate;
+                }
+                if (typeof params.channels === "number") {
+                    timbre.channels = params.channels;
+                }
+                if (typeof params.cellsize === "number") {
+                    timbre.cellsize = params.cellsize;
+                }
+                if (typeof params.streamsize === "number") {
+                    timbre.cellsize = params.streamsize;
+                }
             }
             timbre.sys.setup();
             Object.freeze(timbre);
+        } else {
+            if (timbre._.verbose && params) {
+                console.warn("timbre is already configured.");
+            }
         }
+        return timbre;
     };
-    
     timbre.on = function() {
         if (!timbre.sys._.ison) {
             timbre.setup();
@@ -91,7 +96,6 @@ var timbre = (function(context, timbre) {
         }
         return timbre;
     };
-    
     timbre.off = function() {
         if (timbre.sys._.ison) {
             timbre.sys.off();
@@ -99,7 +103,6 @@ var timbre = (function(context, timbre) {
         }
         return timbre;
     };
-    
     timbre.addEventListener = function(name, func) {
         var list, rm, i;
         if (typeof func === "function") {
@@ -192,6 +195,7 @@ var timbre = (function(context, timbre) {
         var fn = {};
         var klasses = {};
         var TimbreObject = function() {};
+        var objectId = 0;
         
         klasses.find = function(key) {
             if (typeof klasses[key] === "function") {
@@ -237,32 +241,32 @@ var timbre = (function(context, timbre) {
             var f;
             this._.ison = true;
             timbre.dacs.append(this);
-            timbre.fn.doEvent(this, "on");
             if ((f = this._.proto._.on)) f.call(this);
+            timbre.fn.doEvent(this, "on");
             return this;
         };
         defaults.optional.dac.off = function() {
             var f;
             this._.ison = false;
             timbre.dacs.remove(this);
-            timbre.fn.doEvent(this, "off");
             if ((f = this._.proto._.off)) f.call(this);
+            timbre.fn.doEvent(this, "off");
             return this;
         };
         defaults.optional.dac.play = function() {
             var f;
             this._.ison = true;
             timbre.dacs.append(this);
-            timbre.fn.doEvent(this, "play");
             if ((f = this._.proto._.play)) f.call(this);
+            timbre.fn.doEvent(this, "play");
             return this;
         };
         defaults.optional.dac.pause = function() {
             var f;
             this._.ison = false;
             timbre.dacs.remove(this);
-            timbre.fn.doEvent(this, "pause");
             if ((f = this._.proto._.pause)) f.call(this);
+            timbre.fn.doEvent(this, "pause");
             return this;
         };
         
@@ -271,29 +275,35 @@ var timbre = (function(context, timbre) {
             var f;
             this._.ison = true;
             timbre.timers.append(this);
-            timbre.fn.doEvent(this, "on");
             if ((f = this._.proto._.on)) f.call(this);
+            timbre.fn.doEvent(this, "on");
             return this;
         };
         defaults.optional.timer.off = function() {
             var f;
             this._.ison = false;
             timbre.timers.remove(this);
-            timbre.fn.doEvent(this, "off");
             if ((f = this._.proto._.off)) f.call(this);
+            timbre.fn.doEvent(this, "off");
             return this;
         };
         defaults.optional.timer.play = function() {
+            var f;
+            if ((f = this._.proto._.play)) f.call(this);
             timbre.fn.doEvent(this, "play");
             return this;
         };
         defaults.optional.timer.pause = function() {
+            var f;
+            if ((f = this._.proto._.pause)) f.call(this);
             timbre.fn.doEvent(this, "pause");
             return this;
         };
         
         fn.init = function() {
-            var args, key, klass, instance, isThrougOut, isUndefined, proto;
+            var args, key, klass, instance;
+            var isThrougOut, isUndefined, proto, f;
+            
             args = Array.prototype.slice.call(arguments);
             key  = args[0];
             
@@ -348,6 +358,8 @@ var timbre = (function(context, timbre) {
                 if (!instance.hasOwnProperty("_")) instance._ = {};
                 instance._.proto = proto;
                 instance._.isUndefined = !!isUndefined;
+                if (objectId === 0) timbre.setup();
+                instance._.id = objectId++;
                 
                 if (typeof !instance._.ev !== "object") instance._.ev = {};
                 
@@ -372,7 +384,7 @@ var timbre = (function(context, timbre) {
                 }
             }
             
-            if (proto._.init) proto._.init.call(instance);
+            if ((f = proto._.init)) f.call(instance);
             
             return instance;
         };
@@ -2898,6 +2910,7 @@ var timbre = (function(context, timbre) {
             sin = Math.sin(omg);
             n = 0.34657359027997264 * band * omg / sin;
             alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
+            if (alp === Infinity) alp = 0;
             ia0 = 1 / (1 + alp);
             _.a1 = -2 * cos  * ia0;
             _.a2 = (1 - alp) * ia0;
@@ -2916,6 +2929,7 @@ var timbre = (function(context, timbre) {
             sin = Math.sin(omg);
             n = 0.34657359027997264 * band * omg / sin;
             alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
+            if (alp === Infinity) alp = 0;
             ia0 = 1 / (1 + alp);
             _.a1 = -2 * cos  * ia0;
             _.a2 = +(1 - alp) * ia0;
@@ -2934,6 +2948,7 @@ var timbre = (function(context, timbre) {
             sin = Math.sin(omg);
             n = 0.34657359027997264 * band * omg / sin;
             alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
+            if (alp === Infinity) alp = 0;
             ia0 = 1 / (1 + alp);
             _.a1 = -2 * cos  * ia0;
             _.a2 = (1 - alp) * ia0;
@@ -2952,6 +2967,7 @@ var timbre = (function(context, timbre) {
             sin = Math.sin(omg);
             n = 0.34657359027997264 * band * omg / sin;
             alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
+            if (alp === Infinity) alp = 0;
             ia0 = 1 / (1 + alp);
             _.a1 = -2 * cos * ia0;
             _.a2 = +(1 - alp) * ia0;
@@ -2970,6 +2986,7 @@ var timbre = (function(context, timbre) {
             sin = Math.sin(omg);
             n = 0.34657359027997264 * band * omg / sin;
             alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
+            if (alp === Infinity) alp = 0;
             ia0 = 1 / (1 + alp);
             _.a1 = -2 * cos * ia0;
             _.a2 = +(1 - alp) * ia0;
@@ -2989,6 +3006,7 @@ var timbre = (function(context, timbre) {
             sin = Math.sin(omg);
             n = 0.34657359027997264 * band * omg / sin;
             alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
+            if (alp === Infinity) alp = 0;
             alpA  = alp * A;
             alpiA = alp / A;
             ia0 = 1 / (1 + alpiA);
@@ -6099,9 +6117,9 @@ var timbre = (function(context, timbre) {
         
         var setupTimbre = function(defaultSamplerate) {
             switch (timbre.samplerate) {
-            case 11025: case 12000:
-            case 22050: case 24000:
-            case 44100: case 48000:
+            case  8000: case 11025: case 12000:
+            case 16000: case 22050: case 24000:
+            case 32000: case 44100: case 48000:
                 break;
             default:
                 timbre.samplerate = defaultSamplerate;
@@ -6216,7 +6234,7 @@ var timbre = (function(context, timbre) {
                 this.node = null;
             };
             
-            return this.setup();
+            return this;
         };
         
         var MozPlayer = function(sys) {
@@ -6269,7 +6287,7 @@ var timbre = (function(context, timbre) {
                 timer.clearInterval();
             }
             
-            return this.setup();
+            return this;
         };
         
         if (typeof webkitAudioContext === "function") {
@@ -6311,7 +6329,7 @@ var timbre = (function(context, timbre) {
         // start message
         (function() {
             var x = [];
-            x.push("timbre "  + timbre.VERSION);
+            x.push("Timbre.js "  + timbre.VERSION);
             x.push(" (build: " + timbre.BUILD   + ")");
             if (timbre.env === "webkit") {
                 x.push(" on WebAudioAPI");
