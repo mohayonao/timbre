@@ -1,5 +1,5 @@
 /**
- * timbre ${VERSION} / JavaScript Library for Objective Sound Programming
+ * Timbre.js ${VERSION} / JavaScript Library for Objective Sound Programming
  * build: ${DATE}
  */
 ;

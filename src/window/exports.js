@@ -13,7 +13,7 @@ timbre.context  = window;
 // start message
 (function() {
     var x = [];
-    x.push("timbre "  + timbre.VERSION);
+    x.push("Timbre.js "  + timbre.VERSION);
     x.push(" (build: " + timbre.BUILD   + ")");
     if (timbre.env === "webkit") {
         x.push(" on WebAudioAPI");

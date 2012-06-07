@@ -1,4 +1,4 @@
-# timbre
+# Timbre.js
 JavaScript Library for Objective Sound Programming
 
 http://mohayonao.github.com/timbre/
@@ -11,7 +11,7 @@ http://mohayonao.github.com/timbre/
 [Piano and Drums]
 (http://mohayonao.github.com/timbre/examples/003_loadwavfiles.html)
 
-[Timbre Synthesizer]
+[Synthesizer]
 (http://mohayonao.github.com/timbre/examples/004_timbresynth.html)
 
 
@@ -19,3 +19,7 @@ http://mohayonao.github.com/timbre/
 It is so easily learn it. Because it is pure JavaScript.
 
 http://mohayonao.github.com/timbre/documents
+
+
+## License
+MIT License
