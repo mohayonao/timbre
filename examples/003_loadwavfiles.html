@@ -117,7 +117,7 @@ var piano = 4, pianotimer = (function() {
         }
     });
 
-    synth = T("+");
+    synth = T("+").set("mul", 0.5);
     ex0.append(synth);
     
     function play_chord(chord, amp) {

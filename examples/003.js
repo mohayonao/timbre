@@ -58,7 +58,7 @@ ex0 = (function() {
             if (ready === 1) ex0.$ready = true; else ready = 1;
         });
         
-        synth = T("+");
+        synth = T("+").set("mul", 0.5);
         ex0.append(synth);
         
         function play_chord(chord, amp) {
