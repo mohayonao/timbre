@@ -70,7 +70,7 @@ timbre.workerpath = "../timbre.js";
 timbre.utils.exports("converter"); // use atof
 
 // dac
-var ex1 = T("dac");
+var ex0 = T("dac");
 
 // metronome
 var metronome = T("interval", function() {
@@ -82,7 +82,7 @@ var amen = T("wav", "./public/audio/amen.wav", true).load(function(res) {
     metronome.interval = (this.duration / 3) / 16;
 });
 dist = T("efx.dist", 0, -18, 2400, amen).set("mul", 0.5);
-dist.dac = ex1;
+dist.dac = ex0;
 
 var beat = 8, beattimer = (function() {
     var tim = 0, cnt = 0, stay = 0;
@@ -149,7 +149,7 @@ var lead = T("rlpf", T("pulse", 0.462, 800, 2000, 0.8).kr(),
                              T("osc", leadtone, 0, 0.15)),
                       T("adsr", 20, 1500, 0.4)));
 delay = T("efx.delay", 125, 0.8, lead).set("mul", 0.5);
-delay.dac = ex1;
+delay.dac = ex0;
 
 var melo = 16, melotimer = (function() {
     var tone1, tone2, env, phrase = [
@@ -175,7 +175,7 @@ ex0.onbang  = function() {
     dist.isOn  ? dist.off()  : dist.on();
     delay.isOn ? delay.off() : delay.off();
 };
-ex1.onplay  = function() {
+ex0.onplay  = function() {
     metronome.on();
     beattimer.interval  = (amen.duration / 3) / beat;
     beattimer.on();
@@ -184,14 +184,14 @@ ex1.onplay  = function() {
     melotimer.interval  = (amen.duration / 3) / melo;
     melotimer.on();
 };
-ex1.onpause = function() {
+ex0.onpause = function() {
     melotimer.off();
     pianotimer.off();
     beattimer.off();
     metronome.off();
 };
        
-ex1.play();
+ex0.play();
         </pre>
       </div>
     </section>
