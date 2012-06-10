@@ -100,50 +100,52 @@ utils.$exports["converter"] = [
 ];
 
 // __END__
-describe("mtof", function() {
-    it("mtof(-1) should equal 0", function() {
-        utils.mtof(-1).should.equal(0);
+if (module.parent && !module.parent.parent) {
+    describe("mtof", function() {
+        it("mtof(-1) should equal 0", function() {
+            utils.mtof(-1).should.equal(0);
+        });
+        it("mtof(69) should equal 440", function() {
+            utils.mtof(69).should.equal(440);
+        });
+        it("mtof(69+12) should equal 440*2", function() {
+            utils.mtof(69+12).should.equal(440*2);
+        });
+        it("mtof(69-12) should equal 440/2", function() {
+            utils.mtof(69-12).should.equal(440/2);
+        });
+        it("mtof(128) should equal 0", function() {
+            utils.mtof(128).should.equal(0);
+        });
     });
-    it("mtof(69) should equal 440", function() {
-        utils.mtof(69).should.equal(440);
-    });
-    it("mtof(69+12) should equal 440*2", function() {
-        utils.mtof(69+12).should.equal(440*2);
-    });
-    it("mtof(69-12) should equal 440/2", function() {
-        utils.mtof(69-12).should.equal(440/2);
-    });
-    it("mtof(128) should equal 0", function() {
-        utils.mtof(128).should.equal(0);
-    });
-});
 
-describe("ftom", function() {
-    it("ftom(440) should equal 69", function() {
-        utils.ftom(440).should.equal(69);
+    describe("ftom", function() {
+        it("ftom(440) should equal 69", function() {
+            utils.ftom(440).should.equal(69);
+        });
+        it("ftom(660) should equal 69+7", function() {
+            utils.ftom(660).should.equal(69+7);
+        });
     });
-    it("ftom(660) should equal 69+7", function() {
-        utils.ftom(660).should.equal(69+7);
-    });
-});
 
-describe("mtoa", function() {
-    it("mtoa(69) should equal 'A3'", function() {
-        utils.mtoa(69).should.equal("A3");
+    describe("mtoa", function() {
+        it("mtoa(69) should equal 'A3'", function() {
+            utils.mtoa(69).should.equal("A3");
+        });
+        it("mtoa(69+7+24) should equal 'E6'", function() {
+            utils.mtoa(69+7+24).should.equal("E6");
+        });
+        it("mtoa(69-7-12) should equal 'D2'", function() {
+            utils.mtoa(69-7-12).should.equal("D2");
+        });
     });
-    it("mtoa(69+7+24) should equal 'E6'", function() {
-        utils.mtoa(69+7+24).should.equal("E6");
-    });
-    it("mtoa(69-7-12) should equal 'D2'", function() {
-        utils.mtoa(69-7-12).should.equal("D2");
-    });
-});
 
-describe("toam", function() {
-    it("atom('A3') should equal 69", function() {
-        utils.atom("A3").should.equal(69);
+    describe("toam", function() {
+        it("atom('A3') should equal 69", function() {
+            utils.atom("A3").should.equal(69);
+        });
+        it("atom('C2') should equal 48", function() {
+            utils.atom("C2").should.equal(48);
+        });
     });
-    it("atom('C2') should equal 48", function() {
-        utils.atom("C2").should.equal(48);
-    });
-});
+}

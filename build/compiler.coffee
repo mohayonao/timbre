@@ -51,6 +51,8 @@ TIMBRE_SOURCES = [
 
 UTILS_SOURCES = [
     "utils/converters"
+    "utils/range"
+    "utils/random"
     "utils/wavelet"
     "utils/binary"
     "utils/wav"
