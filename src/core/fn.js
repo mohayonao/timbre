@@ -307,6 +307,7 @@ timbre.fn = (function(timbre) {
     defaults.properties.isKr = { get: function() { return  !this._.ar; } };
     defaults.properties.isOn  = { get: function() { return !!this._.ison; } };
     defaults.properties.isOff = { get: function() { return  !this._.ison; } };
+    defaults.properties.scalar = { get: function() { return this.cell[0]; } };
     defaults.properties.isUndefined = { get: function() { return this._.isUndefined; } };
     
     defaults.properties.dac = {
