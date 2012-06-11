@@ -12,11 +12,36 @@ var Scale = (function() {
         initialize.apply(this, arguments);
     }, $this = Scale.prototype;
     
+    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
+    Object.defineProperty($this, "scale", {
+        set: function(value) {
+            var _ = this._;
+            if (typeof value === "string" &&
+                Scale.Scales[value] !== undefined) {
+                _.scale = value;
+                _.list = Scale.Scales[value];
+            } else if (value instanceof Array) {
+                _.scale = "";
+                _.list = value;
+            }
+        },
+        get: function() { return this._.scale; }
+    });
+    
     Object.defineProperty($this, "root", {
         set: function(value) {
             this._.root = timbre(value);
         },
         get: function() { return this._.root; }
+    });
+    Object.defineProperty($this, "octave", {
+        set: function(value) {
+            if (typeof value === "number") {
+                this._.octave = value;
+            }
+        },
+        get: function() { return this._.octave; }
     });
     
     var initialize = function(_args) {
@@ -27,10 +52,11 @@ var Scale = (function() {
         i = 0;
         if (typeof _args[i] === "string" &&
             Scale.Scales[_args[i]] !== undefined) {
-            _.list = Scale.Scales[_args[i++]];
+            _.scale = _args[i++];
         } else {
-            _.list = Scale.Scales["major"];
+            _.scale = "major";
         }
+        _.list = Scale.Scales[_.scale];
         if (typeof _args[i] !== "undefined") {
             this.root = _args[i++];
         } else {
@@ -38,6 +64,7 @@ var Scale = (function() {
         }
         _.octave = typeof _args[i] === "number" ? _args[i++] : 0;
         
+        _.scale_value = 0;
         _.prev_value  = undefined;
         _.prev_index  = undefined;
         _.prev_octave = undefined;
@@ -45,37 +72,67 @@ var Scale = (function() {
         this.args = timbre.fn.valist.call(this, _args.slice(i));
     };
     
+    $this.clone = function(deep) {
+        var newone, _ = this._;
+        newone = timbre("scale");
+        newone.scale  = _.scale;
+        newone._.root = _.root;
+        newone._.octave = _.octave;
+        return timbre.fn.copyBaseArguments(this, newone, deep);
+    };
+    
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell, root, value, index, octave;
-        var cell, x, i;
+        var cell, args, root, value;
+        var index, delta, x0, x1;
+        var scale_value, octave;
+        var len, x, tmp, i, imax;
         
-        if (!_.ison || this.args.length === 0) {
-            return timbre._.none;
-        }
+        if (!_.ison) return timbre._.none;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
-            root  = _.root.seq(seq_id)[0];
-            value = this.args[0].seq(seq_id)[0]|0;
+            args = this.args.slice(0);
+            tmp  = 0;
+            for (i = 0, imax = args.length; i < imax; ++i) {
+                tmp += args[i].seq(seq_id)[0];
+            }
+            value = tmp;
             if (value !== _.prev_value) {
+                len = _.list.length;
                 if (value >= 0) {
-                    index  = value % _.list.length;
-                    octave = ((value / _.list.length)|0);
+                    index = value % len;
+                    octave = (value / len)|0;
                 } else {
-                    index  = _.list.length - (-value % _.list.length);
-                    octave = -(((value+1) / _.list.length)|0);
+                    index = (len + (value % len)) % len;
+                    octave = Math.floor(value / len);
                 }
+                delta  = index - (index|0);
+                index |= 0;
+                if (delta === 0) {
+                    scale_value = _.list[index];
+                } else {
+                    if (index === _.list.length - 1) {
+                        x0 = _.list[index];
+                        x1 = _.list[0] + 12;
+                        scale_value = (1.0 - delta) * x0 + delta * x1;
+                    } else {
+                        x0 = _.list[index];
+                        x1 = _.list[index+1];
+                        scale_value = (1.0 - delta) * x0 + delta * x1;
+                    }
+                }
+                _.scale_value = scale_value;
                 _.prev_value  = value;
-                _.prev_index  = index;
                 _.prev_octave = octave;
             } else {
-                index  = _.prev_index;
+                scale_value = _.scale_value;
                 octave = _.prev_octave;
             }
             octave += _.octave;
-            x = root * Math.pow(2, (_.list[index] + octave * 12) / 12);
+            root = _.root.seq(seq_id)[0];
+            x = root * Math.pow(2, (scale_value + octave * 12) / 12);
             x = x * _.mul + _.add;
             for (i = cell.length; i--; ) {
                 cell[i] = x;
