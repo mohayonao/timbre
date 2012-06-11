@@ -307,8 +307,16 @@ timbre.fn = (function(timbre) {
     defaults.properties.isKr = { get: function() { return  !this._.ar; } };
     defaults.properties.isOn  = { get: function() { return !!this._.ison; } };
     defaults.properties.isOff = { get: function() { return  !this._.ison; } };
-    defaults.properties.scalar = { get: function() { return this.cell[0]; } };
     defaults.properties.isUndefined = { get: function() { return this._.isUndefined; } };
+    
+    defaults.properties.scalar = {
+        get: function() {
+            if (timbre.sys.seq_id !== this.seq_id) {
+                this.seq(timbre.sys.seq_id);
+            }
+            return this.cell[0];
+        }
+    };
     
     defaults.properties.dac = {
         set: function(value) {
