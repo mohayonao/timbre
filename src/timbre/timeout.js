@@ -50,7 +50,7 @@ var Timeout = (function() {
     $this.clone = function(deep) {
         return timbre("timeout", this._.timeout);
     };
-
+    
     $this._.on = function() {
         this._.samples = this._.timeout_samples;
     };
@@ -92,5 +92,27 @@ timbre.fn.register("timeout", Timeout);
 if (module.parent && !module.parent.parent) {
     describe("timeout", function() {
         object_test(Timeout, "timeout");
+        describe("arguments", function() {
+            it("arg..0", function() {
+                var instance = T("timeout");
+                instance.timeout.should.equal(1000);
+            });
+            it("arg..1", function() {
+                var instance = T("timeout", 1500);
+                instance.timeout.should.equal(1500);
+            });
+        });
+        describe("properties", function() {
+            it("get currentTime", function() {
+                var instance = T("timeout");
+                instance.currentTime.should.be.a("number");
+            });
+            it("set currentTime", function() {
+                (function() {
+                    var instance = T("timeout");
+                    instance.currentTime = 1000;
+                }).should.throw(/only a getter/);
+            });
+        });
     });
 }

@@ -83,7 +83,7 @@ var Interval = (function() {
     };
     
     $this.clone = function(deep) {
-        return timbre("interval", this._.interval);
+        return timbre("interval", this._.delay, this._.interval);
     };
     
     $this.bang = function() {
@@ -155,7 +155,7 @@ if (module.parent && !module.parent.parent) {
             it("set count", function() {
                 var instance = T("interval");
                 instance.count = 1000;
-                instance.count.should.equal(1000);
+                instance._.count.should.equal(1000);
             });
             it("get currentTime", function() {
                 var instance = T("interval");
