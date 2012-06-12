@@ -18,6 +18,16 @@ var Schedule = (function() {
     Object.defineProperty($this, "mode", {
         get: function() { return this._.mode; }
     });
+    Object.defineProperty($this, "bpm", {
+        set: function(value) {
+            if (this._.mode === "bpm") {
+                if (typeof value === "number" && value > 0) {
+                    changeBPM.call(this, value);
+                }
+            }
+        },
+        get: function() { return this._.bpm; }
+    });
     Object.defineProperty($this, "currentTime", {
         get: function() { return this._.currentTime; }
     });
@@ -27,6 +37,7 @@ var Schedule = (function() {
         
         this._ = _ = {};
         
+        _.bpm  = 0;
         _.mode = "msec";
         _.msec = 1;
         _.timetable = [];
@@ -66,11 +77,28 @@ var Schedule = (function() {
     };
     
     var setMode = function(mode) {
-        var m;
+        var m, _ = this._;
         if ((m = /^bpm\s*\(\s*(\d+(?:\.\d*)?)\s*(?:,\s*(\d+))?\s*\)/.exec(mode))) {
-            this._.mode = "bpm";
-            this._.msec = timbre.utils.bpm2msec(m[1], m[2] || 16);
+            _.mode = "bpm";
+            _.bpm  = (m[1])|0;
+            _.len  = ((m[2])|0) || 16;
+            _.msec = timbre.utils.bpm2msec(_.bpm, _.len);
         }
+    };
+    
+    var changeBPM = function(bpm) {
+        var msec, x, tt, i, _ = this._;
+        msec = timbre.utils.bpm2msec(bpm, _.len);
+        x = msec / _.msec;
+        
+        tt = _.timetable;
+        for (i = tt.length; i--; ) {
+            tt[i][0] *= x;
+        }
+        _.currentTime *= x;
+        
+        _.msec = msec;
+        _.bpm  = bpm;
     };
     
     $this.bang = function() {
