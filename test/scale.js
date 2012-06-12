@@ -7,7 +7,7 @@ tests = (function() {
     tests[i] = function() {
         var synth, array, scale;
 
-        array = T([0,1,2,3,4,5,6,7]);
+        array = T([0,1,2,3,4,5,6,7]).bang();
         scale = T("scale", "major", 440);
         scale.append(array);
 
@@ -24,7 +24,7 @@ tests = (function() {
         var synth, array, scale, list;
         
         list = [0,2,4,5,7,9,11];
-        array = T([0,1,2,3,4,5,6,7]);
+        array = T([0,1,2,3,4,5,6,7]).bang();
         scale = T("scale").set("scale", list);
         scale.append(array);
         

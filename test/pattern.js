@@ -17,12 +17,12 @@ tests = (function() {
         
         array.repeat = 3;
         
-        arp = T("*", T("sin", scale, 0.2),
+        arp = T("*", T("sin", scale, 0.4),
                      T("perc", 450).bang());
         
         pad = T("*", T("+", T("sin", T("*", 2, scale.root).kr()),
                             T("sin", T("*", 3, scale.root).kr())),
-                     T("+tri", 8, 0.1),
+                     T("+tri", 8, 0.2),
                      T("adsr", 2500, 10000).bang());
                   
         synth = T("efx.delay", T("+", arp, pad));
@@ -30,7 +30,7 @@ tests = (function() {
         timer = T("interval", bpm2msec(bpm, 8), function() {
             array.bang();
             arp.args[1].bang();
-        }).set("delay", bpm2msec(bpm, 8));
+        });
         
         array.onended = function() {
             scale.root.value = atof(choice(["A3","G3","F3","E3","D-3"]));
@@ -40,6 +40,7 @@ tests = (function() {
         
         synth.onbang = function() {
             scale.scale = (scale.scale === "major") ? "minor" : "major";
+            shuffle(array.value);
         };
         synth.onplay = function() {
             timer.on();
