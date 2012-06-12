@@ -1,10 +1,10 @@
 /**
- * Schedule: <draft>
+ * Schedule: 0.3.0
  * [kr-only]
  */
 "use strict";
 
-var timbre = require("../src/timbre");
+var timbre = require("../timbre");
 // __BEGIN__
 
 var Schedule = (function() {

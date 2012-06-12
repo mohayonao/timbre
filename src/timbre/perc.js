@@ -1,5 +1,5 @@
 /**
- * PercussiveEnvelope: 0.1.0
+ * PercussiveEnvelope: 0.3.0
  * Percussive envelope generator
  * [kr-only]
  */

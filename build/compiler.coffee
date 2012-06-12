@@ -11,6 +11,7 @@ TIMBRE_SOURCES = [
     "timbre/boolean"
     "timbre/array"
     "timbre/function"
+    "timbre/scale"
 
     "timbre/dac"
 
@@ -45,6 +46,7 @@ TIMBRE_SOURCES = [
 
     "timbre/interval"
     "timbre/timeout"
+    "timbre/schedule"
 
     "timbre/timbre"
 ]
