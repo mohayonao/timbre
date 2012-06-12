@@ -1,0 +1,132 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Timbre.js: Scale</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/style.css" />
+    <link type="text/css" media="screen" rel="stylesheet" href="public/css/prettify.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">Timbre.js</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+      
+      <div id="caution">system requirements: Chrome 14- or Firefox 4-</div>
+
+      <div class="navi"><a href=".">index</a></div>
+      <div id="contents">
+        <h2>Scale</h2>
+        <p class="desc">
+          Scale
+        </p>
+        <h3>Constructor</h3>
+        <pre id="ex0" class="prettyprint">
+scale = T("scale", scale="major", root=440, octave=0);
+scale = T("major", root=440, octave=0);
+scale = T("minor", root=440, octave=0);
+
+// scale  [String] "major", "minor", "ionian", "dorian", "phrigian", "lydian"
+//                 "mixolydian", "aeolian", "locrian", "wholetone", "chromatic", "ryukyu"
+// root   [Object] root frequency
+// octave [Number] octave shift
+        </pre>
+        
+        <h3>Properties</h3>
+        <pre id="ex1" class="prettyprint">
+scale.scale;  // [String]
+scale.root;   // [Object]
+scale.octave; // [Number]
+        </pre>
+
+        <h3>Methods</h3>
+        <pre id="ex2" class="prettyprint">
+        </pre>
+
+        <h3>Events</h3>
+        <pre id="ex3" class="prettyprint">
+        </pre>
+        
+        <h3>Example: Switch major/minor scales</h3>
+        <pre id="ex4" class="prettyprint">
+timbre.utils.exports("atof", "range", "random.choice");
+
+var array = T(range(8)); // same as T([0, 1, 2, 3, 4, 5, 6, 7]);
+var scale = T("scale", "major", atof("C4"), array);
+
+var synth = T("sin", scale);
+var timer = T("interval", 250, array);
+
+synth.onbang = function() {
+    scale.scale = (scale.scale === "major") ? "minor" : "major";
+};
+synth.onplay = function() {
+    timer.on();
+};
+synth.onpause = function() {
+    timer.off();
+};
+
+synth.play();    
+        </pre>
+
+        <h3>Example</h3>
+        <pre id="ex5" class="prettyprint">
+timbre.utils.exports("atof","bpm2msec", "range",
+                     "random.choice", "random.shuffle");
+var bpm = 138;
+var array = T(shuffle(range(16))).set("repeat", 3);
+var scale = T("scale", "minor").append(array);
+
+var arp = T("*", T("sin", scale, 0.4),
+                 T("perc", 450).bang());
+
+var pad = T("*", T("+", T("sin", T("*", 2, scale.root).kr()),
+                        T("sin", T("*", 3, scale.root).kr())),
+                 T("+tri", 8, 0.4),
+                 T("adsr", 2500, 10000).bang());
+
+var synth = T("efx.delay", T("+", arp, pad));
+
+var timer = T("interval", bpm2msec(bpm, 8), function() {
+    array.bang();
+    arp.args[1].bang();
+});
+
+array.onended = function() {
+    scale.root.value = atof(choice(["A3","G3","F3","E3","D-3"]));
+    array.reset();
+    pad.args[2].bang();
+};
+
+synth.onbang = function() {
+    scale.scale = (scale.scale === "major") ? "minor" : "major";
+    shuffle(array.value);
+};
+synth.onplay = function() {
+    timer.on();
+};
+synth.onpause = function() {
+    timer.off();
+};
+    
+synth.play();
+        </pre>
+        
+        <h3>See Also: </h3>
+        <a href="array.html">T("array")</a>
+        
+      </div>
+      <footer></footer>
+    </section>
+  </body>
+  <script type="text/javascript" src="public/js/prettify.js"></script>
+  <script type="text/javascript">prettyPrint();</script>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="public/js/waveviewer.js"></script>  
+  <script type="text/javascript" src="public/js/main.js"></script>
+  <script type="text/javascript" src="../timbre.js"></script>
+  <script type="text/javascript" src="scale.js"></script>
+</html>

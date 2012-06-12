@@ -1,6 +1,6 @@
 ex4 = (function() {
 
-    timbre.utils.exports("converter"); // use 'atof'
+    timbre.utils.exports("atof");
     
     var data;
     data  = "E3 F3 A3 C4 G3 B3 D4 B3 G#3 B3 D4 B3 C4 E4 B3 E4 ";

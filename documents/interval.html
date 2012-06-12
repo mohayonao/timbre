@@ -24,15 +24,16 @@
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-timer = T("interval", interval=1000, ...);
+timer = T("interval", [delay=0], interval=1000, ...);
 
 // ...   Input objects which will be processed
         </pre>
         
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
-timer.interval    [Number] 
-timer.count       [Readonly]
+timer.interval    [Number]
+timer.delay       [Number] 
+timer.count       [Number]
 timer.currentTime [Readonly]
         </pre>
         
