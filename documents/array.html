@@ -30,8 +30,9 @@ ary = T([]);
         
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
-ary.value; // [Array]
-ary.index; // [Number]
+ary.value;  // [Array]
+ary.index;  // [Number]
+ary.repeat; // [Number]
         </pre>
 
         <h3>Methods</h3>
@@ -42,11 +43,16 @@ ary.bang();
 
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
+// Script to be run when the array has reach the end
+ary.onended = function() {};
+
+// Script to be run when the array has reach the end and loop
+ary.onlooped = function() {};
         </pre>
         
         <h3>Example: Phrase</h3>
         <pre id="ex4" class="prettyprint">
-timbre.utils.exports("converter"); // use 'atof'
+timbre.utils.exports("atof");
 
 data  = "E3 F3 A3 C4 G3 B3 D4 B3 G#3 B3 D4 B3 C4 E4 B3 E4 ";
 data += "E3 F3 A3 C4 G3 B3 D4 B3 F4 E4 D#4 E4 D4 C4 B3 C4"
