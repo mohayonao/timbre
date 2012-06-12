@@ -82,7 +82,7 @@ var ArrayWrapper = (function() {
         }
         _.value = compile(value);
         _.repeat1 = Infinity;        
-        _.index   = 0;
+        _.index   = -1;
         _.repeat2 = 0;
         _.ended = false;
     };
@@ -105,7 +105,7 @@ var ArrayWrapper = (function() {
         var x, cell, i, _ = this._;
         
         _.index = index;
-        x = _.value[index];
+        x = _.value[index] || 0;
         if (x instanceof ArrayWrapper) {
             x = x.cell[0];
         }
@@ -130,19 +130,16 @@ var ArrayWrapper = (function() {
     $this.reset = function() {
         var v, _ = this._;
         v = _.value;
-        _.index   = 0;
+        _.index   = -1;
         _.repeat2 = 0;
         _.ended   = false;
-        if (v[0] instanceof ArrayWrapper) {
-            v[0].reset();
-        }
-        changeTheValue.call(this, 0);
+        changeTheValue.call(this, -1);
         return this;
     };
     
     $this.bang = function() {
         var i, v, _ = this._;
-
+        
         i = _.index;
         v = _.value;
         if (v[i] instanceof ArrayWrapper && !v[i]._.ended) {
@@ -154,7 +151,7 @@ var ArrayWrapper = (function() {
             if (i < v.length) {
                 _.index = i;
                 if (v[i] instanceof ArrayWrapper) {
-                    v[i].reset();
+                    v[i].reset().bang();
                 }
                 changeTheValue.call(this, i);
             } else {                
@@ -166,7 +163,7 @@ var ArrayWrapper = (function() {
                     // loop;
                     _.index = i = 0;
                     if (v[0] instanceof ArrayWrapper) {
-                        v[0].reset();
+                        v[0].reset().bang();
                     }
                     changeTheValue.call(this, i);
                     timbre.fn.doEvent(this, "looped");
@@ -191,9 +188,9 @@ if (module.parent && !module.parent.parent) {
         describe("#bang()", function() {
             it("loop iteration", function() {
                 var i, instance = timbre([2, 3, 5, 7, 11, 13]);
-                instance.index.should.equal(0);
-                instance.cell.should.eql(timbre(2).cell);
-                for (i = 1; i <= 100; i++) {
+                instance.index.should.equal(-1);
+                instance.cell.should.eql(timbre(0).cell);
+                for (i = 0; i < 100; i++) {
                     instance.bang();
                     instance.index.should.equal(i % 6);
                     instance.cell[0].should.equal([2, 3, 5, 7, 11, 13][i % 6]);
@@ -202,8 +199,8 @@ if (module.parent && !module.parent.parent) {
         });
         describe("#index", function() {
             var instance = timbre([2, 3, 5, 7, 11, 13]);
-            it("init is 2", function() {
-                instance.cell.should.eql(timbre(2).cell);
+            it("init is 0", function() {
+                instance.cell.should.eql(timbre(0).cell);
             });
             it("[3] is 7", function() {
                 instance.index = 3;
@@ -217,18 +214,21 @@ if (module.parent && !module.parent.parent) {
         describe("#value", function() {
             it("should multiply", function() {
                 var instance = timbre([2, 3, 5, 7, 11, 13]);
+                instance.bang();
                 instance.cell.should.eql(timbre(2).cell);
                 instance.mul = 2;
                 instance.cell.should.eql(timbre(4).cell);
             });
             it("should add", function() {
                 var instance = timbre([2, 3, 5, 7, 11, 13]);
+                instance.bang();
                 instance.cell.should.eql(timbre(2).cell);
                 instance.add = 3;
                 instance.cell.should.eql(timbre(5).cell);
             });
             it("should multiply and add", function() {
                 var instance = timbre([2, 3, 5, 7, 11, 13]);
+                instance.bang();
                 instance.cell.should.eql(timbre(2).cell);
                 instance.mul = 2;
                 instance.cell.should.eql(timbre(4).cell);
@@ -245,9 +245,8 @@ if (module.parent && !module.parent.parent) {
             describe("[1, [2, 3]:0, 4, 5]", function() {
                 var instance = timbre([1, [2, 3], 4, 5]);
                 instance.value[1].repeat = 0;
-                console.log("instance", instance._.id, instance.value[1]._.id);
                 it("{0}", function() {
-                    instance.cell.should.eql(timbre(1).cell);
+                    instance.bang().cell.should.eql(timbre(1).cell);
                 });
                 it("{1,0}", function() {
                     instance.bang().cell.should.eql(timbre(2).cell);
@@ -283,7 +282,7 @@ if (module.parent && !module.parent.parent) {
             describe("[1, [2, 3]:inf, 4, 5]", function() {
                 var instance = timbre([1, [2, 3], 4, 5]);
                 it("{0}", function() {
-                    instance.cell.should.eql(timbre(1).cell);
+                    instance.bang().cell.should.eql(timbre(1).cell);
                 });
                 it("{1,0}", function() {
                     instance.bang().cell.should.eql(timbre(2).cell);
@@ -308,7 +307,7 @@ if (module.parent && !module.parent.parent) {
                 var instance = timbre([1, [2, 3], 4, 5]);
                 instance.value[1].repeat = 2;
                 it("{0}", function() {
-                    instance.cell.should.eql(timbre(1).cell);
+                    instance.bang().cell.should.eql(timbre(1).cell);
                 });
                 it("{1,0}", function() {
                     instance.bang().cell.should.eql(timbre(2).cell);
@@ -353,7 +352,7 @@ if (module.parent && !module.parent.parent) {
             describe("[0,1,2,3]:4", function() {
                 var instance = timbre([0, 1, 2, 3]).set("repeat", 3);
                 it("{0..3}", function() {
-                    instance.cell.should.eql(timbre(0).cell);
+                    instance.bang().cell.should.eql(timbre(0).cell);
                     instance.bang().cell.should.eql(timbre(1).cell);
                     instance.bang().cell.should.eql(timbre(2).cell);
                     instance.bang().cell.should.eql(timbre(3).cell);
