@@ -143,7 +143,7 @@ var Schedule = (function() {
         var _ = this._;
         var tt, items, schedule;
         var xx, x, y, cnt, result;
-        var i, imax, j;
+        var i, imax, j, k;
         
         tt = _.timetable;
         
@@ -159,10 +159,10 @@ var Schedule = (function() {
                 y = tt[_.index];
                 
                 cnt = 0;
-                for (j = tt.length; j--; ) {
-                    x = tt[j];
+                for (k = tt.length; k--; ) {
+                    x = tt[k];
                     if (x[0] === xx[0] && x[1] == xx[1]) {
-                        tt.splice(j, 1);
+                        tt.splice(k, 1);
                         result.unshift(x);
                         if (x.onremoved) x.onremoved(this, items[0]);
                         cnt += 1;
