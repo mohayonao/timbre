@@ -1,107 +1,53 @@
 ex0 = (function() {
-    var synth, env 
-    synth = T("*", T("sin", 1340),
-                   T("tri", 8, 0.8, 0.4).kr(),
-                   env = T("adsr", 500, 1500));
-    synth.onplay = function() {
-        synth.dac.append(synth);
-        env.bang();
-    };
-    env.onended = function() {
-        synth.pause();
+    return T("sin", 440);
+}());
+
+ex1 = (function() {
+    return T("+", T("sin", 523.35),
+                  T("sin", 659.25),
+                  T("sin", 783.99)).set("mul", 0.3);
+}());
+
+ex2 = (function() {
+    var synth = T("*", T("+", T("sin", 523.35),
+                              T("sin", 659.25),
+                              T("sin", 783.99)).set("mul", 0.25),
+                       T("+tri", 8),
+                       T("adsr", 0, 1500).bang());
+    synth.onplay = synth.onbang = function() {
+        synth.args[2].bang();
     };
     return synth;
 }());
 
-ex1 = (function() {
-    var delay = T("efx.delay", 125, 0.8, 0.75);
+ex3 = (function() {
+    timbre.utils.exports("atof");
     
-    function synth(freq) {
-        var s, env;
-        s = T("*", T("fami", freq, 0.4),
-                   env = T("perc", 1000).bang());
-        delay.append(s);
-        if (delay.args.length >= 4) {
-            delay.args.shift();
-        }
+    var synth = T("efx.delay", 150, 0.8);
+    
+    function tone(freq) {
+        synth.append(  T("*", T("+", T("sin", freq, 0.25), T("sin", freq + 4, 0.1)),
+                              T("perc", 2500).bang()) );
+        if (synth.args.length > 4) synth.args.shift();
     }
     
-    var index = 0;
-    var list  = [ "C5", "D5", "E5", "G5", "C6", "D6", 
-                  "E6", "D6", "C6", "G5", "E5", "D5" ];
+    var sch = T("schedule", "bpm (116, 2)", [
+        [0, tone, [atof("G3")]],
+        [1, tone, [atof("B4")]], [1, tone, [atof("D5")]], [1, tone, [atof("F#5")]],
+        [3, tone, [atof("D3")]],
+        [4, tone, [atof("A4")]], [4, tone, [atof("C#5")]], [4, tone, [atof("F#5")]],
+        [6],
+    ], true);
     
-    var timer = T("interval", 380, function() {
-        synth(timbre.utils.atof(list[index++]));
-        if (index >= list.length) index = 0;
-    });
-    
-    delay.onbang = function() {
-        index = 0;
+    synth.onbang = function() {
+        sch.bang();
     };
-    delay.onplay = function() {
-        timer.on();
+    synth.onplay = function() {
+        sch.on();
     };
-    delay.onpause = function() {
-        timer.off();
-    };
-    
-    return delay;
-}());
-
-ex2 = (function() {
-    var pianotones = [];
-    var lpf = T("lpf");
-    
-    T("wav", "./examples/public/audio/piano_cmaj.wav").load(function(res) {
-        var dx = this.duration / 9;
-        for (var i = 0; i < 9; i++) {
-            pianotones[i] = this.slice(dx * i, dx * i + dx);
-        }
-    }).set("mul", 0.5);
-    
-    function playpiano(id) {
-        lpf.append( pianotones[id].clone() );
-        if (lpf.args.length >= 4) {
-            lpf.args.shift();
-        }
-    }
-    
-    var serif = [ "oh!", "awesome!", "cool!!", "nice!" ];
-    var bridge = function(id) {
-        if (lpf.dac && lpf.dac.isOn) {
-            playpiano(id);
-            return serif[(Math.random() * serif.length)|0];
-        } else {
-            return "press [play] button";
-        }
+    synth.onpause = function() {
+        sch.off();
     };
     
-    lpf.$initUI = function() {
-        Object.defineProperty(window, "c", {
-            get: function() { return bridge(6); }
-        });
-        Object.defineProperty(window, "d", { get: function() {
-            return bridge(7); }
-        });
-        Object.defineProperty(window, "e", { get: function() {
-            return bridge(0); }
-        });
-        Object.defineProperty(window, "f", { get: function() {
-            return bridge(1); }
-        });
-        Object.defineProperty(window, "g", { get: function() {
-            return bridge(2); }
-        });
-        Object.defineProperty(window, "gg", { get: function() {
-            return bridge(3); }
-        });
-        Object.defineProperty(window, "a", { get: function() {
-            return bridge(4); }
-        });
-        Object.defineProperty(window, "b", { get: function() {
-            return bridge(5); }
-        });
-    };
-    
-    return lpf;
+    return synth;
 }());

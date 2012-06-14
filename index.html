@@ -23,8 +23,8 @@
         <div>
           Right-click, and use "Save As"
           <ul>
-            <li><a href="timbre.js">0.3.0</a> (241.6KB)</li>
-            <li><a href="timbre.min.js">minified</a> (94.1KB)</li>
+            <li><a href="timbre.js">0.3.1</a> (244.1KB)</li>
+            <li><a href="timbre.min.js">minified</a> (94.9KB)</li>
           </ul>
         </div>
         
@@ -50,82 +50,61 @@
         <h3>Overview</h3>
         <div>
           <p>
-            Timbre is so easy, useful and powerful.
+            Timbre.js is so easy.
           </p>
           <pre id="ex0" class="prettyprint">
-T("*", T("sin", 1340),
-       T("tri", 8, 0.8, 0.4).kr(),
-       T("adsr", 500, 1500)).play();
-          </pre>
+// generate a 523.25Hz(C4) sine
+T("sin", 523.25).play();</pre>
 
           <p>
-            Looks a bit like SuperCollider?? CUI Max/MSP???
+            It's useful and powerful.
           </p>
           <pre id="ex1" class="prettyprint">
-delay = T("efx.delay", 125, 0.8, 0.75);
-
-function synth(freq) {
-    var s, env;
-    s = T("*", T("fami", freq, 0.6),
-               env = T("perc", 1000).bang());
-    delay.append(s);
-    if (delay.args.length >= 4) {
-        delay.args.shift();
-    }
-}
-
-index = 0;
-list  = [ "C5", "D5", "E5", "G5", "C6", "D6", 
-          "E6", "D6", "C6", "G5", "E5", "D5" ];
-
-timer = T("interval", 380, function() {
-    synth(timbre.utils.atof(list[index++]));
-    if (index >= list.length) index = 0;
-});
-
-delay.onbang = function() {
-    index = 0;
-};
-delay.onplay = function() {
-    timer.on();
-};
-delay.onpause = function() {
-    timer.off();
-};
-
-delay.play();
-          </pre>
+// generate a chord C-major            
+T("+", T("sin", 523.35),
+       T("sin", 659.25),
+       T("sin", 783.99)).set("mul", 0.25).play();</pre>
+          
+          <p>
+            Looks a bit like CUI Max/MSP??? SuperCollider??
+          </p>
+          <pre id="ex2" class="prettyprint">
+// tremolo & decay            
+T("*", T("+", T("sin", 523.35),
+              T("sin", 659.25),
+              T("sin", 783.99)).set("mul", 0.25),
+       T("+tri", 2),
+       T("adsr", 100, 2500)).play();</pre>
           
           <p>
             You can so easily learn it. Because it is pure JavaScript. Fun!!!
           </p>
-          <pre id="ex2" class="prettyprint">
-// Open your WebConsole and input below
-//   > c, e , g [enter]
-//   > f, gg, c [enter] 'gg' is G#
-var pianotones = [], synth = [];
-var lpf = T("lpf");
+          <pre id="ex3" class="prettyprint">
+timbre.utils.exports("atof");
 
-// load wav file and slice
-T("wav", "./examples/public/audio/piano_cmaj.wav").load(function(res) {
-    var dx = this.duration / 9;
-    for (var i = 0; i < 9; i++) {
-        pianotones[i] = this.slice(dx * i, dx * i + dx);
-    }
-}).set("mul", 0.5);
+var synth = T("efx.delay", 150, 0.8);
 
-function playpiano(id) {
-    lpf.append( pianotones[id].clone() );
-    if (lpf.args.length >= 4) {
-        lpf.args.shift();
-    }
+function tone(freq) {
+    synth.append( T("*", T("+", T("sin", freq, 0.25), T("sin", freq + 4, 0.1)),
+                          T("perc", 2500).bang()) );
+    if (synth.args.length > 4) synth.args.shift();
 }
 
-Object.defineProperty(window, "c", {
-    get: function() { playpiano(3); }
-});
-// ...
-          </pre>
+var sch = T("schedule", "bpm (116, 2)", [
+    [0, tone, [atof("G3")]],
+    [1, tone, [atof("B4")]], [1, tone, [atof("D5")]], [1, tone, [atof("F#5")]],
+    [3, tone, [atof("D3")]],
+    [4, tone, [atof("A4")]], [4, tone, [atof("C#5")]], [4, tone, [atof("F#5")]],
+    [6],
+], true);
+
+synth.onplay = function() {
+    sch.on();
+};
+synth.onpause = function() {
+    sch.off();
+};
+synth.play();</pre>
         </div>
         
         <h3>Change Log</h3>
