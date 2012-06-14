@@ -1,6 +1,6 @@
 /**
- * Timbre.js 0.3.0 / JavaScript Library for Objective Sound Programming
- * build: Tue, 12 Jun 2012 08:29:45 GMT
+ * Timbre.js 0.3.1 / JavaScript Library for Objective Sound Programming
+ * build: Thu, 14 Jun 2012 12:00:57 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -9,8 +9,8 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "0.3.0";
-    timbre.BUILD      = "Tue, 12 Jun 2012 08:29:45 GMT";
+    timbre.VERSION    = "0.3.1";
+    timbre.BUILD      = "Thu, 14 Jun 2012 12:00:57 GMT";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 44100;
@@ -5983,27 +5983,22 @@ var timbre = (function(context, timbre) {
         });
         
         var initialize = function(_args) {
-            var list, i, j, _;
+            var list, i, _;
             
-            this._ = _ = {};
+            this._ = _ = { ev:{} };
             
             _.bpm  = 0;
             _.mode = "msec";
             _.msec = 1;
             _.timetable = [];
             _.index = 0;
-            _.init = true;
             
             i = 0;
             if (typeof _args[i] === "string") {
                 setMode.call(this, _args[i++]);
             }
             if (typeof _args[i] === "object" && _args[i] instanceof Array) {
-                list = _args[i++];
-                for (j = list.length; j--; ) {
-                    this.append(list[j]);
-                }
-                _.timetable.sort(function(a, b) { return a[0] - b[0]; });
+                this.append(_args[i++]);
             }
             if (typeof _args[i] === "boolean") {
                 _.loop = _args[i++];
@@ -6014,8 +6009,8 @@ var timbre = (function(context, timbre) {
             _.ison  = false;
             _.currentTime = 0;
             _.loopcount   = 0;
-            
-            delete _.init;
+            _.inseq   = false;
+            _.updated = false;
         };
         
         $this.clone = function(deep) {
@@ -6056,92 +6051,176 @@ var timbre = (function(context, timbre) {
             _.index = 0;
             _.currentTime = 0;
             _.loopcount   = 0;
-            timbre.fn.do_event(this, "bang");
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
-        $this.append = function(items) {
+        $this.append = function() {
             var _ = this._;
-            var tt, schedule;
+            var tt, items;
+            var x, y, result;
+            var i, imax, j, jmax;
             
-            if (typeof items !== "object") return this;
-            if (!(items instanceof Array)) return this;
-            if (items.length === 0) return this;
-    
             tt = _.timetable;
-            schedule = tt[_.index];
+            y  = tt[_.index];
+            result = [];
             
-            items[0] *= _.msec;
-            tt.push(items);
-            
-            if (! _.init) {
-                if (schedule && items[0] < schedule[0]) {
-                    _.index += 1;
+            for (i = 0, imax = arguments.length; i < imax; ++i) {
+                items = arguments[i];
+                for (j = 0, jmax = items.length; j < jmax; ++j) {
+                    x = items[j];
+                    if (typeof x !== "object") continue;
+                    if (!(x instanceof Array)) continue;
+                    if (x.length === 0) continue;
+                    tt.push(x);
+                    result.push(x);
+                    
+                    if (x.onappended) x.onappended(this, x[0]);
+                    
+                    if (y && x[0] < y[0]) {
+                        _.index += 1;
+                    }
                 }
+            }
+            
+            tt.sort(function(a, b) { return a[0] - b[0]; });
+            timbre.fn.doEvent(this, "append", [result]);
+            
+            return this;
+        };
+        
+        $this.remove = function(schedules) {
+            var _ = this._;
+            var tt, items, schedule;
+            var xx, x, y, cnt, result;
+            var i, imax, j, k;
+            
+            tt = _.timetable;
+            
+            result = [];
+            for (i = arguments.length; i--; ) {
+                items = arguments[i];
+                for (j = items.length; j--; ) {
+                    xx = items[j];
+                    if (typeof xx !== "object") continue;
+                    if (!(xx instanceof Array)) continue;
+                    if (xx.length === 0) continue;
+                    
+                    y = tt[_.index];
+                    
+                    cnt = 0;
+                    for (k = tt.length; k--; ) {
+                        x = tt[k];
+                        if (x[0] === xx[0] && x[1] == xx[1]) {
+                            tt.splice(k, 1);
+                            result.unshift(x);
+                            if (x.onremoved) x.onremoved(this, items[0]);
+                            cnt += 1;
+                        }
+                    }
+                    if (y && x[0] < y[0]) {
+                        _.index -= cnt;
+                    }
+                }
+            }
+            timbre.fn.doEvent(this, "remove", [result]);
+            
+            return this;
+        };
+        
+        $this.update = function() {
+            var _ = this._;
+            var tt, msec, c, i;
+            if (_.inseq) {
+                _.updated = true;
+            } else {
+                tt = _.timetable;
                 tt.sort(function(a, b) { return a[0] - b[0]; });
+                i = tt.length - 1;
+                c = _.currentTime;
+                msec = _.msec;
+                while (tt[i] && c < tt[i][0] * msec) {
+                    i -= 1;
+                }
+                _.index = i;
             }
-            return this;
         };
         
-        $this.remove = function(items) {
+        $this.getSchedules = function(a, b) {
             var _ = this._;
-            var tt, cnt;
-            
-            if (typeof items !== "object") return this;
-            if (!(items instanceof Array)) return this;
-            if (items.length === 0) return this;
+            var tt, result, x, i;
             
             tt = _.timetable;
-            schedule = tt[_.index];
-            
-            items[0] *= _.msec;
-            
-            cnt = 0;
-            for (i = tt.length; i--; ) {
-                if (tt[i][0] === items[0] &&
-                    tt[i][1] == items[1] && tt[i][2] === items[2]) {
-                    tt.slice(i, 1);
-                    cnt += 1;
+            result = [];
+            if (a === undefined) {
+                a = 0;
+                b = Infinity;
+            } else if (b === undefined) {
+                b = a;
+            }
+    
+            if (a === b) {
+                for (i = tt.length; i--; ) {
+                    x = tt[i];
+                    if (a == x[0]) {
+                        result.unshift(x);
+                    }
+                }
+            } else {
+                for (i = tt.length; i--; ) {
+                    x = tt[i];
+                    if (a <= x[0] && x[0] < b) {
+                        result.unshift(x);
+                    }
                 }
             }
             
-            if (schedule && schedule[0] < items[0]) {
-                _.index -= cnt;
-            }
-            return this;
+            return result;
         };
         
         $this.seq = function(seq_id) {
             var _ = this._;
             var tt, schedule, target;
+            var msec, i, c;
             
             if (seq_id !== this.seq_id) {
                 this.seq_id = seq_id;
                 
-                tt = _.timetable;
+                tt   = _.timetable;
+                msec = _.msec;
+                _.inseq = true;
                 while ((schedule = tt[_.index]) !== undefined) {
-                    if (_.currentTime < schedule[0]) {
+                    if (_.currentTime < schedule[0] * msec) {
                         break;
                     } else {
                         if ((target = schedule[1]) !== undefined) {
                             if (typeof target === "function") {
-                                target.apply(target, schedule[2]);
+                                target.apply(schedule, schedule[2]);
                             } else if (timbre.fn.isTimbreObject(target)) {
                                 target.bang();
                             }
                         }
-                        if ((++_.index) >= tt.length) {
-                            if (_.index >= tt.length) {
-                                if (_.loop) {
-                                    timbre.fn.do_event(this, "looped",
-                                                       [++_.loopcount]);
-                                    _.index = 0;
-                                    _.currentTime -= schedule[0];
-                                } else {
-                                    timbre.fn.do_event(this, "ended");
-                                    this.off();
-                                }
-                            }
+                        ++_.index;
+                    }
+                }
+                _.inseq = false;
+                if (_.updated) this.update();
+                if (_.index >= tt.length) {
+                    i = tt.length - 1;
+                    if (_.loop) {
+                        _.currentTime -= (tt[i][0] * msec) || 0;
+                        _.index = 0;
+                        timbre.fn.doEvent(this, "looped", [++_.loopcount]);
+                    } else {
+                        timbre.fn.doEvent(this, "ended");
+                        c = _.currentTime;
+                        while (tt[i] && c <= tt[i][0] * msec) {
+                            i -= 1;
+                        }
+                        if (i === tt.length-1) {
+                            this.off();
+                        } else if (i !== -1) {
+                            _.index = i;
                         }
                     }
                 }
