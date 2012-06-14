@@ -1,0 +1,70 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Timbre.js - JavaScript Library for Objective Sound Programming</title>
+    <link type="text/css" rel="stylesheet" href="public/css/index.css" />
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+  </head>
+  <body>
+    <canvas id="waveviewer"></canvas>
+    <section id="body">
+      <header style="margin:5px 0px 15px 0px">
+        <h1 id="title"><a href="/timbre">Timbre.js</a></h1>
+        <span>JavaScript Library for Objective Sound Programming</span><br/>
+      </header>
+
+      <p><button id="play">play</button><button id="pause">pause</button></p>
+      <textarea id="code" style="width:800px;height:600px;font-family:'Courier New',monospace;font-weight:bold;font-size:16px;">
+timbre.utils.exports("random.choice", "msec2hz");
+
+function tone(freq) {
+    var x = T("*", T("+", T("konami", freq + 2, 0.2),
+                          T("konami", freq - 2, 0.2)),
+                   T("perc", 300).set("mul", 0.8).bang());
+    x.args[1].onended = function() { synth.remove(x); };
+    synth.append(x);
+}
+
+var synth = T("rhpf", T("saw", msec2hz(7.5), 1600, 2000).kr(), 0.5);
+
+var sch = T("schedule", "bpm(120)");
+sch.append([
+    [0, function(freq) {
+        tone(freq);
+        synth.cutoff.bang();
+        this[0] += choice([1,1,3,2,2,2,2,4,4,6]);
+        this[2] = [choice([440, 880, 660, 1320])];
+        sch.update();
+    }, [440]]
+]);
+
+synth.onplay = function() {
+    sch.on();
+};
+synth.onpause = function() {
+    sch.off();
+};
+
+return synth;
+      </textarea>
+      
+    </section>
+
+  </body>
+  <script type="text/javascript" src="public/js/jquery.min.js"></script>
+  <script type="text/javascript" src="timbre.js"></script>
+  <script type="text/javascript">
+    $(function() {
+        var synth = null;
+        $("#play").on("click", function() {
+            if (synth) synth.pause();
+            synth = eval("(function() {" + $("#code").val() + "}())");
+            console.log(synth);
+            synth.play();
+        });
+        $("#pause").on("click", function() {
+            if (synth) synth.pause();
+        });
+    });
+  </script>  
+</html>
