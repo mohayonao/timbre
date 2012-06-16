@@ -207,6 +207,8 @@ timbre.streamsize =   32;
 timbre.cellsize   =    8;
 timbre.verbose    = false;
 
+timbre.fn.register("cell", function Cell() {} );
+
 var should = require("should");
 global.object_test = function(klass) {
     var klassname = klass.prototype._.klassname;

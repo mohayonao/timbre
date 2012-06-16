@@ -1,5 +1,5 @@
 /**
- * FFT: 0.1.0
+ * FFT: 0.3.2
  * Fast Fourier transform
  * [ar-only]
  */
@@ -138,44 +138,37 @@ var FFT = (function() {
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var args, cell, amp, center;
-        var tmp, i, j, jmax;
-        var buffer, buffersize;
+        var cell, args, buffer, buffersize, mul, add;
+        var i, imax;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
-            args = this.args.slice(0);
-            for (j = jmax = cell.length; j--; ) {
-                cell[j] = 0.0;
-            }
-            for (i = args.length; i--; ) {
-                tmp = args[i].seq(seq_id);
-                for (j = jmax; j--; ) {
-                    cell[j] += tmp[j];
-                }
-            }
             
+            args = this.args.slice(0);
             buffer     = _.buffer;
             buffersize = _.buffersize;
+            mul  = _.mul;
+            add  = _.add;
             
-            for (j = 0; j < jmax; ++j) {
+            cell = timbre.fn.sumargsAR(this, args, seq_id);
+            
+            for (i = 0, imax = cell.length; i < imax; ++i) {
                 if (_.samples <= 0) {
                     if (_.status === 0) {
                         _.status = 1;
-                        _.samples += _.interval_samples;
-                        _.index = 0;
+                        _.index  = 0;
+                        _.samples += _.interval_samples;                        
                     }
                 }
                 if (_.status === 1) {
-                    buffer[_.index++] = cell[j];
+                    buffer[_.index++] = cell[i];
                     if (buffersize <= _.index) {
-                        if (_.ison) {
-                            process.call(this, buffer);
-                        }
+                        if (_.ison) process.call(this, buffer);
                         _.status = 0;
                     }
                 }
+                cell[i] = cell[i] * mul + add;
                 --_.samples;
             }
         }

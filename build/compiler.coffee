@@ -84,6 +84,50 @@ DST_DIR = path.normalize "#{__dirname}/.."
 VERSION    = fs.readFileSync("#{DST_DIR}/version.txt", "utf-8").split("\n")[0].trim()
 BUILD_DATE = new Date().toUTCString()
 
+class InlineFunction
+    constructor: (@filepath)->
+        lines = fs.readFileSync(filepath, "utf-8").split "\n"
+        line = lines.shift().trim()
+        line = line.replace /\$\d/g, "([_\\w]+[_\\w\\d]*)"
+        @name = path.basename @filepath
+        @re = new RegExp "^(\\s*)" + line + "\\s*$"
+        @va = []
+        @fn = []
+        for line in lines
+            line = line.trimRight()
+            if line.trim() is "" then continue
+            if /var /.test line
+                line = line.trim()
+                line = line.replace /^var\s+/, ""
+                line = line.replace /;$/, ""
+                @va = @va.concat line.split(",").map (x)->x.trim()
+            else @fn.push line
+
+class VarDefine
+    constructor: ->
+        @va = []
+        @pos = 0
+        @indent = ""
+
+    reset: (i, line)->
+        @pos = i
+        @indent = "    " + /^\s*/.exec(line)[0]
+        @va = []
+
+    exec: (i, line)->
+        @pos = i
+        @indent = /^\s*/.exec(line)[0]
+        line = line.trim()
+        line = line.replace /^var\s+/, ""
+        line = line.replace /;$/, ""
+        items = line.split ","
+        items = items.map (x)->
+            x.split("=")[0].trim()
+        @va = @va.concat items
+
+inline_functions = do ->
+    files = fs.readdirSync("#{SRC_DIR}/inline").filter (x)->x.substr(-4) is ".txt"
+    new InlineFunction "#{SRC_DIR}/inline/#{file}" for file in files
 
 # build-functions
 concat_source = (list)->
@@ -98,7 +142,47 @@ fetch_source = (name)->
             continue
         break if line.trim() is "// __END__"
         line
-    return res.join "\n"
+
+    res.shift() while res[0].trim() is ""
+    res.unshift "///// #{name}.js /////"
+
+    # inline function
+    res2 = []
+    va = new VarDefine
+    for line, i in res
+        if /\s*[:=]\s*function\s*\(.*\)\s*{\s*/.test line
+            res2.push line
+            va.reset res2.length, line
+            continue
+
+        if /\s*var\s/.test line
+            res2.push line
+            va.exec res2.length, line
+            continue
+
+        exists = false
+        for inlf in inline_functions
+            m = inlf.re.exec line
+            if not m then continue
+            exists = true
+
+            m.shift()
+
+            items = inlf.va.filter (x)-> va.va.indexOf(x) is -1
+            if not (items.length is 0)
+                line2 = va.indent + "var " + items.join(", ") + ";"
+                va.va = va.va.concat items
+                res2.splice va.pos, 0, line2
+            res2.push "#{m[0]}// inline -----: #{line.trim()}"
+            for line2 in inlf.fn
+                for j in [1..10]
+                    m[j] ="" if not m[j]
+                    line2 = line2.replace new RegExp("\\$#{j}", "g"), m[j]
+                res2.push "#{m[0]}#{line2}"
+            res2.push "#{m[0]}// ----- inline"
+        res2.push line if not exists
+
+    return res2.join "\n"
 
 replace_souce = (wrapper, placeholder, source)->
     wrapper = wrapper.split "\n"

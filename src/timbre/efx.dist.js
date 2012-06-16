@@ -1,5 +1,5 @@
 /**
- * EfxDistortion: 0.1.0
+ * EfxDistortion: 0.3.2
  * [ar-only]
  */
 "use strict";
@@ -82,59 +82,25 @@ var EfxDistortion = (function() {
         return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
-    var THRESHOLD = 0.0000152587890625;
-    
-    var set_params = function(preGain, postGain, lpfFreq, lpfSlope) {
-        var _ = this._;
-        var postScale, omg, cos, sin, alp, n, ia0;
-        
-        postScale = Math.pow(2, -postGain / 6);
-        _.preScale = Math.pow(2, -preGain / 6) * postScale;
-        _.limit = postScale;
-        
-        if (lpfFreq) {
-            omg = lpfFreq * 2 * Math.PI / timbre.samplerate;
-            cos = Math.cos(omg);
-            sin = Math.sin(omg);
-            n = 0.34657359027997264 * lpfSlope * omg / sin;
-            alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
-            ia0 = 1 / (1 + alp);
-            _.a1 = -2 * cos  * ia0;
-            _.a2 = (1 - alp) * ia0;
-            _.b1 = (1 - cos) * ia0;
-            _.b2 = _.b0 = _.b1 * 0.5;
-        }
-    };
-    
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell, args;
-        var tmp, i, imax, j, jmax;
-        var preGain, postGain, lpfFreq;
-        var preScale, limit;
-        var mul, add;
-        var a1, a2, b0, b1, b2;
-        var in1, in2, out1, out2;
+        var cell, args, mul, add;
+        var preGain, postGain, preScale, lpfFreq, limit;
+        var a1, a2, b0, b1, b2, in1, in2, out1, out2;
+        var omg, cos, sin, alp, n, ia0;
         var input, output;
+        var i, imax;        
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
-            args = this.args.slice(0);
-            for (j = jmax = cell.length; j--; ) {
-                cell[j] = 0.0;
-            }
-            for (i = 0, imax = args.length; i < imax; ++i) {
-                tmp = args[i].seq(seq_id);
-                for (j = jmax; j--; ) {
-                    cell[j] += tmp[j];
-                }
-            }
             
+            args = this.args.slice(0);
             mul = _.mul;
             add = _.add;
             
-            // filter
+            cell = timbre.fn.sumargsAR(this, args, seq_id);
+            
             if (_.ison) {
                 preGain  = _.preGain.seq(seq_id)[0];
                 postGain = _.postGain.seq(seq_id)[0];
@@ -142,7 +108,23 @@ var EfxDistortion = (function() {
                 if (preGain  !== _.prev_preGain ||
                     postGain !== _.prev_postGain ||
                     lpfFreq  !== _.prev_lpfFreq) {
-                    set_params.call(this, preGain, postGain, lpfFreq, 1);
+                    
+                    postScale  = Math.pow(2, -postGain / 6);
+                    _.preScale = Math.pow(2, -preGain / 6) * postScale;
+                    _.limit = postScale;
+                    
+                    if (lpfFreq) {
+                        omg = lpfFreq * 2 * Math.PI / timbre.samplerate;
+                        cos = Math.cos(omg);
+                        sin = Math.sin(omg);
+                        n = 0.34657359027997264 * lpfSlope * omg / sin;
+                        alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
+                        ia0 = 1 / (1 + alp);
+                        _.a1 = -2 * cos  * ia0;
+                        _.a2 = (1 - alp) * ia0;
+                        _.b1 = (1 - cos) * ia0;
+                        _.b2 = _.b0 = _.b1 * 0.5;
+                    }
                 }
                 
                 preScale = _.preScale;
@@ -154,7 +136,7 @@ var EfxDistortion = (function() {
                     in1  = _.in1;  in2  = _.in2;
                     out1 = _.out1; out2 = _.out2;
                     
-                    if (out1 < THRESHOLD) out2 = out1 = 0;
+                    if (out1 < 0.0000152587890625) out2 = out1 = 0;
                     
                     for (i = 0, imax = cell.length; i < imax; ++i) {
                         input = cell[i] * preScale;
@@ -193,8 +175,8 @@ var EfxDistortion = (function() {
                     }
                 }
             } else {
-                for (j = jmax; j--; ) {
-                    cell[j] = cell[j] * mul + add;
+                for (i = cell.length; i--; ) {
+                    cell[i] = cell[i] * mul + add;
                 }
             }
         }

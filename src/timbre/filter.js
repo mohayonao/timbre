@@ -1,5 +1,5 @@
 /**
- * Filter: 0.1.0
+ * Filter: 0.3.2
  * [ar-only]
  */
 "use strict";
@@ -121,21 +121,13 @@ var Filter = (function() {
         cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
-            args = this.args.slice(0);
-            for (j = jmax = cell.length; j--; ) {
-                cell[j] = 0.0;
-            }
-            for (i = 0, imax = args.length; i < imax; ++i) {
-                tmp = args[i].seq(seq_id);
-                for (j = jmax; j--; ) {
-                    cell[j] += tmp[j];
-                }
-            }
             
+            args = this.args.slice(0);
             mul = _.mul;
             add = _.add;
             
-            // filter
+            cell = timbre.fn.sumargsAR(this, args, seq_id);
+            
             if (_.ison) {
                 type = _.type;
                 if (_.freq.seq_id === seq_id) {
@@ -189,14 +181,14 @@ var Filter = (function() {
                 _.out1 = out1; _.out2 = out2;
             }
             
-            for (j = jmax; j--; ) {
-                cell[j] = cell[j] * mul + add;
+            for (i = cell.length; i--; ) {
+                cell[i] = cell[i] * mul + add;
             }
         }
         
         return cell;
     };
-
+    
     $this.getFilter = function(name) {
         return Filter.Types[name];
     };

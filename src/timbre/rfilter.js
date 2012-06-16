@@ -1,5 +1,5 @@
 /**
- * ResonantFilter: 0.1.0
+ * ResonantFilter: 0.3.2
  * [ar-only]
  */
 "use strict";
@@ -112,57 +112,34 @@ var ResonantFilter = (function() {
         return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
-    var set_params = function(cutoff, Q) {
-        var _ = this._;
-        var freq = 2 * Math.sin(Math.PI * Math.min(0.25, cutoff / (timbre.samplerate * 2)));
-        _.damp = Math.min(2 * (1 - Math.pow(Q, 0.25)),
-                          Math.min(2, 2 / freq - freq * 0.5));
-        _.freq = freq;
-    };
-    
     $this.seq = function(seq_id) {
         var _ = this._;
         var args, cell, mul, add;
-        var cutoff, Q;
-        var tmp, i, imax, j, jmax;
-        var f, mode, damp, freq, depth, depth0, depth1;
+        var cutoff, Q, f, mode, damp, freq, depth, depth0, depth1;
         var input, output;
+        var i, imax;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
-            args = this.args.slice(0);
-            for (j = jmax = cell.length; j--; ) {
-                cell[j] = 0.0;
-            }
-            for (i = 0, imax = args.length; i < imax; ++i) {
-                if (args[i].seq_id === seq_id) {
-                    tmp = args[i].cell;
-                } else {
-                    tmp = args[i].seq(seq_id);
-                }
-                for (j = jmax; j--; ) {
-                    cell[j] += tmp[j];
-                }
-            }
-
-            mul = _.mul;
-            add = _.add;
+            this.seq_id = seq_id;
             
-            // filter
+            args = this.args.slice(0);
+            mul  = _.mul;
+            add  = _.add;
+            
+            cell = timbre.fn.sumargsAR(this, args, seq_id);
+            
             if (_.ison) {
                 mode   = _.mode;
-                if (_.cutoff.seq_id === seq_id) {
-                    cutoff = _.cutoff.cell[0];
-                } else {
-                    cutoff = _.cutoff.seq(seq_id)[0];
-                }
-                if (_.Q.seq_id === seq_id) {
-                    Q = _.Q.cell[0];
-                } else {
-                    Q = _.Q.seq(seq_id)[0];
-                }
+                cutoff = _.cutoff.seq(seq_id)[0];
+                Q      = _.Q.seq(seq_id)[0];
+                
                 if (cutoff !== _.prev_cutoff || Q !== _.prev_Q ) {
-                    set_params.call(this, cutoff, Q);
+                    
+                    freq = 2 * Math.sin(3.141592653589793 * Math.min(0.25, cutoff / (timbre.samplerate * 2)));
+                    _.damp = Math.min(2 * (1 - Math.pow(Q, 0.25)), Math.min(2, 2 / freq - freq * 0.5));
+                    _.freq = freq;
+                    
                     _.prev_cutoff = cutoff;
                     _.prev_Q      = Q;
                 }
@@ -185,8 +162,7 @@ var ResonantFilter = (function() {
                     f[1] = f[3] - f[0];
                     f[2] = freq * f[1] + f[2];
                     output = 0.5 * f[mode];
-
-                    // second pass
+                    
                     f[3] = input - damp * f[2];
                     f[0] = f[0] + freq * f[2];
                     f[1] = f[3] - f[0];
@@ -202,11 +178,10 @@ var ResonantFilter = (function() {
                     cell[i] = cell[i] * mul + add;
                 }
             } else {
-                for (j = jmax; j--; ) {
-                    cell[j] = cell[j] * mul + add;
+                for (i = cell.length; i--; ) {
+                    cell[i] = cell[i] * mul + add;
                 }
             }
-            this.seq_id = seq_id;
         }
         
         return cell;

@@ -1,5 +1,5 @@
 /**
- * timbre.fn: 0.1.0
+ * timbre.fn: 0.3.2
  */
 "use strict";
 
@@ -53,10 +53,8 @@ timbre.fn = (function(timbre) {
             } else if (fn.isTimbreObject(key)) {
                 instance = key;
                 isThrougOut = true;
-            } else {
-                if (key instanceof Array || key.buffer instanceof ArrayBuffer) {
-                    instance = new ArrayWrapper([key]);
-                }
+            } else if (key instanceof Array) {
+                instance = new ArrayWrapper([key]);
             }
             break;
         }
@@ -581,6 +579,32 @@ timbre.fn = (function(timbre) {
             if ((f = base[names[i]]) instanceof Function) self[names[i]] = f;
         }
         return self;
+    };
+    
+    fn.sumargsAR = function(self, args, seq_id) {
+        var cell, tmp, i, imax, j, jmax;
+        
+        cell = self.cell;
+        for (j = jmax = cell.length; j--; ) {
+            cell[j] = 0;
+        }
+        for (i = 0, imax = args.length; i < imax; ++i) {
+            tmp = args[i].seq(seq_id);
+            for (j = jmax; j--; ) {
+                cell[j] += tmp[j];
+            }
+        }
+        return cell;
+    };
+    
+    fn.sumargsKR = function(self, args, seq_id) {
+        var tmp, i, imax;
+        
+        tmp = 0;
+        for (i = 0, imax = args.length; i < imax; ++i) {
+            tmp += args[i].seq(seq_id)[0];
+        }
+        return tmp;
     };
     
     return fn;

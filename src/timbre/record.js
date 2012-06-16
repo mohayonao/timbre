@@ -1,5 +1,5 @@
 /**
- * Record: 0.1.0
+ * Record: 0.3.2
  * Record sound into a buffer
  * [ar-only]
  */
@@ -112,33 +112,24 @@ var Record = (function() {
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var args, cell;
-        var buffer;
-        var mul, add;
-        var tmp, i, imax, j, jmax;
+        var args, cell, buffer, mul, add;
+        var i, imax;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
+            
+            args = this.args.slice(0);            
             buffer = _.buffer;
             mul  = _.mul;
             add  = _.add;
-            jmax = timbre.cellsize;
-            for (j = jmax; j--; ) {
-                cell[j] = 0;
-            }
-            args = this.args.slice(0);
-            for (i = 0, imax = args.length; i < imax; ++i) {
-                tmp = args[i].seq(seq_id);
-                
-                for (j = jmax; j--; ) {
-                    cell[j] += tmp[j];
-                }
-            }
+            
+            cell = timbre.fn.sumargsAR(this, args, seq_id);
+            
             if (_.ison) {
-                for (j = 0; j < jmax; ++j) {
-                    buffer[_.index++] = cell[j];
-                    cell[j] = cell[j] * mul + add;
+                for (i = 0, imax = cell.length; i < imax; ++i) {
+                    buffer[_.index++] = cell[i];
+                    cell[i] = cell[i] * mul + add;
                 }
                 if (_.index >= buffer.length) {
                     _.ison = false;
@@ -146,7 +137,7 @@ var Record = (function() {
                     timbre.fn.doEvent(this, "ended");
                 }
             } else {
-                for (j = jmax; j--; ) {
+                for (i = cell.length; j--; ) {
                     cell[j] = cell[j] * mul + add;
                 }
             }

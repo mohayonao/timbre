@@ -1,5 +1,5 @@
 /**
- * Add: 0.1.0
+ * Add: 0.3.2
  * Add signals
  * [ar-kr]
  */
@@ -25,41 +25,31 @@ var Add = (function() {
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var args, cell;
-        var mul, add;
-        var tmp, i, imax, j, jmax;
+        var cell, args, mul, add;
+        var tmp, i;
+        
         cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
+            
             args = this.args.slice(0);
             mul  = _.mul;
             add  = _.add;
-            jmax = timbre.cellsize;
+            
             if (_.ar) {
-                for (j = jmax; j--; ) {
-                    cell[j] = 0;
-                }
-                for (i = 0, imax = args.length; i < imax; ++i) {
-                    tmp = args[i].seq(seq_id);
-                    for (j = jmax; j--; ) {
-                        cell[j] += tmp[j];
-                    }
-                }
+                cell = timbre.fn.sumargsAR(this, args, seq_id);
                 
-                for (j = jmax; j--; ) {
-                    cell[j] = cell[j] * mul + add;
+                for (i = cell.length; i--; ) {
+                    cell[i] = cell[i] * mul + add;
                 }
             } else {
-                tmp = 0;
-                for (i = 0, imax = args.length; i < imax; ++i) {
-                    tmp += args[i].seq(seq_id)[0];
-                }
+                tmp = timbre.fn.sumargsKR(this, args, seq_id);
+                
                 tmp = tmp * mul + add;
-                for (j = jmax; j--; ) {
-                    cell[j] = tmp;
+                for (i = cell.length; i--; ) {
+                    cell[i] = tmp;
                 }
             }
-            
         }
         return cell;
     };
@@ -72,5 +62,22 @@ timbre.fn.register("+", Add);
 if (module.parent && !module.parent.parent) {
     describe("+", function() {
         object_test(Add, "+");
+        describe("#seq()", function() {
+            var i1 = T("cell"), i2 = T("cell");
+            i1.cell = new Float32Array([ 0,-1, 2,-3, 4, -5, 6,-7]);
+            i2.cell = new Float32Array([-1,-2, 3, 5,-8,-13,21,34]);
+            it("ar-mode", function() {
+                var instance = T("+", i1, i2);
+                instance.seq(0).should.eql(
+                    new Float32Array([-1,-3, 5,2,-4,-18,27,27])
+                );
+            });
+            it("kr-mode", function() {
+                var instance = T("+", i1, i2).kr();
+                instance.seq(0).should.eql(
+                    new Float32Array([-1,-1,-1,-1,-1,-1,-1,-1])
+                );
+            });
+        });
     });
 }

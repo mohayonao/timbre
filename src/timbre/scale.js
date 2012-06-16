@@ -1,5 +1,5 @@
 /**
- * Scale: 0.3.0
+ * Scale: 0.3.2
  * [kr-only]
  */
 "use strict";
@@ -86,19 +86,18 @@ var Scale = (function() {
         var cell, args, root, value;
         var index, delta, x0, x1;
         var scale_value, octave;
-        var len, x, tmp, i, imax;
+        var len, x, i, imax;
         
         if (!_.ison) return timbre._.none;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
+            
             args = this.args.slice(0);
-            tmp  = 0;
-            for (i = 0, imax = args.length; i < imax; ++i) {
-                tmp += args[i].seq(seq_id)[0];
-            }
-            value = tmp;
+            
+            value = timbre.fn.sumargsKR(this, args, seq_id);
+            
             if (value !== _.prev_value) {
                 len = _.list.length;
                 if (value >= 0) {

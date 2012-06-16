@@ -1,0 +1,15 @@
+timbre\.fn\.doEvent\($1, "$2"(, .*)?\);
+
+var $$func, $$list, $$i, $$imax;
+
+if (($$func = $1.on$2) instanceof Function) {
+    $$func.apply($1$3);
+}
+
+if (($$list = $1._.ev["$2"]) !== undefined) {
+   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
+       $$func = $$list[$$i];
+       $$func.apply($1$3);
+       if ($$func.rm) $1.removeEventListener("$2", $$func);
+   }
+}
