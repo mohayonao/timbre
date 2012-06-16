@@ -79,14 +79,22 @@ timbre.fn.register("max", Max);
 if (module.parent && !module.parent.parent) {
     describe("max", function() {
         object_test(Max, "max");
-        describe("seq", function() {
-            it("ar", function() {
-                var instance = timbre("max", 0, 1);
-                instance.seq(0).should.eql(timbre(1).cell);
+        describe("#seq()", function() {
+            var i1 = T("cell"), i2 = T("cell");
+            i1.cell = new Float32Array([ 0,-1, 2,-3, 4, -5, 6,-7]);
+            i2.cell = new Float32Array([-1,-2, 3, 5,-8,-13,21,34]);
+            
+            it("ar-mode", function() {
+                var instance = timbre("max", i1, i2);
+                instance.seq(0).should.eql(
+                    new Float32Array([0,-1,3,5,4,-5,21,34])
+                );
             });
             it("kr", function() {
-                var instance = timbre("max", 0, 1).kr();
-                instance.seq(0).should.eql(timbre(1).cell);
+                var instance = timbre("max", i1, i2).kr();
+                instance.seq(0).should.eql(
+                    new Float32Array([0,0,0,0,0,0,0,0])
+                );
             });
         });
     });

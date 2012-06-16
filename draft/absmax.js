@@ -122,14 +122,22 @@ timbre.fn.register("absmax", AbsMax);
 if (module.parent && !module.parent.parent) {
     describe("absmax", function() {
         object_test(AbsMax, "absmax");
-        describe("seq", function() {
-            it("ar", function() {
-                var instance = timbre("absmax", 0, 1, -3, 2);
-                instance.seq(0).should.eql(timbre(-3).cell);
+        describe("#seq()", function() {
+            var i1 = T("cell"), i2 = T("cell");
+            i1.cell = new Float32Array([ 0,-1, 2,-3, 4, -5, 6,-7]);
+            i2.cell = new Float32Array([-1,-2, 3, 5,-8,-13,21,34]);
+            
+            it("ar-mode", function() {
+                var instance = timbre("absmax", i1, i2);
+                instance.seq(0).should.eql(
+                    new Float32Array([-1,-2,3,5,-8,-13,21,34])
+                );
             });
             it("kr", function() {
-                var instance = timbre("absmax", 0, 1, -3, 2).kr();
-                instance.seq(0).should.eql(timbre(-3).cell);
+                var instance = timbre("absmax", i1, i2).kr();
+                instance.seq(0).should.eql(
+                    new Float32Array([-1,-1,-1,-1,-1,-1,-1,-1])
+                );
             });
         });
     });
