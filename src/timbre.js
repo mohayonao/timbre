@@ -195,11 +195,11 @@ module.exports = timbre;
 
 require("./core/soundsystem");
 require("./core/fn");
-require("./timbre/number");
-require("./timbre/boolean");
-require("./timbre/array");
-require("./timbre/function");
-require("./timbre/dac");
+require("./objects/number");
+require("./objects/boolean");
+require("./objects/array");
+require("./objects/function");
+require("./objects/dac");
 
 // setting for tests
 timbre.samplerate = 1000;
