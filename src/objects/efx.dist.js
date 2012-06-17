@@ -85,7 +85,7 @@ var EfxDistortion = (function() {
     $this.seq = function(seq_id) {
         var _ = this._;
         var cell, args, mul, add;
-        var preGain, postGain, preScale, lpfFreq, limit;
+        var preGain, postGain, preScale, postScale, lpfFreq, limit;
         var a1, a2, b0, b1, b2, in1, in2, out1, out2;
         var omg, cos, sin, alp, n, ia0;
         var input, output;
@@ -117,7 +117,7 @@ var EfxDistortion = (function() {
                         omg = lpfFreq * 2 * Math.PI / timbre.samplerate;
                         cos = Math.cos(omg);
                         sin = Math.sin(omg);
-                        n = 0.34657359027997264 * lpfSlope * omg / sin;
+                        n = 0.34657359027997264 * omg / sin;
                         alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
                         ia0 = 1 / (1 + alp);
                         _.a1 = -2 * cos  * ia0;
