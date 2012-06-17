@@ -41,7 +41,7 @@ T("*", T("+", T("sin", 523.35),
 
 MIT
 
-## ChangeLog
+### ChangeLog ###
 2012 06 17 - **v0.3.2** (292.79 KB, min: 107.25 KB)
 * Update `compiler.coffee` for Inline-expands functions, improve performance??
 
