@@ -4,5 +4,5 @@ var $$i, $$imax;
 
 $1 = 0;
 for ($$i = 0, $$imax = $3.length; $$i < $$imax; ++$$i) {
-    $1 += $3.args[$$i].seq($4)[0];
+    $1 += $3[$$i].seq($4)[0];
 }
