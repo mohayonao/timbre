@@ -22,9 +22,9 @@
         <h3>Latest Version</h3>
         <div>
           Right-click, and use "Save As"
-          <ul>
-            <li><a href="timbre.js">0.3.1</a> (244.1KB)</li>
-            <li><a href="timbre.min.js">minified</a> (94.9KB)</li>
+          <ul style="padding:15px">
+            <li><a href="timbre.js">0.3.2</a> (292.78 KB)</li>
+            <li><a href="timbre.min.js">minified</a> (107.25 KB)</li>
           </ul>
         </div>
         
@@ -40,11 +40,9 @@
         
         <h3>Examples</h3>
         <div>
-          <ul>
-            <li><a href="./examples/004_timbresynth.html">Timbre Synthesizer</a></li>
-            <li><a href="./examples/002_rhythmsequencer.html">Rhythm Sequencer</a></li>
-            <li><a href="./examples/003_loadwavfiles.html">Piano and Drums</a></li>
-          </ul>
+          <span><a href="./examples/004_timbresynth.html">01</a></span> - 
+          <span><a href="./examples/002_rhythmsequencer.html">02</a></span> -
+          <span><a href="./examples/003_loadwavfiles.html">03</a></span>
         </div>
         
         <h3>Overview</h3>
@@ -85,8 +83,9 @@ timbre.utils.exports("atof");
 var synth = T("efx.delay", 150, 0.8);
 
 function tone(freq) {
-    synth.append( T("*", T("+", T("sin", freq, 0.25), T("sin", freq + 4, 0.1)),
-                          T("perc", 2500).bang()) );
+    synth.append( T("*", T("+", T("sin", freq, 0.25),
+                                T("sin", freq + 4, 0.1)),
+                         T("perc", 2500).bang()) );
     if (synth.args.length > 4) synth.args.shift();
 }
 
@@ -105,30 +104,6 @@ synth.onpause = function() {
     sch.off();
 };
 synth.play();</pre>
-        </div>
-        
-        <h3>Change Log</h3>
-        <div id="changelog">
-          <p>2012 06 12 - <strong>v0.3.0</strong></p>
-          <ul>
-            <li>Added: T("schedule") and T("scale")</li>
-          </ul>
-          
-          <p>2012 06 07 - <strong>v0.2.1a</strong></p>
-          <ul>
-            <li>Added: timbre.setup(), so that the initial configuration</li>
-          </ul>
-          
-          <p>2012 06 04 - <strong>v0.2.0</strong></p>
-          <ul>
-            <li>Added: T("phasor") and T("oscx")</li>
-            <li>Added: T().isUndefined</li>
-          </ul>
-          
-          <p>2012 06 02 - <strong>v0.1.0</strong></p>
-          <ul>
-            <li>Initial release of Timbre.js</li>
-          </ul>
         </div>
         
         <footer>
