@@ -1,6 +1,6 @@
 /**
- * Timbre.js 0.3.2 / JavaScript Library for Objective Sound Programming
- * build: Sun, 17 Jun 2012 00:26:16 GMT
+ * Timbre.js 0.3.2a / JavaScript Library for Objective Sound Programming
+ * build: Sun, 17 Jun 2012 00:48:01 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,8 +10,8 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "0.3.2";
-    timbre.BUILD      = "Sun, 17 Jun 2012 00:26:16 GMT";
+    timbre.VERSION    = "0.3.2a";
+    timbre.BUILD      = "Sun, 17 Jun 2012 00:48:01 GMT";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 44100;
@@ -1660,7 +1660,7 @@ var timbre = (function(context, timbre) {
                 // inline -----: value = timbre.fn.sumargsKR(this, args, seq_id);
                 value = 0;
                 for ($$i = 0, $$imax = args.length; $$i < $$imax; ++$$i) {
-                    value += args.args[$$i].seq(seq_id)[0];
+                    value += args[$$i].seq(seq_id)[0];
                 }
                 // ----- inline
                 
@@ -1886,7 +1886,7 @@ var timbre = (function(context, timbre) {
                     // inline -----: tmp = timbre.fn.sumargsKR(this, args, seq_id);
                     tmp = 0;
                     for ($$i = 0, $$imax = args.length; $$i < $$imax; ++$$i) {
-                        tmp += args.args[$$i].seq(seq_id)[0];
+                        tmp += args[$$i].seq(seq_id)[0];
                     }
                     // ----- inline
                     
@@ -4239,7 +4239,7 @@ var timbre = (function(context, timbre) {
         $this.seq = function(seq_id) {
             var _ = this._;
             var cell, args, mul, add;
-            var preGain, postGain, preScale, lpfFreq, limit;
+            var preGain, postGain, preScale, postScale, lpfFreq, limit;
             var a1, a2, b0, b1, b2, in1, in2, out1, out2;
             var omg, cos, sin, alp, n, ia0;
             var input, output;
@@ -4282,7 +4282,7 @@ var timbre = (function(context, timbre) {
                             omg = lpfFreq * 2 * Math.PI / timbre.samplerate;
                             cos = Math.cos(omg);
                             sin = Math.sin(omg);
-                            n = 0.34657359027997264 * lpfSlope * omg / sin;
+                            n = 0.34657359027997264 * omg / sin;
                             alp = sin * (Math.exp(n) - Math.exp(-n)) * 0.5;
                             ia0 = 1 / (1 + alp);
                             _.a1 = -2 * cos  * ia0;
