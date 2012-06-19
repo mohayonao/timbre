@@ -6,7 +6,7 @@ tests = (function() {
     tests[i] = function() {
         var synth, tri, env;
         synth = T("*", tri = T("tri" , 1340, 0.5),
-                       env = T("adsr", 500, 500));
+                       env = T("adsr", "32db", 500, 500));
         
         synth.onplay = function() { env.bang(); };
         synth.onbang = function() {
