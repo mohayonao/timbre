@@ -23,6 +23,7 @@ TIMBRE_SOURCES = [
     "objects/noise"
     "objects/oscx"
     "objects/phasor"
+    "objects/pwm"
 
     "objects/env"
     "objects/adsr"
@@ -38,6 +39,7 @@ TIMBRE_SOURCES = [
     "objects/wav"
 
     "objects/buddy"
+    "objects/clip"
     "objects/easing"
     "objects/glide"
 
