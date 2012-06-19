@@ -1,5 +1,5 @@
 /**
- * ADSREnvelope: 0.1.0
+ * ADSREnvelope: 0.3.3
  * ADSR envelope generator
  * [kr-only]
  */
@@ -14,19 +14,17 @@ var ADSREnvelope = (function() {
     }, $this = ADSREnvelope.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "kr-only");
+
+    var Envelope = timbre.fn.getClass("env");
+
+    timbre.fn.copyPropertyDescriptors($this,
+                                      Envelope.prototype,
+                                      ["table", "delay", "reversed", "currentTime"]);
     
     var STATUSES = ["off","delay","a","d","s","r"];
     
     Object.defineProperty($this, "status", {
         get: function() { return STATUSES[this._.status+1]; }
-    });
-    Object.defineProperty($this, "delay", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.delay = value;
-            }
-        },
-        get: function() { return this._.delay; }
     });
     Object.defineProperty($this, "a", {
         set: function(value) {
@@ -92,17 +90,6 @@ var ADSREnvelope = (function() {
         },
         get: function() { return this._.rl; }
     });
-    Object.defineProperty($this, "reversed", {
-        set: function(value) {
-            if (typeof value === "boolean") {
-                this._.reversed = value;
-            }
-        },
-        get: function() { return this._.reversed; }
-    });
-    Object.defineProperty($this, "currentTime", {
-        get: function() { return this._.currentTime; }
-    });
     
     var initialize = function(_args) {
         var i, _;
@@ -110,6 +97,12 @@ var ADSREnvelope = (function() {
         _ = this._ = {};
         
         i = 0;
+        if (typeof _args[i] === "string" && Envelope.AmpTables[_args[i]]) {
+            this.table = _args[i++];
+        } else {
+            this.table = "linear";
+        }
+        
         _.a  = (typeof _args[i] === "number") ? _args[i++] : 0;
         _.d  = (typeof _args[i] === "number") ? _args[i++] : 0;
         _.sl = (typeof _args[i] === "number") ? _args[i++] : 0;                
@@ -124,7 +117,8 @@ var ADSREnvelope = (function() {
         
         _.status = -1;
         _.samples = Infinity;
-        _.x0 = 0; _.x1 = 0; _.dx = 0;
+        _.x0 = 0;
+        _.dx = 0;
         _.currentTime = 0;
     };
     
@@ -144,7 +138,7 @@ var ADSREnvelope = (function() {
         // off -> delay
         _.status  = 0;
         _.samples = (timbre.samplerate * (_.delay / 1000))|0;
-        _.x0 = 0; _.x1 = 1;
+        _.x0 = 0;
         _.dx = (timbre.cellsize * _.al) / _.samples;
         _.currentTime = 0;
         
@@ -159,8 +153,7 @@ var ADSREnvelope = (function() {
             // (delay, A, D, S) -> R
             _.status  = 4;
             _.samples = (timbre.samplerate * (_.r / 1000))|0;
-            _.x1 = _.x0; _.x0 = 1;
-            _.dx = -timbre.cellsize * (1 - _.rl) / _.samples;
+            _.dx = -timbre.cellsize * (_.x0 - _.rl) / _.samples;
             timbre.fn.doEvent(this, "R");
         }
     };
@@ -212,17 +205,16 @@ var ADSREnvelope = (function() {
                 if (_.status <= 4) { // (S, R) -> end
                     _.status  = -1;
                     _.samples = Infinity;
-                    _.x0 = _.x1 = _.dx = 0;
+                    _.x0 = _.dx = 0;
                     timbre.fn.doEvent(this, "ended");
                     continue;
                 }
             }
             
-            if (_.reversed) {
-                x = (1.0 - (_.x0 * _.x1)) * _.mul + _.add;
-            } else {
-                x = (_.x0 * _.x1) * _.mul + _.add;
-            }
+            x = (_.x0 === 1) ? 1 : _.table[(_.x0 * 512)|0];
+            if (_.reversed) x = 1 - x;
+            
+            x = x * _.mul + _.add;
             for (i = 0, imax = cell.length; i < imax; ++i) {
                 cell[i] = x;
             }

@@ -1,11 +1,12 @@
 /**
- * PercussiveEnvelope: 0.3.0
+ * PercussiveEnvelope: 0.3.3
  * Percussive envelope generator
  * [kr-only]
  */
 "use strict";
 
 var timbre = require("../timbre");
+require("./env");
 // __BEGIN__
 
 var PercussiveEnvelope = (function() {
@@ -14,21 +15,19 @@ var PercussiveEnvelope = (function() {
     }, $this = PercussiveEnvelope.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
+    var Envelope = timbre.fn.getClass("env");
 
+    timbre.fn.copyPropertyDescriptors($this,
+                                      Envelope.prototype,
+                                      ["table", "delay", "reversed", "currentTime"]);
+    
     var STATUSES = ["off","delay","a","r"];
     
     Object.defineProperty($this, "status", {
         get: function() { return STATUSES[this._.status+1]; }
     });
     
-    Object.defineProperty($this, "delay", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.delay = value;
-            }
-        },
-        get: function() { return this._.delay; }
-    });
     Object.defineProperty($this, "a", {
         set: function(value) {
             if (typeof value === "number") {
@@ -53,15 +52,6 @@ var PercussiveEnvelope = (function() {
         },
         get: function() { return this._.al; }
     });
-    Object.defineProperty($this, "reversed", {
-        set: function(value) {
-            this._.reversed = !!value;
-        },
-        get: function() { return this._.reversed; }
-    });
-    Object.defineProperty($this, "currentTime", {
-        get: function() { return this._.currentTime; }
-    });
     
     var initialize = function(_args) {
         var i, nums, _;
@@ -70,6 +60,12 @@ var PercussiveEnvelope = (function() {
         nums = [];
         
         i = 0;
+        if (typeof _args[i] === "string" && Envelope.AmpTables[_args[i]]) {
+            this.table = _args[i++];
+        } else {
+            this.table = "linear";
+        }
+        
         if (typeof _args[i] === "number") {
             nums.push(_args[i++]);
             if (typeof _args[i] === "number") {
@@ -111,7 +107,8 @@ var PercussiveEnvelope = (function() {
         
         _.status  = -1;        
         _.samples = Infinity;
-        _.x0 = 0; _.dx = 0;
+        _.x0 = 0;
+        _.dx = 0;
         _.currentTime = 0;
     };
     
@@ -139,7 +136,7 @@ var PercussiveEnvelope = (function() {
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell, x, i, imax;
+        var cell, table, x, i, imax;
         
         if (!_.ison) return timbre._.none;
         
@@ -175,11 +172,9 @@ var PercussiveEnvelope = (function() {
                 }
             }
             
-            if (_.reversed) {
-                x = (1.0 - _.x0) * _.mul + _.add;
-            } else {
-                x = _.x0 * _.mul + _.add;
-            }
+            x = (_.x0 === 1) ? 1 : _.table[(_.x0 * 512)|0];
+            if (_.reversed) x = 1 - x;
+            x = x * _.mul + _.add;
             for (i = 0, imax = cell.length; i < imax; ++i) {
                 cell[i] = x;
             }
@@ -193,6 +188,7 @@ var PercussiveEnvelope = (function() {
     return PercussiveEnvelope;
 }());
 timbre.fn.register("perc", PercussiveEnvelope);
+
 
 // __END__
 if (module.parent && !module.parent.parent) {
