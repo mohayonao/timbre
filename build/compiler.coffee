@@ -24,6 +24,7 @@ TIMBRE_SOURCES = [
     "objects/oscx"
     "objects/phasor"
 
+    "objects/env"
     "objects/adsr"
     "objects/perc"
 
