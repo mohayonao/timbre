@@ -10,7 +10,7 @@ Timbre.js
 
 Download the [minified library](http://mohayonao.github.com/timbre/timbre.min.js) and include it in your html.
 ```html
-<script src="timbre.js"></script>
+<script src="timbre.min.js"></script>
 ```
 
 Timbre.js is so easy.
@@ -42,6 +42,12 @@ T("*", T("+", T("sin", 523.35),
 MIT
 
 ### ChangeLog ###
+2012 06 19 - **v0.3.3** (256.87 KB, min: 98.52 KB)
+* Added `T("clip")`
+* Improved `T("adsr)`, `T("perc")` by adding envelope curves.
+* Removed `timbre.fn.doEvent` that is an inline-expands function 
+
+
 2012 06 17 - **v0.3.2** (292.79 KB, min: 107.25 KB)
 * Update `compiler.coffee` for Inline-expands functions, improve performance??
 
