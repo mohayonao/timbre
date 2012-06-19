@@ -1,6 +1,6 @@
 /**
- * Timbre.js 0.3.2a / JavaScript Library for Objective Sound Programming
- * build: Sun, 17 Jun 2012 00:48:01 GMT
+ * Timbre.js 0.3.3 / JavaScript Library for Objective Sound Programming
+ * build: Tue, 19 Jun 2012 11:01:44 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,8 +10,8 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "0.3.2a";
-    timbre.BUILD      = "Sun, 17 Jun 2012 00:48:01 GMT";
+    timbre.VERSION    = "0.3.3";
+    timbre.BUILD      = "Tue, 19 Jun 2012 11:01:44 GMT";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 44100;
@@ -90,41 +90,17 @@ var timbre = (function(context, timbre) {
         return timbre;
     };
     timbre.on = function() {
-        var $$func, $$list, $$i, $$imax;
         if (!timbre.sys._.ison) {
             timbre.setup();
             timbre.sys.on();
-            // inline -----: timbre.fn.doEvent(this, "on");
-            if (($$func = this.onon) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["on"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("on", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "on");
         }
         return timbre;
     };
     timbre.off = function() {
-        var $$func, $$list, $$i, $$imax;
         if (timbre.sys._.ison) {
             timbre.sys.off();
-            // inline -----: timbre.fn.doEvent(this, "off");
-            if (($$func = this.onoff) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["off"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("off", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "off");
         }
         return timbre;
     };
@@ -321,38 +297,15 @@ var timbre = (function(context, timbre) {
         
         defaults.play = function() {
             var f, _ = this._;
-            var $$func, $$list, $$i, $$imax;
             if (_.ar) {
                 if (_.dac === null) {
                     _.dac = timbre("dac", this);
                     if ((f = _.proto._.play) instanceof Function) f.call(this);
-                    // inline -----: timbre.fn.doEvent(this, "play");
-                    if (($$func = this.onplay) instanceof Function) {
-                        $$func.apply(this);
-                    }
-                    if (($$list = this._.ev["play"]) !== undefined) {
-                       for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                           $$func = $$list[$$i];
-                           $$func.apply(this);
-                           if ($$func.rm) this.removeEventListener("play", $$func);
-                       }
-                    }
-                    // ----- inline
+                    timbre.fn.doEvent(this, "play");
                 } else if (this.dac.args.indexOf(this) === -1) {
                     _.dac.append(this);
                     if ((f = _.proto._.play) instanceof Function) f.call(this);
-                    // inline -----: timbre.fn.doEvent(this, "play");
-                    if (($$func = this.onplay) instanceof Function) {
-                        $$func.apply(this);
-                    }
-                    if (($$list = this._.ev["play"]) !== undefined) {
-                       for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                           $$func = $$list[$$i];
-                           $$func.apply(this);
-                           if ($$func.rm) this.removeEventListener("play", $$func);
-                       }
-                    }
-                    // ----- inline
+                    timbre.fn.doEvent(this, "play");
                 }
                 if (_.dac.isOff) _.dac.on();
             }
@@ -361,41 +314,17 @@ var timbre = (function(context, timbre) {
         
         defaults.pause = function() {
             var f, _ = this._;
-            var $$func, $$list, $$i, $$imax;
             if (_.dac && _.dac.args.indexOf(this) !== -1) {
                 _.dac.remove(this);
                 if ((f = _.proto._.pause) instanceof Function) f.call(this);
-                // inline -----: timbre.fn.doEvent(this, "pause");
-                if (($$func = this.onpause) instanceof Function) {
-                    $$func.apply(this);
-                }
-                if (($$list = this._.ev["pause"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this);
-                       if ($$func.rm) this.removeEventListener("pause", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(this, "pause");
                 if (_.dac.isOn && _.dac.args.length === 0) _.dac.off();
             }
             return this;
         };
         
         defaults.bang = function() {
-            var $$func, $$list, $$i, $$imax;
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -405,41 +334,17 @@ var timbre = (function(context, timbre) {
         
         defaults.on = function() {
             var f;
-            var $$func, $$list, $$i, $$imax;
             this._.ison = true;
             if ((f = this._.proto._.on) instanceof Function) f.call(this);
-            // inline -----: timbre.fn.doEvent(this, "on");
-            if (($$func = this.onon) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["on"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("on", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "on");
             return this;
         };
         
         defaults.off = function() {
             var f;
-            var $$func, $$list, $$i, $$imax;
             this._.ison = false;
             if ((f = this._.proto._.off) instanceof Function) f.call(this);
-            // inline -----: timbre.fn.doEvent(this, "off");
-            if (($$func = this.onoff) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["off"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("off", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "off");
             return this;
         };
         
@@ -609,82 +514,34 @@ var timbre = (function(context, timbre) {
         defaults.optional.dac = {
             on: function() {
                 var f;
-                var $$func, $$list, $$i, $$imax;
                 this._.ison = true;
                 timbre.dacs.append(this);
                 if ((f = this._.proto._.on)) f.call(this);
-                // inline -----: timbre.fn.doEvent(this, "on");
-                if (($$func = this.onon) instanceof Function) {
-                    $$func.apply(this);
-                }
-                if (($$list = this._.ev["on"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this);
-                       if ($$func.rm) this.removeEventListener("on", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(this, "on");
                 return this;
             },
             off: function() {
                 var f;
-                var $$func, $$list, $$i, $$imax;
                 this._.ison = false;
                 timbre.dacs.remove(this);
                 if ((f = this._.proto._.off)) f.call(this);
-                // inline -----: timbre.fn.doEvent(this, "off");
-                if (($$func = this.onoff) instanceof Function) {
-                    $$func.apply(this);
-                }
-                if (($$list = this._.ev["off"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this);
-                       if ($$func.rm) this.removeEventListener("off", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(this, "off");
                 return this;
             },
             play: function() {
                 var f;
-                var $$func, $$list, $$i, $$imax;
                 this._.ison = true;
                 timbre.dacs.append(this);
                 if ((f = this._.proto._.play)) f.call(this);
-                // inline -----: timbre.fn.doEvent(this, "play");
-                if (($$func = this.onplay) instanceof Function) {
-                    $$func.apply(this);
-                }
-                if (($$list = this._.ev["play"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this);
-                       if ($$func.rm) this.removeEventListener("play", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(this, "play");
                 return this;
             },
             pause: function() {
                 var f;
-                var $$func, $$list, $$i, $$imax;
                 this._.ison = false;
                 timbre.dacs.remove(this);
                 if ((f = this._.proto._.pause)) f.call(this);
-                // inline -----: timbre.fn.doEvent(this, "pause");
-                if (($$func = this.onpause) instanceof Function) {
-                    $$func.apply(this);
-                }
-                if (($$list = this._.ev["pause"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this);
-                       if ($$func.rm) this.removeEventListener("pause", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(this, "pause");
                 return this;
             }
         };
@@ -692,78 +549,30 @@ var timbre = (function(context, timbre) {
         defaults.optional.timer = {
             on: function() {
                 var f;
-                var $$func, $$list, $$i, $$imax;
                 this._.ison = true;
                 timbre.timers.append(this);
                 if ((f = this._.proto._.on)) f.call(this);
-                // inline -----: timbre.fn.doEvent(this, "on");
-                if (($$func = this.onon) instanceof Function) {
-                    $$func.apply(this);
-                }
-                if (($$list = this._.ev["on"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this);
-                       if ($$func.rm) this.removeEventListener("on", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(this, "on");
                 return this;
             },
             off: function() {
                 var f;
-                var $$func, $$list, $$i, $$imax;
                 this._.ison = false;
                 timbre.timers.remove(this);
                 if ((f = this._.proto._.off)) f.call(this);
-                // inline -----: timbre.fn.doEvent(this, "off");
-                if (($$func = this.onoff) instanceof Function) {
-                    $$func.apply(this);
-                }
-                if (($$list = this._.ev["off"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this);
-                       if ($$func.rm) this.removeEventListener("off", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(this, "off");
                 return this;
             },
             play: function() {
                 var f;
-                var $$func, $$list, $$i, $$imax;
                 if ((f = this._.proto._.play)) f.call(this);
-                // inline -----: timbre.fn.doEvent(this, "play");
-                if (($$func = this.onplay) instanceof Function) {
-                    $$func.apply(this);
-                }
-                if (($$list = this._.ev["play"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this);
-                       if ($$func.rm) this.removeEventListener("play", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(this, "play");
                 return this;
             },
             pause: function() {
                 var f;
-                var $$func, $$list, $$i, $$imax;
                 if ((f = this._.proto._.pause)) f.call(this);
-                // inline -----: timbre.fn.doEvent(this, "pause");
-                if (($$func = this.onpause) instanceof Function) {
-                    $$func.apply(this);
-                }
-                if (($$list = this._.ev["pause"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this);
-                       if ($$func.rm) this.removeEventListener("pause", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(this, "pause");
                 return this;
             }
         };
@@ -1265,21 +1074,9 @@ var timbre = (function(context, timbre) {
         };
         
         $this.bang = function() {
-            var $$func, $$list, $$i, $$imax;
             this._.value = !this._.value;
             changeTheValue.call(this);
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -1420,7 +1217,6 @@ var timbre = (function(context, timbre) {
         
         $this.bang = function() {
             var i, v, _ = this._;
-            var $$func, $$list, $$i, $$imax;
             
             i = _.index;
             v = _.value;
@@ -1440,18 +1236,7 @@ var timbre = (function(context, timbre) {
                     ++_.repeat2;
                     if (_.repeat2 >= _.repeat1) {
                         _.ended = true;
-                        // inline -----: timbre.fn.doEvent(this, "ended");
-                        if (($$func = this.onended) instanceof Function) {
-                            $$func.apply(this);
-                        }
-                        if (($$list = this._.ev["ended"]) !== undefined) {
-                           for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                               $$func = $$list[$$i];
-                               $$func.apply(this);
-                               if ($$func.rm) this.removeEventListener("ended", $$func);
-                           }
-                        }
-                        // ----- inline
+                        timbre.fn.doEvent(this, "ended");
                     } else {
                         // loop;
                         _.index = i = 0;
@@ -1459,34 +1244,12 @@ var timbre = (function(context, timbre) {
                             v[0].reset().bang();
                         }
                         changeTheValue.call(this, i);
-                        // inline -----: timbre.fn.doEvent(this, "looped");
-                        if (($$func = this.onlooped) instanceof Function) {
-                            $$func.apply(this);
-                        }
-                        if (($$list = this._.ev["looped"]) !== undefined) {
-                           for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                               $$func = $$list[$$i];
-                               $$func.apply(this);
-                               if ($$func.rm) this.removeEventListener("looped", $$func);
-                           }
-                        }
-                        // ----- inline
+                        timbre.fn.doEvent(this, "looped");
                     }
                 }
             }
             
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -1543,22 +1306,10 @@ var timbre = (function(context, timbre) {
         
         $this.bang = function() {
             var _ = this._;
-            var $$func, $$list, $$i, $$imax;
             if (_.value !== null) {
                 _.value.apply(this, _.args);
             }
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -1936,11 +1687,7 @@ var timbre = (function(context, timbre) {
                         cell[j] = mul;
                     }
                     for (i = 0, imax = args.length; i < imax; ++i) {
-                        if (args[i].seq_id === seq_id) {
-                            tmp = args[i].cell;
-                        } else {
-                            tmp = args[i].seq(seq_id);
-                        }
+                        tmp = args[i].seq(seq_id);
                         for (j = jmax; j--; ) {
                             cell[j] *= tmp[j];
                         }
@@ -2072,20 +1819,8 @@ var timbre = (function(context, timbre) {
         };
         
         $this.bang = function() {
-            var $$func, $$list, $$i, $$imax;
             this._.x = 1024 * this._.phase;
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -2439,20 +2174,8 @@ var timbre = (function(context, timbre) {
         };
         
         $this.bang = function() {
-            var $$func, $$list, $$i, $$imax;
             this._.x = this._.phase;
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -2626,20 +2349,8 @@ var timbre = (function(context, timbre) {
         };
         
         $this.bang = function() {
-            var $$func, $$list, $$i, $$imax;
             this._.phase.bang();
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -2800,20 +2511,8 @@ var timbre = (function(context, timbre) {
         };
         
         $this.bang = function() {
-            var $$func, $$list, $$i, $$imax;
             this._.x = this._.phase;
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -2868,19 +2567,141 @@ var timbre = (function(context, timbre) {
     }());
     timbre.fn.register("phasor", Phasor);
     
-    ///// objects/adsr.js /////
-    var ADSREnvelope = (function() {
-        var ADSREnvelope = function() {
+    ///// objects/pwm.js /////
+    var Pwm = (function() {
+        var Pwm = function() {
             initialize.apply(this, arguments);
-        }, $this = ADSREnvelope.prototype;
+        }, $this = Pwm.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "ar-kr");
+        
+        Object.defineProperty($this, "width", {
+            set: function(value) {
+                this._.width = timbre(value);
+            },
+            get: function() { return this._.width; }
+        });
+        
+        Object.defineProperty($this, "freq", {
+            set: function(value) {
+                this._.freq = timbre(value);
+            },
+            get: function() { return this._.freq; }
+        });
+        
+        var initialize = function(_args) {
+            var i, _;
+            
+            this._ = _ = {};
+            i = 0;
+            
+            if (typeof _args[i] !== "undefined") {
+                this.width = _args[i++];
+            } else {
+                this.width = 0.5;
+            }
+            if (typeof _args[i] !== "undefined") {
+                this.freq = _args[i++];
+            } else {
+                this.freq = 440;
+            }
+            
+            _.x     = 0;
+            _.coeff = 1 / timbre.samplerate;
+        };
+        
+        $this.clone = function(deep) {
+            var newone, _ = this._;
+            newone = T("pwm");
+            if (deep) {
+                newone._.width = _.width.clone(true);
+                newone._.freq  = _.freq.clone(true);
+            } else {
+                newone._.width = _.width;
+                newone._.freq  = _.freq;
+            }
+            return timbre.fn.copyBaseArguments(this, newone, deep);
+        };
+        
+        $this.bang = function() {
+            this._.x = 0;
+            timbre.fn.doEvent(this, "bang");
+            return this;
+        };
+        
+        $this.seq = function(seq_id) {
+            var _ = this._;
+            var cell;
+            var width, freq, mul, add;
+            var x, dx, coeff, xx;
+            var i, imax;
+            
+            if (!_.ison) return timbre._.none;
+            
+            cell = this.cell;
+            if (seq_id !== this.seq_id) {
+                this.seq_id = seq_id;
+                
+                width = _.width.seq(seq_id)[0];
+                freq  = _.freq .seq(seq_id);
+                mul   = _.mul;
+                add   = _.add;
+                x     = _.x;
+                coeff = _.coeff;
+                if (_.ar) {
+                    if (_.freq.isAr) {
+                        for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                            cell[i] = ((x < width) ? -1 : +1) * mul + add;
+                            x += freq[i] * coeff;
+                            while (x > 1.0) x -= 1.0;
+                        }
+                    } else {
+                        dx = freq[0] * coeff;
+                        for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                            cell[i] = ((x < width) ? -1 : +1) * mul + add;
+                            x += dx;
+                            while (x > 1.0) x -= 1.0;
+                        }
+                    }
+                } else {
+                    xx = ((_.x < width) ? -1 : +1) * _.mul + add;
+                    for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                        cell[i] = xx;
+                    }
+                    x += freq[0] * coeff * imax;
+                    while (x > 1.0) x -= 1.0;
+                }
+                _.x = x;
+            }
+            return cell;
+        };
+        
+        return Pwm;
+    }());
+    timbre.fn.register("pwm", Pwm);
+    
+    ///// objects/env.js /////
+    var Envelope = (function() {
+        var Envelope = function() {
+            initialize.apply(this, arguments);
+        }, $this = Envelope.prototype;
         
         timbre.fn.setPrototypeOf.call($this, "kr-only");
-        
-        var STATUSES = ["off","delay","a","d","s","r"];
-        
-        Object.defineProperty($this, "status", {
-            get: function() { return STATUSES[this._.status+1]; }
+    
+        Object.defineProperty($this, "table", {
+            set: function(value) {
+                var dx;
+                if (typeof value === "string") {
+                    if ((dx = Envelope.AmpTables[value]) !== undefined) {
+                        if (typeof dx === "function") dx = dx();
+                        this._.tableName = value;
+                        this._.table = dx;
+                    }
+                }
+            },
+            get: function(value) { return this._.tableName; }
         });
+        
         Object.defineProperty($this, "delay", {
             set: function(value) {
                 if (typeof value === "number") {
@@ -2888,6 +2709,73 @@ var timbre = (function(context, timbre) {
                 }
             },
             get: function() { return this._.delay; }
+        });
+        Object.defineProperty($this, "reversed", {
+            set: function(value) {
+                this._.reversed = !!value;
+            },
+            get: function() { return this._.reversed; }
+        });
+        Object.defineProperty($this, "currentTime", {
+            get: function() { return this._.currentTime; }
+        });
+        
+        var initialize = function(_args) {
+        };
+        
+        return Envelope;
+    }());
+    timbre.fn.register("env", Envelope);
+    
+    Envelope.AmpTables = {};
+    Envelope.AmpTables["linear"] = function() {
+        var l, i;
+        l = new Float32Array(512);
+        for (i = 0; i < 512; ++i) {
+            l[i] = i / 512;
+        }
+        return l;
+    };
+    
+    (function(list) {
+        list.forEach(function(db) {
+            Envelope.AmpTables[db + "db"] = function() {
+                var l, i;
+                l = new Float32Array(512);
+                for (i = 0; i < 512; ++i) {
+                    l[512-i] = Math.pow(10, (db * (i/512) / -20));
+                }
+                return l;
+            };
+            Envelope.AmpTables["~" + db + "db"] = function() {
+                var l, i;
+                l = new Float32Array(512);
+                for (i = 0; i < 512; ++i) {
+                    l[i] = 1 - Math.pow(10, (db * (i/512) / -20));
+                }
+                return l;
+            };
+        });
+    }([32,48,64,96]));
+    
+    ///// objects/adsr.js /////
+    var ADSREnvelope = (function() {
+        var ADSREnvelope = function() {
+            initialize.apply(this, arguments);
+        }, $this = ADSREnvelope.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "kr-only");
+    
+        var Envelope = timbre.fn.getClass("env");
+    
+        timbre.fn.copyPropertyDescriptors($this,
+                                          Envelope.prototype,
+                                          ["table", "delay", "reversed", "currentTime"]);
+        
+        var STATUSES = ["off","delay","a","d","s","r"];
+        
+        Object.defineProperty($this, "status", {
+            get: function() { return STATUSES[this._.status+1]; }
         });
         Object.defineProperty($this, "a", {
             set: function(value) {
@@ -2953,17 +2841,6 @@ var timbre = (function(context, timbre) {
             },
             get: function() { return this._.rl; }
         });
-        Object.defineProperty($this, "reversed", {
-            set: function(value) {
-                if (typeof value === "boolean") {
-                    this._.reversed = value;
-                }
-            },
-            get: function() { return this._.reversed; }
-        });
-        Object.defineProperty($this, "currentTime", {
-            get: function() { return this._.currentTime; }
-        });
         
         var initialize = function(_args) {
             var i, _;
@@ -2971,6 +2848,12 @@ var timbre = (function(context, timbre) {
             _ = this._ = {};
             
             i = 0;
+            if (typeof _args[i] === "string" && Envelope.AmpTables[_args[i]]) {
+                this.table = _args[i++];
+            } else {
+                this.table = "linear";
+            }
+            
             _.a  = (typeof _args[i] === "number") ? _args[i++] : 0;
             _.d  = (typeof _args[i] === "number") ? _args[i++] : 0;
             _.sl = (typeof _args[i] === "number") ? _args[i++] : 0;                
@@ -2985,7 +2868,8 @@ var timbre = (function(context, timbre) {
             
             _.status = -1;
             _.samples = Infinity;
-            _.x0 = 0; _.x1 = 0; _.dx = 0;
+            _.x0 = 0;
+            _.dx = 0;
             _.currentTime = 0;
         };
         
@@ -3001,59 +2885,33 @@ var timbre = (function(context, timbre) {
         
         $this.bang = function(mode) {
             var _ = this._;
-            var $$func, $$list, $$i, $$imax;
             
             // off -> delay
             _.status  = 0;
             _.samples = (timbre.samplerate * (_.delay / 1000))|0;
-            _.x0 = 0; _.x1 = 1;
+            _.x0 = 0;
             _.dx = (timbre.cellsize * _.al) / _.samples;
             _.currentTime = 0;
             
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
     
         $this.keyoff = function() {
             var _ = this._;
-            var $$func, $$list, $$i, $$imax;
             
             if (_.status <= 3) {
                 // (delay, A, D, S) -> R
                 _.status  = 4;
                 _.samples = (timbre.samplerate * (_.r / 1000))|0;
-                _.x1 = _.x0; _.x0 = 1;
-                _.dx = -timbre.cellsize * (1 - _.rl) / _.samples;
-                // inline -----: timbre.fn.doEvent(this, "R");
-                if (($$func = this.onR) instanceof Function) {
-                    $$func.apply(this);
-                }
-                if (($$list = this._.ev["R"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this);
-                       if ($$func.rm) this.removeEventListener("R", $$func);
-                   }
-                }
-                // ----- inline
+                _.dx = -timbre.cellsize * (_.x0 - _.rl) / _.samples;
+                timbre.fn.doEvent(this, "R");
             }
         };
         
         $this.seq = function(seq_id) {
             var _ = this._;
             var cell, x, i, imax;
-            var $$func, $$list, $$i, $$imax;
             
             if (!_.ison) return timbre._.none;
             
@@ -3067,18 +2925,7 @@ var timbre = (function(context, timbre) {
                         _.samples += (timbre.samplerate * (_.a / 1000))|0;
                         _.x0 = _.al;
                         _.dx = (timbre.cellsize * (_.dl -_.al)) / _.samples;
-                        // inline -----: timbre.fn.doEvent(this, "A");
-                        if (($$func = this.onA) instanceof Function) {
-                            $$func.apply(this);
-                        }
-                        if (($$list = this._.ev["A"]) !== undefined) {
-                           for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                               $$func = $$list[$$i];
-                               $$func.apply(this);
-                               if ($$func.rm) this.removeEventListener("A", $$func);
-                           }
-                        }
-                        // ----- inline
+                        timbre.fn.doEvent(this, "A");
                         continue;
                     }
                     if (_.status === 1) { // A -> D
@@ -3086,18 +2933,7 @@ var timbre = (function(context, timbre) {
                         _.samples += (timbre.samplerate * (_.d / 1000))|0;
                         _.x0 = _.dl;
                         _.dx = -timbre.cellsize * (_.dl - _.sl) / _.samples;
-                        // inline -----: timbre.fn.doEvent(this, "D");
-                        if (($$func = this.onD) instanceof Function) {
-                            $$func.apply(this);
-                        }
-                        if (($$list = this._.ev["D"]) !== undefined) {
-                           for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                               $$func = $$list[$$i];
-                               $$func.apply(this);
-                               if ($$func.rm) this.removeEventListener("D", $$func);
-                           }
-                        }
-                        // ----- inline
+                        timbre.fn.doEvent(this, "D");
                         continue;
                     }
                     if (_.status === 2) { // D -> S
@@ -3114,45 +2950,22 @@ var timbre = (function(context, timbre) {
                             _.samples += (timbre.samplerate * (_.s / 1000))|0;
                             _.dx = -timbre.cellsize * (_.sl - _.rl) / _.samples;
                         }
-                        // inline -----: timbre.fn.doEvent(this, "S");
-                        if (($$func = this.onS) instanceof Function) {
-                            $$func.apply(this);
-                        }
-                        if (($$list = this._.ev["S"]) !== undefined) {
-                           for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                               $$func = $$list[$$i];
-                               $$func.apply(this);
-                               if ($$func.rm) this.removeEventListener("S", $$func);
-                           }
-                        }
-                        // ----- inline
+                        timbre.fn.doEvent(this, "S");
                         continue;
                     }
                     if (_.status <= 4) { // (S, R) -> end
                         _.status  = -1;
                         _.samples = Infinity;
-                        _.x0 = _.x1 = _.dx = 0;
-                        // inline -----: timbre.fn.doEvent(this, "ended");
-                        if (($$func = this.onended) instanceof Function) {
-                            $$func.apply(this);
-                        }
-                        if (($$list = this._.ev["ended"]) !== undefined) {
-                           for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                               $$func = $$list[$$i];
-                               $$func.apply(this);
-                               if ($$func.rm) this.removeEventListener("ended", $$func);
-                           }
-                        }
-                        // ----- inline
+                        _.x0 = _.dx = 0;
+                        timbre.fn.doEvent(this, "ended");
                         continue;
                     }
                 }
                 
-                if (_.reversed) {
-                    x = (1.0 - (_.x0 * _.x1)) * _.mul + _.add;
-                } else {
-                    x = (_.x0 * _.x1) * _.mul + _.add;
-                }
+                x = (_.x0 === 1) ? 1 : _.table[(_.x0 * 512)|0];
+                if (_.reversed) x = 1 - x;
+                
+                x = x * _.mul + _.add;
                 for (i = 0, imax = cell.length; i < imax; ++i) {
                     cell[i] = x;
                 }
@@ -3174,21 +2987,19 @@ var timbre = (function(context, timbre) {
         }, $this = PercussiveEnvelope.prototype;
         
         timbre.fn.setPrototypeOf.call($this, "kr-only");
+        
+        var Envelope = timbre.fn.getClass("env");
     
+        timbre.fn.copyPropertyDescriptors($this,
+                                          Envelope.prototype,
+                                          ["table", "delay", "reversed", "currentTime"]);
+        
         var STATUSES = ["off","delay","a","r"];
         
         Object.defineProperty($this, "status", {
             get: function() { return STATUSES[this._.status+1]; }
         });
         
-        Object.defineProperty($this, "delay", {
-            set: function(value) {
-                if (typeof value === "number") {
-                    this._.delay = value;
-                }
-            },
-            get: function() { return this._.delay; }
-        });
         Object.defineProperty($this, "a", {
             set: function(value) {
                 if (typeof value === "number") {
@@ -3213,15 +3024,6 @@ var timbre = (function(context, timbre) {
             },
             get: function() { return this._.al; }
         });
-        Object.defineProperty($this, "reversed", {
-            set: function(value) {
-                this._.reversed = !!value;
-            },
-            get: function() { return this._.reversed; }
-        });
-        Object.defineProperty($this, "currentTime", {
-            get: function() { return this._.currentTime; }
-        });
         
         var initialize = function(_args) {
             var i, nums, _;
@@ -3230,6 +3032,12 @@ var timbre = (function(context, timbre) {
             nums = [];
             
             i = 0;
+            if (typeof _args[i] === "string" && Envelope.AmpTables[_args[i]]) {
+                this.table = _args[i++];
+            } else {
+                this.table = "linear";
+            }
+            
             if (typeof _args[i] === "number") {
                 nums.push(_args[i++]);
                 if (typeof _args[i] === "number") {
@@ -3271,7 +3079,8 @@ var timbre = (function(context, timbre) {
             
             _.status  = -1;        
             _.samples = Infinity;
-            _.x0 = 0; _.dx = 0;
+            _.x0 = 0;
+            _.dx = 0;
             _.currentTime = 0;
         };
         
@@ -3285,7 +3094,6 @@ var timbre = (function(context, timbre) {
         
         $this.bang = function() {
             var _ = this._;
-            var $$func, $$list, $$i, $$imax;
     
             // off -> delay
             _.status  = 0;
@@ -3294,25 +3102,13 @@ var timbre = (function(context, timbre) {
             _.dx = -(timbre.cellsize * _.al) / _.samples;
             _.currentTime = 0;
             
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
         $this.seq = function(seq_id) {
             var _ = this._;
-            var cell, x, i, imax;
-            var $$func, $$list, $$i, $$imax;
+            var cell, table, x, i, imax;
             
             if (!_.ison) return timbre._.none;
             
@@ -3326,18 +3122,7 @@ var timbre = (function(context, timbre) {
                         _.samples += (timbre.samplerate * (_.a / 1000))|0;
                         _.x0 = _.al;
                         _.dx = -(timbre.cellsize * (1 -_.al)) / _.samples;
-                        // inline -----: timbre.fn.doEvent(this, "A");
-                        if (($$func = this.onA) instanceof Function) {
-                            $$func.apply(this);
-                        }
-                        if (($$list = this._.ev["A"]) !== undefined) {
-                           for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                               $$func = $$list[$$i];
-                               $$func.apply(this);
-                               if ($$func.rm) this.removeEventListener("A", $$func);
-                           }
-                        }
-                        // ----- inline
+                        timbre.fn.doEvent(this, "A");
                         continue;
                     }
                     if (_.status === 1) {
@@ -3346,18 +3131,7 @@ var timbre = (function(context, timbre) {
                         _.samples = (timbre.samplerate * (_.r / 1000))|0;
                         _.x0 = 1;
                         _.dx = timbre.cellsize / _.samples;
-                        // inline -----: timbre.fn.doEvent(this, "R");
-                        if (($$func = this.onR) instanceof Function) {
-                            $$func.apply(this);
-                        }
-                        if (($$list = this._.ev["R"]) !== undefined) {
-                           for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                               $$func = $$list[$$i];
-                               $$func.apply(this);
-                               if ($$func.rm) this.removeEventListener("R", $$func);
-                           }
-                        }
-                        // ----- inline
+                        timbre.fn.doEvent(this, "R");
                         continue;
                     }
                     if (_.status === 2) {
@@ -3365,27 +3139,14 @@ var timbre = (function(context, timbre) {
                         _.status  = -1;
                         _.samples = Infinity;
                         _.x0 = _.dx = 0;
-                        // inline -----: timbre.fn.doEvent(this, "ended");
-                        if (($$func = this.onended) instanceof Function) {
-                            $$func.apply(this);
-                        }
-                        if (($$list = this._.ev["ended"]) !== undefined) {
-                           for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                               $$func = $$list[$$i];
-                               $$func.apply(this);
-                               if ($$func.rm) this.removeEventListener("ended", $$func);
-                           }
-                        }
-                        // ----- inline
+                        timbre.fn.doEvent(this, "ended");
                         continue;
                     }
                 }
                 
-                if (_.reversed) {
-                    x = (1.0 - _.x0) * _.mul + _.add;
-                } else {
-                    x = _.x0 * _.mul + _.add;
-                }
+                x = (_.x0 === 1) ? 1 : _.table[(_.x0 * 512)|0];
+                if (_.reversed) x = 1 - x;
+                x = x * _.mul + _.add;
                 for (i = 0, imax = cell.length; i < imax; ++i) {
                     cell[i] = x;
                 }
@@ -3399,6 +3160,7 @@ var timbre = (function(context, timbre) {
         return PercussiveEnvelope;
     }());
     timbre.fn.register("perc", PercussiveEnvelope);
+    
     
     ///// objects/filter.js /////
     var Filter = (function() {
@@ -4609,20 +4371,8 @@ var timbre = (function(context, timbre) {
             
             this.bang = function() {
                 var _ = this._;
-                var $$func, $$list, $$i, $$imax;
                 _.phase = (_.reversed) ? Math.max(0, _.buffer.length - 1) : 0;
-                // inline -----: timbre.fn.doEvent(this, "bang");
-                if (($$func = this.onbang) instanceof Function) {
-                    $$func.apply(this);
-                }
-                if (($$list = this._.ev["bang"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this);
-                       if ($$func.rm) this.removeEventListener("bang", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(this, "bang");
                 return this;
             };
             
@@ -4630,7 +4380,6 @@ var timbre = (function(context, timbre) {
                 var _ = this._;
                 var cell, buffer, mul, add;
                 var i, imax;
-                var $$func, $$list, $$i, $$imax;
                 
                 if (!_.ison) return timbre._.none;
                 
@@ -4646,31 +4395,9 @@ var timbre = (function(context, timbre) {
                             if (_.phase < 0) {
                                 if (_.loop) {
                                     _.phase = Math.max(0, _.buffer.length - 1);
-                                    // inline -----: timbre.fn.doEvent(this, "looped");
-                                    if (($$func = this.onlooped) instanceof Function) {
-                                        $$func.apply(this);
-                                    }
-                                    if (($$list = this._.ev["looped"]) !== undefined) {
-                                       for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                                           $$func = $$list[$$i];
-                                           $$func.apply(this);
-                                           if ($$func.rm) this.removeEventListener("looped", $$func);
-                                       }
-                                    }
-                                    // ----- inline
+                                    timbre.fn.doEvent(this, "looped");
                                 } else {
-                                    // inline -----: timbre.fn.doEvent(this, "ended");
-                                    if (($$func = this.onended) instanceof Function) {
-                                        $$func.apply(this);
-                                    }
-                                    if (($$list = this._.ev["ended"]) !== undefined) {
-                                       for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                                           $$func = $$list[$$i];
-                                           $$func.apply(this);
-                                           if ($$func.rm) this.removeEventListener("ended", $$func);
-                                       }
-                                    }
-                                    // ----- inline
+                                    timbre.fn.doEvent(this, "ended");
                                 }
                             }
                         }
@@ -4680,31 +4407,9 @@ var timbre = (function(context, timbre) {
                             if (_.phase >= buffer.length) {
                                 if (_.loop) {
                                     _.phase = 0;
-                                    // inline -----: timbre.fn.doEvent(this, "looped");
-                                    if (($$func = this.onlooped) instanceof Function) {
-                                        $$func.apply(this);
-                                    }
-                                    if (($$list = this._.ev["looped"]) !== undefined) {
-                                       for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                                           $$func = $$list[$$i];
-                                           $$func.apply(this);
-                                           if ($$func.rm) this.removeEventListener("looped", $$func);
-                                       }
-                                    }
-                                    // ----- inline
+                                    timbre.fn.doEvent(this, "looped");
                                 } else {
-                                    // inline -----: timbre.fn.doEvent(this, "ended");
-                                    if (($$func = this.onended) instanceof Function) {
-                                        $$func.apply(this);
-                                    }
-                                    if (($$list = this._.ev["ended"]) !== undefined) {
-                                       for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                                           $$func = $$list[$$i];
-                                           $$func.apply(this);
-                                           if ($$func.rm) this.removeEventListener("ended", $$func);
-                                       }
-                                    }
-                                    // ----- inline
+                                    timbre.fn.doEvent(this, "ended");
                                 }
                             }
                         }
@@ -4742,70 +4447,24 @@ var timbre = (function(context, timbre) {
                 xhr.open("GET", _.src, true);
                 xhr.responseType = "arraybuffer";
                 xhr.onreadystatechange = function(event) {
-                    var $$func, $$list, $$i, $$imax;
                     if (xhr.readyState === 4) {
                         if (xhr.status !== 200) {
-                            // inline -----: timbre.fn.doEvent(self, "error", [xhr]);
-                            if (($$func = self.onerror) instanceof Function) {
-                                $$func.apply(self, [xhr]);
-                            }
-                            if (($$list = self._.ev["error"]) !== undefined) {
-                               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                                   $$func = $$list[$$i];
-                                   $$func.apply(self, [xhr]);
-                                   if ($$func.rm) self.removeEventListener("error", $$func);
-                               }
-                            }
-                            // ----- inline
+                            timbre.fn.doEvent(self, "error", [xhr]);
                         }
                     }
                 };
                 xhr.onload = function() {
-                    var $$func, $$list, $$i, $$imax;
                     _.buffer = ctx.createBuffer(xhr.response, true).getChannelData(0);
                     _.duration  = _.buffer.length / timbre.samplerate * 1000;
                     opts.buffer = _.buffer;
                     
-                    // inline -----: timbre.fn.doEvent(self, "loadedmetadata", [opts]);
-                    if (($$func = self.onloadedmetadata) instanceof Function) {
-                        $$func.apply(self, [opts]);
-                    }
-                    if (($$list = self._.ev["loadedmetadata"]) !== undefined) {
-                       for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                           $$func = $$list[$$i];
-                           $$func.apply(self, [opts]);
-                           if ($$func.rm) self.removeEventListener("loadedmetadata", $$func);
-                       }
-                    }
-                    // ----- inline
+                    timbre.fn.doEvent(self, "loadedmetadata", [opts]);
                     _.isloaded = true;
-                    // inline -----: timbre.fn.doEvent(self, "loadeddata", [opts]);
-                    if (($$func = self.onloadeddata) instanceof Function) {
-                        $$func.apply(self, [opts]);
-                    }
-                    if (($$list = self._.ev["loadeddata"]) !== undefined) {
-                       for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                           $$func = $$list[$$i];
-                           $$func.apply(self, [opts]);
-                           if ($$func.rm) self.removeEventListener("loadeddata", $$func);
-                       }
-                    }
-                    // ----- inline
+                    timbre.fn.doEvent(self, "loadeddata", [opts]);
                 };
                 xhr.send();
             } else {
-                // inline -----: timbre.fn.doEvent(self, "error", [xhr]);
-                if (($$func = self.onerror) instanceof Function) {
-                    $$func.apply(self, [xhr]);
-                }
-                if (($$list = self._.ev["error"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(self, [xhr]);
-                       if ($$func.rm) self.removeEventListener("error", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(self, "error", [xhr]);
             }
             _.isloaded = false;
             _.buffer   = new Float32Array(0);
@@ -4833,7 +4492,6 @@ var timbre = (function(context, timbre) {
         $this.load = function(callback) {
             var self = this, _ = this._;
             var audio, output, buffer_index, istep, opts;
-            var $$func, $$list, $$i, $$imax;
             
             opts = { buffer:null, samplerate:0 };
             
@@ -4841,18 +4499,7 @@ var timbre = (function(context, timbre) {
                 audio = new Audio(_.src);
                 audio.loop = false;
                 audio.addEventListener("error", function(e) {
-                    // inline -----: timbre.fn.doEvent(self, "error", [e]);
-                    if (($$func = self.onerror) instanceof Function) {
-                        $$func.apply(self, [e]);
-                    }
-                    if (($$list = self._.ev["error"]) !== undefined) {
-                       for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                           $$func = $$list[$$i];
-                           $$func.apply(self, [e]);
-                           if ($$func.rm) self.removeEventListener("error", $$func);
-                       }
-                    }
-                    // ----- inline
+                    timbre.fn.doEvent(self, "error", [e]);
                 }, false);
                 audio.addEventListener("loadedmetadata", function(e) {
                     audio.volume = 0.0;
@@ -4863,18 +4510,7 @@ var timbre = (function(context, timbre) {
                     audio.play();
                     opts.buffer = _.buffer;
                     opts.samplerate = audio.mozSampleRate;
-                    // inline -----: timbre.fn.doEvent(self, "loadedmetadata", [opts]);
-                    if (($$func = self.onloadedmetadata) instanceof Function) {
-                        $$func.apply(self, [opts]);
-                    }
-                    if (($$list = self._.ev["loadedmetadata"]) !== undefined) {
-                       for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                           $$func = $$list[$$i];
-                           $$func.apply(self, [opts]);
-                           if ($$func.rm) self.removeEventListener("loadedmetadata", $$func);
-                       }
-                    }
-                    // ----- inline
+                    timbre.fn.doEvent(self, "loadedmetadata", [opts]);
                 }, false);
                 audio.addEventListener("MozAudioAvailable", function(e) {
                     var samples, buffer, i, imax;
@@ -4886,18 +4522,7 @@ var timbre = (function(context, timbre) {
                 }, false);
                 audio.addEventListener("ended", function(e) {
                     _.isloaded = true;
-                    // inline -----: timbre.fn.doEvent(self, "loadeddata", [opts]);
-                    if (($$func = self.onloadeddata) instanceof Function) {
-                        $$func.apply(self, [opts]);
-                    }
-                    if (($$list = self._.ev["loadeddata"]) !== undefined) {
-                       for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                           $$func = $$list[$$i];
-                           $$func.apply(self, [opts]);
-                           if ($$func.rm) self.removeEventListener("loadeddata", $$func);
-                       }
-                    }
-                    // ----- inline
+                    timbre.fn.doEvent(self, "loadeddata", [opts]);
                 }, false);
                 audio.load();
             }
@@ -5024,20 +4649,8 @@ var timbre = (function(context, timbre) {
         };
         
         var send = function(type, result, callback) {
-            var $$func, $$list, $$i, $$imax;
             if (type === "loadedmetadata") {
-                // inline -----: timbre.fn.doEvent(this, "loadedmetadata", [result]);
-                if (($$func = this.onloadedmetadata) instanceof Function) {
-                    $$func.apply(this, [result]);
-                }
-                if (($$list = this._.ev["loadedmetadata"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this, [result]);
-                       if ($$func.rm) this.removeEventListener("loadedmetadata", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(this, "loadedmetadata", [result]);
             } else if (type === "loadeddata") {
                 if (typeof callback === "function") {
                     callback.call(this, result);
@@ -5050,43 +4663,20 @@ var timbre = (function(context, timbre) {
                         console.log("wav.load: done.");
                     }
                 }
-                // inline -----: timbre.fn.doEvent(this, "loadeddata", [result]);
-                if (($$func = this.onloadeddata) instanceof Function) {
-                    $$func.apply(this, [result]);
-                }
-                if (($$list = this._.ev["loadeddata"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this, [result]);
-                       if ($$func.rm) this.removeEventListener("loadeddata", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(this, "loadeddata", [result]);
             } else if (type === "error") {
                 if (typeof callback === "function") {
                     callback.call(this, "error");
                 } else if (typeof callback === "object") {
                     console.log("wav.load: error.");
                 }
-                // inline -----: timbre.fn.doEvent(this, "error");
-                if (($$func = this.onerror) instanceof Function) {
-                    $$func.apply(this);
-                }
-                if (($$list = this._.ev["error"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this);
-                       if ($$func.rm) this.removeEventListener("error", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(this, "error");
             }
         };
         
         $this.load = function(callback) {
             var self = this, _ = this._;
             var worker, src, m, buffer, samplerate;        
-            var $$func, $$list, $$i, $$imax;
             if (_.loaded_src === _.src) {
                 if (_.samplerate === 0) {
                     send.call(this, "error", {}, callback);
@@ -5099,18 +4689,7 @@ var timbre = (function(context, timbre) {
                                buffer    :_.buffer}, callback);    
                 }
             } else if (_.src !== "") {
-                // inline -----: timbre.fn.doEvent(this, "loading");
-                if (($$func = this.onloading) instanceof Function) {
-                    $$func.apply(this);
-                }
-                if (($$list = this._.ev["loading"]) !== undefined) {
-                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                       $$func = $$list[$$i];
-                       $$func.apply(this);
-                       if ($$func.rm) this.removeEventListener("loading", $$func);
-                   }
-                }
-                // ----- inline
+                timbre.fn.doEvent(this, "loading");
                 if (timbre.platform === "web" && timbre._.workerpath) {
                     src = timbre.utils.relpath2rootpath(_.src);
                     worker = new Worker(timbre._.workerpath);
@@ -5190,20 +4769,8 @@ var timbre = (function(context, timbre) {
         };
         
         $this.bang = function() {
-            var $$func, $$list, $$i, $$imax;
             this._.phase = 0;
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -5213,7 +4780,6 @@ var timbre = (function(context, timbre) {
             var buffer, phase, phaseStep;
             var index, delta, x0, x1;
             var i, imax;
-            var $$func, $$list, $$i, $$imax;
             
             if (!_.ison) return timbre._.none;
             
@@ -5238,31 +4804,9 @@ var timbre = (function(context, timbre) {
                         if (_.phase < 0) {
                             if (_.loop) {
                                 _.phase = Math.max(0, _.buffer.length - 1);
-                                // inline -----: timbre.fn.doEvent(this, "looped");
-                                if (($$func = this.onlooped) instanceof Function) {
-                                    $$func.apply(this);
-                                }
-                                if (($$list = this._.ev["looped"]) !== undefined) {
-                                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                                       $$func = $$list[$$i];
-                                       $$func.apply(this);
-                                       if ($$func.rm) this.removeEventListener("looped", $$func);
-                                   }
-                                }
-                                // ----- inline
+                                timbre.fn.doEvent(this, "looped");
                             } else {
-                                // inline -----: timbre.fn.doEvent(this, "ended");
-                                if (($$func = this.onended) instanceof Function) {
-                                    $$func.apply(this);
-                                }
-                                if (($$list = this._.ev["ended"]) !== undefined) {
-                                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                                       $$func = $$list[$$i];
-                                       $$func.apply(this);
-                                       if ($$func.rm) this.removeEventListener("ended", $$func);
-                                   }
-                                }
-                                // ----- inline
+                                timbre.fn.doEvent(this, "ended");
                             }
                         }
                     }
@@ -5279,31 +4823,9 @@ var timbre = (function(context, timbre) {
                         if (_.phase >= buffer.length) {
                             if (_.loop) {
                                 _.phase = 0;
-                                // inline -----: timbre.fn.doEvent(this, "looped");
-                                if (($$func = this.onlooped) instanceof Function) {
-                                    $$func.apply(this);
-                                }
-                                if (($$list = this._.ev["looped"]) !== undefined) {
-                                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                                       $$func = $$list[$$i];
-                                       $$func.apply(this);
-                                       if ($$func.rm) this.removeEventListener("looped", $$func);
-                                   }
-                                }
-                                // ----- inline
+                                timbre.fn.doEvent(this, "looped");
                             } else {
-                                // inline -----: timbre.fn.doEvent(this, "ended");
-                                if (($$func = this.onended) instanceof Function) {
-                                    $$func.apply(this);
-                                }
-                                if (($$list = this._.ev["ended"]) !== undefined) {
-                                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                                       $$func = $$list[$$i];
-                                       $$func.apply(this);
-                                       if ($$func.rm) this.removeEventListener("ended", $$func);
-                                   }
-                                }
-                                // ----- inline
+                                timbre.fn.doEvent(this, "ended");
                             }
                         }
                     }
@@ -5439,6 +4961,133 @@ var timbre = (function(context, timbre) {
         return Buddy;
     }());
     timbre.fn.register("buddy", Buddy);
+    ///// objects/clip.js /////
+    var Clip = (function() {
+        var Clip = function() {
+            initialize.apply(this, arguments);
+        }, $this = Clip.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "ar-kr");
+    
+        Object.defineProperty($this, "min", {
+            set: function(value) {
+                if (typeof value === "number") {
+                    this._.min = value;
+                }
+            },
+            get: function() { return this._.min; }
+        });
+        Object.defineProperty($this, "max", {
+            set: function(value) {
+                this._.max = value;
+            },
+            get: function() { return this._.max; }
+        });
+        
+        var initialize = function(_args) {
+            var i, nums, _;
+    
+            this._ = _ = {};
+            nums = [];
+            
+            i = 0;
+            if (typeof _args[i] === "number") {
+                nums.push(_args[i++]);
+                if (typeof _args[i] === "number") {
+                    nums.push(_args[i++]);
+                }
+            }
+            switch (nums.length) {
+            case 1:
+                if (nums[0] < 0) {
+                    _.min =  nums[0];
+                    _.max = -nums[0];
+                } else {
+                    _.min = -nums[0];
+                    _.max =  nums[0];
+                }
+                break;
+            case 2:
+                if (nums[0] < nums[1]) {
+                    _.min = nums[0];
+                    _.max = nums[1];
+                } else {
+                    _.min = nums[1];
+                    _.max = nums[0];
+                }
+                break;
+            default:
+                _.min = -1;
+                _.max = +1;
+                break;
+            }
+            
+            this.args = timbre.fn.valist.call(this, _args.slice(i));
+        };
+        
+        $this.seq = function(seq_id) {
+            var _ = this._;
+            var args, cell, mul, add;
+            var min, max, x, i;
+            var $$tmp, $$i, $$imax, $$j, $$jmax;
+            
+            cell = this.cell;
+            if (seq_id !== this.seq_id) {
+                this.seq_id = seq_id;
+                
+                args = this.args.slice(0);
+                mul  = _.mul;
+                add  = _.add;
+                min  = _.min;
+                max  = _.max;
+                
+                if (_.ar) {
+                    // inline -----: cell = timbre.fn.sumargsAR(this, args, seq_id);
+                    for ($$j = $$jmax = cell.length; $$j--; ) {
+                        cell[$$j] = 0;
+                    }
+                    for ($$i = 0, $$imax = args.length; $$i < $$imax; ++$$i) {
+                        $$tmp = args[$$i].seq(seq_id);
+                        for ($$j = $$jmax; $$j--; ) {
+                            cell[$$j] += $$tmp[$$j];
+                        }
+                    }
+                    // ----- inline
+                    
+                    for (i = cell.length; i--; ) {
+                        x = cell[i];
+                        if (x < min) {
+                            x = min;
+                        } else if (max < x) {
+                            x = max;
+                        }
+                        cell[i] = x * mul + add;
+                    }
+                } else {
+                    // inline -----: x = timbre.fn.sumargsKR(this, args, seq_id);
+                    x = 0;
+                    for ($$i = 0, $$imax = args.length; $$i < $$imax; ++$$i) {
+                        x += args[$$i].seq(seq_id)[0];
+                    }
+                    // ----- inline
+                    if (x < min) {
+                        x = min;
+                    } else if (max < x) {
+                        x = max;
+                    }
+                    x = x * mul + add;
+                    for (i = cell.length; i--; ) {
+                        cell[i] = x;
+                    }
+                }
+            }
+            return cell;
+        };
+        
+        return Clip;
+    }());
+    timbre.fn.register("clip", Clip);
+    
     ///// objects/easing.js /////
     var Easing = (function() {
         var Easing = function() {
@@ -5549,7 +5198,6 @@ var timbre = (function(context, timbre) {
         
         $this.bang = function() {
             var _ = this._;
-            var $$func, $$list, $$i, $$imax;
             
             _.status = 0;
             _.value  = 0;
@@ -5557,25 +5205,13 @@ var timbre = (function(context, timbre) {
             _.x0 = 0; _.dx = 0;
             _.currentTime = 0;
             
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
     
         $this.seq = function(seq_id) {
             var _ = this._;
             var cell, x, value, i, imax;
-            var $$func, $$list, $$i, $$imax;
             
             if (!_.ison) return timbre._.none;
             
@@ -5597,18 +5233,7 @@ var timbre = (function(context, timbre) {
                         _.dx = 0;
                         x = _.func(1);
                         _.value = (x * (_.stop-_.start) + _.start) * _.mul + _.add;
-                        // inline -----: timbre.fn.doEvent(this, "ended");
-                        if (($$func = this.onended) instanceof Function) {
-                            $$func.apply(this);
-                        }
-                        if (($$list = this._.ev["ended"]) !== undefined) {
-                           for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                               $$func = $$list[$$i];
-                               $$func.apply(this);
-                               if ($$func.rm) this.removeEventListener("ended", $$func);
-                           }
-                        }
-                        // ----- inline
+                        timbre.fn.doEvent(this, "ended");
                         continue;
                     }
                 }
@@ -5619,18 +5244,7 @@ var timbre = (function(context, timbre) {
                         cell[i] = value;
                     }
                     if (_.status === 1) {
-                        // inline -----: timbre.fn.doEvent(this, "changed", [value]);
-                        if (($$func = this.onchanged) instanceof Function) {
-                            $$func.apply(this, [value]);
-                        }
-                        if (($$list = this._.ev["changed"]) !== undefined) {
-                           for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                               $$func = $$list[$$i];
-                               $$func.apply(this, [value]);
-                               if ($$func.rm) this.removeEventListener("changed", $$func);
-                           }
-                        }
-                        // ----- inline
+                        timbre.fn.doEvent(this, "changed", [value]);
                     }
                     _.value = value;
                     _.x0 += _.dx;
@@ -5869,7 +5483,6 @@ var timbre = (function(context, timbre) {
         
         $this.bang = function() {
             var _ = this._;
-            var $$func, $$list, $$i, $$imax;
             
             _.status = 0;
             _.start  = _.value;
@@ -5878,18 +5491,7 @@ var timbre = (function(context, timbre) {
             _.x0 = 0; _.dx = 0;
             _.currentTime = 0;
             
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -5960,7 +5562,6 @@ var timbre = (function(context, timbre) {
         
         $this.on = function() {
             var buffer, i, _ = this._;
-            var $$func, $$list, $$i, $$imax;
             _.ison = true;
             if (_.index >= _.buffer.length) {
                 _.index = _.currentTime = 0;
@@ -5971,43 +5572,19 @@ var timbre = (function(context, timbre) {
                     }
                 }
             }
-            // inline -----: timbre.fn.doEvent(this, "on");
-            if (($$func = this.onon) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["on"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("on", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "on");
             return this;
         };
         $this.off = function() {
-            var $$func, $$list, $$i, $$imax;
             if (this._.ison) {
                 onrecorded.call(this);
             }
             this._.ison = false;
-            // inline -----: timbre.fn.doEvent(this, "off");
-            if (($$func = this.onoff) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["off"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("off", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "off");
             return this;
         };
         $this.bang = function() {
             var buffer, i, _ = this._;
-            var $$func, $$list, $$i, $$imax;
             _.index = _.currentTime = 0;
             if (!_.overwrite) {
                 buffer = _.buffer;
@@ -6015,18 +5592,7 @@ var timbre = (function(context, timbre) {
                     buffer[i] = 0;
                 }
             }
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -6040,7 +5606,6 @@ var timbre = (function(context, timbre) {
             var _ = this._;
             var args, cell, buffer, mul, add;
             var i, imax;
-            var $$func, $$list;
             var $$tmp, $$i, $$imax, $$j, $$jmax;
             
             cell = this.cell;
@@ -6072,22 +5637,11 @@ var timbre = (function(context, timbre) {
                     if (_.index >= buffer.length) {
                         _.ison = false;
                         onrecorded.call(this);
-                        // inline -----: timbre.fn.doEvent(this, "ended");
-                        if (($$func = this.onended) instanceof Function) {
-                            $$func.apply(this);
-                        }
-                        if (($$list = this._.ev["ended"]) !== undefined) {
-                           for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                               $$func = $$list[$$i];
-                               $$func.apply(this);
-                               if ($$func.rm) this.removeEventListener("ended", $$func);
-                           }
-                        }
-                        // ----- inline
+                        timbre.fn.doEvent(this, "ended");
                     }
                 } else {
-                    for (i = cell.length; j--; ) {
-                        cell[j] = cell[j] * mul + add;
+                    for (i = cell.length; i--; ) {
+                        cell[i] = cell[i] * mul + add;
                     }
                 }
             }
@@ -6223,20 +5777,8 @@ var timbre = (function(context, timbre) {
         
         $this.bang = function() {
             var _ = this._;
-            var $$func, $$list, $$i, $$imax;
             _.phase = (_.reversed) ? Math.max(0, _.buffer.length - 1) : 0;
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -6244,7 +5786,6 @@ var timbre = (function(context, timbre) {
             var _ = this._;
             var cell, buffer, mul, add;
             var i, imax;
-            var $$func, $$list, $$i, $$imax;
             
             if (!_.ison) return timbre._.none;
             
@@ -6260,31 +5801,9 @@ var timbre = (function(context, timbre) {
                         if (_.phase < 0) {
                             if (_.loop) {
                                 _.phase = Math.max(0, _.buffer.length - 1);
-                                // inline -----: timbre.fn.doEvent(this, "looped");
-                                if (($$func = this.onlooped) instanceof Function) {
-                                    $$func.apply(this);
-                                }
-                                if (($$list = this._.ev["looped"]) !== undefined) {
-                                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                                       $$func = $$list[$$i];
-                                       $$func.apply(this);
-                                       if ($$func.rm) this.removeEventListener("looped", $$func);
-                                   }
-                                }
-                                // ----- inline
+                                timbre.fn.doEvent(this, "looped");
                             } else {
-                                // inline -----: timbre.fn.doEvent(this, "ended");
-                                if (($$func = this.onended) instanceof Function) {
-                                    $$func.apply(this);
-                                }
-                                if (($$list = this._.ev["ended"]) !== undefined) {
-                                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                                       $$func = $$list[$$i];
-                                       $$func.apply(this);
-                                       if ($$func.rm) this.removeEventListener("ended", $$func);
-                                   }
-                                }
-                                // ----- inline
+                                timbre.fn.doEvent(this, "ended");
                             }
                         }
                     }
@@ -6294,31 +5813,9 @@ var timbre = (function(context, timbre) {
                         if (_.phase >= buffer.length) {
                             if (_.loop) {
                                 _.phase = 0;
-                                // inline -----: timbre.fn.doEvent(this, "looped");
-                                if (($$func = this.onlooped) instanceof Function) {
-                                    $$func.apply(this);
-                                }
-                                if (($$list = this._.ev["looped"]) !== undefined) {
-                                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                                       $$func = $$list[$$i];
-                                       $$func.apply(this);
-                                       if ($$func.rm) this.removeEventListener("looped", $$func);
-                                   }
-                                }
-                                // ----- inline
+                                timbre.fn.doEvent(this, "looped");
                             } else {
-                                // inline -----: timbre.fn.doEvent(this, "ended");
-                                if (($$func = this.onended) instanceof Function) {
-                                    $$func.apply(this);
-                                }
-                                if (($$list = this._.ev["ended"]) !== undefined) {
-                                   for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                                       $$func = $$list[$$i];
-                                       $$func.apply(this);
-                                       if ($$func.rm) this.removeEventListener("ended", $$func);
-                                   }
-                                }
-                                // ----- inline
+                                timbre.fn.doEvent(this, "ended");
                             }
                         }
                     }
@@ -6515,7 +6012,6 @@ var timbre = (function(context, timbre) {
             var sintable, costable, windowfunc;
             var i, j, n, m, k, k2, h, d, c, s, ik, dx, dy;
             var rval, ival, mag, spectrum, sqrt;
-            var $$func, $$list, $$i, $$imax;
             
             bitrev = _.bitrev;
             real   = _.real;
@@ -6563,18 +6059,7 @@ var timbre = (function(context, timbre) {
                 }
             }
             
-            // inline -----: timbre.fn.doEvent(this, "fft", [real, imag]);
-            if (($$func = this.onfft) instanceof Function) {
-                $$func.apply(this, [real, imag]);
-            }
-            if (($$list = this._.ev["fft"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this, [real, imag]);
-                   if ($$func.rm) this.removeEventListener("fft", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "fft", [real, imag]);
         };
         
         $this.getWindowFunction = function(name) {
@@ -6680,23 +6165,11 @@ var timbre = (function(context, timbre) {
         
         $this.bang = function() {
             var _ = this._;
-            var $$func, $$list, $$i, $$imax;
             _.delaySamples = (timbre.samplerate * (_.delay / 1000))|0;;
             _.samples = 0;
             _.count   = 0;
             _.currentTime = 0;
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             
             return this;
         };
@@ -6780,22 +6253,10 @@ var timbre = (function(context, timbre) {
         
         $this.bang = function() {
             var _ = this._;
-            var $$func, $$list, $$i, $$imax;
             
             _.samples = _.timeout_samples;
             _.currentTime = 0;
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             
             return this;
         };
@@ -6915,22 +6376,10 @@ var timbre = (function(context, timbre) {
         
         $this.bang = function() {
             var _ = this._;
-            var $$func, $$list, $$i, $$imax;
             _.index = 0;
             _.currentTime = 0;
             _.loopcount   = 0;
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -6939,7 +6388,6 @@ var timbre = (function(context, timbre) {
             var tt, items;
             var x, y, result;
             var i, imax, j, jmax;
-            var $$func, $$list, $$i, $$imax;
             
             tt = _.timetable;
             y  = tt[_.index];
@@ -6964,18 +6412,7 @@ var timbre = (function(context, timbre) {
             }
             
             tt.sort(function(a, b) { return a[0] - b[0]; });
-            // inline -----: timbre.fn.doEvent(this, "append", [result]);
-            if (($$func = this.onappend) instanceof Function) {
-                $$func.apply(this, [result]);
-            }
-            if (($$list = this._.ev["append"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this, [result]);
-                   if ($$func.rm) this.removeEventListener("append", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "append", [result]);
             
             return this;
         };
@@ -6985,7 +6422,6 @@ var timbre = (function(context, timbre) {
             var tt, items, schedule;
             var xx, x, y, cnt, result;
             var i, imax, j, k;
-            var $$func, $$list, $$i, $$imax;
             
             tt = _.timetable;
             
@@ -7015,18 +6451,7 @@ var timbre = (function(context, timbre) {
                     }
                 }
             }
-            // inline -----: timbre.fn.doEvent(this, "remove", [result]);
-            if (($$func = this.onremove) instanceof Function) {
-                $$func.apply(this, [result]);
-            }
-            if (($$list = this._.ev["remove"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this, [result]);
-                   if ($$func.rm) this.removeEventListener("remove", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "remove", [result]);
             
             return this;
         };
@@ -7085,7 +6510,6 @@ var timbre = (function(context, timbre) {
             var _ = this._;
             var tt, schedule, target;
             var msec, i, c;
-            var $$func, $$list, $$i, $$imax;
             
             if (seq_id !== this.seq_id) {
                 this.seq_id = seq_id;
@@ -7114,31 +6538,9 @@ var timbre = (function(context, timbre) {
                     if (_.loop) {
                         _.currentTime -= (tt[i][0] * msec) || 0;
                         _.index = 0;
-                        // inline -----: timbre.fn.doEvent(this, "looped", [++_.loopcount]);
-                        if (($$func = this.onlooped) instanceof Function) {
-                            $$func.apply(this, [++_.loopcount]);
-                        }
-                        if (($$list = this._.ev["looped"]) !== undefined) {
-                           for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                               $$func = $$list[$$i];
-                               $$func.apply(this, [++_.loopcount]);
-                               if ($$func.rm) this.removeEventListener("looped", $$func);
-                           }
-                        }
-                        // ----- inline
+                        timbre.fn.doEvent(this, "looped", [++_.loopcount]);
                     } else {
-                        // inline -----: timbre.fn.doEvent(this, "ended");
-                        if (($$func = this.onended) instanceof Function) {
-                            $$func.apply(this);
-                        }
-                        if (($$list = this._.ev["ended"]) !== undefined) {
-                           for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                               $$func = $$list[$$i];
-                               $$func.apply(this);
-                               if ($$func.rm) this.removeEventListener("ended", $$func);
-                           }
-                        }
-                        // ----- inline
+                        timbre.fn.doEvent(this, "ended");
                         c = _.currentTime;
                         while (tt[i] && c <= tt[i][0] * msec) {
                             i -= 1;
@@ -7205,20 +6607,8 @@ var timbre = (function(context, timbre) {
         };
         
         $this.bang = function() {
-            var $$func, $$list, $$i, $$imax;
             if (this._.synth) this._.synth.bang();
-            // inline -----: timbre.fn.doEvent(this, "bang");
-            if (($$func = this.onbang) instanceof Function) {
-                $$func.apply(this);
-            }
-            if (($$list = this._.ev["bang"]) !== undefined) {
-               for ($$i = 0, $$imax = $$list.length; $$i < $$imax; ++$$i) {
-                   $$func = $$list[$$i];
-                   $$func.apply(this);
-                   if ($$func.rm) this.removeEventListener("bang", $$func);
-               }
-            }
-            // ----- inline
+            timbre.fn.doEvent(this, "bang");
             return this;
         };
         
@@ -7359,6 +6749,14 @@ var timbre = (function(context, timbre) {
         utils.hz2bpm = function(hz, len) {
             if (typeof len === "undefined") len = 4;
             return 60 / (1000 / msec / 1000) * (4 / len);
+        };
+        
+        utils.num2db = function(num) {
+            return -20 * Math.log(num) * Math.LOG10E;
+        };
+        
+        utils.db2num = function(db) {
+            return Math.pow(10, (db / -20));
         };
         
         utils.$exports["converter"] = [
