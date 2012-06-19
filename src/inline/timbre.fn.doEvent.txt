@@ -1,4 +1,4 @@
-timbre\.fn\.doEvent\($1, "$2"(, .*)?\);
+# timbre\.fn\.doEvent\($1, "$2"(, .*)?\);
 
 var $$func, $$list, $$i, $$imax;
 
