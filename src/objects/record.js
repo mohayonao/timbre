@@ -137,8 +137,8 @@ var Record = (function() {
                     timbre.fn.doEvent(this, "ended");
                 }
             } else {
-                for (i = cell.length; j--; ) {
-                    cell[j] = cell[j] * mul + add;
+                for (i = cell.length; i--; ) {
+                    cell[i] = cell[i] * mul + add;
                 }
             }
         }
