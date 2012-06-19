@@ -94,6 +94,14 @@ utils.hz2bpm = function(hz, len) {
     return 60 / (1000 / msec / 1000) * (4 / len);
 };
 
+utils.num2db = function(num) {
+    return -20 * Math.log(num) * Math.LOG10E;
+};
+
+utils.db2num = function(db) {
+    return Math.pow(10, (db / -20));
+};
+
 utils.$exports["converter"] = [
     "mtof", "ftom", "mtoa", "ftoa", "atom", "atof",
     "bpm2msec", "msec2bpm", "msec2hz", "msec2hz", "bpm2hz", "hz2bpm",
