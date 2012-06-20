@@ -1,5 +1,5 @@
 /**
- * AudioDecoder: 0.1.0
+ * AudioDecoder: 0.3.5
  * Store audio samples
  * [ar-only]
  */
@@ -164,6 +164,25 @@ var AudioDecoder = {
             return cell;
         };
         
+        this.getAudioSrc = function() {
+            var _ = this._;
+            var items, m, saved, i, imax;
+            if (timbre.platform === "web") {
+                saved = "";
+                items = _.src.split(/,/).map(function(x) { return x.trim(); });
+                for (i = 0, imax = items.length; i < imax; ++i) {
+                    m = /^(.*\.)(aac|mp3|ogg|wav)$/i.exec(saved + items[i]);
+                    if (m) {
+                        if ((new Audio("")).canPlayType("audio/" + m[2])) {
+                            return m[0];
+                        }
+                        if (saved === "") saved = m[1];
+                    }
+                }
+            }
+            return "";
+        };
+        
         return this;
     }
 };
@@ -183,14 +202,15 @@ var WebKitAudio = (function() {
     
     $this.load = function() {
         var self = this, _ = this._;
-        var ctx, xhr, opts;
+        var src, ctx, xhr, opts;
         
         ctx  = new webkitAudioContext();
         xhr  = new XMLHttpRequest();
         opts = { buffer:null, samplerate:ctx.sampleRate };
         
-        if (_.src !== "") {
-            xhr.open("GET", _.src, true);
+        src = this.getAudioSrc(_.src);
+        if (src !== "") {
+            xhr.open("GET", src, true);
             xhr.responseType = "arraybuffer";
             xhr.onreadystatechange = function(event) {
                 if (xhr.readyState === 4) {
@@ -237,12 +257,13 @@ var MozAudio = (function() {
     
     $this.load = function(callback) {
         var self = this, _ = this._;
-        var audio, output, buffer_index, istep, opts;
+        var src, audio, output, buffer_index, istep, opts;
         
         opts = { buffer:null, samplerate:0 };
-        
-        if (_.src !== "") {
-            audio = new Audio(_.src);
+
+        src = this.getAudioSrc(_.src);
+        if (src !== "") {
+            audio = new Audio(src);
             audio.loop = false;
             audio.addEventListener("error", function(e) {
                 timbre.fn.doEvent(self, "error", [e]);
