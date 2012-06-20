@@ -48,6 +48,10 @@ T("*", T("+", T("sin", 523.35),
 MIT
 
 ### ChangeLog ###
+2012 06 20 - **v0.3.5** (257.92 KB, minified:98.90 KB)
+* Improved `T("audio")` by selecting audio sources(*.ogg, *.mp3, *.wav)
+
+
 2012 06 20 - **v0.3.4** (257.07 KB, minified:98.58 KB)
 * Safari 6
 
