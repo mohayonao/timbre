@@ -1,5 +1,5 @@
 /**
- * window/player
+ * Player: 0.3.4
  */
 "use strict";
 
@@ -183,9 +183,15 @@ var MozPlayer = function(sys) {
 };
 
 if (typeof webkitAudioContext === "function") {
+    // Chrome
+    timbre.env = "webkit";
+    timbre.sys.bind(WebKitPlayer);
+} else if (typeof webkitAudioContext === "object") {
+    // Safari
     timbre.env = "webkit";
     timbre.sys.bind(WebKitPlayer);
 } else if (typeof Audio === "function" && typeof (new Audio).mozSetup === "function") {
+    // Firefox
     timbre.env = "moz";
     timbre.sys.bind(MozPlayer);
 }
