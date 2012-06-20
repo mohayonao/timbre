@@ -1,5 +1,5 @@
 /**
- * window/mutekitimer
+ * MutekiTimer: 0.3.4
  */
 "use strict";
 
@@ -37,7 +37,7 @@ var MutekiTimer = (function() {
         if (this._timer !== null) {
             this._timer.onmessage = func;
             this._timer.postMessage(interval);
-            if (/mac.*firefox/i.test(window.navigator.userAgent)) {
+            if (/firefox/i.test(window.navigator.userAgent)) {
                 window.clearInterval(this._ugly_patch);
                 this._ugly_patch = window.setInterval(function() {}, 1000);
             }
