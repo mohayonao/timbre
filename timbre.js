@@ -1,6 +1,6 @@
 /**
- * Timbre.js 0.3.3 / JavaScript Library for Objective Sound Programming
- * build: Tue, 19 Jun 2012 11:01:44 GMT
+ * Timbre.js 0.3.4 / JavaScript Library for Objective Sound Programming
+ * build: Wed, 20 Jun 2012 11:08:43 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,8 +10,8 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "0.3.3";
-    timbre.BUILD      = "Tue, 19 Jun 2012 11:01:44 GMT";
+    timbre.VERSION    = "0.3.4";
+    timbre.BUILD      = "Wed, 20 Jun 2012 11:08:43 GMT";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 44100;
@@ -7140,7 +7140,7 @@ var timbre = (function(context, timbre) {
                 if (this._timer !== null) {
                     this._timer.onmessage = func;
                     this._timer.postMessage(interval);
-                    if (/mac.*firefox/i.test(window.navigator.userAgent)) {
+                    if (/firefox/i.test(window.navigator.userAgent)) {
                         window.clearInterval(this._ugly_patch);
                         this._ugly_patch = window.setInterval(function() {}, 1000);
                     }
@@ -7345,9 +7345,15 @@ var timbre = (function(context, timbre) {
         };
         
         if (typeof webkitAudioContext === "function") {
+            // Chrome
+            timbre.env = "webkit";
+            timbre.sys.bind(WebKitPlayer);
+        } else if (typeof webkitAudioContext === "object") {
+            // Safari
             timbre.env = "webkit";
             timbre.sys.bind(WebKitPlayer);
         } else if (typeof Audio === "function" && typeof (new Audio).mozSetup === "function") {
+            // Firefox
             timbre.env = "moz";
             timbre.sys.bind(MozPlayer);
         }

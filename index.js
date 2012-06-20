@@ -5,13 +5,13 @@ ex0 = (function() {
 ex1 = (function() {
     return T("+", T("sin", 523.35),
                   T("sin", 659.25),
-                  T("sin", 783.99)).set("mul", 0.3);
+                  T("sin", 783.99)).set({mul: 0.25});
 }());
 
 ex2 = (function() {
     var synth = T("*", T("+", T("sin", 523.35),
                               T("sin", 659.25),
-                              T("sin", 783.99)).set("mul", 0.25),
+                              T("sin", 783.99)).set({mul: 0.25}),
                        T("+tri", 8),
                        T("adsr", 0, 1500).bang());
     synth.onplay = synth.onbang = function() {
