@@ -1,6 +1,6 @@
 /**
- * Timbre.js 0.3.4 / JavaScript Library for Objective Sound Programming
- * build: Wed, 20 Jun 2012 11:08:43 GMT
+ * Timbre.js 0.3.5 / JavaScript Library for Objective Sound Programming
+ * build: Wed, 20 Jun 2012 12:47:21 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,11 +10,11 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "0.3.4";
-    timbre.BUILD      = "Wed, 20 Jun 2012 11:08:43 GMT";
+    timbre.VERSION    = "0.3.5";
+    timbre.BUILD      = "Wed, 20 Jun 2012 12:47:21 GMT";
     timbre.env        = "";
     timbre.platform   = "";
-    timbre.samplerate = 44100;
+    timbre.samplerate = 0;
     timbre.channels   = 2;
     timbre.cellsize   = 128;
     timbre.streamsize = 1024;
@@ -4418,6 +4418,25 @@ var timbre = (function(context, timbre) {
                 return cell;
             };
             
+            this.getAudioSrc = function() {
+                var _ = this._;
+                var items, m, saved, i, imax;
+                if (timbre.platform === "web") {
+                    saved = "";
+                    items = _.src.split(/,/).map(function(x) { return x.trim(); });
+                    for (i = 0, imax = items.length; i < imax; ++i) {
+                        m = /^(.*\.)(aac|mp3|ogg|wav)$/i.exec(saved + items[i]);
+                        if (m) {
+                            if ((new Audio("")).canPlayType("audio/" + m[2])) {
+                                return m[0];
+                            }
+                            if (saved === "") saved = m[1];
+                        }
+                    }
+                }
+                return "";
+            };
+            
             return this;
         }
     };
@@ -4437,14 +4456,15 @@ var timbre = (function(context, timbre) {
         
         $this.load = function() {
             var self = this, _ = this._;
-            var ctx, xhr, opts;
+            var src, ctx, xhr, opts;
             
             ctx  = new webkitAudioContext();
             xhr  = new XMLHttpRequest();
             opts = { buffer:null, samplerate:ctx.sampleRate };
             
-            if (_.src !== "") {
-                xhr.open("GET", _.src, true);
+            src = this.getAudioSrc(_.src);
+            if (src !== "") {
+                xhr.open("GET", src, true);
                 xhr.responseType = "arraybuffer";
                 xhr.onreadystatechange = function(event) {
                     if (xhr.readyState === 4) {
@@ -4491,12 +4511,13 @@ var timbre = (function(context, timbre) {
         
         $this.load = function(callback) {
             var self = this, _ = this._;
-            var audio, output, buffer_index, istep, opts;
+            var src, audio, output, buffer_index, istep, opts;
             
             opts = { buffer:null, samplerate:0 };
-            
-            if (_.src !== "") {
-                audio = new Audio(_.src);
+    
+            src = this.getAudioSrc(_.src);
+            if (src !== "") {
+                audio = new Audio(src);
                 audio.loop = false;
                 audio.addEventListener("error", function(e) {
                     timbre.fn.doEvent(self, "error", [e]);

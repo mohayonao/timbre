@@ -1,5 +1,5 @@
 ex0 = (function() {
-    var synth = T("audio", "public/audio/sample.ogg", true).load();
+    var synth = T("audio", "public/audio/sample.ogg,mp3", true).load();
     
     synth.$listener = T("rec", 100).listen(synth).off().set("overwrite", true);
     synth.$view = synth.$listener.buffer;
