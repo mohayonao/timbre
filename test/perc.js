@@ -2,54 +2,132 @@ tests = (function() {
     "use strict";
     
     var i = 0, tests = [];
-    
-    tests[i] = function() {
-        var synth, tri, env;
-        synth = T("*", tri = T("tri" , 1340, 0.5),
-                       env = T("perc", 500));
-        
-        synth.onplay = function() { env.bang(); };
-        synth.onbang = function() { env.bang(); };
-        env.onended  = function() { console.log(env.currentTime); };
-        
-        synth.$listener = T("rec", 3000).listen(env).off();
-        synth.$view  = synth.$listener.buffer;
-        
-        return synth;
-    }; tests[i++].desc = "perc:";
 
     tests[i] = function() {
-        var synth, tri, env;
-        synth = T("*", tri = T("tri" , 1340, 0.5),
-                       env = T("perc", 500));
+        var perc = T("perc");
         
-        synth.onplay = function() { env.bang(); };
-        synth.onbang = function() { env.bang(); };
-        env.onended  = function() { console.log(env.currentTime); };
-
-        env.delay = 1000;
-        env.a = 10;
-        env.al = 0.5;
+        var synth = T("*", T("tri", 880), perc);
+        var interval = T("interval", 1250, function() {
+            perc.bang();
+        });
         
-        synth.$listener = T("rec", 3000).listen(env).off();
+        synth.onplay = function() {
+            interval.on();
+        };
+        synth.onpause = function() {
+            interval.off();
+        };
+        
+        synth.$listener = T("rec", 3000).listen(perc).off();
         synth.$view  = synth.$listener.buffer;
         
         return synth;
-    }; tests[i++].desc = "perc:";
+    }; tests[i++].desc = "perc";
     
     tests[i] = function() {
-        var synth, tri, env;
-        synth = T("*", T("hpf", 8000, T("noise")),
-                       env = T("perc", 30), 0.1)        
+        var perc = T("perc", 250);
         
-        synth.onplay = function() { env.bang(); };
-        synth.onbang = function() { env.bang(); };
+        var synth = T("*", T("tri", 880), perc);
+        var interval = T("interval", 1250, function() {
+            perc.bang();
+        });
         
-        synth.$listener = T("rec", 3000).listen(env).off();
+        synth.onplay = function() {
+            interval.on();
+        };
+        synth.onpause = function() {
+            interval.off();
+        };
+        
+        synth.$listener = T("rec", 3000).listen(perc).off();
         synth.$view  = synth.$listener.buffer;
         
         return synth;
-    }; tests[i++].desc = "perc:";
+    }; tests[i++].desc = "perc";
+
+    tests[i] = function() {
+        var perc = T("perc", 500, 250);
+        
+        var synth = T("*", T("tri", 880), perc);
+        var interval = T("interval", 1250, function() {
+            perc.bang();
+        });
+        
+        synth.onplay = function() {
+            interval.on();
+        };
+        synth.onpause = function() {
+            interval.off();
+        };
+        
+        synth.$listener = T("rec", 3000).listen(perc).off();
+        synth.$view  = synth.$listener.buffer;
+        
+        return synth;
+    }; tests[i++].desc = "perc";
+
+    tests[i] = function() {
+        var perc = T("perc", 100, 500, 250);
+        
+        var synth = T("*", T("tri", 880), perc);
+        var interval = T("interval", 1250, function() {
+            perc.bang();
+        });
+        
+        synth.onplay = function() {
+            interval.on();
+        };
+        synth.onpause = function() {
+            interval.off();
+        };
+        
+        synth.$listener = T("rec", 3000).listen(perc).off();
+        synth.$view  = synth.$listener.buffer;
+        
+        return synth;
+    }; tests[i++].desc = "perc";
+    
+    tests[i] = function() {
+        var perc = T("perc", 100, 500, 250, 0.5);
+        
+        var synth = T("*", T("tri", 880), perc);
+        var interval = T("interval", 1250, function() {
+            perc.bang();
+        });
+        
+        synth.onplay = function() {
+            interval.on();
+        };
+        synth.onpause = function() {
+            interval.off();
+        };
+        
+        synth.$listener = T("rec", 3000).listen(perc).off();
+        synth.$view  = synth.$listener.buffer;
+        
+        return synth;
+    }; tests[i++].desc = "perc";
+
+    tests[i] = function() {
+        var perc = T("perc", "24db", 100, 500, 250, 0.5);
+        
+        var synth = T("*", T("tri", 880), perc);
+        var interval = T("interval", 1250, function() {
+            perc.bang();
+        });
+        
+        synth.onplay = function() {
+            interval.on();
+        };
+        synth.onpause = function() {
+            interval.off();
+        };
+        
+        synth.$listener = T("rec", 3000).listen(perc).off();
+        synth.$view  = synth.$listener.buffer;
+        
+        return synth;
+    }; tests[i++].desc = "perc";
     
     return tests;
 }());

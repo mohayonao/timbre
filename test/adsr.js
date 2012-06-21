@@ -2,7 +2,34 @@ tests = (function() {
     "use strict";
     
     var i = 0, tests = [];
+
+    tests[i] = function() {
+        var adsr = T("adsr", "24db", 200, 1500, 0.5, 1000);
+        
+        var synth = T("*", T("saw", 880), adsr);
+        var tim  = T("timeout", 2500, function() {
+            adsr.keyoff();
+        });
+        
+        adsr.onD = function() {
+            adsr.table = "~";
+        };
+        
+        synth.onplay = synth.onbang = function() {
+            tim.on();
+            adsr.bang();
+        };
+        synth.onpause = function() {
+            tim.off();
+        };
+        
+        synth.$listener = T("rec", 5000).listen(adsr).off();
+        synth.$view  = synth.$listener.buffer;
+        
+        return synth;
+    }; tests[i++].desc = "adsr";
     
+    /*
     tests[i] = function() {
         var synth, tri, env;
         synth = T("*", tri = T("tri" , 1340, 0.5),
@@ -23,7 +50,7 @@ tests = (function() {
         
         return synth;
     }; tests[i++].desc = "adsr: delay->a->d->end";
-    
+
     tests[i] = function() {
         var synth, tri, env;
         synth = T("*", tri = T("tri" , 1340, 0.5),
@@ -65,6 +92,7 @@ tests = (function() {
         
         return synth;
     }; tests[i++].desc = "adsr: sustain-rate & reversed";
+    */
     
     return tests;
 }());
