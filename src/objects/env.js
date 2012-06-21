@@ -17,12 +17,23 @@ var Envelope = (function() {
 
     Object.defineProperty($this, "table", {
         set: function(value) {
-            var dx;
+            var dx, name, _ = this._;
             if (typeof value === "string") {
-                if ((dx = Envelope.AmpTables[value]) !== undefined) {
+                if (value === "~") {
+                    name = _.tableName;
+                    if (name.charAt(0) === "~") {
+                        name = name.substr(1);
+                    } else {
+                        name = "~" + name;
+                    }
+                } else {
+                    name = value;
+                }
+                
+                if ((dx = Envelope.AmpTables[name]) !== undefined) {
                     if (typeof dx === "function") dx = dx();
-                    this._.tableName = value;
-                    this._.table = dx;
+                    _.tableName = name;
+                    _.table = dx;
                 }
             }
         },
@@ -54,12 +65,13 @@ var Envelope = (function() {
 }());
 timbre.fn.register("env", Envelope);
 
+Envelope.AmpSize = 512;
 Envelope.AmpTables = {};
 Envelope.AmpTables["linear"] = function() {
     var l, i;
-    l = new Float32Array(512);
-    for (i = 0; i < 512; ++i) {
-        l[i] = i / 512;
+    l = new Float32Array(Envelope.AmpSize);
+    for (i = 0; i < Envelope.AmpSize; ++i) {
+        l[i] = i / Envelope.AmpSize;
     }
     return l;
 };
@@ -68,21 +80,21 @@ Envelope.AmpTables["linear"] = function() {
     list.forEach(function(db) {
         Envelope.AmpTables[db + "db"] = function() {
             var l, i;
-            l = new Float32Array(512);
-            for (i = 0; i < 512; ++i) {
-                l[512-i] = Math.pow(10, (db * (i/512) / -20));
+            l = new Float32Array(Envelope.AmpSize);
+            for (i = 0; i < Envelope.AmpSize; ++i) {
+                l[Envelope.AmpSize-i] = Math.pow(10, (db * (i/Envelope.AmpSize) / -20));
             }
             return l;
         };
         Envelope.AmpTables["~" + db + "db"] = function() {
             var l, i;
-            l = new Float32Array(512);
-            for (i = 0; i < 512; ++i) {
-                l[i] = 1 - Math.pow(10, (db * (i/512) / -20));
+            l = new Float32Array(Envelope.AmpSize);
+            for (i = 0; i < Envelope.AmpSize; ++i) {
+                l[i] = 1 - Math.pow(10, (db * (i/Envelope.AmpSize) / -20));
             }
             return l;
         };
     });
-}([32,48,64,96]));
+}([24,32,48,64,96]));
 
 // __END__

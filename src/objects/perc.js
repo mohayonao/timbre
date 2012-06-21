@@ -60,50 +60,52 @@ var PercussiveEnvelope = (function() {
         nums = [];
         
         i = 0;
-        if (typeof _args[i] === "string" && Envelope.AmpTables[_args[i]]) {
+        if (typeof _args[i] === "string") {
             this.table = _args[i++];
-        } else {
-            this.table = "linear";
         }
-        
-        if (typeof _args[i] === "number") {
+        if (_.table === undefined) this.table = "linear";
+
+        nums = [];
+        while (typeof _args[i] === "number") {
             nums.push(_args[i++]);
-            if (typeof _args[i] === "number") {
-                nums.push(_args[i++]);
-                if (typeof _args[i] === "number") {
-                    nums.push(_args[i++]);
-                }
-            }
         }
+
+        _.delay = 0;
+        _.a  = 0;
+        _.r  = 1000;
+        _.al = 0;
+        
         switch (nums.length) {
-        case 1:
-            _.delay = 0;
-            _.a = 0;
+        case 0: // T("perc");
+            break;
+        case 1: // T("perc", release);
             _.r = nums[0];
             break;
-        case 2:
-            _.delay = 0;
+        case 2: // T("perc", attack, release);
             _.a = nums[0];
             _.r = nums[1];
             break;
-        case 3:
+        case 3: // T("perc", delay, attack, release);
             _.delay = nums[0];
             _.a = nums[1];
             _.r = nums[2];
             break;
-        default:
-            _.delay = 0;
-            _.a = 0;
-            _.r = 0;
+        default: // T("perc", delay, attack, release, attack-level);
+            _.delay = nums[0];
+            _.a  = nums[1];
+            _.r  = nums[2];
+            _.al = nums[3];
             break;
+        }
+
+        _.reversed = false;
+        if (typeof _args[i] === "boolean") {
+            _.reversed = _args[i++];
         }
         
         if (typeof _args[i] === "function") {
             this.onended = _args[i++];
         }
-        
-        _.al = 0;
-        _.reversed = false;
         
         _.status  = -1;        
         _.samples = Infinity;
@@ -114,8 +116,10 @@ var PercussiveEnvelope = (function() {
     
     $this.clone = function(deep) {
         var _ = this._;
-        var newone = timbre("perc", _.delay, _.a, _.r);
-        newone._.al    = _.al;
+        var newone = timbre("perc", _.tableName);
+        newone._.delay = _.delay;
+        newone._.a = _.a; newone._.al = _.al;
+        newone._.r = _.r;
         newone._.reversed = _.reversed;
         return timbre.fn.copyBaseArguments(this, newone, deep);
     };
@@ -125,11 +129,15 @@ var PercussiveEnvelope = (function() {
 
         // off -> delay
         _.status  = 0;
-        _.samples = (timbre.samplerate * (_.delay / 1000))|0;
+        if (_.delay < 0) {
+            _.samples = 0;
+            _.dx = 0;
+        } else {
+            _.samples = (timbre.samplerate * (_.delay / 1000))|0;
+            _.dx = -(timbre.cellsize * _.al) / _.samples;
+        }
         _.x0 = 0;
-        _.dx = -(timbre.cellsize * _.al) / _.samples;
         _.currentTime = 0;
-        
         timbre.fn.doEvent(this, "bang");
         return this;
     };
@@ -148,8 +156,8 @@ var PercussiveEnvelope = (function() {
                 if (_.status === 0) { // delay -> A
                     _.status = 1;
                     _.samples += (timbre.samplerate * (_.a / 1000))|0;
-                    _.x0 = _.al;
                     _.dx = -(timbre.cellsize * (1 -_.al)) / _.samples;
+                    _.x0 = _.al;
                     timbre.fn.doEvent(this, "A");
                     continue;
                 }
@@ -172,7 +180,7 @@ var PercussiveEnvelope = (function() {
                 }
             }
             
-            x = (_.x0 === 1) ? 1 : _.table[(_.x0 * 512)|0];
+            x = (_.x0 === 1) ? 1 : _.table[(_.x0 * Envelope.AmpSize)|0];
             if (_.reversed) x = 1 - x;
             x = x * _.mul + _.add;
             for (i = 0, imax = cell.length; i < imax; ++i) {
