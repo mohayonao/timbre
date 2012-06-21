@@ -40,6 +40,9 @@ TIMBRE_SOURCES = [
     "objects/wav"
 
     "objects/buddy"
+    "objects/delay"
+    "objects/sah"
+    "objects/pong"
     "objects/clip"
     "objects/easing"
     "objects/glide"

@@ -1,11 +1,11 @@
 /**
- * Pong: <draft>
+ * Pong: 0.3.6
  * Variable range signal folding
  * [ar-kr]
  */
 "use strict";
 
-var timbre = require("../src/timbre");
+var timbre = require("../timbre");
 // __BEGIN__
 
 var Pong = (function() {

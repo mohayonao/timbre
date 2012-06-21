@@ -1,5 +1,5 @@
 /**
- * SampleAndHold: <draft>
+ * SampleAndHold: 0.3.6
  * [ar-kr]
  */
 "use strict";
