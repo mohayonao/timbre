@@ -71,6 +71,12 @@ var FFT = (function() {
         if (n < 256) n = 256;
         else if (2048 < n) n = 2048;
         n = 1 << Math.ceil(Math.log(n) * Math.LOG2E);
+
+        if (typeof _args[i] === "number") {
+            this.interval = _args[i++];    
+        } else {
+            this.interval = 100;
+        }
         
         if (typeof _args[i] === "string" &&
             (FFT.WindowFunctions[_args[i]]) !== undefined) {
@@ -85,7 +91,6 @@ var FFT = (function() {
         
         timbre.fn.valist.call(this, _args.slice(i));
         
-        this.interval = 100;
         _.status   = 0;
         _.samples  = 0;
         _.buffersize = n;
