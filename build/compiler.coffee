@@ -21,6 +21,7 @@ TIMBRE_SOURCES = [
     "objects/osc"
     "objects/func"
     "objects/noise"
+    "objects/pink"
     "objects/oscx"
     "objects/phasor"
     "objects/pwm"
