@@ -48,6 +48,13 @@ T("*", T("+", T("sin", 523.35),
 MIT
 
 ### ChangeLog ###
+2012 06 21 - **v0.3.6** (272.25 KB, minified:103.22 KB)
+* Added `T("pink")` pink noise generator
+* Added `T("pong)` signal folding
+* Added `T("a&h")` sample & hold
+* Improved `T("adsr")`, `T("perc")` arguments for constructor
+
+
 2012 06 20 - **v0.3.5** (257.92 KB, minified:98.90 KB)
 * Improved `T("audio")` by selecting audio sources(*.ogg, *.mp3, *.wav)
 
