@@ -25,7 +25,7 @@ var WhiteNoise = (function() {
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell;
+        var cell, r;
         var mul, add, x, i;
         
         if (!_.ison) return timbre._.none;
@@ -36,8 +36,9 @@ var WhiteNoise = (function() {
             mul = _.mul;
             add = _.add;
             if (_.ar) {
+                r = Math.random;
                 for (i = cell.length; i--; ) {
-                    cell[i] = (Math.random() * 2.0 - 1.0) * mul + add;
+                    cell[i] = (r() * 2.0 - 1.0) * mul + add;
                 }
             } else {
                 x = (Math.random() * 2.0 - 1.0) * mul + add;
