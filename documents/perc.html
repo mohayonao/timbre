@@ -24,10 +24,16 @@
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-perc = T("perc", r=200, ended=NOP);
+perc = T("perc", r=200, reversed=false, ended=NOP);
 
 // r     [Number]   Release time in msec
 // ended [Function] Script to be run when the envelope status reach the end
+
+// Other constructors
+T("perc", [table], release);
+T("perc", [table], attack, release);
+T("perc", [table], delay, attack, release);
+T("perc", [table], delay, attack, release, attack-level);
         </pre>
         
         <h3>Properties</h3>

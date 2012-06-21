@@ -24,18 +24,25 @@
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-adsr = T("adsr", a=200, d=500, sl=0.5, r=500);
+adsr = T("adsr", table="linear", a=200, d=500, sl=0.5, r=500, reversed=false);
 
 // a  [Number] Attack time in msec
 // d  [Number] Decay time in msec
 // sl [Number] Sustain Level
 // r  [Number] Release time in msec
 
-// (push [bang] button to send 'keyoff')
+// Other constructors
+T("adsr", [table], decay);
+T("adsr", [table], attack, decay);
+T("adsr", [table], attack, decay, release);
+T("adsr", [table], attack, decay, sustain-level, release);
+T("adsr", [table], delay, attack, delay, sustain-level, release);
         </pre>
-
+        
         <h3>Properties</h3>
         <pre id="ex1" class="prettyprint">
+adsr.table    // [String] Envelope curve
+
 adsr.delay    // [Number] Delay time in msec
 adsr.a        // [Number] Attack time in msec
 adsr.d        // [Number] Decay time in msec
@@ -89,27 +96,37 @@ adsr.onR = function() {
 };
 
 // Script to be run when the envelope status reach the end
-adsr.onended = function() {
-    adsr.bang();
-};
-
-
-// (push [bang] button to send 'keyoff')
+adsr.onended = function() {};
         </pre>
-
-        <h3>Example: Controll Oscillator's Frequecny</h3>
+        
+        <h3>Example: Envelope curve</h3>
         <pre id="ex4" class="prettyprint">
+adsr  = T("adsr", 250, 1000, 0.5, 500);
+synth = T("*", adsr, T("tri", 880, 0.25));
+    
+timeout = T("timeout", 3000, function() {
+    adsr.keyoff();
+});
+adsr.onbang = function() {
+    this.table = "32db";
+};
+adsr.onD = function() {
+    this.table = "~32db";
+};
+synth.play();          
+        </pre>
+        
+        <h3>Example: Controll Oscillator's Frequecny</h3>
+        <pre id="ex5" class="prettyprint">
 adsr  = T("adsr", 200, 500, 0.75, 500).set("delay", 200);
 synth = T("tri", adsr, 0.25);
-    
+
 adsr.al = 0.2;
-adsr.dl = 1.5;
+adsr.dl = 1.0;
 adsr.mul = 880;
 adsr.add = 440;
 
 synth.play();
-
-// (push [bang] button to send 'keyoff')
         </pre>
         
         <h3>See Also: </h3>

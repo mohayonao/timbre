@@ -18,13 +18,13 @@
 
       <div class="navi"><a href=".">index</a></div>
       <div id="contents">
-        <h2>WhiteNoise</h2>
+        <h2>PinkNoise</h2>
         <p class="desc">
-          White noise generator
+          Pink noise generator
         </p>
         <h3>Constructor</h3>
         <pre id="ex0" class="prettyprint">
-T("noise").play();
+T("pink").play();
         </pre>
 
         <h3>Properties</h3>
@@ -38,28 +38,9 @@ T("noise").play();
         <h3>Events</h3>
         <pre id="ex3" class="prettyprint">
         </pre>
-
-        <h3>Example: Hi-Hat</h3>
-        <pre id="ex4" class="prettyprint">
-synth = T("*", T("hpf", 6000, T("noise")),
-               env = T("perc"));
-
-metro = T("interval", 110, function() {
-    var i = metro.count % 4;
-    if (i <= 1) {
-        env.r = 20;
-        env.mul = 0.6 - i * 0.4;
-        env.bang();
-    } else if (i === 2) {
-        env.r = 200;
-        env.mul = 0.8;
-        env.bang();
-    }
-});
-        </pre>
         
         <h3>See Also: </h3>
-        <a href="pink.html">T("pink")</a>
+        <a href="noise.html">T("noise")</a>
         
       </div>
       <footer></footer>
@@ -71,5 +52,5 @@ metro = T("interval", 110, function() {
   <script type="text/javascript" src="public/js/waveviewer.js"></script>  
   <script type="text/javascript" src="public/js/main.js"></script>
   <script type="text/javascript" src="../timbre.js"></script>
-  <script type="text/javascript" src="noise.js"></script>
+  <script type="text/javascript" src="pink.js"></script>
 </html>
