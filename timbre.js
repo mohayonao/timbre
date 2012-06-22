@@ -1,6 +1,6 @@
 /**
  * Timbre.js 0.3.6 / JavaScript Library for Objective Sound Programming
- * build: Thu, 21 Jun 2012 12:11:45 GMT
+ * build: Fri, 22 Jun 2012 22:50:51 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -11,7 +11,7 @@ var timbre = (function(context, timbre) {
         return timbre.fn.init.apply(timbre, arguments);
     };
     timbre.VERSION    = "0.3.6";
-    timbre.BUILD      = "Thu, 21 Jun 2012 12:11:45 GMT";
+    timbre.BUILD      = "Fri, 22 Jun 2012 22:50:51 GMT";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 0;
@@ -5329,7 +5329,7 @@ var timbre = (function(context, timbre) {
         $this.seq = function(seq_id) {
             var _ = this._;
             var args, cell, mul, add;
-            var x, i;
+            var x, y, i;
             var $$tmp, $$i, $$imax, $$j, $$jmax;
             
             cell = this.cell;
@@ -5355,13 +5355,17 @@ var timbre = (function(context, timbre) {
                     
                     for (i = cell.length; i--; ) {
                         x = cell[i];
-                        while (x < -1.0 || 1.0 < x) {
-                            if (x < -1.0) {
-                                x = -1.0 - (x + 1.0);
-                            } else {
-                                x = 1.0 - (x - 1.0);
-                            }
+                        
+                        if (x < -1.0) {
+                            x = -x - 1.0;
+                            y = x >> 1;
+                            x = (y & 1) ? +1 - (x-(y<<1)) : -1 + (x-(y<<1));
+                        } else if (1.0 < x) {
+                            x = +x - 1.0;
+                            y = x >> 1;
+                            x = (y & 1) ? -1 + (x-(y<<1)) : +1 - (x-(y<<1));
                         }
+                        
                         cell[i] = x * mul + add;
                     }
                 } else {
@@ -5371,13 +5375,17 @@ var timbre = (function(context, timbre) {
                         x += args[$$i].seq(seq_id)[0];
                     }
                     // ----- inline
-                    while (x < -1.0 || 1.0 < x) {
-                        if (x < -1.0) {
-                            x = -1.0 - (x + 1.0);
-                        } else {
-                            x = 1.0 - (x - 1.0);
-                        }
+                    
+                    if (x < -1.0) {
+                        x = -x - 1.0;
+                        y = x >> 1;
+                        x = (y & 1) ? +1 - (x-(y<<1)) : -1 + (x-(y<<1));
+                    } else if (1.0 < x) {
+                        x = +x - 1.0;
+                        y = x >> 1;
+                        x = (y & 1) ? -1 + (x-(y<<1)) : +1 - (x-(y<<1));
                     }
+                    
                     x = x * mul + add;
                     for (i = cell.length; i--; ) {
                         cell[i] = x;
@@ -5951,6 +5959,20 @@ var timbre = (function(context, timbre) {
             },
             get: function() { return this._.recTime; }
         });
+        Object.defineProperty($this, "interval", {
+            set: function(value) {
+                var _ = this._;
+                if (typeof value === "number") {
+                    _.interval = value;
+                    _.interval_samples = (timbre.samplerate * (value / 1000))|0;
+                    if (_.interval_samples < _.buffer.length) {
+                        _.interval_samples = _.buffer.length;
+                        _.interval = _.buffer.length * timbre.samplerate / 1000;
+                    }
+                }
+            },
+            get: function() { return this._.interval; }
+        });
         Object.defineProperty($this, "currentTime", {
             get: function() { return this._.index / timbre.samplerate * 1000; }
         });
@@ -5973,16 +5995,25 @@ var timbre = (function(context, timbre) {
             } else {
                 _.recTime = 1000;
             }
+            _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
+            
+            if (typeof _args[i] === "number" && _args[i] > 0) {
+                this.interval = _args[i++];
+            } else {
+                this.interval = Infinity;
+            }
             if (typeof _args[i] === "function") {
                 this.onrecorded = _args[i++];
             }
             this.args = timbre.fn.valist.call(this, _args.slice(i));
             
-            _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
-            _.index  = _.currentTime = 0;
+            _.index   =  0;
+            _.samples =  0;
+            _.currentTime = 0;
             _.overwrite = false;
+            _.status = 0;
         };
-    
+        
         $this.clone = function(deep) {
             var newone, _ = this._;
             newone = timbre("rec", _.recTime);
@@ -5993,15 +6024,8 @@ var timbre = (function(context, timbre) {
         $this.on = function() {
             var buffer, i, _ = this._;
             _.ison = true;
-            if (_.index >= _.buffer.length) {
-                _.index = _.currentTime = 0;
-                if (!_.overwrite) {
-                    buffer = _.buffer;
-                    for (i = buffer.length; i--; ) {
-                        buffer[i] = 0;
-                    }
-                }
-            }
+            _.samples = 0;
+            _.status  = 0;
             timbre.fn.doEvent(this, "on");
             return this;
         };
@@ -6014,14 +6038,9 @@ var timbre = (function(context, timbre) {
             return this;
         };
         $this.bang = function() {
-            var buffer, i, _ = this._;
-            _.index = _.currentTime = 0;
-            if (!_.overwrite) {
-                buffer = _.buffer;
-                for (i = buffer.length; i--; ) {
-                    buffer[i] = 0;
-                }
-            }
+            var _ = this._;
+            _.samples = 0;
+            _.status  = 0;
             timbre.fn.doEvent(this, "bang");
             return this;
         };
@@ -6059,21 +6078,39 @@ var timbre = (function(context, timbre) {
                 }
                 // ----- inline
                 
-                if (_.ison) {
+                if (_.status === 0 && _.samples <= 0) {
+                    _.status = 1;
+                    _.index = _.currentTime = 0;
+                    _.samples += _.interval_samples;
+                    if (!_.overwrite) {
+                        for (i = buffer.length; i--; ) {
+                            buffer[i] = 0;
+                        }
+                    }
+                }
+                
+                if (_.ison && _.status === 1) {
                     for (i = 0, imax = cell.length; i < imax; ++i) {
                         buffer[_.index++] = cell[i];
                         cell[i] = cell[i] * mul + add;
                     }
                     if (_.index >= buffer.length) {
-                        _.ison = false;
                         onrecorded.call(this);
-                        timbre.fn.doEvent(this, "ended");
+                        if (_.interval === Infinity) {
+                            _.status = 2;
+                            _.ison = false;
+                            timbre.fn.doEvent(this, "ended");
+                        } else {
+                            _.status = 0;
+                            timbre.fn.doEvent(this, "looped");
+                        }
                     }
                 } else {
                     for (i = cell.length; i--; ) {
                         cell[i] = cell[i] * mul + add;
                     }
                 }
+                _.samples -= cell.length;
             }
             return cell;
         };
