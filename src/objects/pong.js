@@ -22,7 +22,7 @@ var Pong = (function() {
     $this.seq = function(seq_id) {
         var _ = this._;
         var args, cell, mul, add;
-        var x, i;
+        var x, y, i;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
@@ -37,24 +37,32 @@ var Pong = (function() {
                 
                 for (i = cell.length; i--; ) {
                     x = cell[i];
-                    while (x < -1.0 || 1.0 < x) {
-                        if (x < -1.0) {
-                            x = -1.0 - (x + 1.0);
-                        } else {
-                            x = 1.0 - (x - 1.0);
-                        }
+                    
+                    if (x < -1.0) {
+                        x = -x - 1.0;
+                        y = x >> 1;
+                        x = (y & 1) ? +1 - (x-(y<<1)) : -1 + (x-(y<<1));
+                    } else if (1.0 < x) {
+                        x = +x - 1.0;
+                        y = x >> 1;
+                        x = (y & 1) ? -1 + (x-(y<<1)) : +1 - (x-(y<<1));
                     }
+                    
                     cell[i] = x * mul + add;
                 }
             } else {
                 x = timbre.fn.sumargsKR(this, args, seq_id);
-                while (x < -1.0 || 1.0 < x) {
-                    if (x < -1.0) {
-                        x = -1.0 - (x + 1.0);
-                    } else {
-                        x = 1.0 - (x - 1.0);
-                    }
+                
+                if (x < -1.0) {
+                    x = -x - 1.0;
+                    y = x >> 1;
+                    x = (y & 1) ? +1 - (x-(y<<1)) : -1 + (x-(y<<1));
+                } else if (1.0 < x) {
+                    x = +x - 1.0;
+                    y = x >> 1;
+                    x = (y & 1) ? -1 + (x-(y<<1)) : +1 - (x-(y<<1));
                 }
+                
                 x = x * mul + add;
                 for (i = cell.length; i--; ) {
                     cell[i] = x;
