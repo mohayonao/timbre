@@ -1,5 +1,5 @@
 /**
- * Record: 0.3.2
+ * Record: 0.3.6
  * Record sound into a buffer
  * [ar-only]
  */
@@ -29,6 +29,20 @@ var Record = (function() {
         },
         get: function() { return this._.recTime; }
     });
+    Object.defineProperty($this, "interval", {
+        set: function(value) {
+            var _ = this._;
+            if (typeof value === "number") {
+                _.interval = value;
+                _.interval_samples = (timbre.samplerate * (value / 1000))|0;
+                if (_.interval_samples < _.buffer.length) {
+                    _.interval_samples = _.buffer.length;
+                    _.interval = _.buffer.length * timbre.samplerate / 1000;
+                }
+            }
+        },
+        get: function() { return this._.interval; }
+    });
     Object.defineProperty($this, "currentTime", {
         get: function() { return this._.index / timbre.samplerate * 1000; }
     });
@@ -51,16 +65,25 @@ var Record = (function() {
         } else {
             _.recTime = 1000;
         }
+        _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
+        
+        if (typeof _args[i] === "number" && _args[i] > 0) {
+            this.interval = _args[i++];
+        } else {
+            this.interval = Infinity;
+        }
         if (typeof _args[i] === "function") {
             this.onrecorded = _args[i++];
         }
         this.args = timbre.fn.valist.call(this, _args.slice(i));
         
-        _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
-        _.index  = _.currentTime = 0;
+        _.index   =  0;
+        _.samples =  0;
+        _.currentTime = 0;
         _.overwrite = false;
+        _.status = 0;
     };
-
+    
     $this.clone = function(deep) {
         var newone, _ = this._;
         newone = timbre("rec", _.recTime);
@@ -71,15 +94,8 @@ var Record = (function() {
     $this.on = function() {
         var buffer, i, _ = this._;
         _.ison = true;
-        if (_.index >= _.buffer.length) {
-            _.index = _.currentTime = 0;
-            if (!_.overwrite) {
-                buffer = _.buffer;
-                for (i = buffer.length; i--; ) {
-                    buffer[i] = 0;
-                }
-            }
-        }
+        _.samples = 0;
+        _.status  = 0;
         timbre.fn.doEvent(this, "on");
         return this;
     };
@@ -92,14 +108,9 @@ var Record = (function() {
         return this;
     };
     $this.bang = function() {
-        var buffer, i, _ = this._;
-        _.index = _.currentTime = 0;
-        if (!_.overwrite) {
-            buffer = _.buffer;
-            for (i = buffer.length; i--; ) {
-                buffer[i] = 0;
-            }
-        }
+        var _ = this._;
+        _.samples = 0;
+        _.status  = 0;
         timbre.fn.doEvent(this, "bang");
         return this;
     };
@@ -126,21 +137,39 @@ var Record = (function() {
             
             cell = timbre.fn.sumargsAR(this, args, seq_id);
             
-            if (_.ison) {
+            if (_.status === 0 && _.samples <= 0) {
+                _.status = 1;
+                _.index = _.currentTime = 0;
+                _.samples += _.interval_samples;
+                if (!_.overwrite) {
+                    for (i = buffer.length; i--; ) {
+                        buffer[i] = 0;
+                    }
+                }
+            }
+            
+            if (_.ison && _.status === 1) {
                 for (i = 0, imax = cell.length; i < imax; ++i) {
                     buffer[_.index++] = cell[i];
                     cell[i] = cell[i] * mul + add;
                 }
                 if (_.index >= buffer.length) {
-                    _.ison = false;
                     onrecorded.call(this);
-                    timbre.fn.doEvent(this, "ended");
+                    if (_.interval === Infinity) {
+                        _.status = 2;
+                        _.ison = false;
+                        timbre.fn.doEvent(this, "ended");
+                    } else {
+                        _.status = 0;
+                        timbre.fn.doEvent(this, "looped");
+                    }
                 }
             } else {
                 for (i = cell.length; i--; ) {
                     cell[i] = cell[i] * mul + add;
                 }
             }
+            _.samples -= cell.length;
         }
         return cell;
     };
