@@ -131,13 +131,10 @@ ex0 = (function() {
         beattimer.off();
         metronome.off();
     };
-
-    ex0.$listener = T("rec", 100).listen(ex0).off().set("overwrite", true);
+    
+    ex0.$listener = T("rec", 100, 100).listen(ex0).off().set("overwrite", true);
     ex0.$view = ex0.$listener.buffer;
     ex0.$range = [-2.5, +2.5];
-    ex0.$listener.onrecorded = function () {
-        ex0.$listener.on().bang();
-    };
     
     ex0.$initUI = function() {
         Object.defineProperty(window, "beat", {

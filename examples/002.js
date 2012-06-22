@@ -17,16 +17,19 @@ ex0 = (function() {
     timbre.setup({samplerate:24000});
     
     var bpm = 132;
-    var s1, s2, hh, hh_env, sd, sd_env, bd, bd_env;
+    var seq, s1, s2, hh, hh_env, sd, sd_env, bd, bd_env;
     var metro, drumkit, beam;
+
+    // sequence
+    seq = T("+");
     
     // sequence(1)
     s1 = function(freq) {
         var s1, env;
         s1 = T("*", T("fami", freq, 0.6),
-                    T("*", T("pulse", 12), env = T("perc", 120))).play();
+                    T("*", T("pulse", 12), env = T("perc", 120))).appendTo(seq);
         env.addEventListener("~ended", function() {
-            s1.pause();
+            seq.remove(s1);
         }).bang();
     };
     s1.freqs = [ 880, 440, 880*2, 220, 880*2, 660, 880*2, 660 ];
@@ -36,26 +39,26 @@ ex0 = (function() {
     s2 = function() {
         var s2, env;
         s2 = T("*", T("saw", T("ease", "cubic.out", 300, 880*4, 220).bang(), 0.4),
-                    env = T("perc", 300)).play();
+                    env = T("perc", 300)).appendTo(seq);
         env.addEventListener("~ended", function() {
-            s2.pause();
+            seq.remove(s2);
         }).bang();
     };
     s2.i = 1;
     
     // hihat
     hh = T("*", T("hpf", 8000, T("noise")),
-                hh_env = T("perc", 30));
+                hh_env = T("perc", "32db", 30));
     hh.i = 2;
     
     // snare
-    sd = T("*", T("rlpf", 5000, 0.4, T("noise")),
-                sd_env = T("perc", 120));
+    sd = T("*", T("rlpf", 5000, 0.4, T("pink")),
+                sd_env = T("perc", "32db", 120));
     sd.i = 3;
-
+    
     // bass drum
-    bd = T("*", T("rlpf", 40, 0.5, T("pulse", 40, 2)),
-                bd_env = T("perc", 60));
+    bd = T("clip", T("*", T("rlpf", 40, 0.5, T("pulse", 40, 2)),
+                          bd_env = T("perc", "32db", 60)));
     bd.i = 4;
     
     // metro    
@@ -67,11 +70,11 @@ ex0 = (function() {
         beam = false;
         
         if (p[hh.i][i]) {
-            hh_env.mul = [0.2, 0.4][i & 1];
+            hh_env.mul = [0.4, 0.6][i & 1];
             hh_env.bang();
         }
         if (p[sd.i][i]) {
-            sd_env.mul = [0.6, 0.4][i & 1];
+            sd_env.mul = [0.4, 0.2][i & 1];
             sd_env.d   = [180, 120][i & 1];
             sd_env.bang();
         }
@@ -81,7 +84,7 @@ ex0 = (function() {
     });
     
     // drumkit
-    drumkit = T("dac", hh, sd, bd);
+    drumkit = T("dac", seq, hh, sd, bd);
 
     drumkit.onbang = function() {
         beam = true;
@@ -93,14 +96,11 @@ ex0 = (function() {
     drumkit.onpause = function() {
         metro.off();
     };
-
+    
     var ex0 = drumkit;
-    ex0.$listener = T("rec", 1818).listen(ex0).off().set("overwrite", true);
+    ex0.$listener = T("rec", 1818, 1818).listen(ex0).set("overwrite", true);
     ex0.$view = ex0.$listener.buffer;
     ex0.$range = [-2, +2];
-    ex0.$listener.onrecorded = function () {
-        ex0.$listener.on().bang();
-    };
     
     ex0.$initUI = function() {
         var elem = document.getElementById("p");
