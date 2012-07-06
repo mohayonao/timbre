@@ -62,6 +62,7 @@ UTILS_SOURCES = [
     "utils/converters"
     "utils/range"
     "utils/random"
+    "utils/fft"
     "utils/wavelet"
     "utils/binary"
     "utils/wav"
