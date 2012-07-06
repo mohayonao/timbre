@@ -1,5 +1,5 @@
 /**
- * FFT: 0.3.2
+ * FFT: 0.3.7
  * Fast Fourier transform
  * [ar-only]
  */
@@ -7,14 +7,15 @@
 "use strict";
 
 var timbre = require("../timbre");
+timbre.utils = {
+    FFT:require("../utils/fft")
+};
 // __BEGIN__
 
 var FFT = (function() {
     var FFT = function() {
         initialize.apply(this, arguments);
     }, $this = FFT.prototype;
-    
-    var PI2 = Math.PI * 2;
     
     timbre.fn.setPrototypeOf.call($this, "ar-only");
     timbre.fn.setPrototypeOf.call($this, "listener");
@@ -71,7 +72,7 @@ var FFT = (function() {
         if (n < 256) n = 256;
         else if (2048 < n) n = 2048;
         n = 1 << Math.ceil(Math.log(n) * Math.LOG2E);
-
+        
         if (typeof _args[i] === "number") {
             this.interval = _args[i++];    
         } else {
@@ -97,35 +98,8 @@ var FFT = (function() {
         _.samplerate = timbre.samplerate;
         _.buffer = new Float32Array(n);
         _.index  = 0;
-
-        _.real = new Float32Array(n);
-        _.imag = new Float32Array(n);
         
-        _.bitrev = (function() {
-            var x, i, j, k, n2;
-            x = new Int16Array(n);
-            n2 = n >> 1;
-            i = j = 0;
-            for (;;) {
-                x[i] = j;
-                if (++i >= n) break;
-                k = n2;
-                while (k <= j) { j -= k; k >>= 1; }
-                j += k;
-            }
-            return x;
-        }());
-        
-        k = Math.floor(Math.log(n) / Math.LN2);
-        sintable = new Float32Array((1<<k)-1);
-        costable = new Float32Array((1<<k)-1);
-        
-        for (i = sintable.length; i--; ) {
-            sintable[i] = Math.sin(PI2 * (i / n));
-            costable[i] = Math.cos(PI2 * (i / n));
-        }
-        _.sintable = sintable;
-        _.costable = costable;
+        _.fft = new timbre.utils.FFT(n);
         
         _.noSpectrum = false;
         _.spectrum   = new Float32Array(n>>1);
@@ -182,43 +156,18 @@ var FFT = (function() {
     
     var process = function(buffer) {
         var _ = this._;
-        var bitrev, real, imag;
-        var sintable, costable, windowfunc;
-        var i, j, n, m, k, k2, h, d, c, s, ik, dx, dy;
-        var rval, ival, mag, spectrum, sqrt;
+        var fft, real, imag, windowfunc, spectrum;
+        var sqrt, n, m, i, rval, ival, mag;
         
-        bitrev = _.bitrev;
-        real   = _.real;
-        imag   = _.imag;
-        sintable = _.sintable;
-        costable = _.costable;
+        fft = _.fft;
         windowfunc = _.windowfunc;
-        n = _.buffersize;
-
-        for (i = n; i--; ) {
+        
+        for (i = n = fft.length; i--; ) {
             buffer[i] *= windowfunc(i / n);
-        }        
-        
-        for (i = n; i--; ) {
-            real[i] = buffer[bitrev[i]];
-            imag[i] = 0.0;
         }
-        
-        for (k = 1; k < n; k = k2) {
-            h = 0; k2 = k + k; d = n / k2;
-            for (j = 0; j < k; j++) {
-                c = costable[h];
-                s = sintable[h];
-                for (i = j; i < n; i += k2) {
-                    ik = i + k;
-                    dx = s * imag[ik] + c * real[ik];
-                    dy = c * imag[ik] - s * real[ik];
-                    real[ik] = real[i] - dx; real[i] += dx;
-                    imag[ik] = imag[i] - dy; imag[i] += dy;
-                }
-                h += d;
-            }
-        }
+        fft.forward(buffer);
+        real = fft.real;
+        imag = fft.imag;
         
         // calc spectrum
         if (!_.noSpectrum) {
