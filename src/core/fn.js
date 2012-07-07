@@ -394,7 +394,7 @@ timbre.fn = (function(timbre) {
     defaults.optional.listener = {
         listen: function(target) {
             if (target === null) {
-                this.args = this._.args;
+                if (this._.args) this.args = this._.args;
                 timbre.listeners.remove(this);
             } else {
                 if (fn.isTimbreObject(target)) {
