@@ -16,7 +16,11 @@ TIMBRE_SOURCES = [
     "objects/dac"
 
     "objects/add"
+    "objects/subtract"
     "objects/mul"
+    "objects/divide"
+    "objects/modulo"
+    "objects/math"
 
     "objects/osc"
     "objects/func"

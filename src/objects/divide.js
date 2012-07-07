@@ -1,11 +1,11 @@
 /**
- * Divide: <draft>
+ * Divide: 0.3.7
  * Divide signals
  * [ar-kr]
  */
 "use strict";
 
-var timbre = require("../src/timbre");
+var timbre = require("../timbre");
 // __BEGIN__
 
 var Divide = (function() {

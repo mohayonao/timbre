@@ -1,17 +1,16 @@
 /**
- * Modulo: <draft>
- * Divide signals, output the remainder
+ * Subtract: 0.3.7
  * [ar-kr]
  */
 "use strict";
 
-var timbre = require("../src/timbre");
+var timbre = require("../timbre");
 // __BEGIN__
 
-var Modulo = (function() {
-    var Modulo = function() {
+var Subtract = (function() {
+    var Subtract = function() {
         initialize.apply(this, arguments);
-    }, $this = Modulo.prototype;
+    }, $this = Subtract.prototype;
     
     timbre.fn.setPrototypeOf.call($this, "ar-kr");
     
@@ -22,7 +21,7 @@ var Modulo = (function() {
     $this.seq = function(seq_id) {
         var _ = this._;
         var args, cell, mul, add;
-        var tmp, x, i, imax, j, jmax;
+        var tmp, i, imax, j, jmax;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {
@@ -41,12 +40,7 @@ var Modulo = (function() {
                     for (i = 1, imax = args.length; i < imax; ++i) {
                         tmp = args[i].seq(seq_id);
                         for (j = jmax; j--; ) {
-                            x = tmp[j];
-                            if (x === 0) {
-                                cell[j] = 0;
-                            } else {
-                                cell[j] %= x;
-                            }
+                            cell[j] -= tmp[j];
                         }
                     }
                     for (j = jmax; j--; ) {
@@ -55,12 +49,7 @@ var Modulo = (function() {
                 } else {
                     tmp = args[0].seq(seq_id)[0];
                     for (i = 1, imax = args.length; i < imax; ++i) {
-                        x = args[i].seq(seq_id)[0];
-                        if (x === 0) {
-                            tmp = 0;
-                        } else {
-                            tmp %= x
-                        }
+                        tmp -= args[i].seq(seq_id)[0];
                     }
                     tmp = tmp * mul + add;
                     for (j = cell.length; j--; ) {
@@ -76,28 +65,28 @@ var Modulo = (function() {
         return cell;
     };
     
-    return Modulo;
+    return Subtract;
 }());
-timbre.fn.register("%", Modulo);
+timbre.fn.register("-", Subtract);
 
 // __END__
 if (module.parent && !module.parent.parent) {
-    describe("modulo", function() {
-        object_test(Modulo, "%");
+    describe("subtract", function() {
+        object_test(Subtract, "-");
         describe("#seq()", function() {
             var i1 = T("cell"), i2 = T("cell");
             i1.cell = new Float32Array([ 0,-1, 2,-3, 4, -5, 6,-7]);
-            i2.cell = new Float32Array([-1,-2, 3, 5,-8,-13,21, 0]);
+            i2.cell = new Float32Array([-1,-2, 3, 5,-8,-13,21,34]);
             it("ar-mode", function() {
-                var instance = T("%", i1, i2);
+                var instance = T("-", i1, i2);
                 instance.seq(0).should.eql(
-                    new Float32Array([0,-1%-2,2%3,-3%5,4%-8,-5%-13,6%21,0])
+                    new Float32Array([1,1,-1,-8,12,8,-15,-41])
                 );
             });
             it("kr-mode", function() {
-                var instance = T("%", i1, i2).kr();
+                var instance = T("-", i1, i2).kr();
                 instance.seq(0).should.eql(
-                    new Float32Array([0,0,0,0,0,0,0,0])
+                    new Float32Array([1,1,1,1,1,1,1,1])
                 );
             });
         });
