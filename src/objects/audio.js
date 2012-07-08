@@ -215,13 +215,25 @@ var WebKitAudio = (function() {
         if (_.src instanceof File) {
             reader = new FileReader();
             reader.onload = function(e) {
-                _.buffer = ctx.createBuffer(e.target.result, true).getChannelData(0);
-                _.duration  = _.buffer.length / timbre.samplerate * 1000;
-                opts.buffer = _.buffer;
+                var buffer;
                 
-                timbre.fn.doEvent(self, "loadedmetadata", [opts]);
-                _.isloaded = true;
-                timbre.fn.doEvent(self, "loadeddata", [opts]);
+                try {
+                    buffer = ctx.createBuffer(e.target.result, true);
+                } catch (e) {
+                    buffer = null;
+                }
+                
+                if (buffer !== null) {
+                    _.buffer    = buffer.getChannelData(0);
+                    _.duration  = _.buffer.length / timbre.samplerate * 1000;
+                    opts.buffer = _.buffer;
+                    
+                    timbre.fn.doEvent(self, "loadedmetadata", [opts]);
+                    _.isloaded = true;
+                    timbre.fn.doEvent(self, "loadeddata", [opts]);
+                } else {
+                    timbre.fn.doEvent(self, "error", [e]);
+                }
             };
             reader.readAsArrayBuffer(_.src);
         } else {
