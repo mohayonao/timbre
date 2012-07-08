@@ -53,11 +53,11 @@ EJS_VIEW = """
     <canvas id="waveviewer"></canvas>
     <section id="body"><h1>test: <%= js %></h1><div id="contents"></div></section>
   </body>
+  <script type="text/javascript" src="/public/js/jquery.min.js"></script>
   <script type="text/javascript" src="/timbre.js"></script>
   <script type="text/javascript" src="/<%= js %>"></script>
   <script type="text/javascript" src="/public/js/waveviewer.js"></script>
   <script type="text/javascript" src="/public/js/prettify.js"></script>
-  <script type="text/javascript" src="/public/js/jquery.min.js"></script>
   <script type="text/javascript" src="/public/js/main.js"></script>
 </html>
 """
