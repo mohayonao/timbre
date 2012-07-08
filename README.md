@@ -48,6 +48,14 @@ T("*", T("+", T("sin", 523.35),
 MIT
 
 ### ChangeLog ###
+2012 07 08 - **v0.3.7** (294.64 KB, minified:110.66 KB)
+* Add `T("-")` subtract signals
+* Add `T("/")` divide signals
+* Add `T("%")` modulo signals
+* Add `T("math")` math functions
+* Improved `T("audio").src` accept a [File Object]
+
+
 2012 06 21 - **v0.3.6** (272.25 KB, minified:103.22 KB)
 * Added `T("pink")` pink noise generator
 * Added `T("pong)` signal folding
