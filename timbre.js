@@ -1,6 +1,6 @@
 /**
- * Timbre.js 0.3.6 / JavaScript Library for Objective Sound Programming
- * build: Fri, 22 Jun 2012 22:50:51 GMT
+ * Timbre.js 0.3.7 / JavaScript Library for Objective Sound Programming
+ * build: Sun, 08 Jul 2012 01:41:58 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,8 +10,8 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "0.3.6";
-    timbre.BUILD      = "Fri, 22 Jun 2012 22:50:51 GMT";
+    timbre.VERSION    = "0.3.7";
+    timbre.BUILD      = "Sun, 08 Jul 2012 01:41:58 GMT";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 0;
@@ -580,7 +580,7 @@ var timbre = (function(context, timbre) {
         defaults.optional.listener = {
             listen: function(target) {
                 if (target === null) {
-                    this.args = this._.args;
+                    if (this._.args) this.args = this._.args;
                     timbre.listeners.remove(this);
                 } else {
                     if (fn.isTimbreObject(target)) {
@@ -1654,6 +1654,69 @@ var timbre = (function(context, timbre) {
     }());
     timbre.fn.register("+", Add);
     
+    ///// objects/subtract.js /////
+    var Subtract = (function() {
+        var Subtract = function() {
+            initialize.apply(this, arguments);
+        }, $this = Subtract.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "ar-kr");
+        
+        var initialize = function(_args) {
+            this.args = timbre.fn.valist.call(this, _args);
+        };
+        
+        $this.seq = function(seq_id) {
+            var _ = this._;
+            var args, cell, mul, add;
+            var tmp, i, imax, j, jmax;
+            
+            cell = this.cell;
+            if (seq_id !== this.seq_id) {
+                this.seq_id = seq_id;
+                
+                args = this.args.slice(0);
+                mul  = _.mul;
+                add  = _.add;
+    
+                if (args.length > 0) {
+                    if (_.ar) {
+                        tmp = args[0].seq(seq_id);
+                        for (j = jmax = cell.length; j--; ) {
+                            cell[j] = tmp[j];
+                        }
+                        for (i = 1, imax = args.length; i < imax; ++i) {
+                            tmp = args[i].seq(seq_id);
+                            for (j = jmax; j--; ) {
+                                cell[j] -= tmp[j];
+                            }
+                        }
+                        for (j = jmax; j--; ) {
+                            cell[j] = cell[j] * mul + add;
+                        }
+                    } else {
+                        tmp = args[0].seq(seq_id)[0];
+                        for (i = 1, imax = args.length; i < imax; ++i) {
+                            tmp -= args[i].seq(seq_id)[0];
+                        }
+                        tmp = tmp * mul + add;
+                        for (j = cell.length; j--; ) {
+                            cell[j] = tmp;
+                        }
+                    }
+                } else {
+                    for (i = cell.length; i--; ) {
+                        cell[i] = add;
+                    }
+                }
+            }
+            return cell;
+        };
+        
+        return Subtract;
+    }());
+    timbre.fn.register("-", Subtract);
+    
     ///// objects/mul.js /////
     var Multiply = (function() {
         var Multiply = function() {
@@ -1718,6 +1781,361 @@ var timbre = (function(context, timbre) {
         return Multiply;
     }());
     timbre.fn.register("*", Multiply);
+    
+    ///// objects/divide.js /////
+    var Divide = (function() {
+        var Divide = function() {
+            initialize.apply(this, arguments);
+        }, $this = Divide.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "ar-kr");
+        
+        var initialize = function(_args) {
+            this.args = timbre.fn.valist.call(this, _args);
+        };
+        
+        $this.seq = function(seq_id) {
+            var _ = this._;
+            var args, cell, mul, add;
+            var tmp, x, i, imax, j, jmax;
+            
+            cell = this.cell;
+            if (seq_id !== this.seq_id) {
+                this.seq_id = seq_id;
+                
+                args = this.args.slice(0);
+                mul  = _.mul;
+                add  = _.add;
+    
+                if (args.length > 0) {
+                    if (_.ar) {
+                        tmp = args[0].seq(seq_id);
+                        for (j = jmax = cell.length; j--; ) {
+                            cell[j] = tmp[j];
+                        }
+                        for (i = 1, imax = args.length; i < imax; ++i) {
+                            tmp = args[i].seq(seq_id);
+                            for (j = jmax; j--; ) {
+                                x = tmp[j];
+                                if (x === 0) {
+                                    cell[j] = 0;
+                                } else {
+                                    cell[j] /= x;
+                                }
+                            }
+                        }
+                        for (j = jmax; j--; ) {
+                            cell[j] = cell[j] * mul + add;
+                        }
+                    } else {
+                        tmp = args[0].seq(seq_id)[0];
+                        for (i = 1, imax = args.length; i < imax; ++i) {
+                            x = args[i].seq(seq_id)[0];
+                            if (x === 0) {
+                                tmp = 0;
+                            } else {
+                                tmp /= x
+                            }
+                        }
+                        tmp = tmp * mul + add;
+                        for (j = cell.length; j--; ) {
+                            cell[j] = tmp;
+                        }
+                    }
+                } else {
+                    for (i = cell.length; i--; ) {
+                        cell[i] = add;
+                    }
+                }
+            }
+            return cell;
+        };
+        
+        return Divide;
+    }());
+    timbre.fn.register("/", Divide);
+    
+    ///// objects/modulo.js /////
+    var Modulo = (function() {
+        var Modulo = function() {
+            initialize.apply(this, arguments);
+        }, $this = Modulo.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "ar-kr");
+        
+        var initialize = function(_args) {
+            this.args = timbre.fn.valist.call(this, _args);
+        };
+        
+        $this.seq = function(seq_id) {
+            var _ = this._;
+            var args, cell, mul, add;
+            var tmp, x, i, imax, j, jmax;
+            
+            cell = this.cell;
+            if (seq_id !== this.seq_id) {
+                this.seq_id = seq_id;
+                
+                args = this.args.slice(0);
+                mul  = _.mul;
+                add  = _.add;
+    
+                if (args.length > 0) {
+                    if (_.ar) {
+                        tmp = args[0].seq(seq_id);
+                        for (j = jmax = cell.length; j--; ) {
+                            cell[j] = tmp[j];
+                        }
+                        for (i = 1, imax = args.length; i < imax; ++i) {
+                            tmp = args[i].seq(seq_id);
+                            for (j = jmax; j--; ) {
+                                x = tmp[j];
+                                if (x === 0) {
+                                    cell[j] = 0;
+                                } else {
+                                    cell[j] %= x;
+                                }
+                            }
+                        }
+                        for (j = jmax; j--; ) {
+                            cell[j] = cell[j] * mul + add;
+                        }
+                    } else {
+                        tmp = args[0].seq(seq_id)[0];
+                        for (i = 1, imax = args.length; i < imax; ++i) {
+                            x = args[i].seq(seq_id)[0];
+                            if (x === 0) {
+                                tmp = 0;
+                            } else {
+                                tmp %= x
+                            }
+                        }
+                        tmp = tmp * mul + add;
+                        for (j = cell.length; j--; ) {
+                            cell[j] = tmp;
+                        }
+                    }
+                } else {
+                    for (i = cell.length; i--; ) {
+                        cell[i] = add;
+                    }
+                }
+            }
+            return cell;
+        };
+        
+        return Modulo;
+    }());
+    timbre.fn.register("%", Modulo);
+    
+    ///// objects/math.js /////
+    var MathFunction = (function() {
+        var MathFunction = function() {
+            initialize.apply(this, arguments);
+        }, $this = MathFunction.prototype;
+        
+        timbre.fn.setPrototypeOf.call($this, "ar-kr");
+        
+        Object.defineProperty($this, "func", {
+            get: function() { return this._.func; }
+        });
+        
+        var initialize = function(_args) {
+            var p, i, _;
+            
+            this._ = _ = {};
+            
+            i = 0;
+            if (typeof _args[i] === "string" &&
+                MathFunction.Functions[_args[i]] !== undefined) {
+                p = MathFunction.Functions[_args[i++]];
+            } else {
+                p = MathFunction.Functions["round"];
+            }
+            _.func = p.func;
+            
+            this.seq = seqs[p.args + 1];
+            if (p.args === 2) {
+                _.arg2 = (typeof _args[i] === "number") ? _args[i++] : 0;
+            } else if (p.args === -1) {
+                _.ar = false;
+            }
+            this.args = timbre.fn.valist.call(this, _args.slice(i));
+        };
+        
+        var seqs = [];
+        seqs[0] = function(seq_id) {
+            var _ = this._;
+            var args, cell;
+            var value, i ;
+            
+            if (!_.ison) return timbre._.none;
+            
+            cell = this.cell;
+            if (seq_id !== this.seq_id) {
+                this.seq_id = seq_id;
+                value = _.func * _.mul + _.add;
+                for (i = timbre.cellsize; i--; ) {
+                    cell[i] = value;
+                }
+            }
+            return cell;
+        };
+        seqs[1] = function(seq_id) {
+            var _ = this._;
+            var args, cell;
+            var mul, add, func;
+            var tmp, i, imax, j, jmax;
+            
+            if (!_.ison) return timbre._.none;
+            
+            cell = this.cell;
+            if (seq_id !== this.seq_id) {
+                this.seq_id = seq_id;
+                mul  = _.mul;
+                add  = _.add;
+                func = _.func;
+                jmax = timbre.cellsize;
+                if (_.ar) {
+                    for (j = jmax; j--; ) {
+                        cell[j] = func() * mul + add;
+                    }
+                } else {
+                    tmp = func() * mul + add;
+                    for (j = jmax; j--; ) {
+                        cell[j] = tmp;
+                    }
+                }
+            }
+            return cell;
+        };
+        seqs[2] = function(seq_id) {
+            var _ = this._;
+            var args, cell;
+            var mul, add, func;
+            var tmp, i, imax, j, jmax;
+            
+            if (!_.ison) return timbre._.none;
+            
+            cell = this.cell;
+            if (seq_id !== this.seq_id) {
+                this.seq_id = seq_id;
+                args = this.args.slice(0);
+                mul  = _.mul;
+                add  = _.add;
+                func = _.func;
+                jmax = timbre.cellsize;
+                if (_.ar) {
+                    for (j = jmax; j--; ) {
+                        cell[j] = 0;
+                    }
+                    for (i = 0, imax = args.length; i < imax; ++i) {
+                        tmp = args[i].seq(seq_id);
+                        for (j = jmax; j--; ) {
+                            cell[j] += tmp[j];
+                        }
+                    }
+                    for (j = jmax; j--; ) {
+                        cell[j] = func(cell[j]) * mul + add;
+                    }
+                } else {
+                    tmp = 0;
+                    for (i = 0, imax = args.length; i < imax; ++i) {
+                        tmp += args[i].seq(seq_id)[0];
+                    }
+                    tmp = func(tmp) * mul + add;
+                    for (j = jmax; j--; ) {
+                        cell[j] = tmp;
+                    }
+                }
+            }
+            return cell;
+        };
+        seqs[3] = function(seq_id) {
+            var _ = this._;
+            var args, cell;
+            var mul, add, func, arg2;
+            var tmp, i, imax, j, jmax;
+    
+            if (!_.ison) return timbre._.none;
+            
+            cell = this.cell;
+            if (seq_id !== this.seq_id) {
+                this.seq_id = seq_id;
+                args = this.args.slice(0);
+                mul  = _.mul;
+                add  = _.add;
+                func = _.func;
+                arg2 = _.arg2;
+                jmax = timbre.cellsize;
+                if (_.ar) {
+                    for (j = jmax; j--; ) {
+                        cell[j] = 0;
+                    }
+                    for (i = 0, imax = args.length; i < imax; ++i) {
+                        tmp = args[i].seq(seq_id);
+                        for (j = jmax; j--; ) {
+                            cell[j] += tmp[j];
+                        }
+                    }
+                    for (j = jmax; j--; ) {
+                        cell[j] = func(cell[j], arg2) * mul + add;
+                    }
+                } else {
+                    tmp = 0;
+                    for (i = 0, imax = args.length; i < imax; ++i) {
+                        tmp += args[i].seq(seq_id)[0];
+                    }
+                    tmp = func(tmp, arg2) * mul + add;
+                    for (j = jmax; j--; ) {
+                        cell[j] = tmp;
+                    }
+                }
+            }
+            return cell;
+        };
+        
+        return MathFunction;
+    }());
+    timbre.fn.register("math", MathFunction);
+    
+    MathFunction.Functions = {};
+    MathFunction.Functions["PI"]      = {func:Math.PI     , args:-1};
+    MathFunction.Functions["E"]       = {func:Math.E      , args:-1};
+    MathFunction.Functions["LN2"]     = {func:Math.LN2    , args:-1};
+    MathFunction.Functions["LN10"]    = {func:Math.LN10   , args:-1};
+    MathFunction.Functions["LOG2E"]   = {func:Math.LOG2E  , args:-1};
+    MathFunction.Functions["LOG10E"]  = {func:Math.LOG10E , args:-1};
+    MathFunction.Functions["SQRT2"]   = {func:Math.SQRT2  , args:-1};
+    MathFunction.Functions["SQRT1_2"] = {func:Math.SQRT1_2, args:-1};
+    MathFunction.Functions["random"]  = {func:Math.random , args: 0};
+    MathFunction.Functions["sin"]     = {func:Math.sin    , args: 1};
+    MathFunction.Functions["cos"]     = {func:Math.cos    , args: 1};
+    MathFunction.Functions["tan"]     = {func:Math.tan    , args: 1};
+    MathFunction.Functions["asin"]    = {func:Math.asin   , args: 1};
+    MathFunction.Functions["acos"]    = {func:Math.acos   , args: 1};
+    MathFunction.Functions["atan"]    = {func:Math.atan   , args: 1};
+    MathFunction.Functions["ceil"]    = {func:Math.ceil   , args: 1};
+    MathFunction.Functions["floor"]   = {func:Math.floor  , args: 1};
+    MathFunction.Functions["round"]   = {func:Math.round  , args: 1};
+    MathFunction.Functions["abs"]     = {func:Math.abs    , args: 1};
+    MathFunction.Functions["sqrt"]    = {func:Math.sqrt   , args: 1};
+    MathFunction.Functions["exp"]     = {func:Math.exp    , args: 1};
+    MathFunction.Functions["log"]     = {func:Math.log    , args: 1};
+    MathFunction.Functions["atan2"]   = {func:Math.atan2  , args: 2};
+    MathFunction.Functions["max"]     = {func:Math.max    , args: 2};
+    MathFunction.Functions["min"]     = {func:Math.min    , args: 2};
+    MathFunction.Functions["pow"]     = {func:Math.pow    , args: 2};
+    
+    (function() {
+        for (var k in MathFunction.Functions) {
+            timbre.fn.register("math." + k, MathFunction, (function(k) {
+                return function(_args) {
+                    return new MathFunction([k].concat(_args));
+                };
+            }(k)));
+        }
+    }());
     
     ///// objects/osc.js /////
     var Oscillator = (function() {
@@ -4442,6 +4860,9 @@ var timbre = (function(context, timbre) {
                             this._.src = value;
                             this._.isloaded = false;
                         }
+                    } else if (timbre.platform === "web" && value instanceof File) {
+                        this._.src = value;
+                        this._.isloaded = false;
                     }
                 },
                 get: function() { return this._.src; }
@@ -4605,24 +5026,16 @@ var timbre = (function(context, timbre) {
         $this.load = function() {
             var self = this, _ = this._;
             var src, ctx, xhr, opts;
+            var reader;
             
             ctx  = new webkitAudioContext();
             xhr  = new XMLHttpRequest();
             opts = { buffer:null, samplerate:ctx.sampleRate };
             
-            src = this.getAudioSrc(_.src);
-            if (src !== "") {
-                xhr.open("GET", src, true);
-                xhr.responseType = "arraybuffer";
-                xhr.onreadystatechange = function(event) {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status !== 200) {
-                            timbre.fn.doEvent(self, "error", [xhr]);
-                        }
-                    }
-                };
-                xhr.onload = function() {
-                    _.buffer = ctx.createBuffer(xhr.response, true).getChannelData(0);
+            if (_.src instanceof File) {
+                reader = new FileReader();
+                reader.onload = function(e) {
+                    _.buffer = ctx.createBuffer(e.target.result, true).getChannelData(0);
                     _.duration  = _.buffer.length / timbre.samplerate * 1000;
                     opts.buffer = _.buffer;
                     
@@ -4630,13 +5043,36 @@ var timbre = (function(context, timbre) {
                     _.isloaded = true;
                     timbre.fn.doEvent(self, "loadeddata", [opts]);
                 };
-                xhr.send();
+                reader.readAsArrayBuffer(_.src);
             } else {
-                timbre.fn.doEvent(self, "error", [xhr]);
+                src = this.getAudioSrc(_.src);
+                if (src !== "") {
+                    xhr.open("GET", src, true);
+                    xhr.responseType = "arraybuffer";
+                    xhr.onreadystatechange = function(event) {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status !== 200) {
+                                timbre.fn.doEvent(self, "error", [xhr]);
+                            }
+                        }
+                    };
+                    xhr.onload = function() {
+                        _.buffer = ctx.createBuffer(xhr.response, true).getChannelData(0);
+                        _.duration  = _.buffer.length / timbre.samplerate * 1000;
+                        opts.buffer = _.buffer;
+                        
+                        timbre.fn.doEvent(self, "loadedmetadata", [opts]);
+                        _.isloaded = true;
+                        timbre.fn.doEvent(self, "loadeddata", [opts]);
+                    };
+                    xhr.send();
+                } else {
+                    timbre.fn.doEvent(self, "error", [xhr]);
+                }
+                _.isloaded = false;
+                _.buffer   = new Float32Array(0);
+                _.phase    = 0;
             }
-            _.isloaded = false;
-            _.buffer   = new Float32Array(0);
-            _.phase    = 0;
             return this;
         };
         
@@ -4656,48 +5092,89 @@ var timbre = (function(context, timbre) {
         }, $this = AudioDecoder.setPrototype.call(MozAudio.prototype);
         
         timbre.fn.setPrototypeOf.call($this, "ar-only");
-        
-        $this.load = function(callback) {
-            var self = this, _ = this._;
-            var src, audio, output, buffer_index, istep, opts;
-            
-            opts = { buffer:null, samplerate:0 };
     
-            src = this.getAudioSrc(_.src);
-            if (src !== "") {
-                audio = new Audio(src);
-                audio.loop = false;
-                audio.addEventListener("error", function(e) {
-                    timbre.fn.doEvent(self, "error", [e]);
-                }, false);
-                audio.addEventListener("loadedmetadata", function(e) {
-                    audio.volume = 0.0;
-                    _.buffer = new Float32Array((audio.duration * audio.mozSampleRate)|0);
-                    _.duration = audio.duration * 1000;
-                    buffer_index = 0;
-                    istep = audio.mozSampleRate / timbre.samplerate;
-                    audio.play();
-                    opts.buffer = _.buffer;
-                    opts.samplerate = audio.mozSampleRate;
-                    timbre.fn.doEvent(self, "loadedmetadata", [opts]);
-                }, false);
-                audio.addEventListener("MozAudioAvailable", function(e) {
-                    var samples, buffer, i, imax;
+        var loadAudio = function(audio, opts) {
+            var self = this, _ = this._;
+            var output, buffer_index, istep;
+            
+            var loadFunc = function(e) {
+                var samples, buffer, i, imax;
+                try {
                     samples = e.frameBuffer;
                     buffer  = _.buffer;
                     for (i = 0, imax = samples.length; i < imax; i += istep) {
                         buffer[buffer_index++] = samples[i|0];
                     }
-                }, false);
-                audio.addEventListener("ended", function(e) {
-                    _.isloaded = true;
-                    timbre.fn.doEvent(self, "loadeddata", [opts]);
-                }, false);
-                audio.load();
+                    audio.removeEventListener("MozAudioAvailable", loadFunc);
+                    audio.addEventListener("MozAudioAvailable", function(e) {
+                        var samples, buffer, i, imax;
+                        samples = e.frameBuffer;
+                        buffer  = _.buffer;
+                        for (i = 0, imax = samples.length; i < imax; i += istep) {
+                            buffer[buffer_index++] = samples[i|0];
+                        }
+                    }, false);
+                } catch (e) {
+                    audio.removeEventListener("MozAudioAvailable", loadFunc);
+                    audio.pause();
+                    timbre.fn.doEvent(self, "error", [e]);
+                }
+            };
+            
+            audio.loop = false;
+            audio.addEventListener("error", function(e) {
+                timbre.fn.doEvent(self, "error", [e]);
+            }, false);
+            audio.addEventListener("loadedmetadata", function(e) {
+                audio.volume = 0.0;
+                _.buffer = new Float32Array((audio.duration * audio.mozSampleRate)|0);
+                _.duration = audio.duration * 1000;
+                buffer_index = 0;
+                istep = audio.mozSampleRate / timbre.samplerate;
+                audio.play();
+                opts.buffer = _.buffer;
+                opts.samplerate = audio.mozSampleRate;
+                timbre.fn.doEvent(self, "loadedmetadata", [opts]);
+            }, false);
+            audio.addEventListener("MozAudioAvailable", loadFunc, false);
+            audio.addEventListener("ended", function(e) {
+                _.isloaded = true;
+                timbre.fn.doEvent(self, "loadeddata", [opts]);
+            }, false);
+            audio.load();
+        };
+        
+        $this.load = function(callback) {
+            var self = this, _ = this._;
+            var src, reader, opts;
+            
+            opts = { buffer:null, samplerate:0 };
+            
+            if (_.src instanceof File) {
+                reader = new FileReader();
+                reader.onload = function(e) {
+                    var audio, m;
+                    if ((m = /^data:(.*?);/.exec(e.target.result)) !== null) {
+                        if ((new Audio("")).canPlayType(m[1])) {
+                            audio = new Audio(e.target.result);
+                            loadAudio.call(self, audio, opts);
+                        } else {
+                            timbre.fn.doEvent(self, "error", ["cannot play: '" + m[1] + "'"]);
+                        }
+                    } else {
+                        timbre.fn.doEvent(self, "error", ["file error"]);
+                    }
+                };
+                reader.readAsDataURL(_.src);
+            } else {        
+                src = this.getAudioSrc(_.src);
+                if (src !== "") {
+                    loadAudio.call(this, new Audio(src), opts);
+                }
+                _.isloaded = false;
+                _.buffer   = new Float32Array(0);
+                _.phase    = 0;
             }
-            _.isloaded = false;
-            _.buffer   = new Float32Array(0);
-            _.phase    = 0;
             return this;
         };
         
@@ -6301,8 +6778,6 @@ var timbre = (function(context, timbre) {
             initialize.apply(this, arguments);
         }, $this = FFT.prototype;
         
-        var PI2 = Math.PI * 2;
-        
         timbre.fn.setPrototypeOf.call($this, "ar-only");
         timbre.fn.setPrototypeOf.call($this, "listener");
         
@@ -6358,7 +6833,7 @@ var timbre = (function(context, timbre) {
             if (n < 256) n = 256;
             else if (2048 < n) n = 2048;
             n = 1 << Math.ceil(Math.log(n) * Math.LOG2E);
-    
+            
             if (typeof _args[i] === "number") {
                 this.interval = _args[i++];    
             } else {
@@ -6384,35 +6859,8 @@ var timbre = (function(context, timbre) {
             _.samplerate = timbre.samplerate;
             _.buffer = new Float32Array(n);
             _.index  = 0;
-    
-            _.real = new Float32Array(n);
-            _.imag = new Float32Array(n);
             
-            _.bitrev = (function() {
-                var x, i, j, k, n2;
-                x = new Int16Array(n);
-                n2 = n >> 1;
-                i = j = 0;
-                for (;;) {
-                    x[i] = j;
-                    if (++i >= n) break;
-                    k = n2;
-                    while (k <= j) { j -= k; k >>= 1; }
-                    j += k;
-                }
-                return x;
-            }());
-            
-            k = Math.floor(Math.log(n) / Math.LN2);
-            sintable = new Float32Array((1<<k)-1);
-            costable = new Float32Array((1<<k)-1);
-            
-            for (i = sintable.length; i--; ) {
-                sintable[i] = Math.sin(PI2 * (i / n));
-                costable[i] = Math.cos(PI2 * (i / n));
-            }
-            _.sintable = sintable;
-            _.costable = costable;
+            _.fft = new timbre.utils.FFT(n);
             
             _.noSpectrum = false;
             _.spectrum   = new Float32Array(n>>1);
@@ -6480,43 +6928,18 @@ var timbre = (function(context, timbre) {
         
         var process = function(buffer) {
             var _ = this._;
-            var bitrev, real, imag;
-            var sintable, costable, windowfunc;
-            var i, j, n, m, k, k2, h, d, c, s, ik, dx, dy;
-            var rval, ival, mag, spectrum, sqrt;
+            var fft, real, imag, windowfunc, spectrum;
+            var sqrt, n, m, i, rval, ival, mag;
             
-            bitrev = _.bitrev;
-            real   = _.real;
-            imag   = _.imag;
-            sintable = _.sintable;
-            costable = _.costable;
+            fft = _.fft;
             windowfunc = _.windowfunc;
-            n = _.buffersize;
-    
-            for (i = n; i--; ) {
+            
+            for (i = n = fft.length; i--; ) {
                 buffer[i] *= windowfunc(i / n);
-            }        
-            
-            for (i = n; i--; ) {
-                real[i] = buffer[bitrev[i]];
-                imag[i] = 0.0;
             }
-            
-            for (k = 1; k < n; k = k2) {
-                h = 0; k2 = k + k; d = n / k2;
-                for (j = 0; j < k; j++) {
-                    c = costable[h];
-                    s = sintable[h];
-                    for (i = j; i < n; i += k2) {
-                        ik = i + k;
-                        dx = s * imag[ik] + c * real[ik];
-                        dy = c * imag[ik] - s * real[ik];
-                        real[ik] = real[i] - dx; real[i] += dx;
-                        imag[ik] = imag[i] - dy; imag[i] += dy;
-                    }
-                    h += d;
-                }
-            }
+            fft.forward(buffer);
+            real = fft.real;
+            imag = fft.imag;
             
             // calc spectrum
             if (!_.noSpectrum) {
@@ -7352,6 +7775,143 @@ var timbre = (function(context, timbre) {
             utils.$exports["random"] = [ "random" ];
             
         }( utils.random = {} ));
+        
+        
+        ///// utils/fft.js /////
+        var FFT = (function() {
+            var FFT = function() {
+                initialize.apply(this, arguments);
+            }, $this = FFT.prototype;
+            
+            var FFT_PARAMS = {
+                get: function(n) {
+                    return FFT_PARAMS[n] || (function() {
+                        var bitrev = (function() {
+                            var x, i, j, k, n2;
+                            x = new Int16Array(n);
+                            n2 = n >> 1;
+                            i = j = 0;
+                            for (;;) {
+                                x[i] = j;
+                                if (++i >= n) break;
+                                k = n2;
+                                while (k <= j) { j -= k; k >>= 1; }
+                                j += k;
+                            }
+                            return x;
+                        }());
+                        var i, k = Math.floor(Math.log(n) / Math.LN2);
+                        var sintable = new Float32Array((1<<k)-1);
+                        var costable = new Float32Array((1<<k)-1);
+                        var PI2 = Math.PI * 2;
+                        
+                        for (i = sintable.length; i--; ) {
+                            sintable[i] = Math.sin(PI2 * (i / n));
+                            costable[i] = Math.cos(PI2 * (i / n));
+                        }
+                        return FFT_PARAMS[n] = {
+                            bitrev: bitrev, sintable:sintable, costable:costable
+                        };
+                    }());
+                }
+            };
+            
+            var initialize = function(n) {
+                n = (typeof n === "number") ? n : 512;
+                n = 1 << Math.ceil(Math.log(n) * Math.LOG2E);
+                
+                this.length = n;
+                this.buffer = new Float32Array(n);
+                this.real   = new Float32Array(n);
+                this.imag   = new Float32Array(n);
+                this._real  = new Float32Array(n);
+                this._imag  = new Float32Array(n);
+                
+                var params = FFT_PARAMS.get(n);
+                this._bitrev   = params.bitrev;
+                this._sintable = params.sintable;
+                this._costable = params.costable;
+            };
+            
+            $this.forward = function(_buffer) {
+                var buffer, real, imag, bitrev, sintable, costable;
+                var i, j, n, k, k2, h, d, c, s, ik, dx, dy;
+                
+                buffer = this.buffer;
+                real   = this.real;
+                imag   = this.imag;
+                bitrev = this._bitrev;
+                sintable = this._sintable;
+                costable = this._costable;
+                n = buffer.length;
+                
+                for (i = n; i--; ) {
+                    buffer[i] = _buffer[i];
+                    real[i]   = _buffer[bitrev[i]];
+                    imag[i]   = 0.0;
+                }
+                
+                for (k = 1; k < n; k = k2) {
+                    h = 0; k2 = k + k; d = n / k2;
+                    for (j = 0; j < k; j++) {
+                        c = costable[h];
+                        s = sintable[h];
+                        for (i = j; i < n; i += k2) {
+                            ik = i + k;
+                            dx = s * imag[ik] + c * real[ik];
+                            dy = c * imag[ik] - s * real[ik];
+                            real[ik] = real[i] - dx; real[i] += dx;
+                            imag[ik] = imag[i] - dy; imag[i] += dy;
+                        }
+                        h += d;
+                    }
+                }
+                return {real:real, imag:imag};
+            };
+            
+            $this.inverse = function(_real, _imag) {
+                var buffer, real, imag, bitrev, sintable, costable;
+                var i, j, n, k, k2, h, d, c, s, ik, dx, dy, t;
+                
+                buffer = this.buffer;
+                real   = this._real;
+                imag   = this._imag;
+                bitrev = this._bitrev;
+                sintable = this._sintable;
+                costable = this._costable;
+                n = buffer.length;
+                
+                for (i = n; i--; ) {
+                    j = bitrev[i];
+                    real[i] = +_real[j];
+                    imag[i] = -_imag[j];
+                }
+                
+                for (k = 1; k < n; k = k2) {
+                    h = 0; k2 = k + k; d = n / k2;
+                    for (j = 0; j < k; j++) {
+                        c = costable[h];
+                        s = sintable[h];
+                        for (i = j; i < n; i += k2) {
+                            ik = i + k;
+                            dx = s * imag[ik] + c * real[ik];
+                            dy = c * imag[ik] - s * real[ik];
+                            real[ik] = real[i] - dx; real[i] += dx;
+                            imag[ik] = imag[i] - dy; imag[i] += dy;
+                        }
+                        h += d;
+                    }
+                }
+                
+                for (i = n; i--; ) {
+                    buffer[i] = real[i] / n;
+                }
+                return buffer;
+            };
+            
+            return FFT;
+        }());
+        utils.FFT = FFT;
         
         
         ///// utils/wavelet.js /////
