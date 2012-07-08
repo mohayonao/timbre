@@ -1,6 +1,6 @@
 /**
- * Timbre.js 0.3.7 / JavaScript Library for Objective Sound Programming
- * build: Sun, 08 Jul 2012 01:41:58 GMT
+ * Timbre.js 0.3.7a / JavaScript Library for Objective Sound Programming
+ * build: Sun, 08 Jul 2012 08:04:11 GMT
  */
 ;
 var timbre = (function(context, timbre) {
@@ -10,8 +10,8 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "0.3.7";
-    timbre.BUILD      = "Sun, 08 Jul 2012 01:41:58 GMT";
+    timbre.VERSION    = "0.3.7a";
+    timbre.BUILD      = "Sun, 08 Jul 2012 08:04:11 GMT";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 0;
@@ -5035,13 +5035,25 @@ var timbre = (function(context, timbre) {
             if (_.src instanceof File) {
                 reader = new FileReader();
                 reader.onload = function(e) {
-                    _.buffer = ctx.createBuffer(e.target.result, true).getChannelData(0);
-                    _.duration  = _.buffer.length / timbre.samplerate * 1000;
-                    opts.buffer = _.buffer;
+                    var buffer;
                     
-                    timbre.fn.doEvent(self, "loadedmetadata", [opts]);
-                    _.isloaded = true;
-                    timbre.fn.doEvent(self, "loadeddata", [opts]);
+                    try {
+                        buffer = ctx.createBuffer(e.target.result, true);
+                    } catch (e) {
+                        buffer = null;
+                    }
+                    
+                    if (buffer !== null) {
+                        _.buffer    = buffer.getChannelData(0);
+                        _.duration  = _.buffer.length / timbre.samplerate * 1000;
+                        opts.buffer = _.buffer;
+                        
+                        timbre.fn.doEvent(self, "loadedmetadata", [opts]);
+                        _.isloaded = true;
+                        timbre.fn.doEvent(self, "loadeddata", [opts]);
+                    } else {
+                        timbre.fn.doEvent(self, "error", [e]);
+                    }
                 };
                 reader.readAsArrayBuffer(_.src);
             } else {
