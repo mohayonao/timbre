@@ -1,7 +1,7 @@
 /**
- * Oscillator: 0.1.0
+ * Oscillator: v12.07.12
  * Table lookup oscillator
- * [ar-kr]
+ * v12.07.12: add "pwm125", "pwm25", "pwm50"
  */
 "use strict";
 
@@ -250,6 +250,30 @@ Oscillator.Wavetables["pulse"] = function() {
     }
     return l;
 };
+Oscillator.Wavetables["pwm125"] = function() {
+    var l, i;
+    l = new Float32Array(1024);
+    for (i = 0; i < 1024; ++i) {
+        l[i] = i < 128 ? -1 : +1;
+    }
+    return l;
+};
+Oscillator.Wavetables["pwm25"] = function() {
+    var l, i;
+    l = new Float32Array(1024);
+    for (i = 0; i < 1024; ++i) {
+        l[i] = i < 256 ? -1 : +1;
+    }
+    return l;
+};
+Oscillator.Wavetables["pwm50"] = function() {
+    var l, i;
+    l = new Float32Array(1024);
+    for (i = 0; i < 1024; ++i) {
+        l[i] = i < 512 ? -1 : +1;
+    }
+    return l;
+};
 Oscillator.Wavetables["+pulse"] = function() {
     var l, i;
     l = new Float32Array(1024);
@@ -348,6 +372,15 @@ timbre.fn.register("cos", Oscillator, function(_args) {
 });
 timbre.fn.register("pulse", Oscillator, function(_args) {
     return new Oscillator(["pulse"].concat(_args));
+});
+timbre.fn.register("pwm125", Oscillator, function(_args) {
+    return new Oscillator(["pwm125"].concat(_args));
+});
+timbre.fn.register("pwm25", Oscillator, function(_args) {
+    return new Oscillator(["pwm25"].concat(_args));
+});
+timbre.fn.register("pwm50", Oscillator, function(_args) {
+    return new Oscillator(["pwm50"].concat(_args));
 });
 timbre.fn.register("tri", Oscillator, function(_args) {
     return new Oscillator(["tri"].concat(_args));
