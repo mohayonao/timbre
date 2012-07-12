@@ -9,7 +9,6 @@ var timbre = function() {
     return timbre.fn.init.apply(timbre, arguments);
 };
 timbre.VERSION    = "${VERSION}";
-timbre.BUILD      = "${DATE}";
 timbre.env        = "";
 timbre.platform   = "";
 timbre.samplerate = 0;

@@ -93,7 +93,14 @@ PRODUCT_NAME = "timbre"
 SRC_DIR = path.normalize "#{__dirname}/../src"
 DST_DIR = path.normalize "#{__dirname}/.."
 
-VERSION    = fs.readFileSync("#{DST_DIR}/version.txt", "utf-8").split("\n")[0].trim()
+
+VERSION    = do ->
+    dt = new Date()
+    YY = dt.getFullYear().toString().substr(-2)
+    MM = ("00" + (dt.getMonth() + 1)).substr(-2)
+    DD = ("00" + dt.getDate()).substr(-2)
+    "v#{YY}.#{MM}.#{DD}"
+
 BUILD_DATE = new Date().toUTCString()
 
 class InlineFunction
@@ -226,7 +233,7 @@ source = replace_souce source, "WINDOW_CODE", concat_source WINDOW_SOURCES
 source = replace_souce source, "WORKER_CODE", concat_source WORKER_SOURCES
 source = replace_souce source, "NODE_CODE"  , concat_source NODE_SOURCES
 source = source.replace /\${VERSION}/g, VERSION
-source = source.replace /\${DATE}/g   , BUILD_DATE
+# source = source.replace /\${DATE}/g   , BUILD_DATE
 console.log "build: #{VERSION} (#{BUILD_DATE})"
 
 fs.writeFileSync "#{DST_DIR}/#{PRODUCT_NAME}.js", source, "utf-8"

@@ -13,8 +13,7 @@ timbre.context  = window;
 // start message
 (function() {
     var x = [];
-    x.push("Timbre.js "  + timbre.VERSION);
-    x.push(" (build: " + timbre.BUILD   + ")");
+    x.push("timbre.js "  + timbre.VERSION);
     if (timbre.env === "webkit") {
         x.push(" on WebAudioAPI");
     } else if (timbre.env === "moz") {
