@@ -1,7 +1,7 @@
 /**
- * Easing: 0.1.1
- * [kr-only]
+ * Easing: 12.07.12
  * 'Easing.Functions' refered to https://github.com/sole/tween.js
+ * v12.07.12: add ar-mode
  */
 "use strict";
 
@@ -13,7 +13,7 @@ var Easing = (function() {
         initialize.apply(this, arguments);
     }, $this = Easing.prototype;
     
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    timbre.fn.setPrototypeOf.call($this, "ar-kr");
 
     Object.defineProperty($this, "type", {
         set: function(value) {
@@ -130,7 +130,8 @@ var Easing = (function() {
 
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell, x, value, i, imax;
+        var cell, x0, x1, dx, value, i, imax;
+        var mul, add;
         
         if (!_.ison) return timbre._.none;
         
@@ -150,18 +151,37 @@ var Easing = (function() {
                     _.samples = Infinity;
                     _.x0 = 1;
                     _.dx = 0;
-                    x = _.func(1);
-                    _.value = (x * (_.stop-_.start) + _.start) * _.mul + _.add;
+                    x0 = _.func(1);
+                    _.value = (x0 * (_.stop-_.start) + _.start) * _.mul + _.add;
                     timbre.fn.doEvent(this, "ended");
                     continue;
                 }
             }
             if (_.status !== 2) {
-                x = (_.status === 1) ? _.func(_.x0) : 0;
-                value = (x * (_.stop - _.start) + _.start) * _.mul + _.add;
-                for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
-                    cell[i] = value;
+                x0 = (_.status === 1) ? _.func(_.x0) : 0;
+                
+                value = x0 * (_.stop - _.start) + _.start;
+                
+                if (_.ar) { // ar-mode
+                    
+                    mul = _.mul;
+                    add = _.add;
+                    
+                    x0 = _.value;
+                    x1 =   value;
+                    dx = (x1 - x0) / cell.length;
+                    
+                    for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                        cell[i] = x0 * mul + add;
+                        x0 += dx;
+                    }
+                } else {    // kr-mode
+                    x0 = value * _.mul + _.add;
+                    for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                        cell[i] = x0;
+                    }
                 }
+                
                 if (_.status === 1) {
                     timbre.fn.doEvent(this, "changed", [value]);
                 }

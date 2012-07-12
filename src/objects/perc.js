@@ -1,7 +1,7 @@
 /**
- * PercussiveEnvelope: 0.3.3
+ * PercussiveEnvelope: 12.07.12
  * Percussive envelope generator
- * [kr-only]
+ * v12.07.12: add ar-mode
  */
 "use strict";
 
@@ -14,7 +14,7 @@ var PercussiveEnvelope = (function() {
         initialize.apply(this, arguments);
     }, $this = PercussiveEnvelope.prototype;
     
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    timbre.fn.setPrototypeOf.call($this, "kr-ar");
     
     var Envelope = timbre.fn.getClass("env");
 
@@ -111,6 +111,7 @@ var PercussiveEnvelope = (function() {
         _.samples = Infinity;
         _.x0 = 0;
         _.dx = 0;
+        _.curx = 0;
         _.currentTime = 0;
     };
     
@@ -136,7 +137,7 @@ var PercussiveEnvelope = (function() {
             _.samples = (timbre.samplerate * (_.delay / 1000))|0;
             _.dx = -(timbre.cellsize * _.al) / _.samples;
         }
-        _.x0 = 0;
+        _.x0 = 0; _.curx = 0;
         _.currentTime = 0;
         timbre.fn.doEvent(this, "bang");
         return this;
@@ -144,7 +145,8 @@ var PercussiveEnvelope = (function() {
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell, table, x, i, imax;
+        var cell, x0, x1, dx, i, imax;
+        var mul, add;
         
         if (!_.ison) return timbre._.none;
         
@@ -180,12 +182,38 @@ var PercussiveEnvelope = (function() {
                 }
             }
             
-            x = (_.x0 === 1) ? 1 : _.table[(_.x0 * Envelope.AmpSize)|0];
-            if (_.reversed) x = 1 - x;
-            x = x * _.mul + _.add;
-            for (i = 0, imax = cell.length; i < imax; ++i) {
-                cell[i] = x;
+            if (_.ar) { // ar-mode (v.12.07.12)
+                
+                mul = _.mul;
+                add = _.add;
+                
+                if (_.x0 === 1) {
+                    x0 = x1 = 1;
+                } else {
+                    x0 = _.table[((_.x0       ) * 512)|0];
+                    x1 = _.table[((_.x0 - _.dx) * 512)|0];
+                    if (x1 === undefined) x1 = x0;
+                }
+                if (_.reversed) {
+                    x0 = 1 - x0; x1 = 1 - x1;
+                }
+                dx = (x1 - x0) / cell.length;
+                for (i = 0, imax = cell.length; i < imax; ++i) {
+                    cell[i] = x0 * mul + add;
+                    x0 += dx;
+                }
+                
+            } else {    // kr-mode
+                
+                x0 = (_.x0 === 1) ? 1 : _.table[(_.x0 * Envelope.AmpSize)|0];
+                if (_.reversed) x = 1 - x0;
+                
+                x0 = x0 * _.mul + _.add;
+                for (i = 0, imax = cell.length; i < imax; ++i) {
+                    cell[i] = x0;
+                }
             }
+            
             _.x0 -= _.dx;
             _.samples -= imax;
             _.currentTime += imax * 1000 / timbre.samplerate;;

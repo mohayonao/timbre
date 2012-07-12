@@ -1,11 +1,12 @@
 /**
- * ADSREnvelope: 0.3.6
+ * ADSREnvelope: 12.07.12
  * ADSR envelope generator
- * [kr-only]
+ * v12.07.12: add ar-mode
  */
 "use strict";
 
 var timbre = require("../timbre");
+require("./env");
 // __BEGIN__
 
 var ADSREnvelope = (function() {
@@ -13,7 +14,7 @@ var ADSREnvelope = (function() {
         initialize.apply(this, arguments);
     }, $this = ADSREnvelope.prototype;
     
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    timbre.fn.setPrototypeOf.call($this, "kr-ar");
 
     var Envelope = timbre.fn.getClass("env");
 
@@ -220,7 +221,8 @@ var ADSREnvelope = (function() {
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell, x, i, imax;
+        var cell, x0, x1, dx, i, imax;
+        var mul, add;
         
         if (!_.ison) return timbre._.none;
         
@@ -282,12 +284,36 @@ var ADSREnvelope = (function() {
                 }
             }
             
-            x = (_.x0 === 1) ? 1 : _.table[(_.x0 * 512)|0];
-            if (_.reversed) x = 1 - x;
+            if (_.ar) { // ar-mode (v12.07.12)
+                
+                mul = _.mul;
+                add = _.add;
+
+                if (_.x0 === 1) {
+                    x0 = x1 = 1;
+                } else {
+                    x0 = _.table[((_.x0       ) * 512)|0];
+                    x1 = _.table[((_.x0 + _.dx) * 512)|0];
+                    if (x1 === undefined) x1 = x0;
+                }
+                if (_.reversed) {
+                    x0 = 1 - x0; x1 = 1 - x1;
+                }
+                dx = (x1 - x0) / cell.length;
+                for (i = 0, imax = cell.length; i < imax; ++i) {
+                    cell[i] = x0 * mul + add;
+                    x0 += dx;
+                }
+                
+            } else {   // kr-mode
             
-            x = x * _.mul + _.add;
-            for (i = 0, imax = cell.length; i < imax; ++i) {
-                cell[i] = x;
+                x0 = (_.x0 === 1) ? 1 : _.table[(_.x0 * 512)|0];
+                if (_.reversed) x = 1 - x0;
+                
+                x0 = x0 * _.mul + _.add;
+                for (i = 0, imax = cell.length; i < imax; ++i) {
+                    cell[i] = x0;
+                }
             }
             _.x0 += _.dx;
             _.samples -= imax;

@@ -1,6 +1,6 @@
 /**
- * Glide: 0.1.1
- * [kr-only]
+ * Glide: 12.07.12
+ * v12.07.12: add ar-mode
  */
 "use strict";
 
@@ -13,7 +13,7 @@ var Glide = (function() {
         initialize.apply(this, arguments);
     }, $this = Glide.prototype;
     
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
+    timbre.fn.setPrototypeOf.call($this, "kr-ar");
     
     var Easing = timbre.fn.getClass("ease");
     
