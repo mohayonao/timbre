@@ -20,6 +20,7 @@ timbre.timers     = [];
 timbre.listeners  = [];
 timbre.sys        = null;
 timbre.context    = {};
+timbre.utils      = {};
 timbre._ = { ev:{}, amp:0.8,
              autorun:true, verbose:true, workerpath:"",
              none: new Float32Array(timbre.cellsize) };
