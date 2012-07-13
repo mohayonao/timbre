@@ -29,6 +29,7 @@ TIMBRE_SOURCES = [
     "objects/oscx"
     "objects/phasor"
     "objects/pwm"
+    "objects/eightbitnoise"
 
     "objects/env"
     "objects/adsr"
@@ -224,6 +225,9 @@ uglify = (src, dst, callback)->
         console.log "exec error: #{error}" if error
         callback src, dst if callback
 
+filesize = (filepath)->
+    ((fs.statSync filepath).size / 1024).toFixed 2
+
 
 # build timbre.js
 source = fs.readFileSync "#{SRC_DIR}/timbre.txt", "utf-8"
@@ -237,7 +241,8 @@ source = source.replace /\${VERSION}/g, VERSION
 console.log "build: #{VERSION} (#{BUILD_DATE})"
 
 fs.writeFileSync "#{DST_DIR}/#{PRODUCT_NAME}.js", source, "utf-8"
-console.log "build  >> #{DST_DIR}/#{PRODUCT_NAME}.js"
+fsize = filesize "#{DST_DIR}/#{PRODUCT_NAME}.js"
+console.log "build  >> #{DST_DIR}/#{PRODUCT_NAME}.js (#{fsize}kB)"
 
 
 # minify
@@ -251,4 +256,5 @@ uglify "#{DST_DIR}/#{PRODUCT_NAME}.js", tmp_path, ->
     src = src.replace /^\s+[*]\s+build.+\n/m, ""
 
     fs.writeFileSync min_path, src, "utf-8"
-    console.log "minify >> #{min_path}"
+    fsize = filesize min_path
+    console.log "minify >> #{min_path} (#{fsize}kB)"
