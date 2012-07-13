@@ -36,7 +36,7 @@ $(function() {
             synth = x.call(null);
             
             if (synth.isKr) {
-                synth = T("buddy", synth);
+                synth = T("+", synth).buddy(["on", "off", "bang"]);
             }
             
             $pre = $("<pre>").text(x.toString()).addClass("prettyprint");

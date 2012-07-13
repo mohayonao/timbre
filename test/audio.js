@@ -28,7 +28,7 @@ tests = (function() {
     }; tests[i++].desc = "audio";
     
     tests[i] = function() {
-        var synth = T("buddy");
+        var synth = T("+");
         synth.onplay = function() {
             synth.args[0] = s[0].slice(500, 1500);
         };
@@ -36,7 +36,7 @@ tests = (function() {
     }; tests[i++].desc = "audio#slice()";
     
     tests[i] = function() {
-        var synth = T("buddy");
+        var synth = T("+");
         synth.onplay = function() {
             synth.args[0] = s[0].clone().set("reversed", true);
         };
@@ -44,7 +44,7 @@ tests = (function() {
     }; tests[i++].desc = "reversed audio";
 
     tests[i] = function() {
-        var synth = T("buddy");
+        var synth = T("+");
         synth.onplay = function() {
             synth.args[0] = s[0].slice(2500, 1500);
         };
@@ -52,7 +52,7 @@ tests = (function() {
     }; tests[i++].desc = "reversed slice";
 
     tests[i] = function() {
-        var synth = T("buddy");
+        var synth = T("+");
         synth.onplay = function() {
             synth.args[0] = file_audio.clone();
         };
