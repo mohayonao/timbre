@@ -86,6 +86,18 @@ timbre.fn = (function(timbre) {
             timbre.fn.copyBaseArguments(this, newone, deep);
             return newone;
         },
+        // v12.07.14
+        buddy: function(name, list, altMethod) {
+            var buddies = this._.buddies;
+            if (list === null) {
+                delete buddies[name];
+            } else if (list === undefined) {
+                buddies[name] = [this.args, altMethod];
+            } else if (list instanceof Array) {
+                buddies[name] = [list     , altMethod];
+            }
+            return this;
+        },
         append: function() {
             var f;
             this.args.append.apply(this.args, arguments);
@@ -250,8 +262,12 @@ timbre.fn = (function(timbre) {
             if (TimbreObject.objectId === 0) timbre.setup();
             instance._.id = TimbreObject.objectId++;
             
-            if (typeof !instance._.ev !== "object") instance._.ev = {};
-            
+            if (typeof instance._.ev      !== "object") {
+                instance._.ev = {};
+            }
+            if (typeof instance._.buddies !== "object") {
+                instance._.buddies = {};
+            }
             if (typeof instance._.ar !== "boolean") {
                 if (p && typeof p._ === "object") {
                     instance._.ar = !!p._.ar;
@@ -488,19 +504,38 @@ timbre.fn = (function(timbre) {
         };
     }());
     
+    // v12.07.14
+    var buddyCall = function(name, list, altMethod) {
+        var func;
+        for (var i = 0, imax = list.length; i < imax; ++i) {
+            if (list[i] instanceof Array) {
+                buddyCall(name, list[i], altMethod);
+            } else if (list[i] instanceof Function) {
+                list[i].call();
+            } else if ((func = list[i][altMethod||name]) instanceof Function) {
+                func.call(list[i]);
+            }
+        }
+    };
+    
     fn.doEvent = function(obj, name, args) {
-        var func, list, i, imax;
+        var func, list;
         
         if ((func = obj["on" + name]) instanceof Function) {
             func.apply(obj, args);
         }
         
         if ((list = obj._.ev[name]) !== undefined) {
-            for (i = 0, imax = list.length; i < imax; ++i) {
+            for (var i = 0, imax = list.length; i < imax; ++i) {
                 func = list[i];
                 func.apply(obj, args);
                 if (func.rm) obj.removeEventListener(name, func);
             }
+        }
+        
+        // v12.07.14
+        if (obj._.buddies && (list = obj._.buddies[name]) !== undefined) {
+            buddyCall(name, list[0], list[1]);
         }
     };
     fn.do_event = fn.doEvent;
@@ -605,10 +640,14 @@ timbre.fn = (function(timbre) {
         
         var base = options.base;
         if (typeof base === "string") base = [ base ];
-
+        
         if (base instanceof Array) {
             base.forEach(function(x) {
-                fn.setPrototypeOf.call(this, x);
+                if (typeof x === "string") {
+                    fn.setPrototypeOf.call(this, x);
+                } else if (typeof x === "function") {
+                    x.call(p);
+                }
             }.bind(p));
         }
         
