@@ -1,7 +1,6 @@
 /**
- * BooleanWrapper: 0.1.0
+ * BooleanWrapper: v12.07.13
  * Constant signal of 0 or 1
- * [kr-only]
  */
 "use strict";
 
@@ -11,34 +10,35 @@ var timbre = require("../timbre");
 var BooleanWrapper = (function() {
     var BooleanWrapper = function() {
         initialize.apply(this, arguments);
-    }, $this = BooleanWrapper.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
-    
-    Object.defineProperty($this, "value", {
-        set: function(value) {
-            this._.value = !!value;
-            changeTheValue.call(this);
-        },
-        get: function() { return this._.value; }
-    });
-    Object.defineProperty($this, "mul", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.mul = value;
-                changeTheValue.call(this);
-            }
-        },
-        get: function() { return this._.mul; }
-    });
-    Object.defineProperty($this, "add", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.add = value;
-                changeTheValue.call(this);
-            }
-        },
-        get: function() { return this._.add; }
+    }, $this = timbre.fn.buildPrototype(BooleanWrapper, {
+        base: "kr-only",
+        properties: {
+            value: {
+                set: function(value) {
+                    this._.value = !!value;
+                    changeTheValue.call(this);
+                },
+                get: function() { return this._.value; }
+            },
+            mul: {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        this._.mul = value;
+                        changeTheValue.call(this);
+                    }
+                },
+                get: function() { return this._.mul; }
+            },
+            add: {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        this._.add = value;
+                        changeTheValue.call(this);
+                    }
+                },
+                get: function() { return this._.mul; }
+            },
+        } // properties
     });
     
     var initialize = function(_args) {

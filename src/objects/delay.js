@@ -1,6 +1,5 @@
 /**
- * Delay: 0.3.6
- * [ar-kr]
+ * Delay: v12.07.13
  */
 "use strict";
 
@@ -10,18 +9,18 @@ var timbre = require("../timbre");
 var Delay = (function() {
     var Delay = function() {
         initialize.apply(this, arguments);
-    }, $this = Delay.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
-    
-    Object.defineProperty($this, "time", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.delayTime = value;
+    }, $this = timbre.fn.buildPrototype(Delay, {
+        base: "ar-kr",
+        properties: {
+            delay: {
+                set: function(value) {
+                    if (typeof value === "number") this._.delayTime = value;
+                },
+                get: function() { return this._.delayTime; }
             }
-        },
-        get: function() { return this._.delayTime; }
+        } // properties
     });
+    
     
     var initialize = function(_args) {
         var bits, i, _;
@@ -47,9 +46,9 @@ var Delay = (function() {
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell, tmp, mul, add;
+        var args, cell, tmp, mul, add;
         var buffer, buffer_mask, pointerRead, pointerWrite;
-        var i;
+        var i, imax;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {

@@ -1,7 +1,7 @@
 /**
- * WhiteNoise: 0.1.0
+ * WhiteNoise: v12.07.13
  * White noise generator
- * [ar-kr]
+ * v0.1.0: first version
  */
 "use strict";
 
@@ -11,9 +11,10 @@ var timbre = require("../timbre");
 var WhiteNoise = (function() {
     var WhiteNoise = function() {
         initialize.apply(this, arguments);
-    }, $this = WhiteNoise.prototype;
+    }, $this = timbre.fn.buildPrototype(WhiteNoise, {
+        base: "ar-kr"
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
     
     var initialize = function(_args) {
         

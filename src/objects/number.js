@@ -1,7 +1,7 @@
 /**
- * NumberWrapper: 0.1.0
+ * NumberWrapper: v12.07.13
  * Constant signal of a number
- * [kr-only]
+ * v0.1.0: first version
  */
 "use strict";
 
@@ -11,37 +11,39 @@ var timbre = require("../timbre");
 var NumberWrapper = (function() {
     var NumberWrapper = function() {
         initialize.apply(this, arguments);
-    }, $this = NumberWrapper.prototype;
+    }, $this = timbre.fn.buildPrototype(NumberWrapper, {
+        base: "kr-only",
+        properties: {
+            value: {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        this._.value = value;
+                        changeTheValue.call(this);
+                    }
+                },
+                get: function() { return this._.value; }
+            },
+            mul: {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        this._.mul = value;
+                        changeTheValue.call(this);
+                    }
+                },
+                get: function() { return this._.mul; }
+            },
+            add: {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        this._.add = value;
+                        changeTheValue.call(this);
+                    }
+                },
+                get: function() { return this._.add; }
+            }
+        } // properties
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
-    
-    Object.defineProperty($this, "value", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.value = value;
-                changeTheValue.call(this);
-            }
-        },
-        get: function() { return this._.value; }
-    });
-    Object.defineProperty($this, "mul", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.mul = value;
-                changeTheValue.call(this);
-            }
-        },
-        get: function() { return this._.mul; }
-    });
-    Object.defineProperty($this, "add", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.add = value;
-                changeTheValue.call(this);
-            }
-        },
-        get: function() { return this._.add; }
-    });
     
     var initialize = function(_args) {
         this._ = {};

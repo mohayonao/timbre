@@ -1,7 +1,6 @@
 /**
- * AudioDecoder: 0.3.7
+ * AudioDecoder: v12.07.13
  * Store audio samples
- * [ar-only]
  */
 "use strict";
 
@@ -192,16 +191,19 @@ var AudioDecoder = {
 
 
 /**
- * WebKitAudio: 0.1.0
+ * WebKitAudio: v12.07.13
  * Store audio samples (Web Audio API)
  * [ar-only]
  */
 var WebKitAudio = (function() {
     var WebKitAudio = function() {
         AudioDecoder.initialize.apply(this, arguments);
-    }, $this = AudioDecoder.setPrototype.call(WebKitAudio.prototype);
+    }, $this = timbre.fn.buildPrototype(WebKitAudio, {
+        base: "ar-only"
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-only");
+    $this = AudioDecoder.setPrototype.call($this);
+    
     
     $this.load = function() {
         var self = this, _ = this._;
@@ -274,17 +276,20 @@ timbre.fn.register("-webkit-audio", WebKitAudio);
 
 
 /**
- * MozAudio: <draft>
+ * MozAudio: v12.07.13
  * Store audio samples (Audio Data API)
  * [ar-only]
  */
 var MozAudio = (function() {
     var MozAudio = function() {
         AudioDecoder.initialize.apply(this, arguments);
-    }, $this = AudioDecoder.setPrototype.call(MozAudio.prototype);
+    }, $this = timbre.fn.buildPrototype(WebKitAudio, {
+        base: "ar-only"
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-only");
-
+    $this = AudioDecoder.setPrototype.call($this);
+    
+    
     var loadAudio = function(audio, opts) {
         var self = this, _ = this._;
         var output, buffer_index, istep;

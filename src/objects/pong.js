@@ -1,7 +1,7 @@
 /**
- * Pong: 0.3.6
+ * Pong: v12.07.13
  * Variable range signal folding
- * [ar-kr]
+ * v0.3.6: first version
  */
 "use strict";
 
@@ -11,9 +11,10 @@ var timbre = require("../timbre");
 var Pong = (function() {
     var Pong = function() {
         initialize.apply(this, arguments);
-    }, $this = Pong.prototype;
+    }, $this = timbre.fn.buildPrototype(Pong, {
+        base: "ar-kr"
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
     
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);

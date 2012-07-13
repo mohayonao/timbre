@@ -1,6 +1,6 @@
 /**
- * Schedule: 0.3.1
- * [kr-only]
+ * Schedule v12.07.13
+ * v0.3.1: first version
  */
 "use strict";
 
@@ -10,27 +10,28 @@ var timbre = require("../timbre");
 var Schedule = (function() {
     var Schedule = function() {
         initialize.apply(this, arguments);
-    }, $this = Schedule.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
-    timbre.fn.setPrototypeOf.call($this, "timer");
-    
-    Object.defineProperty($this, "mode", {
-        get: function() { return this._.mode; }
-    });
-    Object.defineProperty($this, "bpm", {
-        set: function(value) {
-            if (this._.mode === "bpm") {
-                if (typeof value === "number" && value > 0) {
-                    changeBPM.call(this, value);
-                }
+    }, $this = timbre.fn.buildPrototype(Schedule, {
+        base: ["kr-only", "timer"],
+        properties: {
+            mode: {
+                get: function() { return this._.mode; }
+            },
+            bpm: {
+                set: function(value) {
+                    if (this._.mode === "bpm") {
+                        if (typeof value === "number" && value > 0) {
+                            changeBPM.call(this, value);
+                        }
+                    }
+                },
+                get: function() { return this._.bpm; }
+            },
+            currentTime: {
+                get: function() { return this._.currentTime; }
             }
-        },
-        get: function() { return this._.bpm; }
+        } // properties
     });
-    Object.defineProperty($this, "currentTime", {
-        get: function() { return this._.currentTime; }
-    });
+    
     
     var initialize = function(_args) {
         var list, i, _;

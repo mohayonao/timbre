@@ -1,6 +1,6 @@
 /**
- * Scale: 0.3.2
- * [kr-only]
+ * Scale v12.07.13
+ * v0.3.2: first version
  */
 "use strict";
 
@@ -10,39 +10,38 @@ var timbre = require("../timbre");
 var Scale = (function() {
     var Scale = function() {
         initialize.apply(this, arguments);
-    }, $this = Scale.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
-    
-    Object.defineProperty($this, "scale", {
-        set: function(value) {
-            var _ = this._;
-            if (typeof value === "string" &&
-                Scale.Scales[value] !== undefined) {
-                _.scale = value;
-                _.list = Scale.Scales[value];
-            } else if (value instanceof Array) {
-                _.scale = "";
-                _.list = value;
+    }, $this = timbre.fn.buildPrototype(Scale, {
+        base: "kr-only",
+        properties: {
+            scale: {
+                set: function(value) {
+                    var _ = this._;
+                    if (typeof value === "string" &&
+                        Scale.Scales[value] !== undefined) {
+                        _.scale = value;
+                        _.list = Scale.Scales[value];
+                    } else if (value instanceof Array) {
+                        _.scale = "";
+                        _.list = value;
+                    }
+                },
+                get: function() { return this._.scale; }
+            },
+            root: {
+                set: function(value) {
+                    this._.root = timbre(value);
+                },
+                get: function() { return this._.root; }
+            },
+            octave: {
+                set: function(value) {
+                    if (typeof value === "number") this._.octave = value;
+                },
+                get: function() { return this._.octave; }
             }
-        },
-        get: function() { return this._.scale; }
+        } // properties
     });
     
-    Object.defineProperty($this, "root", {
-        set: function(value) {
-            this._.root = timbre(value);
-        },
-        get: function() { return this._.root; }
-    });
-    Object.defineProperty($this, "octave", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.octave = value;
-            }
-        },
-        get: function() { return this._.octave; }
-    });
     
     var initialize = function(_args) {
         var i, _;

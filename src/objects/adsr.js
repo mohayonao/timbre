@@ -1,5 +1,5 @@
 /**
- * ADSREnvelope: 12.07.12
+ * ADSREnvelope: v12.07.13
  * ADSR envelope generator
  * v12.07.12: add ar-mode
  */
@@ -12,85 +12,68 @@ require("./env");
 var ADSREnvelope = (function() {
     var ADSREnvelope = function() {
         initialize.apply(this, arguments);
-    }, $this = ADSREnvelope.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "kr-ar");
-
-    var Envelope = timbre.fn.getClass("env");
-
-    timbre.fn.copyPropertyDescriptors($this,
-                                      Envelope.prototype,
-                                      ["table", "delay", "reversed", "currentTime"]);
+    }, $this = timbre.fn.buildPrototype(ADSREnvelope, {
+        base: "kr-ar",
+        properties: {
+            status: {
+                get: function() { return STATUSES[this._.status+1]; }
+            },
+            a: { // atack-time
+                set: function(value) {
+                    if (typeof value === "number") this._.a = value;
+                },
+                get: function() { return this._.a; }
+            },
+            d: { // decay-time
+                set: function(value) {
+                    if (typeof value === "number") this._.d = value;
+                },
+                get: function() { return this._.d; }
+            },
+            s: { // sustain-time
+                set: function(value) {
+                    if (typeof value === "number") this._.s = value;
+                },
+                get: function() { return this._.s; }
+            },
+            r: { // release-time
+                set: function(value) {
+                    if (typeof value === "number") this._.r = value;
+                },
+                get: function() { return this._.r; }
+            },
+            al: { // attack-level
+                set: function(value) {
+                    if (typeof value === "number") this._.al = value;
+                },
+                get: function() { return this._.al; }
+            },
+            dl: { // decay-level
+                set: function(value) {
+                    if (typeof value === "number") this._.dl = value;
+                },
+                get: function() { return this._.dl; }
+            },
+            sl: { // sustain-level
+                set: function(value) {
+                    if (typeof value === "number") this._.sl = value;
+                },
+                get: function() { return this._.sl; }
+            },
+            rl: { // release-level
+                set: function(value) {
+                    if (typeof value === "number") this._.rl = value;
+                },
+                get: function() { return this._.rl; }
+            }
+        }, // properties
+        copies: [
+            "env.table", "env.delay", "env.reversed", "env.currentTime"
+        ]
+    });
     
     var STATUSES = ["off","delay","a","d","s","r"];
     
-    Object.defineProperty($this, "status", {
-        get: function() { return STATUSES[this._.status+1]; }
-    });
-    Object.defineProperty($this, "a", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.a = value;
-            }
-        },
-        get: function() { return this._.a; }
-    });
-    Object.defineProperty($this, "d", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.d = value;
-            }
-        },
-        get: function() { return this._.d; }
-    });
-    Object.defineProperty($this, "s", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.s = value;
-            }
-        },
-        get: function() { return this._.s; }
-    });
-    Object.defineProperty($this, "r", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.r = value;
-            }
-        },
-        get: function() { return this._.r; }
-    });
-    Object.defineProperty($this, "al", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.al = value;
-            }
-        },
-        get: function() { return this._.al; }
-    });
-    Object.defineProperty($this, "dl", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.dl = value;
-            }
-        },
-        get: function() { return this._.dl; }
-    });
-    Object.defineProperty($this, "sl", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.sl = value;
-            }
-        },
-        get: function() { return this._.sl; }
-    });
-    Object.defineProperty($this, "rl", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.rl = value;
-            }
-        },
-        get: function() { return this._.rl; }
-    });
     
     var initialize = function(_args) {
         var i, nums, _;

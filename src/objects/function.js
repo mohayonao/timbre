@@ -1,6 +1,5 @@
 /**
- * FunctionWrapper: 0.1.0
- * [kr-only]
+ * FunctionWrapper: v12.07.13
  */
 "use strict";
 
@@ -10,26 +9,26 @@ var timbre = require("../timbre");
 var FunctionWrapper = (function() {
     var FunctionWrapper = function() {
         initialize.apply(this, arguments);
-    }, $this = FunctionWrapper.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
-    
-    Object.defineProperty($this, "value", {
-        set: function(value) {
-            if (typeof value === "function") {
-                this._.value = value;
+    }, $this = timbre.fn.buildPrototype(FunctionWrapper, {
+        base: "kr-only",
+        properties: {
+            value: {
+                set: function(value) {
+                    if (typeof value === "function") this._.value = value;
+                },
+                get: function() { return this._.value; }
+            },
+            args: {
+                set: function(value) {
+                    if (typeof value === "object" && value instanceof Array) {
+                        this._.args = value;
+                    }
+                },
+                get: function() { return this._.args; }
             }
-        },
-        get: function() { return this._.value; }
+        } // properties
     });
-    Object.defineProperty($this, "args", {
-        set: function(value) {
-            if (typeof value === "object" && value instanceof Array) {
-                this._.args = value;
-            }
-        },
-        get: function() { return this._.args; }
-    });
+    
     
     var initialize = function(_args) {
         var i, _;

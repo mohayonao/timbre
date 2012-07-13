@@ -1,6 +1,6 @@
 /**
- * PhaseOscillator: 0.2.0
- * [ar-kr]
+ * PhaseOscillator: v12.07.13
+ * v0.2.0: first version
  */
 "use strict";
 
@@ -11,30 +11,27 @@ require("./osc");
 var PhaseOscillator = (function() {
     var PhaseOscillator = function() {
         initialize.apply(this, arguments);
-    }, $this = PhaseOscillator.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
-    
-    var Oscillator = timbre.fn.getClass("osc");
-    
-    timbre.fn.copyPropertyDescriptors($this,
-                                      Oscillator.prototype,
-                                      ["wave"]);
-    
-    Object.defineProperty($this, "phase", {
-        set: function(value) {
-            this._.phase = timbre(value);
-        },
-        get: function() { return this._.phase; }
-    });
-    Object.defineProperty($this, "fb", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.fb = value;
+    }, $this = timbre.fn.buildPrototype(PhaseOscillator, {
+        base: "ar-kr",
+        properties: {
+            phase: {
+                set: function(value) {
+                    this._.phase = timbre(value);
+                },
+                get: function() { return this._.phase; }
+            },
+            fb: {
+                set: function(value) {
+                    if (typeof value === "number") this._.fb = value;
+                },
+                get: function() { return this._.fb; }
             }
-        },
-        get: function() { return this._.fb; }
+        }, // properties
+        copies: [
+            "osc.wave"
+        ]
     });
+    
     
     var initialize = function(_args) {
         var i, _;

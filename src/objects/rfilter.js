@@ -1,6 +1,5 @@
 /**
- * ResonantFilter: 0.3.2
- * [ar-only]
+ * ResonantFilter: v12.07.13
  */
 "use strict";
 
@@ -10,43 +9,45 @@ var timbre = require("../timbre");
 var ResonantFilter = (function() {
     var ResonantFilter = function() {
         initialize.apply(this, arguments);
-    }, $this = ResonantFilter.prototype;
+    }, $this = timbre.fn.buildPrototype(ResonantFilter, {
+        base: "ar-only",
+        properties: {
+            type: {
+                set: function(value) {
+                    var mode;
+                    if (typeof value === "string") {
+                        if ((mode = ResonantFilter.Types[value]) !== undefined) {
+                            this._.type = value;
+                            this._.mode = mode;
+                        }
+                    }
+                },
+                get: function() { return this._.type; }
+            },
+            cutoff: {
+                set: function(value) {
+                    this._.cutoff = timbre(value);
+                },
+                get: function() { return this._.cutoff; }
+            },
+            Q: {
+                set: function(value) {
+                    this._.Q = timbre(value);
+                },
+                get: function() { return this._.Q; }
+            },
+            depth: {
+                set: function(value) {
+                    this._.depth = timbre(value);
+                },
+                get: function() { return this._.depth; }
+            }
+        } // properties
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-only");
     
     ResonantFilter.Types = { lpf:0, hpf:1, bpf:2, brf:3 };
     
-    Object.defineProperty($this, "type", {
-        set: function(value) {
-            var mode;
-            if (typeof value === "string") {
-                if ((mode = ResonantFilter.Types[value]) !== undefined) {
-                    this._.type = value;
-                    this._.mode = mode;
-                }
-            }
-        },
-        get: function() { return this._.type; }
-    });
-    
-    Object.defineProperty($this, "cutoff", {
-        set: function(value) {
-            this._.cutoff = timbre(value);
-        },
-        get: function() { return this._.cutoff; }
-    });
-    Object.defineProperty($this, "Q", {
-        set: function(value) {
-            this._.Q = timbre(value);
-        },
-        get: function() { return this._.Q; }
-    });
-    Object.defineProperty($this, "depth", {
-        set: function(value) {
-            this._.depth = timbre(value);
-        },
-        get: function() { return this._.depth; }
-    });
     
     var initialize = function(_args) {
         var type, i, _;

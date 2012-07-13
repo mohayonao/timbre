@@ -1,7 +1,6 @@
 /**
- * Record: 0.3.6
+ * Record: v12.07.13
  * Record sound into a buffer
- * [ar-only]
  */
 "use strict";
 
@@ -11,48 +10,49 @@ var timbre = require("../timbre");
 var Record = (function() {
     var Record = function() {
         initialize.apply(this, arguments);
-    }, $this = Record.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "ar-only");
-    timbre.fn.setPrototypeOf.call($this, "listener");
-    
-    Object.defineProperty($this, "buffer", {
-        get: function() { return this._.buffer; }
-    });
-    Object.defineProperty($this, "recTime", {
-        set: function(value) {
-            var _ = this._;
-            if (typeof value === "number" && value > 0) {
-                _.recTime = value;
-                _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
+    }, $this = timbre.fn.buildPrototype(Record, {
+        base: ["ar-only", "listener"],
+        properties: {
+            buffer: {
+                get: function() { return this._.buffer; }
+            },
+            recTime: {
+                set: function(value) {
+                    var _ = this._;
+                    if (typeof value === "number" && value > 0) {
+                        _.recTime = value;
+                        _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
+                    }
+                },
+                get: function() { return this._.recTime; }
+            },
+            interval: {
+                set: function(value) {
+                    var _ = this._;
+                    if (typeof value === "number") {
+                        _.interval = value;
+                        _.interval_samples = (timbre.samplerate * (value / 1000))|0;
+                        if (_.interval_samples < _.buffer.length) {
+                            _.interval_samples = _.buffer.length;
+                            _.interval = _.buffer.length * timbre.samplerate / 1000;
+                        }
+                    }
+                },
+                get: function() { return this._.interval; }
+            },
+            currentTime: {
+                get: function() { return this._.index / timbre.samplerate * 1000; }
+            },
+            isRecording: {
+                get: function() { return this._.ison; }
+            },
+            overwrite: {
+                set: function(value) { this._.overwrite = !!value; },
+                get: function() { return this._.overwrite; }
             }
-        },
-        get: function() { return this._.recTime; }
+        } // properties
     });
-    Object.defineProperty($this, "interval", {
-        set: function(value) {
-            var _ = this._;
-            if (typeof value === "number") {
-                _.interval = value;
-                _.interval_samples = (timbre.samplerate * (value / 1000))|0;
-                if (_.interval_samples < _.buffer.length) {
-                    _.interval_samples = _.buffer.length;
-                    _.interval = _.buffer.length * timbre.samplerate / 1000;
-                }
-            }
-        },
-        get: function() { return this._.interval; }
-    });
-    Object.defineProperty($this, "currentTime", {
-        get: function() { return this._.index / timbre.samplerate * 1000; }
-    });
-    Object.defineProperty($this, "isRecording", {
-        get: function() { return this._.ison; }
-    });
-    Object.defineProperty($this, "overwrite", {
-        set: function(value) { this._.overwrite = !!value; },
-        get: function() { return this._.overwrite; }
-    });
+    
     
     var initialize = function(_args) {
         var i, _;

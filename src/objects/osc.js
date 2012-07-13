@@ -1,6 +1,7 @@
 /**
  * Oscillator: v12.07.12
  * Table lookup oscillator
+ * v 0. 0. 1: first version
  * v12.07.12: add "pwm125", "pwm25", "pwm50"
  */
 "use strict";
@@ -11,54 +12,56 @@ var timbre = require("../timbre");
 var Oscillator = (function() {
     var Oscillator = function() {
         initialize.apply(this, arguments);
-    }, $this = Oscillator.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
-    
-    Object.defineProperty($this, "wave", {
-        set: function(value) {
-            var wave, i, dx;
-            wave = this._.wave;
-            if (typeof value === "function") {
-                for (i = 0; i < 1024; i++) {
-                    wave[i] = value(i / 1024);
-                }
-            } else if (typeof value === "object" &&
-                       (value instanceof Array || value.buffer instanceof ArrayBuffer)) {
-                if (value.length === 1024) {
-                    this._.wave = value;
-                } else {
-                    dx = value.length / 1024;
-                    for (i = 0; i < 1024; i++) {
-                        wave[i] = value[(i * dx)|0] || 0.0;
+    }, $this = timbre.fn.buildPrototype(Oscillator, {
+        base: "ar-kr",
+        properties: {
+            wave: {
+                set: function(value) {
+                    var wave, i, dx;
+                    wave = this._.wave;
+                    if (typeof value === "function") {
+                        for (i = 0; i < 1024; i++) {
+                            wave[i] = value(i / 1024);
+                        }
+                    } else if (typeof value === "object" &&
+                               (value instanceof Array || value.buffer instanceof ArrayBuffer)) {
+                        if (value.length === 1024) {
+                            this._.wave = value;
+                        } else {
+                            dx = value.length / 1024;
+                            for (i = 0; i < 1024; i++) {
+                                wave[i] = value[(i * dx)|0] || 0.0;
+                            }
+                        }
+                    } else if (typeof value === "string") {
+                        if ((dx = Oscillator.Wavetables[value]) !== undefined) {
+                            if (typeof dx === "function") dx = dx();
+                            this._.wave = dx;
+                        }
                     }
-                }
-            } else if (typeof value === "string") {
-                if ((dx = Oscillator.Wavetables[value]) !== undefined) {
-                    if (typeof dx === "function") dx = dx();
-                    this._.wave = dx;
-                }
+                },
+                get: function() { return this._.wave; }
+            },
+            freq: {
+                set: function(value) {
+                    this._.freq = timbre(value);
+                },
+                get: function() { return this._.freq; }
+            },
+            phase: {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        while (value >= 1.0) value -= 1.0;
+                        while (value <  0.0) value += 1.0;
+                        this._.phase = value;
+                        this._.x = 1024 * this._.phase;
+                    }
+                },
+                get: function() { return this._.phase; }
             }
-        },
-        get: function() { return this._.wave; }
+        } // properties
     });
-    Object.defineProperty($this, "freq", {
-        set: function(value) {
-            this._.freq = timbre(value);
-        },
-        get: function() { return this._.freq; }
-    });
-    Object.defineProperty($this, "phase", {
-        set: function(value) {
-            if (typeof value === "number") {
-                while (value >= 1.0) value -= 1.0;
-                while (value <  0.0) value += 1.0;
-                this._.phase = value;
-                this._.x = 1024 * this._.phase;
-            }
-        },
-        get: function() { return this._.phase; }
-    });
+    
     
     var initialize = function(_args) {
         var i, _;

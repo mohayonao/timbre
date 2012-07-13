@@ -1,7 +1,6 @@
 /**
- * WavDecoder: 0.1.0
+ * WavDecoder: v12.07.13
  * Decode wav file and play it
- * [ar-only]
  */
 "use strict";
 
@@ -11,51 +10,53 @@ var timbre = require("../timbre");
 var WavDecoder = (function() {
     var WavDecoder = function() {
         initialize.apply(this, arguments);
-    }, $this = WavDecoder.prototype;
+    }, $this = timbre.fn.buildPrototype(WavDecoder, {
+        base: "ar-only",
+        properties: {
+            src: {
+                set: function(value) {
+                    if (typeof value === "string") {
+                        if (this._.src !== value) {
+                            this._.src = value;
+                            this._.isloaded = false;
+                        }
+                    }
+                },
+                get: function() { return this._.src; }
+            },
+            loop: {
+                set: function(value) { this._.loop = !!value; },
+                get: function() { return this._.loop; }
+            },
+            reversed: {
+                set: function(value) {
+                    var _ = this._;
+                    _.reversed = !!value;
+                    if (_.reversed && _.phase === 0) {
+                        _.phase = Math.max(0, _.buffer.length - 1);
+                    }
+                },
+                get: function() { return this._.reversed; }
+            },
+            isLoaded: {
+                get: function() { return this._.isloaded; }
+            },
+            duration: {
+                get: function() { return this._.duration; }
+            },
+            currentTime: {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        if (0 <= value && value <= this._.duration) {
+                            this._.phase = (value / 1000) * this._.samplerate;
+                        }
+                    }
+                },
+                get: function() { return (this._.phase / this._.samplerate) * 1000; }
+            }
+        } // properties
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-only");
-    
-    Object.defineProperty($this, "src", {
-        set: function(value) {
-            if (typeof value === "string") {
-                if (this._.src !== value) {
-                    this._.src = value;
-                    this._.isloaded = false;
-                }
-            }
-        },
-        get: function() { return this._.src; }
-    });
-    Object.defineProperty($this, "loop", {
-        set: function(value) { this._.loop = !!value; },
-        get: function() { return this._.loop; }
-    });
-    Object.defineProperty($this, "reversed", {
-        set: function(value) {
-            var _ = this._;
-            _.reversed = !!value;
-            if (_.reversed && _.phase === 0) {
-                _.phase = Math.max(0, _.buffer.length - 1);
-            }
-        },
-        get: function() { return this._.reversed; }
-    });
-    Object.defineProperty($this, "isLoaded", {
-        get: function() { return this._.isloaded; }
-    });
-    Object.defineProperty($this, "duration", {
-        get: function() { return this._.duration; }
-    });
-    Object.defineProperty($this, "currentTime", {
-        set: function(value) {
-            if (typeof value === "number") {
-                if (0 <= value && value <= this._.duration) {
-                    this._.phase = (value / 1000) * this._.samplerate;
-                }
-            }
-        },
-        get: function() { return (this._.phase / this._.samplerate) * 1000; }
-    });
     
     var initialize = function(_args) {
         var i, _;

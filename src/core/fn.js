@@ -1,5 +1,5 @@
 /**
- * timbre.fn: 0.3.2
+ * timbre.fn: v12.07.13
  */
 "use strict";
 
@@ -7,34 +7,203 @@ var timbre = require("../timbre");
 // __BEGIN__
 
 timbre.fn = (function(timbre) {
-    var TimbreObject = function() {};
-    var fn = {}, klasses;
-    var defaults = { optional:{}, properties:{} };
+    var fn = {}, NOP = function() { return this; };
     
+    var TimbreObject = function() {};
     TimbreObject.objectId = 0;
-    TimbreObject.klasses = klasses = {
+    TimbreObject.klasses = {
         _find: function(key) {
-            if (typeof klasses[key] === "function") {
-                return klasses[key];
+            if (typeof TimbreObject.klasses[key] === "function") {
+                return TimbreObject.klasses[key];
             }
             key = "-" + timbre.env + "-" + key;    
-            if (typeof klasses[key] === "function") {
-                return klasses[key];
+            if (typeof TimbreObject.klasses[key] === "function") {
+                return TimbreObject.klasses[key];
             }
         }
     };
+    TimbreObject.PrototypeValue = function() {};
+    
+    
+    timbre.TimbreBasePrototype = TimbreObject.prototype = {
+        play: function() {
+            var f, _ = this._;
+            if (_.ar) {
+                if (_.dac === null) {
+                    _.dac = timbre("dac", this);
+                    if ((f = _.proto._.play) instanceof Function) f.call(this);
+                    timbre.fn.doEvent(this, "play");
+                } else if (this.dac.args.indexOf(this) === -1) {
+                    _.dac.append(this);
+                    if ((f = _.proto._.play) instanceof Function) f.call(this);
+                    timbre.fn.doEvent(this, "play");
+                }
+                if (_.dac.isOff) _.dac.on();
+            }
+            return this;
+        },
+        pause: function() {
+            var f, _ = this._;
+            if (_.dac && _.dac.args.indexOf(this) !== -1) {
+                _.dac.remove(this);
+                if ((f = _.proto._.pause) instanceof Function) f.call(this);
+                timbre.fn.doEvent(this, "pause");
+                if (_.dac.isOn && _.dac.args.length === 0) _.dac.off();
+            }
+            return this;
+        },
+        ar: function() {
+            this._.ar = true;
+            return this;
+        },
+        kr: function() {
+            this._.ar = false;
+            return this;
+        },
+        bang: function() {
+            timbre.fn.doEvent(this, "bang");
+            return this;
+        },
+        seq: function() {
+            return this.cell;
+        },
+        on: function() {
+            var f;
+            this._.ison = true;
+            if ((f = this._.proto._.on) instanceof Function) f.call(this);
+            timbre.fn.doEvent(this, "on");
+            return this;
+        },
+        off: function() {
+            var f;
+            this._.ison = false;
+            if ((f = this._.proto._.off) instanceof Function) f.call(this);
+            timbre.fn.doEvent(this, "off");
+            return this;
+        },
+        clone: function(deep) {
+            var newone = timbre(this._.proto._.klassname);
+            timbre.fn.copyBaseArguments(this, newone, deep);
+            return newone;
+        },
+        append: function() {
+            var f;
+            this.args.append.apply(this.args, arguments);
+            if ((f = this._.proto._.append) instanceof Function) f.call(this);
+            return this;
+        },
+        appendTo: function(obj) {
+            obj.args.append.call(obj.args, this);
+            return this;
+        },
+        remove: function() {
+            var f;
+            this.args.remove.apply(this.args, arguments);
+            if ((f = this._.proto._.remove) instanceof Function) f.call(this);
+            return this;
+        },
+        removeFrom: function(obj) {
+            obj.args.remove.call(obj.args, this);
+            return this;
+        },
+        removeAll: function() {
+            var f;
+            this.args.removeAll.apply(this.args, arguments);
+            if ((f = this._.proto._.remove) instanceof Function) f.call(this);
+            return this;
+        },
+        set: function(key, value) {
+            var desc = Object.getOwnPropertyDescriptor;
+            if (typeof key === "string") {
+                var x = this._.proto;
+                while (x !== null) {
+                    if (desc(x, key) !== undefined) {
+                        this[key] = value;
+                        break;
+                    }
+                    x = Object.getPrototypeOf(x); 
+                }
+            } else if (typeof key === "object") {
+                for (var k in key) {
+                    var x = this._.proto;
+                    while (x !== null) {
+                        if (desc(x, key) !== undefined) {
+                            this[key] = value;
+                            break;
+                        }
+                        x = Object.getPrototypeOf(x); 
+                    }
+                }
+            }
+            return this;
+        },
+        get: function(key) {
+            var desc = Object.getOwnPropertyDescriptor;
+            var x    = this._.proto;
+            while (x !== null) {
+                if (desc(x, key) !== undefined) return this[key];
+                x = Object.getPrototypeOf(x);
+            }
+        },
+        addEventListener       : timbre.addEventListener,
+        removeEventListener    : timbre.removeEventListener,
+        removeAllEventListeners: timbre.removeAllEventListeners
+    }; // TimbreObject.prototype
+    
+    Object.defineProperties(TimbreObject.prototype, {
+        isAr: { get: function() { return !!this._.ar; } },
+        isKr: { get: function() { return  !this._.ar; } },
+        isOn : { get: function() { return !!this._.ison; } },
+        isOff: { get: function() { return  !this._.ison; } },
+        isUndefined: { get: function() { return this._.isUndefined; } },
+        scalar: {
+            get: function() {
+                if (timbre.sys.seq_id !== this.seq_id) {
+                    this.seq(timbre.sys.seq_id);
+                }
+                return this.cell[0];
+            }
+        },
+        dac: {
+            set: function(value) {
+                if (value !== this._.dac) {
+                    if (this._.dac !== null) {
+                        this._.dac.remove(this);
+                    }
+                    if (value !== null) {
+                        this._.dac = value.append(this);
+                    } else {
+                        this._.dac = null;
+                    }
+                }
+            },
+            get: function() { return this._.dac; },
+        },
+        mul: {
+            set: function(value) {
+                if (typeof value === "number") { this._.mul = value; }
+            },
+            get: function() { return this._.mul; }
+        },
+        add: {
+            set: function(value) {
+                if (typeof value === "number") { this._.add = value; }
+            },
+            get: function() { return this._.add; }
+        }
+    }); // Object.defineProperties
     
     
     fn.init = function() {
-        var args, key, klass, instance, proto, f;
+        var klass, instance;
         var isThrougOut, isUndefined;
         
-        args = Array.prototype.slice.call(arguments);
-        key  = args[0];
+        var args = Array.prototype.slice.call(arguments);
+        var key  = args[0];
         
         switch (typeof key) {
         case "string":
-            if ((klass = klasses._find(key)) !== undefined) {
+            if ((klass = TimbreObject.klasses._find(key)) !== undefined) {
                 instance = new klass(args.slice(1));
             }
             break;
@@ -51,7 +220,7 @@ timbre.fn = (function(timbre) {
             if (key === null) {
                 instance = new NumberWrapper([0]);
             } else if (fn.isTimbreObject(key)) {
-                instance = key;
+                instance    = key;
                 isThrougOut = true;
             } else if (key instanceof Array) {
                 instance = new ArrayWrapper([key]);
@@ -66,7 +235,7 @@ timbre.fn = (function(timbre) {
             }
         }
         
-        proto = Object.getPrototypeOf(instance);
+        var p = Object.getPrototypeOf(instance);
         if (!isThrougOut) {
             instance.seq_id = -1;
             if (!instance.cell) {
@@ -76,7 +245,7 @@ timbre.fn = (function(timbre) {
             timbre.fn.arrayset(instance.args);
             
             if (!instance.hasOwnProperty("_")) instance._ = {};
-            instance._.proto = proto;
+            instance._.proto = p;
             instance._.isUndefined = !!isUndefined;
             if (TimbreObject.objectId === 0) timbre.setup();
             instance._.id = TimbreObject.objectId++;
@@ -84,8 +253,8 @@ timbre.fn = (function(timbre) {
             if (typeof !instance._.ev !== "object") instance._.ev = {};
             
             if (typeof instance._.ar !== "boolean") {
-                if (proto && typeof proto._ === "object") {
-                    instance._.ar = !!proto._.ar;
+                if (p && typeof p._ === "object") {
+                    instance._.ar = !!p._.ar;
                 } else {
                     instance._.ar = false;
                 }
@@ -104,228 +273,47 @@ timbre.fn = (function(timbre) {
             }
         }
         
-        if ((f = proto._.init) instanceof Function) f.call(instance);
+        if (p._.init instanceof Function) p._.init.call(instance);
         
         return instance;
-    };
+    }; // fn.init
     
-    defaults.play = function() {
-        var f, _ = this._;
-        if (_.ar) {
-            if (_.dac === null) {
-                _.dac = timbre("dac", this);
-                if ((f = _.proto._.play) instanceof Function) f.call(this);
-                timbre.fn.doEvent(this, "play");
-            } else if (this.dac.args.indexOf(this) === -1) {
-                _.dac.append(this);
-                if ((f = _.proto._.play) instanceof Function) f.call(this);
-                timbre.fn.doEvent(this, "play");
-            }
-            if (_.dac.isOff) _.dac.on();
-        }
-        return this;
-    };
-    
-    defaults.pause = function() {
-        var f, _ = this._;
-        if (_.dac && _.dac.args.indexOf(this) !== -1) {
-            _.dac.remove(this);
-            if ((f = _.proto._.pause) instanceof Function) f.call(this);
-            timbre.fn.doEvent(this, "pause");
-            if (_.dac.isOn && _.dac.args.length === 0) _.dac.off();
-        }
-        return this;
-    };
-    
-    defaults.bang = function() {
-        timbre.fn.doEvent(this, "bang");
-        return this;
-    };
-    
-    defaults.seq = function() {
-        return this.cell;
-    };
-    
-    defaults.on = function() {
-        var f;
-        this._.ison = true;
-        if ((f = this._.proto._.on) instanceof Function) f.call(this);
-        timbre.fn.doEvent(this, "on");
-        return this;
-    };
-    
-    defaults.off = function() {
-        var f;
-        this._.ison = false;
-        if ((f = this._.proto._.off) instanceof Function) f.call(this);
-        timbre.fn.doEvent(this, "off");
-        return this;
-    };
-    
-    defaults.clone = function(deep) {
-        var newone = timbre(this._.proto._.klassname);
-        timbre.fn.copyBaseArguments(this, newone, deep);
-        return newone;
-    };
-    
-    defaults.append = function() {
-        var f;
-        this.args.append.apply(this.args, arguments);
-        if ((f = this._.proto._.append) instanceof Function) f.call(this);
-        return this;
-    };
-    
-    defaults.appendTo = function(obj) {
-        obj.args.append.call(obj.args, this);
-        return this;
-    };
-    
-    defaults.remove = function() {
-        var f;
-        this.args.remove.apply(this.args, arguments);
-        if ((f = this._.proto._.remove) instanceof Function) f.call(this);
-        return this;
-    };
-    
-    defaults.removeFrom = function(obj) {
-        obj.args.remove.call(obj.args, this);
-        return this;
-    };
-    
-    defaults.removeAll = function() {
-        var f;
-        this.args.removeAll.apply(this.args, arguments);
-        if ((f = this._.proto._.remove) instanceof Function) f.call(this);
-        return this;
-    };
-    
-    defaults.set = function(key, value) {
-        var k, self = this._.proto;
-        if (typeof key === "string") {
-            if (Object.getOwnPropertyDescriptor(self, key) !== undefined) {
-                this[key] = value;
-            }
-        } else if (typeof key === "object") {
-            for (k in key) {
-                if (Object.getOwnPropertyDescriptor(self, k) !== undefined) {
-                    this[k] = key[k];
-                }
-            }
-        }
-        return this;
-    };
-    
-    defaults.get = function(key) {
-        var v, self = this._.proto;
-        if (Object.getOwnPropertyDescriptor(self, key) !== undefined) {
-            v = this[key];
-        }
-        return v;
-    };
-    
-    defaults.addEventListener        = timbre.addEventListener;
-    defaults.removeEventListener     = timbre.removeEventListener;
-    defaults.removeAllEventListeners = timbre.removeAllEventListeners;
-    
-    defaults.properties.isAr = { get: function() { return !!this._.ar; } };
-    defaults.properties.isKr = { get: function() { return  !this._.ar; } };
-    defaults.properties.isOn  = { get: function() { return !!this._.ison; } };
-    defaults.properties.isOff = { get: function() { return  !this._.ison; } };
-    defaults.properties.isUndefined = { get: function() { return this._.isUndefined; } };
-    
-    defaults.properties.scalar = {
-        get: function() {
-            if (timbre.sys.seq_id !== this.seq_id) {
-                this.seq(timbre.sys.seq_id);
-            }
-            return this.cell[0];
-        }
-    };
-    
-    defaults.properties.dac = {
-        set: function(value) {
-            if (value !== this._.dac) {
-                if (this._.dac !== null) {
-                    this._.dac.remove(this);
-                }
-                if (value !== null) {
-                    this._.dac = value.append(this);
-                } else {
-                    this._.dac = null;
-                }
-            }
-        },
-        get: function() { return this._.dac; },
-    };
-    
-    defaults.properties.mul  = {
-        set: function(value) {
-            if (typeof value === "number") { this._.mul = value; }
-        },
-        get: function() { return this._.mul; }
-    };
-    
-    defaults.properties.add  = {
-        set: function(value) {
-            if (typeof value === "number") { this._.add = value; }
-        },
-        get: function() { return this._.add; }
-    };
     
     fn.register = function(key, klass, func) {
-        var proto, _, i;
+        if (typeof klass !== "function") return;
         
-        if (typeof klass === "function") {
-            proto = klass.prototype;
-            
-            _ = new TimbreObject();
-            if (typeof proto._ === "object") {
-                for (i in proto._) _[i] = proto._[i];
-            }
-            proto._ = _;
-            
-            for (i in defaults) {
-                if (typeof defaults[i] === "function") {
-                    if (!(proto[i] instanceof Function)) proto[i] = defaults[i];
-                }
-            }
-            for (i in defaults.properties) {
-                if (Object.getOwnPropertyDescriptor(proto, i) === undefined) {
-                    Object.defineProperty(proto, i, defaults.properties[i]);
-                }
-            }
-            
-            if (typeof proto.ar !== "function") {
-                fn.setPrototypeOf.call(proto, "ar-kr");
-            }
-            
-            if (typeof key === "string") {
-                if (func instanceof Function) {
-                    klasses[key]  = func;
-                } else {
-                    proto._.klassname = key;
-                    proto._.klass     = klass;
-                    klasses[key] = klass;
-                }
+        var p = klass.prototype;
+        var q = TimbreObject.prototype;
+        var _ = new TimbreObject.PrototypeValue();
+        
+        if (typeof p._ === "object") {
+            for (var i in p._) _[i] = p._[i];
+        }
+        p._ = _;
+        
+        if (typeof p.ar !== "function") {
+            fn.setPrototypeOf.call(p, "ar-kr");
+        }
+        
+        for (var j in p) {
+            if (p.hasOwnProperty(j) && p[j] instanceof Function) {
+                if (q[j] === undefined) q[j] = NOP;
             }
         }
-    };
+        
+        if (typeof key === "string") {
+            if (func instanceof Function) {
+                TimbreObject.klasses[key]  = func;
+            } else {
+                p._.klassname = key;
+                p._.klass     = klass;
+                TimbreObject.klasses[key] = klass;
+            }
+        }
+    }; // fn.register
     
-    defaults.optional.ar = function() {
-        this._.ar = true;
-        return this;
-    };
     
-    defaults.optional.kr = function() {
-        this._.ar = false;
-        return this;
-    };
-    
-    defaults.optional.fixrate = function() {
-        return this;
-    };
-    
-    defaults.optional.dac = {
+    TimbreObject.dac = {
         on: function() {
             var f;
             this._.ison = true;
@@ -360,7 +348,7 @@ timbre.fn = (function(timbre) {
         }
     };
     
-    defaults.optional.timer = {
+    TimbreObject.timer = {
         on: function() {
             var f;
             this._.ison = true;
@@ -391,7 +379,7 @@ timbre.fn = (function(timbre) {
         }
     };
     
-    defaults.optional.listener = {
+    TimbreObject.listener = {
         listen: function(target) {
             if (target === null) {
                 if (this._.args) this.args = this._.args;
@@ -412,41 +400,35 @@ timbre.fn = (function(timbre) {
         if (!this._) this._ = {};
         switch (type) {
         case "ar-only": case "ar":
-            this.ar = defaults.optional.fixrate;
-            this.kr = defaults.optional.fixrate;
+            this.ar = this.kr = NOP;
             this._.ar = true;
             break;
         case "kr-only": case "kr":
-            this.ar = defaults.optional.fixrate;
-            this.kr = defaults.optional.fixrate;
+            this.ar = this.kr = NOP;
             this._.ar = false;
             break;
         case "kr-ar": case "kr->ar":
-            this.ar = defaults.optional.ar;
-            this.kr = defaults.optional.kr;
             this._.ar = false;
             break;
         case "ar-kr": case "ar->kr":
-            this.ar = defaults.optional.ar;
-            this.kr = defaults.optional.kr;
             this._.ar = true;
             break;
         case "dac":
-            this.on    = defaults.optional.dac.on;
-            this.off   = defaults.optional.dac.off;
-            this.play  = defaults.optional.dac.play;
-            this.pause = defaults.optional.dac.pause;
+            this.on    = TimbreObject.dac.on;
+            this.off   = TimbreObject.dac.off;
+            this.play  = TimbreObject.dac.play;
+            this.pause = TimbreObject.dac.pause;
             this._.type = 1;
             break;
         case "timer":
-            this.on    = defaults.optional.timer.on;
-            this.off   = defaults.optional.timer.off;
-            this.play  = defaults.optional.timer.play;
-            this.pause = defaults.optional.timer.pause;
+            this.on    = TimbreObject.timer.on;
+            this.off   = TimbreObject.timer.off;
+            this.play  = TimbreObject.timer.play;
+            this.pause = TimbreObject.timer.pause;
             this._.type = 2;
             break;
         case "listener":
-            this.listen = defaults.optional.listener.listen;
+            this.listen = TimbreObject.listener.listen;
             this._.type = 3;
             break;
         }
@@ -548,10 +530,13 @@ timbre.fn = (function(timbre) {
     
     fn.isTimbreObject = function(o) {
         var x;
+        if (o instanceof TimbreObject) {
+            return true;
+        }
         if (o instanceof Object) {
             if ((x = o._) instanceof Object) {
                 if ((x = x.proto) instanceof Object) {
-                    return x._ instanceof TimbreObject;
+                    return x._ instanceof TimbreObject.PrototypeValue;
                 }
             }
         }
@@ -559,10 +544,11 @@ timbre.fn = (function(timbre) {
     };
     
     fn.getClass = function(name) {
-        return klasses[name];
+        return TimbreObject.klasses[name];
     };
     
     fn.copyPropertyDescriptors = function(self, base, names) {
+        console.warn("timbre.fn.copyPropertyDescriptors is deprecated.");
         var i, d;
         for (i = names.length; i--; ) {
             d = Object.getOwnPropertyDescriptor(base, names[i]);
@@ -574,6 +560,7 @@ timbre.fn = (function(timbre) {
     };
     
     fn.copyFunctions = function(self, base, names) {
+        console.warn("timbre.fn.copyFunctions is deprecated.");
         var i, f;
         for (i = names.length; i--; ) {
             if ((f = base[names[i]]) instanceof Function) self[names[i]] = f;
@@ -605,6 +592,58 @@ timbre.fn = (function(timbre) {
             tmp += args[i].seq(seq_id)[0];
         }
         return tmp;
+    };
+    
+    
+    // v12.07.13
+    fn.buildPrototype = function(constructor, options) {
+        var TimbreObject = function() {};
+        TimbreObject.prototype = timbre.TimbreBasePrototype;
+        var p = constructor.prototype = new TimbreObject();
+        
+        options = options || {};
+        
+        var base = options.base;
+        if (typeof base === "string") base = [ base ];
+
+        if (base instanceof Array) {
+            base.forEach(function(x) {
+                fn.setPrototypeOf.call(this, x);
+            }.bind(p));
+        }
+        
+        var properties = options.properties;
+        if (properties instanceof Object) {
+            for (var key in properties) {
+                if (properties[key] instanceof Object) {
+                    Object.defineProperty(p, key, properties[key]);
+                }
+            }
+        }
+        
+        var copies = options.copies;
+        if (copies instanceof Array) {
+            var klassMap = {};
+            var re = /^([\w\d]+)\.([\w\d]+)(\(\))?$/;
+            copies.forEach(function(x) {
+                var m = re.exec(x.trim());
+                if (m !== null) {
+                    var klass = klassMap[m[1]] || (klassMap[m[1]] = timbre.fn.getClass(m[1]));
+                    if (klass !== undefined) {
+                        var name = m[2];
+                        var x, q = klass.prototype;
+                        if (m[3] !== undefined) {
+                            if ((x = q[name]) instanceof Function) p[name] = x;
+                        } else {
+                            var x = Object.getOwnPropertyDescriptor(q, name);
+                            if (x !== undefined) Object.defineProperty(p, name, x);
+                        }
+                    }
+                }
+            });
+        }
+        
+        return p;
     };
     
     return fn;

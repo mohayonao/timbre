@@ -1,6 +1,7 @@
 /**
- * MathFunction: 0.3.7
+ * MathFunction: v12.07.13
  * [ar-kr]
+ * v0.3.7: first version
  */
 "use strict";
 
@@ -10,13 +11,15 @@ var timbre = require("../timbre");
 var MathFunction = (function() {
     var MathFunction = function() {
         initialize.apply(this, arguments);
-    }, $this = MathFunction.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
-    
-    Object.defineProperty($this, "func", {
-        get: function() { return this._.func; }
+    }, $this = timbre.fn.buildPrototype(MathFunction, {
+        base: "ar-kr",
+        properties: {
+            func: {
+                get: function() { return this._.func; }
+            }
+        } // properties
     });
+    
     
     var initialize = function(_args) {
         var p, i, _;

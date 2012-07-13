@@ -1,7 +1,6 @@
 /**
- * Dac: 0.1.0
+ * Dac: v12.07.13
  * Audio output
- * [ar-only]
  */
 "use strict";
 
@@ -11,20 +10,21 @@ var timbre = require("../timbre");
 var Dac = (function() {
     var Dac = function() {
         initialize.apply(this, arguments);
-    }, $this = Dac.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "ar-only");
-    timbre.fn.setPrototypeOf.call($this, "dac");
-    
-    Object.defineProperty($this, "dac", {
-        get: function() { return this; }
+    }, $this = timbre.fn.buildPrototype(Dac, {
+        base: ["ar-only", "dac"],
+        properties: {
+            dac: {
+                get: function() { return this; }
+            },
+            pan: {
+                set: function(value) {
+                    this._.pan = timbre(value);
+                },
+                get: function() { return this._.pan; }
+            }
+        } // properties
     });
-    Object.defineProperty($this, "pan", {
-        set: function(value) {
-            this._.pan = timbre(value);
-        },
-        get: function() { return this._.pan; }
-    });
+    
     
     var initialize = function(_args) {
         var _ = this._ = {};

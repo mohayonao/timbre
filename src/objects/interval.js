@@ -1,7 +1,6 @@
 /**
- * Interval: 0.3.0
+ * Interval: v12.07.13
  * Calls a bang() repeatedly at regular intervals
- * [kr-only]
  */
 "use strict";
 
@@ -11,40 +10,38 @@ var timbre = require("../timbre");
 var Interval = (function() {
     var Interval = function() {
         initialize.apply(this, arguments);
-    }, $this = Interval.prototype;
+    }, $this = timbre.fn.buildPrototype(Interval, {
+        base: ["kr-only", "timer"],
+        properties: {
+            interval: {
+                set: function(value) {
+                    if (typeof value === "number" && value >= 0) {
+                        this._.interval = value;
+                    }
+                },
+                get: function() { return this._.interval; }
+            },
+            delay: {
+                set: function(value) {
+                    if (typeof value === "number" && value >= 0) {
+                        this._.delay = value;
+                        this._.delaySamples = (timbre.samplerate * (value / 1000))|0;
+                    }
+                },
+                get: function() { return this._.delay; }
+            },
+            count: {
+                set: function(value) {
+                    if (typeof value === "number") this._.count = value;
+                },
+                get: function() { return this._.count; }
+            },
+            currentTime: {
+                get: function() { return this._.currentTime; }
+            }
+        } // properties
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
-    timbre.fn.setPrototypeOf.call($this, "timer");
-    
-    Object.defineProperty($this, "interval", {
-        set: function(value) {
-            if (typeof value === "number" && value >= 0) {
-                this._.interval = value;
-            }
-        },
-        get: function() { return this._.interval; }
-    });
-    Object.defineProperty($this, "delay", {
-        set: function(value) {
-            if (typeof value === "number" && value >= 0) {
-                this._.delay = value;
-                this._.delaySamples = (timbre.samplerate * (value / 1000))|0;
-            }
-        },
-        get: function() { return this._.delay; }
-    });
-    Object.defineProperty($this, "count", {
-        set: function(value) {
-            var _ = this._;
-            if (typeof value === "number") {
-                _.count = value;
-            }
-        },
-        get: function() { return this._.count; }
-    });
-    Object.defineProperty($this, "currentTime", {
-        get: function() { return this._.currentTime; }
-    });
     
     var initialize = function(_args) {
         var i, nums, _;

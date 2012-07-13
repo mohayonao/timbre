@@ -1,5 +1,5 @@
 /**
- * PercussiveEnvelope: 12.07.12
+ * PercussiveEnvelope: v12.07.13
  * Percussive envelope generator
  * v12.07.12: add ar-mode
  */
@@ -12,46 +12,38 @@ require("./env");
 var PercussiveEnvelope = (function() {
     var PercussiveEnvelope = function() {
         initialize.apply(this, arguments);
-    }, $this = PercussiveEnvelope.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "kr-ar");
-    
-    var Envelope = timbre.fn.getClass("env");
-
-    timbre.fn.copyPropertyDescriptors($this,
-                                      Envelope.prototype,
-                                      ["table", "delay", "reversed", "currentTime"]);
+    }, $this = timbre.fn.buildPrototype(PercussiveEnvelope, {
+        base: "kr-ar",
+        properties: {
+            status: {
+                get: function() { return STATUSES[this._.status+1]; }
+            },
+            a: { // attack-time
+                set: function(value) {
+                    if (typeof value === "number") this._.a = value;
+                },
+                get: function() { return this._.a; }
+            },
+            r: { // release-time
+                set: function(value) {
+                    if (typeof value === "number") this._.r = value;
+                },
+                get: function() { return this._.r; }
+            },
+            al: { // atack-level
+                set: function(value) {
+                    if (typeof value === "number") this._.al = value;
+                },
+                get: function() { return this._.al; }
+            }
+        }, // properties
+        copies: [
+            "env.table", "env.delay", "env.reversed", "env.currentTime"
+        ]
+    });
     
     var STATUSES = ["off","delay","a","r"];
     
-    Object.defineProperty($this, "status", {
-        get: function() { return STATUSES[this._.status+1]; }
-    });
-    
-    Object.defineProperty($this, "a", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.a = value;
-            }
-        },
-        get: function() { return this._.a; }
-    });
-    Object.defineProperty($this, "r", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.r = value;
-            }
-        },
-        get: function() { return this._.r; }
-    });
-    Object.defineProperty($this, "al", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.al = value;
-            }
-        },
-        get: function() { return this._.al; }
-    });
     
     var initialize = function(_args) {
         var i, nums, _;
@@ -235,7 +227,7 @@ if (module.parent && !module.parent.parent) {
                 var instance = T("perc");
                 instance.delay.should.equal(0);
                 instance.a.should.equal(0);
-                instance.r.should.equal(0);
+                instance.r.should.equal(1000);
             });
             it("arg..1", function() {
                 var instance = T("perc", 1500);

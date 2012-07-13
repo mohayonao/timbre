@@ -1,7 +1,7 @@
 /**
- * Multiply: 0.1.0
+ * Multiply: v12.07.13
  * Multiply signals
- * [ar-kr]
+ * v0.1.0: first version
  */
 "use strict";
 
@@ -11,9 +11,10 @@ var timbre = require("../timbre");
 var Multiply = (function() {
     var Multiply = function() {
         initialize.apply(this, arguments);
-    }, $this = Multiply.prototype;
+    }, $this = timbre.fn.buildPrototype(Multiply, {
+        base: "ar-kr"
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
     
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);

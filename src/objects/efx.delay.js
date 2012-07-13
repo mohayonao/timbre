@@ -1,6 +1,5 @@
 /**
- * EfxDelay: 0.1.0
- * [ar-only]
+ * EfxDelay: v12.07.13
  */
 "use strict";
 
@@ -10,35 +9,30 @@ var timbre = require("../timbre");
 var EfxDelay = (function() {
     var EfxDelay = function() {
         initialize.apply(this, arguments);
-    }, $this = EfxDelay.prototype;
+    }, $this = timbre.fn.buildPrototype(EfxDelay, {
+        base: "ar-only",
+        properties: {
+            time: {
+                set: function(value) {
+                    if (typeof value === "number") this._.delayTime = value;
+                },
+                get: function() { return this._.delayTime; }
+            },
+            fb: {
+                set: function(value) {
+                    if (typeof value === "number") this._.feedback = value;
+                },
+                get: function() { return this._.feedback; }
+            },
+            wet: {
+                set: function(value) {
+                    if (typeof value === "number") this._.wet = value;
+                },
+                get: function() { return this._.wet; }
+            }
+        } // properties
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-only");
-    
-    Object.defineProperty($this, "time", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.delayTime = value;
-            }
-        },
-        get: function() { return this._.delayTime; }
-    });
-    Object.defineProperty($this, "fb", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.feedback = value;
-            }
-        },
-        get: function() { return this._.feedback; }
-                        
-    });
-    Object.defineProperty($this, "wet", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.wet = value;
-            }
-        },
-        get: function() { return this._.wet; }
-    });
     
     var initialize = function(_args) {
         var bits, i, _;

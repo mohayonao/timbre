@@ -1,6 +1,5 @@
 /**
- * ArrayWrapper: 0.3.0
- * [kr-only]
+ * ArrayWrapper: v12.07.13
  */
 "use strict";
 
@@ -10,64 +9,64 @@ var timbre = require("../timbre");
 var ArrayWrapper = (function() {
     var ArrayWrapper = function() {
         initialize.apply(this, arguments);
-    }, $this = ArrayWrapper.prototype;
+    }, $this = timbre.fn.buildPrototype(ArrayWrapper, {
+        base: "kr-only",
+        properties: {
+            value: {
+                set: function(value) {
+                    if (typeof value === "object" && 
+                        (value instanceof Array ||
+                         value.buffer instanceof ArrayBuffer)) {
+                        this._.value = compile(value);
+                        this._.index = 0;
+                    }
+                },
+                get: function() { return this._.value; }
+            },
+            index: {
+                set: function(value) {
+                    var _ = this._;
+                    if (typeof value === "number") {
+                        value = value|0;
+                        if (value < 0) value = _.value.length + value;
+                        if (0 <= value && value < _.value.length) {
+                            _.index = value;
+                            changeTheValue.call(this, value);
+                        }
+                    }
+                },
+                get: function() { return this._.index; }
+            },
+            repeat: {
+                set: function(value) {
+                    if (typeof value === "number") this._.repeat1 = value;
+                },
+                get: function() { return this._.repeat1; }
+            },
+            mul: {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        this._.mul = value;
+                        changeTheValue.call(this, this._.index);
+                    }
+                },
+                get: function() { return this._.mul; }
+            },
+            add: {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        this._.add = value;
+                        changeTheValue.call(this, this._.index);
+                    }
+                },
+                get: function() { return this._.add; }
+            },
+            isEnded: {
+                get: function() { return this._.status === 1; }
+            }
+        } // properties
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
-    
-    Object.defineProperty($this, "value", {
-        set: function(value) {
-            if (typeof value === "object" && 
-                (value instanceof Array ||
-                 value.buffer instanceof ArrayBuffer)) {
-                this._.value = compile(value);
-                this._.index = 0;
-            }
-        },
-        get: function() { return this._.value; }
-    });
-    Object.defineProperty($this, "index", {
-        set: function(value) {
-            var _ = this._;
-            if (typeof value === "number") {
-                value = value|0;
-                if (value < 0) value = _.value.length + value;
-                if (0 <= value && value < _.value.length) {
-                    _.index = value;
-                    changeTheValue.call(this, value);
-                }
-            }
-        },
-        get: function() { return this._.index; }
-    });
-    Object.defineProperty($this, "repeat", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.repeat1 = value;
-            }
-        },
-        get: function() { return this._.repeat1; }
-    });
-    Object.defineProperty($this, "mul", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.mul = value;
-                changeTheValue.call(this, this._.index);
-            }
-        },
-        get: function() { return this._.mul; }
-    });
-    Object.defineProperty($this, "add", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.add = value;
-                changeTheValue.call(this, this._.index);
-            }
-        },
-        get: function() { return this._.add; }
-    });
-    Object.defineProperty($this, "isEnded", {
-        get: function() { return this._.status === 1; }
-    });
     
     var initialize = function(_args) {
         var value, i, _;

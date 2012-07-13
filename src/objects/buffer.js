@@ -1,7 +1,6 @@
 /**
- * Buffer: 0.1.0
+ * Buffer: v12.07.13
  * Store audio samples
- * [ar-only]
  */
 "use strict";
 
@@ -11,62 +10,64 @@ var timbre = require("../timbre");
 var Buffer = (function() {
     var Buffer = function() {
         initialize.apply(this, arguments);
-    }, $this = Buffer.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "ar-only");
-    
-    Object.defineProperty($this, "buffer", {
-        set: function(value) {
-            var buffer, i, _ = this._;
-            if (typeof value === "object") {
-                if (value instanceof Float32Array) {
-                    _.buffer = value;
-                } else if (value instanceof Array ||
-                           value.buffer instanceof ArrayBuffer) {
-                    buffer = new Float32Array(value.length);
-                    for (i = buffer.length; i--; ) {
-                        buffer[i] = value[i];
+    }, $this = timbre.fn.buildPrototype(Buffer, {
+        base: "ar-only",
+        properties: {
+            buffer: {
+                set: function(value) {
+                    var buffer, i, _ = this._;
+                    if (typeof value === "object") {
+                        if (value instanceof Float32Array) {
+                            _.buffer = value;
+                        } else if (value instanceof Array ||
+                                   value.buffer instanceof ArrayBuffer) {
+                            buffer = new Float32Array(value.length);
+                            for (i = buffer.length; i--; ) {
+                                buffer[i] = value[i];
+                            }
+                            _.buffer = buffer;
+                            _.duration = buffer.length / timbre.samplerate * 1000;
+                            if (_.reversed) {
+                                _.phase = Math.max(0, _.buffer.length - 1);
+                            } else {
+                                _.phase = 0;
+                            }
+                        }
                     }
-                    _.buffer = buffer;
-                    _.duration = buffer.length / timbre.samplerate * 1000;
-                    if (_.reversed) {
+                },
+                get: function() { return this._.buffer; }
+            },
+            loop: {
+                set: function(value) { this._.loop = !!value; },
+                get: function() { return this._.loop; }
+            },
+            reversed: {
+                set: function(value) {
+                    var _ = this._;
+                    _.reversed = !!value;
+                    if (_.reversed && _.phase === 0) {
                         _.phase = Math.max(0, _.buffer.length - 1);
-                    } else {
-                        _.phase = 0;
                     }
-                }
+                },
+                get: function() { return this._.reversed; }
+            },
+            duration: {
+                get: function() { return this._.duration; }
+            },
+            currentTime: {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        if (0 <= value && value <= this._.duration) {
+                            this._.phase = (value / 1000) * this._.samplerate;
+                        }
+                    }
+                },
+                get: function() { return (this._.phase / this._.samplerate) * 1000; }
             }
-        },
-        get: function() { return this._.buffer; }
+        } // properties
     });
-    Object.defineProperty($this, "loop", {
-        set: function(value) { this._.loop = !!value; },
-        get: function() { return this._.loop; }
-    });
-    Object.defineProperty($this, "reversed", {
-        set: function(value) {
-            var _ = this._;
-            _.reversed = !!value;
-            if (_.reversed && _.phase === 0) {
-                _.phase = Math.max(0, _.buffer.length - 1);
-            }
-        },
-        get: function() { return this._.reversed; }
-    });
-    Object.defineProperty($this, "duration", {
-        get: function() { return this._.duration; }
-    });
-    Object.defineProperty($this, "currentTime", {
-        set: function(value) {
-            if (typeof value === "number") {
-                if (0 <= value && value <= this._.duration) {
-                    this._.phase = (value / 1000) * this._.samplerate;
-                }
-            }
-        },
-        get: function() { return (this._.phase / this._.samplerate) * 1000; }
-    });
-
+    
+    
     var initialize = function(_args) {
         var buffer, tmp, i, j, _;
         

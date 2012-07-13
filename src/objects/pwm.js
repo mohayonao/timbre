@@ -1,6 +1,6 @@
 /**
- * Pwm: 0.3.3
- * [ar-kr]
+ * Pwm: v12.07.13
+ * v0.3.3: first version
  */
 "use strict";
 
@@ -10,23 +10,24 @@ var timbre = require("../timbre");
 var Pwm = (function() {
     var Pwm = function() {
         initialize.apply(this, arguments);
-    }, $this = Pwm.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
-    
-    Object.defineProperty($this, "width", {
-        set: function(value) {
-            this._.width = timbre(value);
-        },
-        get: function() { return this._.width; }
+    }, $this = timbre.fn.buildPrototype(Pwm, {
+        base: "ar-kr",
+        properties: {
+            width: {
+                set: function(value) {
+                    this._.width = timbre(value);
+                },
+                get: function() { return this._.width; }
+            },
+            freq: {
+                set: function(value) {
+                    this._.freq = timbre(value);
+                },
+                get: function() { return this._.freq; }
+            }
+        } // properties
     });
     
-    Object.defineProperty($this, "freq", {
-        set: function(value) {
-            this._.freq = timbre(value);
-        },
-        get: function() { return this._.freq; }
-    });
     
     var initialize = function(_args) {
         var i, _;

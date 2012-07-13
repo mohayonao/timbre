@@ -1,6 +1,6 @@
 /**
- * Subtract: 0.3.7
- * [ar-kr]
+ * Subtract: v12.07.13
+ * v0.3.7: first version
  */
 "use strict";
 
@@ -10,9 +10,10 @@ var timbre = require("../timbre");
 var Subtract = (function() {
     var Subtract = function() {
         initialize.apply(this, arguments);
-    }, $this = Subtract.prototype;
+    }, $this = timbre.fn.buildPrototype(Subtract, {
+        base: "ar-kr"
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
     
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);

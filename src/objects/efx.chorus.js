@@ -1,6 +1,5 @@
 /**
- * EfxChorus: 0.1.0
- * [ar-only]
+ * EfxChorus: v12.07.13
  */
 "use strict";
 
@@ -10,43 +9,45 @@ var timbre = require("../timbre");
 var EfxChorus = (function() {
     var EfxChorus = function() {
         initialize.apply(this, arguments);
-    }, $this = EfxChorus.prototype;
+    }, $this = timbre.fn.buildPrototype(EfxChorus, {
+        base: "ar-only",
+        properties: {
+            depth: {
+                set: function(value) {
+                    var _ = this._;
+                    if (typeof value === "number") {
+                        _.depth = value;
+                        _.lfo.mul = _.depth * _.offset;
+                    }
+                },
+                get: function() { return this._.depth; }
+            },
+            rate: {
+                set: function(value) {
+                    var _ = this._;
+                    if (typeof value === "number") {
+                        _.rate = value;
+                        _.lfo.freq.value = value;
+                    }
+                },
+                get: function() { return this._.rate; }
+            },
+            wet: {
+                set: function(value) {
+                    var _ = this._;
+                    if (typeof value === "number") {
+                        if (0 <= value && value <= 1.0) {
+                            _.wet = value;
+                            _.wet0 = Math.sin(0.25 * Math.PI * value);
+                            _.dry0 = Math.cos(0.25 * Math.PI * value);
+                        }
+                    }
+                },
+                get: function() { return this._.wet; }
+            }
+        } // properties
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-only");
-    
-    Object.defineProperty($this, "depth", {
-        set: function(value) {
-            var _ = this._;
-            if (typeof value === "number") {
-                _.depth = value;
-                _.lfo.mul = _.depth * _.offset;
-            }
-        },
-        get: function() { return this._.depth; }
-    });
-    Object.defineProperty($this, "rate", {
-        set: function(value) {
-            var _ = this._;
-            if (typeof value === "number") {
-                _.rate = value;
-                _.lfo.freq.value = value;
-            }
-        },
-        get: function() { return this._.rate; }
-    });
-    Object.defineProperty($this, "wet", {
-        set: function(value) {
-            var _ = this._;
-            if (typeof value === "number") {
-                if (0 <= value && value <= 1.0) {
-                    _.wet = value;
-                    _.wet0 = Math.sin(0.25 * Math.PI * value);
-                    _.dry0 = Math.cos(0.25 * Math.PI * value);
-                }
-            }
-        },
-        get: function() { return this._.wet; }
-    });
     
     var initialize = function(_args) {
         var bits, i, _;

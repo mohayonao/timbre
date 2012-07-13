@@ -1,7 +1,7 @@
 /**
- * Modulo: 0.3.7
+ * Modulo: v12.07.13
  * Divide signals, output the remainder
- * [ar-kr]
+ * v0.3.7: first version
  */
 "use strict";
 
@@ -11,9 +11,10 @@ var timbre = require("../timbre");
 var Modulo = (function() {
     var Modulo = function() {
         initialize.apply(this, arguments);
-    }, $this = Modulo.prototype;
+    }, $this = timbre.fn.buildPrototype(Modulo, {
+        base: "ar-kr"
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
     
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);

@@ -1,5 +1,5 @@
 /**
- * FuncOscillator: 0.1.0
+ * FuncOscillator: v12.07.13
  * Signal generator
  * [ar-kr] TODO: kr
  */
@@ -11,43 +11,43 @@ var timbre = require("../timbre");
 var FuncOscillator = (function() {
     var FuncOscillator = function() {
         initialize.apply(this, arguments);
-    }, $this = FuncOscillator.prototype;
+    }, $this = timbre.fn.buildPrototype(FuncOscillator, {
+        base: "ar-kr",
+        properties: {
+            func: {
+                set: function(value) {
+                    if (typeof value === "function") this._.func = value;
+                },
+                get: function() { return this._.func; }
+            },
+            numOfSamples: {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        this._.saved = new Float32Array(value);
+                        this._.numOfSamples = value;
+                    }
+                },
+                get: function() { return this._.numOfSamples; }
+            },
+            freq: {
+                set: function(value) {
+                    this._.freq = timbre(value);
+                },
+                get: function() { return this._.freq; }
+            },
+            phase: {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        while (value >= 1.0) value -= 1.0;
+                        while (value <  0.0) value += 1.0;
+                        this._.phase = this._.x = value;
+                    }
+                },
+                get: function() { return this._.phase; }
+            }
+        } // properties
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
-    
-    Object.defineProperty($this, "func", {
-        set: function(value) {
-            if (typeof value === "function") {
-                this._.func = value;
-            }
-        },
-        get: function() { return this._.func; }
-    });
-    Object.defineProperty($this, "numOfSamples", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.saved = new Float32Array(value);
-                this._.numOfSamples = value;
-            }
-        },
-        get: function() { return this._.numOfSamples; }
-    });
-    Object.defineProperty($this, "freq", {
-        set: function(value) {
-            this._.freq = timbre(value);
-        },
-        get: function() { return this._.freq; }
-    });
-    Object.defineProperty($this, "phase", {
-        set: function(value) {
-            if (typeof value === "number") {
-                while (value >= 1.0) value -= 1.0;
-                while (value <  0.0) value += 1.0;
-                this._.phase = this._.x = value;
-            }
-        },
-        get: function() { return this._.phase; }
-    });
     
     var DEFAULT_FUNCTION = function(x) { return x; };
     

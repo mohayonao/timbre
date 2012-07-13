@@ -1,7 +1,6 @@
 /**
- * Divide: 0.3.7
+ * Divide: v12.07.13
  * Divide signals
- * [ar-kr]
  */
 "use strict";
 
@@ -11,9 +10,10 @@ var timbre = require("../timbre");
 var Divide = (function() {
     var Divide = function() {
         initialize.apply(this, arguments);
-    }, $this = Divide.prototype;
+    }, $this = timbre.fn.buildPrototype(Divide, {
+        base: "ar-kr",
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
     
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);

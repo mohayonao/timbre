@@ -1,7 +1,7 @@
 /**
- * PinkNoise: 0.3.5
+ * PinkNoise: v12.07.13
  * Pink noise generator
- * [ar-kr]
+ * v0.3.5: first version
  */
 "use strict";
 
@@ -11,9 +11,10 @@ var timbre = require("../timbre");
 var PinkNoise = (function() {
     var PinkNoise = function() {
         initialize.apply(this, arguments);
-    }, $this = PinkNoise.prototype;
+    }, $this = timbre.fn.buildPrototype(PinkNoise, {
+        base: "ar-kr"
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-only");
     
     var initialize = function(_args) {
         this._ = {};

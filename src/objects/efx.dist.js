@@ -1,6 +1,5 @@
 /**
- * EfxDistortion: 0.3.2
- * [ar-only]
+ * EfxDistortion: v12.07.13
  */
 "use strict";
 
@@ -10,31 +9,30 @@ var timbre = require("../timbre");
 var EfxDistortion = (function() {
     var EfxDistortion = function() {
         initialize.apply(this, arguments);
-    }, $this = EfxDistortion.prototype;
+    }, $this = timbre.fn.buildPrototype(EfxDistortion, {
+        base: "ar-only",
+        properties: {
+            pre: {
+                set: function(value) {
+                    this._.preGain = timbre(value);
+                },
+                get: function() { return this._.preGain; }
+            },
+            post: {
+                set: function(value) {
+                    this._.postGain = timbre(value);
+                },
+                get: function() { return this._.postGain; }
+            },
+            freq: {
+                set: function(value) {
+                    this._.lpfFreq = timbre(value);
+                },
+                get: function() { return this._.lpfFreq; }
+            }
+        } // properties
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-only");
-    
-    Object.defineProperty($this, "pre", {
-        set: function(value) {
-            this._.preGain = timbre(value);
-        },
-        get: function() { return this._.preGain; }
-                        
-    });
-    Object.defineProperty($this, "post", {
-        set: function(value) {
-            this._.postGain = timbre(value);
-        },
-        get: function() { return this._.postGain; }
-                        
-    });
-    Object.defineProperty($this, "freq", {
-        set: function(value) {
-            this._.lpfFreq = timbre(value);
-        },
-        get: function() { return this._.lpfFreq; }
-                        
-    });
     
     var initialize = function(_args) {
         var i, _;

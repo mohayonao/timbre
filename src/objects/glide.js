@@ -1,5 +1,5 @@
 /**
- * Glide: 12.07.12
+ * Glide: v12.07.13
  * v12.07.12: add ar-mode
  */
 "use strict";
@@ -11,32 +11,29 @@ require("./easing");
 var Glide = (function() {
     var Glide = function() {
         initialize.apply(this, arguments);
-    }, $this = Glide.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "kr-ar");
-    
-    var Easing = timbre.fn.getClass("ease");
-    
-    timbre.fn.copyPropertyDescriptors($this,
-                                     Easing.prototype,
-                                     ["type","delay","duration","currentTime"]);
-    timbre.fn.copyFunctions($this,
-                            Easing.prototype,
-                            ["seq","getFunction","setFunction"]);
-    
-    Object.defineProperty($this, "value", {
-        set: function(value) {
-            var _ = this._;
-            if (typeof value === "number") {
-                _.status = 0;
-                _.start  = _.value;
-                _.stop   = value;
-                _.samples = (timbre.samplerate * (_.delay / 1000))|0;
-                _.x0 = 0; _.dx = 0;
+    }, $this = timbre.fn.buildPrototype(Glide, {
+        base: "kr-ar",
+        properties: {
+            value: {
+                set: function(value) {
+                    var _ = this._;
+                    if (typeof value === "number") {
+                        _.status = 0;
+                        _.start  = _.value;
+                        _.stop   = value;
+                        _.samples = (timbre.samplerate * (_.delay / 1000))|0;
+                        _.x0 = 0; _.dx = 0;
+                    }
+                },
+                get: function() { return this._.value; }
             }
-        },
-        get: function() { return this._.value; }
+        }, // properties
+        copies: [
+            "ease.type", "ease.delay", "ease.duration","ease.currentTime",
+            "ease.seq()", "ease.getFunction()", "ease.setFunction()"
+        ]
     });
+    
     
     var initialize = function(_args) {
         var i, _;

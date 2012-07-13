@@ -1,5 +1,5 @@
 /**
- * Easing: 12.07.12
+ * Easing: 12.07.13
  * 'Easing.Functions' refered to https://github.com/sole/tween.js
  * v12.07.12: add ar-mode
  */
@@ -11,65 +11,57 @@ var timbre = require("../timbre");
 var Easing = (function() {
     var Easing = function() {
         initialize.apply(this, arguments);
-    }, $this = Easing.prototype;
+    }, $this = timbre.fn.buildPrototype(Easing, {
+        base: "kr-ar",
+        properties: {
+            type: {
+                set: function(value) {
+                    var f;
+                    if (typeof value === "string") {
+                        if ((f = Easing.Functions[value]) !== undefined) {
+                            this._.type = value;
+                            this._.func = f;
+                        }
+                    } else if (typeof value === "function") {
+                        this._.type = "function";
+                        this._.func = value;
+                    }
+                },
+                get: function() { return this._.type; }
+            },
+            delay: {
+                set: function(value) {
+                    if (typeof value === "number") this._.delay = value;
+                },
+                get: function() { return this._.delay; }
+            },
+            duration: {
+                set: function(value) {
+                    if (typeof value === "number") this._.duration = value;
+                },
+                get: function() { return this._.duration; }
+            },
+            currentTime: {
+                get: function() { return this._.currentTime; }
+            },
+            start: {
+                set: function(value) {
+                    if (typeof value === "number") this._.start = value;
+                },
+                get: function() { return this._.start; }
+            },
+            stop: {
+                set: function(value) {
+                    if (typeof value === "number") this._.stop = value;
+                },
+                get: function() { return this._.stop; }
+            },
+            value: {
+                get: function() { return this._.value; }
+            }
+        } // properties
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
-
-    Object.defineProperty($this, "type", {
-        set: function(value) {
-            var f;
-            if (typeof value === "string") {
-                if ((f = Easing.Functions[value]) !== undefined) {
-                    this._.type = value;
-                    this._.func = f;
-                }
-            } else if (typeof value === "function") {
-                this._.type = "function";
-                this._.func = value;
-            }
-        },
-        get: function() { return this._.type; }
-    });
-    Object.defineProperty($this, "delay", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.delay = value;
-            }
-        },
-        get: function() { return this._.delay; }
-    });
-    Object.defineProperty($this, "duration", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.duration = value;
-            }
-        },
-        get: function() { return this._.duration; }
-    });
-    Object.defineProperty($this, "currentTime", {
-        get: function() { return this._.currentTime; }
-    });
-    
-
-    Object.defineProperty($this, "start", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.start = value;
-            }
-        },
-        get: function() { return this._.start; }
-    });
-    Object.defineProperty($this, "stop", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.stop = value;
-            }
-        },
-        get: function() { return this._.stop; }
-    });
-    Object.defineProperty($this, "value", {
-        get: function() { return this._.value; }
-    });
     
     var initialize = function(_args) {
         var i, _;

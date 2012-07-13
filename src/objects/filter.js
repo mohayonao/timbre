@@ -1,6 +1,5 @@
 /**
- * Filter: 0.3.2
- * [ar-only]
+ * Filter: v12.07.13
  */
 "use strict";
 
@@ -10,40 +9,42 @@ var timbre = require("../timbre");
 var Filter = (function() {
     var Filter = function() {
         initialize.apply(this, arguments);
-    }, $this = Filter.prototype;
+    }, $this = timbre.fn.buildPrototype(Filter, {
+        base: "ar-only",
+        properties: {
+            type: {
+                set: function(value) {
+                    var f;
+                    if (typeof value === "string") {
+                        if ((f = Filter.Types[value]) !== undefined) {
+                            this._.type = value;
+                            this._.set_params = f.set_params;
+                        }
+                    }
+                },
+                get: function() { return this._.type; }
+            },
+            freq: {
+                set: function(value) {
+                    this._.freq = timbre(value);
+                },
+                get: function() { return this._.freq; }
+            },
+            band: {
+                set: function(value) {
+                    this._.band = timbre(value);
+                },
+                get: function() { return this._.band; }
+            },
+            gain: {
+                set: function(value) {
+                    this._.gain = timbre(value);
+                },
+                get: function() { return this._.gain; }
+            },
+        } // properties
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-only");
-    
-    Object.defineProperty($this, "type", {
-        set: function(value) {
-            var f;
-            if (typeof value === "string") {
-                if ((f = Filter.Types[value]) !== undefined) {
-                    this._.type = value;
-                    this._.set_params = f.set_params;
-                }
-            }
-        },
-        get: function() { return this._.type; }
-    });
-    Object.defineProperty($this, "freq", {
-        set: function(value) {
-            this._.freq = timbre(value);
-        },
-        get: function() { return this._.freq; }
-    });
-    Object.defineProperty($this, "band", {
-        set: function(value) {
-            this._.band = timbre(value);
-        },
-        get: function() { return this._.band; }
-    });
-    Object.defineProperty($this, "gain", {
-        set: function(value) {
-            this._.gain = timbre(value);
-        },
-        get: function() { return this._.gain; }
-    });
     
     var initialize = function(_args) {
         var type, i, _;

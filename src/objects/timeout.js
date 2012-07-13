@@ -1,7 +1,6 @@
 /**
- * Timeout: 0.1.0
+ * Timeout: v12.07.13
  * Calls a bang() after specified delay
- * [kr-only]
  */
 "use strict";
 
@@ -11,23 +10,24 @@ var timbre = require("../timbre");
 var Timeout = (function() {
     var Timeout = function() {
         initialize.apply(this, arguments);
-    }, $this = Timeout.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
-    timbre.fn.setPrototypeOf.call($this, "timer");
-    
-    Object.defineProperty($this, "timeout", {
-        set: function(value) {
-            if (typeof value === "number" && value > 0) {
-                this._.timeout = value;
-                this._.timeout_samples = (timbre.samplerate * (value / 1000))|0;
+    }, $this = timbre.fn.buildPrototype(Timeout, {
+        base: ["kr-only", "timer"],
+        properties: {
+            timeout: {
+                set: function(value) {
+                    if (typeof value === "number" && value > 0) {
+                        this._.timeout = value;
+                        this._.timeout_samples = (timbre.samplerate * (value / 1000))|0;
+                    }
+                },
+                get: function() { return this._.timeout; }
+            },
+            currentTime: {
+                get: function() { return this._.currentTime; }
             }
-        },
-        get: function() { return this._.timeout; }
+        } // properties
     });
-    Object.defineProperty($this, "currentTime", {
-        get: function() { return this._.currentTime; }
-    });
+    
     
     var initialize = function(_args) {
         var i, _;

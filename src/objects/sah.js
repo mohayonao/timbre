@@ -1,27 +1,27 @@
 /**
- * SampleAndHold: 0.3.6
- * [ar-kr]
+ * SampleAndHold: v12.07.13
+ * v0.3.6: first version
  */
 "use strict";
 
-var timbre = require("../src/timbre");
+var timbre = require("../timbre");
 // __BEGIN__
 
 var SampleAndHold = (function() {
     var SampleAndHold = function() {
         initialize.apply(this, arguments);
-    }, $this = SampleAndHold.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
-    
-    Object.defineProperty($this, "sample", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.sampleMax = value|0;
+    }, $this = timbre.fn.buildPrototype(SampleAndHold, {
+        base: "ar-kr",
+        properties: {
+            sample: {
+                set: function(value) {
+                    if (typeof value === "number") this._.sampleMax = value|0;
+                },
+                get: function() { return this._.sampleMax; }
             }
-        },
-        get: function() { return this._.sampleMax; }
+        } // properties
     });
+    
     
     var initialize = function(_args) {
         var i, _;
@@ -42,13 +42,14 @@ var SampleAndHold = (function() {
     
     $this.bang = function() {
         timbre.fn.doEvent(this, "bang");
+        return this;
     };
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell, tmp, mul, add;
+        var args, cell, tmp, mul, add;
         var sample, hold;
-        var i;
+        var i, imax;
         
         cell = this.cell;
         if (seq_id !== this.seq_id) {

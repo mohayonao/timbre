@@ -1,7 +1,6 @@
 /**
- * Envelope: 0.3.3
+ * Envelope: v12.07.13
  * Envelope generator
- * [kr-only]
  */
 "use strict";
 
@@ -11,52 +10,51 @@ var timbre = require("../timbre");
 var Envelope = (function() {
     var Envelope = function() {
         initialize.apply(this, arguments);
-    }, $this = Envelope.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "kr-only");
-
-    Object.defineProperty($this, "table", {
-        set: function(value) {
-            var dx, name, _ = this._;
-            if (typeof value === "string") {
-                if (value === "~") {
-                    name = _.tableName;
-                    if (name.charAt(0) === "~") {
-                        name = name.substr(1);
-                    } else {
-                        name = "~" + name;
+    }, $this = timbre.fn.buildPrototype(Envelope, {
+        base: "kr-ar",
+        properties: {
+            table: {
+                set: function(value) {
+                    var dx, name, _ = this._;
+                    if (typeof value === "string") {
+                        if (value === "~") {
+                            name = _.tableName;
+                            if (name.charAt(0) === "~") {
+                                name = name.substr(1);
+                            } else {
+                                name = "~" + name;
+                            }
+                        } else {
+                            name = value;
+                        }
+                        
+                        if ((dx = Envelope.AmpTables[name]) !== undefined) {
+                            if (typeof dx === "function") dx = dx();
+                            _.tableName = name;
+                            _.table = dx;
+                        }
                     }
-                } else {
-                    name = value;
-                }
-                
-                if ((dx = Envelope.AmpTables[name]) !== undefined) {
-                    if (typeof dx === "function") dx = dx();
-                    _.tableName = name;
-                    _.table = dx;
-                }
+                },
+                get: function(value) { return this._.tableName; }
+            },
+            delay: {
+                set: function(value) {
+                    if (typeof value === "number") this._.delay = value;
+                },
+                get: function() { return this._.delay; }
+            },
+            reversed: {
+                set: function(value) {
+                    this._.reversed = !!value;
+                },
+                get: function() { return this._.reversed; }
+            },
+            currentTime: {
+                get: function() { return this._.currentTime; }
             }
-        },
-        get: function(value) { return this._.tableName; }
+        }, // properties
     });
     
-    Object.defineProperty($this, "delay", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.delay = value;
-            }
-        },
-        get: function() { return this._.delay; }
-    });
-    Object.defineProperty($this, "reversed", {
-        set: function(value) {
-            this._.reversed = !!value;
-        },
-        get: function() { return this._.reversed; }
-    });
-    Object.defineProperty($this, "currentTime", {
-        get: function() { return this._.currentTime; }
-    });
     
     var initialize = function(_args) {
     };

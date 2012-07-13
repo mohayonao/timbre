@@ -1,63 +1,63 @@
 /**
- * FFT: 0.3.7
+ * FFT: v12.07.13
  * Fast Fourier transform
- * [ar-only]
  */
 
 "use strict";
 
 var timbre = require("../timbre");
-timbre.utils = {
-    FFT:require("../utils/fft")
-};
+timbre.utils.FFT = require("../utils/fft");
+
 // __BEGIN__
 
 var FFT = (function() {
     var FFT = function() {
         initialize.apply(this, arguments);
-    }, $this = FFT.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "ar-only");
-    timbre.fn.setPrototypeOf.call($this, "listener");
-    
-    Object.defineProperty($this, "size", {
-        get: function() { return this._.buffersize >> 1; }
-    });
-    Object.defineProperty($this, "window", {
-        set: function(value) {
-            var f;
-            if (typeof value === "string") {
-                if ((f = FFT.WindowFunctions[value]) !== undefined) {
-                    this._.window = value;
-                    this._.windowfunc = f;
-                }
-            } else if (typeof value === "function") {
-                this._.window = "function";
-                this._.windowfunc = value;
+    }, $this = timbre.fn.buildPrototype(FFT, {
+        base: ["ar-only", "listener"],
+        properties: {
+            size: {
+                get: function() { return this._.buffersize >> 1; }
+            },
+            window: {
+                set: function(value) {
+                    var f;
+                    if (typeof value === "string") {
+                        var m = /([A-Z][a-z]+)(?:([01]\.?\d*))?/.exec(value);
+                        if (m !== null) {
+                            var name = m[1], a = m[2] !== undefined ? +m[2] : 0.25;
+                            if ((f = timbre.utils.FFT.WindowFunctions[name]) !== undefined) {
+                                this._.window = name;
+                                this._.fft.setWindow(name, a);
+                            }
+                        }
+                        
+                    }
+                },
+                get: function() { return this._.window; }
+            },
+            interval: {
+                set: function(value) {
+                    var _ = this._;
+                    if (typeof value === "number") {
+                        _.interval = value;
+                        _.interval_samples = (timbre.samplerate * (value / 1000))|0;
+                        if (_.interval_samples < _.buffersize) {
+                            _.interval_samples = _.buffersize;
+                            _.interval = _.buffersize * timbre.samplerate / 1000;
+                        }
+                    }
+                },
+                get: function() { return this._.interval; }
+            },
+            spectrum: {
+                get: function() { return this._.spectrum; }
+            },
+            noSpectrum: {
+                set: function(value) { this._.noSpectrum = !!value; },
+                get: function() { return this._.noSpectrum; }
             }
-        },
-        get: function() { return this._.window; }
-    });
-    Object.defineProperty($this, "interval", {
-        set: function(value) {
-            var _ = this._;
-            if (typeof value === "number") {
-                _.interval = value;
-                _.interval_samples = (timbre.samplerate * (value / 1000))|0;
-                if (_.interval_samples < _.buffersize) {
-                    _.interval_samples = _.buffersize;
-                    _.interval = _.buffersize * timbre.samplerate / 1000;
-                }
-            }
-        },
-        get: function() { return this._.interval; }
-    });
-    Object.defineProperty($this, "spectrum", {
-        get: function() { return this._.spectrum; }
-    });
-    Object.defineProperty($this, "noSpectrum", {
-        set: function(value) { this._.noSpectrum = !!value; },
-        get: function() { return this._.noSpectrum; }
+        } // properties
     });
     
     
@@ -73,6 +73,8 @@ var FFT = (function() {
         else if (2048 < n) n = 2048;
         n = 1 << Math.ceil(Math.log(n) * Math.LOG2E);
         
+        _.fft = new timbre.utils.FFT(n);
+        
         if (typeof _args[i] === "number") {
             this.interval = _args[i++];    
         } else {
@@ -80,7 +82,7 @@ var FFT = (function() {
         }
         
         if (typeof _args[i] === "string" &&
-            (FFT.WindowFunctions[_args[i]]) !== undefined) {
+            (timbre.utils.FFT.WindowFunctions[_args[i]]) !== undefined) {
             this.window = _args[i++];
         } else {
             this.window = "Hann";
@@ -99,8 +101,6 @@ var FFT = (function() {
         _.buffer = new Float32Array(n);
         _.index  = 0;
         
-        _.fft = new timbre.utils.FFT(n);
-        
         _.noSpectrum = false;
         _.spectrum   = new Float32Array(n>>1);
     };
@@ -108,9 +108,8 @@ var FFT = (function() {
     $this.clone = function(deep) {
         var newone, _ = this._;
         newone = timbre("fft", _.buffersize);
-        newone._.window     = _.window;
-        newone._.windowfunc = _.windowfunc;
-        newone._.interval   = _.interval;
+        newone._.window   = _.window;
+        newone._.interval = _.interval;
         newone._.interval_samples = _.interval_samples;
         return timbre.fn.copyBaseArguments(this, newone, deep);
     };
@@ -156,15 +155,11 @@ var FFT = (function() {
     
     var process = function(buffer) {
         var _ = this._;
-        var fft, real, imag, windowfunc, spectrum;
+        var fft, real, imag, spectrum;
         var sqrt, n, m, i, rval, ival, mag;
         
         fft = _.fft;
-        windowfunc = _.windowfunc;
         
-        for (i = n = fft.length; i--; ) {
-            buffer[i] *= windowfunc(i / n);
-        }
         fft.forward(buffer);
         real = fft.real;
         imag = fft.imag;
@@ -173,6 +168,7 @@ var FFT = (function() {
         if (!_.noSpectrum) {
             sqrt = Math.sqrt;
             spectrum = _.spectrum;
+            n = buffer.length;
             m = n >> 1;
             for (i = n; i--; ) {
                 rval = real[i];
@@ -185,27 +181,10 @@ var FFT = (function() {
         timbre.fn.doEvent(this, "fft", [real, imag]);
     };
     
-    $this.getWindowFunction = function(name) {
-        return FFT.WindowFunctions[name];
-    };
-    
-    $this.setWindowFunction = function(name, func) {
-        if (typeof value === "function") {
-            FFT.WindowFunctions[name] = func;
-        }
-    };
-    
     return FFT;
 }());
 timbre.fn.register("fft", FFT);
 
-FFT.WindowFunctions = {};
-(function() {
-    var PI2 = Math.PI * 2;
-    FFT.WindowFunctions["Hann"] = function(x) {
-        return 0.5 * (1 - Math.cos(PI2 * x));
-    };
-}());
 
 // __END__
 if (module.parent && !module.parent.parent) {

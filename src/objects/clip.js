@@ -1,6 +1,5 @@
 /**
- * Clip: <draft>
- * [ar-kr]
+ * Clip: v12.07.13
  */
 "use strict";
 
@@ -10,24 +9,24 @@ var timbre = require("../timbre");
 var Clip = (function() {
     var Clip = function() {
         initialize.apply(this, arguments);
-    }, $this = Clip.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
-
-    Object.defineProperty($this, "min", {
-        set: function(value) {
-            if (typeof value === "number") {
-                this._.min = value;
+    }, $this = timbre.fn.buildPrototype(Clip, {
+        base: "ar-kr",
+        properties: {
+            min: {
+                set: function(value) {
+                    if (typeof value === "number") this._.min = value;
+                },
+                get: function() { return this._.min; }
+            },
+            max: {
+                set: function(value) {
+                    if (typeof value === "number") this._.max = value;
+                },
+                get: function() { return this._.max; }
             }
-        },
-        get: function() { return this._.min; }
+        } // properties
     });
-    Object.defineProperty($this, "max", {
-        set: function(value) {
-            this._.max = value;
-        },
-        get: function() { return this._.max; }
-    });
+    
     
     var initialize = function(_args) {
         var i, nums, _;

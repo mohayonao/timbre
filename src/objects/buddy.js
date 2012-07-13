@@ -10,6 +10,7 @@ var timbre = require("../timbre");
 
 var Buddy = (function() {
     var Buddy = function() {
+        console.warn("Buddy is deprecated.");
         initialize.apply(this, arguments);
     }, $this = Buddy.prototype;
     
@@ -132,6 +133,7 @@ var Buddy = (function() {
 timbre.fn.register("buddy", Buddy);
 // __END__
 if (module.parent && !module.parent.parent) {
+    /*
     describe("buddy", function() {
         object_test(Buddy, "buddy", 0);
         describe("wrapping event", function() {
@@ -197,4 +199,5 @@ if (module.parent && !module.parent.parent) {
             })
         });
     });
+    */
 }

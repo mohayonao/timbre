@@ -1,6 +1,6 @@
 /**
- * Phasor: 0.2.0
- * [ar-kr]
+ * Phasor: v12.07.13
+ * v0.2.0: first version
  */
 "use strict";
 
@@ -10,34 +10,36 @@ var timbre = require("../timbre");
 var Phasor = (function() {
     var Phasor = function() {
         initialize.apply(this, arguments);
-    }, $this = Phasor.prototype;
-    
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
-    
-    Object.defineProperty($this, "freq", {
-        set: function(value) {
-            this._.freq = timbre(value);
-        },
-        get: function() { return this._.freq; }
-    });
-    Object.defineProperty($this, "fmul", {
-        set: function(value) {
-            if (typeof value === "number" && value >= 0) {
-                this._.fmul = value;
+    }, $this = timbre.fn.buildPrototype(Phasor, {
+        base: "ar-kr",
+        properties: {
+            freq: {
+                set: function(value) {
+                    this._.freq = timbre(value);
+                },
+                get: function() { return this._.freq; }
+            },
+            fmul: {
+                set: function(value) {
+                    if (typeof value === "number" && value >= 0) {
+                        this._.fmul = value;
+                    }
+                },
+                get: function() { return this._.fmul; }
+            },
+            phase: {
+                set: function(value) {
+                    if (typeof value === "number") {
+                        while (value >= 1.0) value -= 1.0;
+                        while (value <  0.0) value += 1.0;
+                        this._.phase = this._.x = value;
+                    }
+                },
+                get: function() { return this._.phase; }
             }
-        },
-        get: function() { return this._.fmul; }
+        } // properties
     });
-    Object.defineProperty($this, "phase", {
-        set: function(value) {
-            if (typeof value === "number") {
-                while (value >= 1.0) value -= 1.0;
-                while (value <  0.0) value += 1.0;
-                this._.phase = this._.x = value;
-            }
-        },
-        get: function() { return this._.phase; }
-    });
+    
     
     var initialize = function(_args) {
         var i, _;

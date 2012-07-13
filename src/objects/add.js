@@ -1,5 +1,5 @@
 /**
- * Add: 0.3.2
+ * Add: v12.07.13
  * Add signals
  * [ar-kr]
  */
@@ -11,9 +11,10 @@ var timbre = require("../timbre");
 var Add = (function() {
     var Add = function() {
         initialize.apply(this, arguments);
-    }, $this = Add.prototype;
+    }, $this = timbre.fn.buildPrototype(Add, {
+        base: "ar-kr"
+    });
     
-    timbre.fn.setPrototypeOf.call($this, "ar-kr");
     
     var initialize = function(_args) {
         this.args = timbre.fn.valist.call(this, _args);
