@@ -89,12 +89,25 @@ timbre.fn = (function(timbre) {
         // v12.07.14
         buddy: function(name, list, altMethod) {
             var buddies = this._.buddies;
-            if (list === null) {
-                delete buddies[name];
-            } else if (list === undefined) {
-                buddies[name] = [this.args, altMethod];
-            } else if (list instanceof Array) {
-                buddies[name] = [list     , altMethod];
+            
+            if (typeof name === "string") name = [ name ];
+            
+            if (name instanceof Array) {
+                for (var i = name.length, x; i--; ) {
+                    if (typeof(x = name[i]) === "string") {
+                        if (list === null) {
+                            delete buddies[x];
+                        } else if (list === undefined) {
+                            buddies[x] = [this.args, altMethod];
+                        } else if (list instanceof Array) {
+                            buddies[x] = [ list    , altMethod];
+                        } else if (list instanceof Function) {
+                            buddies[x] = [[list]   , altMethod];
+                        } else if (list instanceof TimbreObject) {
+                            buddies[x] = [[list]   , altMethod];
+                        }
+                    }
+                }
             }
             return this;
         },
