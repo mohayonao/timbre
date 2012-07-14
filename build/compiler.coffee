@@ -88,6 +88,7 @@ WORKER_SOURCES = [
 
 NODE_SOURCES = [
     "node/exports"
+    "node/player"
 ]
 
 PRODUCT_NAME = "timbre"
