@@ -1,0 +1,9 @@
+{
+  "name": "ctimbre",
+  "version": "0.0.1",
+  "author": "mohayonao <mohayonao@gmail.com> (http://mohayonao.github.com/timbre)",
+  "main": "./build/Release/ctimbre",
+  "engines": {
+    "node": ">=0.6.0"
+  }
+}
