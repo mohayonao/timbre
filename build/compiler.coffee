@@ -38,6 +38,7 @@ TIMBRE_SOURCES = [
     "objects/filter"
     "objects/rfilter"
     "objects/efx.delay"
+    "objects/efx.reverb"
     "objects/efx.dist"
     "objects/efx.chorus"
 
