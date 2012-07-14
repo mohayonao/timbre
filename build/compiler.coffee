@@ -41,6 +41,7 @@ TIMBRE_SOURCES = [
     "objects/efx.reverb"
     "objects/efx.dist"
     "objects/efx.chorus"
+    "objects/efx.comp"
 
     "objects/audio"
     "objects/wav"
