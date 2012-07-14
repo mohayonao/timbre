@@ -14,19 +14,31 @@ var EfxDelay = (function() {
         properties: {
             time: {
                 set: function(value) {
-                    if (typeof value === "number") this._.delayTime = value;
+                    var _ = this._;
+                    if (typeof value === "number") {
+                        _.time = value;
+                        set_params.call(this, _.time, this._.fb, _.wet);
+                    }
                 },
-                get: function() { return this._.delayTime; }
+                get: function() { return this._.time; }
             },
             fb: {
                 set: function(value) {
-                    if (typeof value === "number") this._.feedback = value;
+                    var _ = this._;
+                    if (typeof value === "number") {
+                        _.fb = value;
+                        set_params.call(this, _.time, _.fb, _.wet);
+                    }
                 },
-                get: function() { return this._.feedback; }
+                get: function() { return this._.fb; }
             },
             wet: {
                 set: function(value) {
-                    if (typeof value === "number") this._.wet = value;
+                    var _ = this._;
+                    if (typeof value === "number") {
+                        _.wet = value;
+                        set_params.call(this, _.time, _.fb, _.wet);
+                    }
                 },
                 get: function() { return this._.wet; }
             }
@@ -35,114 +47,100 @@ var EfxDelay = (function() {
     
     
     var initialize = function(_args) {
-        var bits, i, _;
+        var _ = this._ = {};
         
-        this._ = _ = {};
-        bits = Math.ceil(Math.log(timbre.samplerate * 1.5) * Math.LOG2E)
+        var i, bits = Math.ceil(Math.log(timbre.samplerate * 1.5) * Math.LOG2E)
         
-        _.buffer = new Float32Array(1 << bits);
-        _.buffer_mask = (1 << bits) - 1;
-        _.pointerWrite = 0;
-        _.pointerRead  = 0;
-        _.delayTime = 250;
-        _.feedback = 0.25;
-        _.wet = 0.25;
+        _.buffer = new Float32Array(1<<bits);
+        _.mask = (1 << bits) - 1;
+        _.idx  = 0;
+        _.out  = 0;
+        
+        _.time = 250;
+        _.fb   = 0.25;
+        _.wet  = 0.25;
         
         i = 0;
         if (typeof _args[i] === "number") {
-            _.delayTime = _args[i++];
+            _.time = _args[i++];
         }    
         if (typeof _args[i] === "number") {
-            _.feedback = _args[i++];
+            _.fb = _args[i++];
         }    
         if (typeof _args[i] === "number") {
             _.wet = _args[i++];
         }
         
-        set_params.call(this, _.delayTime, _.feedback, _.wet);
+        set_params.call(this, _.time, _.fb, _.wet);
+        
         this.args = timbre.fn.valist.call(this, _args.slice(i));
     };
     
     $this.clone = function(deep) {
         var newone, _ = this._;
-        newone = timbre("efx.delay", _.delayTime, _.feedback, _.wet);
+        newone = timbre("efx.delay", _.time, _.fb, _.wet);
         return timbre.fn.copyBaseArguments(this, newone, deep);
     };
     
-    var set_params = function(delayTime, feedback, wet) {
-        var offset, _ = this._;
-        offset = delayTime * timbre.samplerate / 1000;
+    var set_params = function(time, fb, wet) {
+        var _ = this._;
         
-        _.pointerWrite = (_.pointerRead + offset) & _.buffer_mask;
-        if (feedback >= 1.0) {
-            _.feedback = +0.9990234375;
-        } else if (feedback <= -1.0) {
-            _.feedback = -0.9990234375;
+        var offset = time * timbre.samplerate / 1000;
+        var mask   = _.mask;
+        
+        _.out = (_.idx + offset) & mask;
+        
+        if (fb >= 0.995) {
+            _.fb = +0.995;
+        } else if (fb <= -0.995) {
+            _.fb = -0.995;
         } else {
-            _.feedback = feedback;
+            _.fb = fb;
         }
-        if (wet < 0) {
-            _.wet = 0;
-        } else if (wet > 1.0) {
-            _.wet = 1.0;
-        } else {
-            _.wet = wet;
-        }
+        
+        if (wet > 1) wet = 1; else if (wet < 0) wet = 0;
+        _.wet = wet;
     };
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var args, cell;
-        var tmp, i, imax, j, jmax;
-        var mul, add;
-        var x, feedback, wet, dry;
-        var buffer, buffer_mask, pointerRead, pointerWrite;
+        var i, imax, j, jmax;
         
-        cell = this.cell;
+        var cell = this.cell;
+        
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
-            args = this.args.slice(0);
-            for (j = jmax = cell.length; j--; ) {
-                cell[j] = 0.0;
-            }
-            for (i = 0, imax = args.length; i < imax; ++i) {
-                tmp = args[i].seq(seq_id);
-                for (j = jmax; j--; ) {
-                    cell[j] += tmp[j];
-                }
-            }
+            var args = this.args.slice(0);
+
+            cell = timbre.fn.sumargsAR(this, args, seq_id);
             
-            buffer = _.buffer;
-            buffer_mask = _.buffer_mask;
-            feedback = _.feedback;
-            wet = _.wet;
-            dry = 1 - wet;
-            pointerRead  = _.pointerRead;
-            pointerWrite = _.pointerWrite;
-            mul = _.mul;
-            add = _.add;
+            var n, b = _.buffer, mask = _.mask;
+            var idx = _.idx, fb  = _.fb, out = _.out;
+            var wet = _.wet, dry = 1 - _.wet;
             
             if (_.ison) {
                 for (i = 0, imax = cell.length; i < imax; ++i) {
-                    x = buffer[pointerRead];
-                    buffer[pointerWrite] = cell[i] - x * feedback;
-                    cell[i] *= dry;
-                    cell[i] += x * wet;
-                    cell[i] = cell[i] * mul + add;
-                    pointerWrite = (pointerWrite + 1) & buffer_mask;
-                    pointerRead  = (pointerRead  + 1) & buffer_mask;
+                    n = b[idx];
+                    b[out] = cell[i] - (n * fb);
+                    out = (++out) & mask;
+                    idx = (++idx) & mask;
+                    cell[i] = (cell[i] * dry) + (n * wet);
                 }
             } else {
                 for (i = 0, imax = cell.length; i < imax; ++i) {
-                    x = buffer[pointerRead];
-                    buffer[pointerWrite] = cell[i] - x * feedback;
-                    pointerWrite = (pointerWrite + 1) & buffer_mask;
-                    pointerRead  = (pointerRead  + 1) & buffer_mask;
-                    cell[i] = cell[i] * mul + add;
+                    n = b[idx];
+                    b[out] = cell[i] - (n * fb);
+                    idx = (++idx) & mask;
+                    out = (++out) & mask;                    
                 }
             }
-            _.pointerRead  = pointerRead;
-            _.pointerWrite = pointerWrite;
+            _.idx = idx;
+            _.out = out;
+
+            var mul = _.mul, add = _.add;
+            for (i = cell.length; i--; ) {
+                cell[i] = cell[i] * mul + add;
+            }
         }
         return cell;
     };
