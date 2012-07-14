@@ -1,4 +1,4 @@
-timbre = T = require("../../timbre")
+timbre = T = require("../../../timbre")
 
 timbre.setup({samplerate:48000});
 console.log timbre.env
