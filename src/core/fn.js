@@ -152,8 +152,8 @@ timbre.fn = (function(timbre) {
                 for (var k in key) {
                     var x = this._.proto;
                     while (x !== null) {
-                        if (desc(x, key) !== undefined) {
-                            this[key] = value;
+                        if (desc(x, k) !== undefined) {
+                            this[k] = key[k];
                             break;
                         }
                         x = Object.getPrototypeOf(x); 
