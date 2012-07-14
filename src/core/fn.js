@@ -664,13 +664,8 @@ timbre.fn = (function(timbre) {
             }.bind(p));
         }
         
-        var properties = options.properties;
-        if (properties instanceof Object) {
-            for (var key in properties) {
-                if (properties[key] instanceof Object) {
-                    Object.defineProperty(p, key, properties[key]);
-                }
-            }
+        if (options.properties instanceof Object) {
+            Object.defineProperties(p, options.properties);
         }
         
         var copies = options.copies;
@@ -680,7 +675,8 @@ timbre.fn = (function(timbre) {
             copies.forEach(function(x) {
                 var m = re.exec(x.trim());
                 if (m !== null) {
-                    var klass = klassMap[m[1]] || (klassMap[m[1]] = timbre.fn.getClass(m[1]));
+                    var klass = klassMap[m[1]] ||
+                        (klassMap[m[1]] = timbre.fn.getClass(m[1]));
                     if (klass !== undefined) {
                         var name = m[2];
                         var x, q = klass.prototype;
@@ -688,7 +684,9 @@ timbre.fn = (function(timbre) {
                             if ((x = q[name]) instanceof Function) p[name] = x;
                         } else {
                             var x = Object.getOwnPropertyDescriptor(q, name);
-                            if (x !== undefined) Object.defineProperty(p, name, x);
+                            if (x !== undefined) {
+                                Object.defineProperty(p, name, x);
+                            }
                         }
                     }
                 }
