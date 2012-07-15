@@ -191,10 +191,4 @@ if (module.parent && !module.parent.parent) {
     describe("efx.reverb", function() {
         object_test(EfxReverb, "efx.reverb");
     });
-    
-    (function() {
-        for (var i = 0; i < 6; i++) {
-            console.log( 1.0 + (i / 7.0) );
-        }
-    }());
 }
