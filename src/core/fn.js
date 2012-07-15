@@ -616,23 +616,29 @@ timbre.fn = (function(timbre) {
         var cell, tmp, i, imax, j, jmax;
         
         cell = self.cell;
-        for (j = jmax = cell.length; j--; ) {
-            cell[j] = 0;
+        
+        j = jmax = cell.length;
+        while (j) {
+            cell[--j] = 0; cell[--j] = 0; cell[--j] = 0; cell[--j] = 0;
+            cell[--j] = 0; cell[--j] = 0; cell[--j] = 0; cell[--j] = 0;
         }
+        
         for (i = 0, imax = args.length; i < imax; ++i) {
             tmp = args[i].seq(seq_id);
-            for (j = jmax; j--; ) {
-                cell[j] += tmp[j];
+            j = jmax;
+            while (j) {
+                --j; cell[j] += tmp[j]; --j; cell[j] += tmp[j];
+                --j; cell[j] += tmp[j]; --j; cell[j] += tmp[j];
+                --j; cell[j] += tmp[j]; --j; cell[j] += tmp[j];
+                --j; cell[j] += tmp[j]; --j; cell[j] += tmp[j];
             }
         }
         return cell;
     };
     
     fn.sumargsKR = function(self, args, seq_id) {
-        var tmp, i, imax;
-        
-        tmp = 0;
-        for (i = 0, imax = args.length; i < imax; ++i) {
+        var tmp = 0;
+        for (var i = 0, imax = args.length; i < imax; ++i) {
             tmp += args[i].seq(seq_id)[0];
         }
         return tmp;

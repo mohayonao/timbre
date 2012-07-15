@@ -1,4 +1,4 @@
-$1 = timbre\.fn\.sumargsAR\($2, $3, $4\);
+# $1 = timbre\.fn\.sumargsAR\($2, $3, $4\);
 
 var $$tmp, $$i, $$imax, $$j, $$jmax;
 

@@ -1,4 +1,4 @@
-$1 = timbre\.fn\.sumargsKR\($2, $3, $4\);
+# $1 = timbre\.fn\.sumargsKR\($2, $3, $4\);
 
 var $$i, $$imax;
 
