@@ -174,8 +174,8 @@ timbre.fn = (function(timbre) {
         removeEventListener    : timbre.removeEventListener,
         removeAllEventListeners: timbre.removeAllEventListeners
     }; // TimbreObject.prototype
-    
-    Object.defineProperties(TimbreObject.prototype, {
+
+    var TimbreObjectPropertiesDescription = {
         isAr: { get: function() { return !!this._.ar; } },
         isKr: { get: function() { return  !this._.ar; } },
         isOn : { get: function() { return !!this._.ison; } },
@@ -216,7 +216,10 @@ timbre.fn = (function(timbre) {
             },
             get: function() { return this._.add; }
         }
-    }); // Object.defineProperties
+    }; // TimbreObjectPropertiesDescription
+    
+    Object.defineProperties(TimbreObject.prototype,
+                            TimbreObjectPropertiesDescription);
     
     
     fn.init = function() {
@@ -319,6 +322,20 @@ timbre.fn = (function(timbre) {
             for (var i in p._) _[i] = p._[i];
         }
         p._ = _;
+        
+        if (!(p instanceof TimbreObject)) {
+            for (var i in q) {
+                if (typeof q[i] === "function") {
+                    if (!(p[i] instanceof Function)) p[i] = q[i];
+                }
+            }
+            for (var i in TimbreObjectPropertiesDescription) {
+                if (Object.getOwnPropertyDescriptor(p, i) === undefined) {
+                    Object.defineProperty(p, i, TimbreObjectPropertiesDescription[i]);
+                }
+            }
+        }
+        
         
         if (typeof p.ar !== "function") {
             fn.setPrototypeOf.call(p, "ar-kr");
