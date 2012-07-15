@@ -83,7 +83,7 @@ var Filter = (function() {
         } else {
             _.gain = timbre(Filter.Types[type].default_gain || 6);
         }
-        this.args = timbre.fn.valist.call(this, _args.slice(i));
+        this.args = _args.slice(i).map(timbre);
         
         _.prev_type = undefined;
         _.prev_freq = undefined;

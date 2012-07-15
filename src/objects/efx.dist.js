@@ -64,7 +64,7 @@ var EfxDistortion = (function() {
             _.lpfFreq = timbre(2400);
         }
         
-        this.args = timbre.fn.valist.call(this, _args.slice(i));
+        this.args = _args.slice(i).map(timbre);
         
         _.prev_preGain  = undefined;
         _.prev_postGain = undefined;

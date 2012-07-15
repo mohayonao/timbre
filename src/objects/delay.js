@@ -41,7 +41,7 @@ var Delay = (function() {
         var offset = _.delayTime * timbre.samplerate / 1000;
         _.pointerWrite = (_.pointerRead + offset) & _.buffer_mask;
         
-        this.args = timbre.fn.valist.call(this, _args.slice(i));
+        this.args = _args.slice(i).map(timbre);
     };
     
     $this.seq = function(seq_id) {

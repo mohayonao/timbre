@@ -71,7 +71,7 @@ var Interval = (function() {
             break;
         }
         
-        this.args = timbre.fn.valist.call(this, _args.slice(i));
+        this.args = _args.slice(i).map(timbre);
         
         _.ison = false;
         _.samples = 0;

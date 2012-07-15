@@ -127,7 +127,7 @@ var EfxReverb = (function() {
         
         set_params.call(this, _.time, _.fb, _.wet);
         
-        this.args = timbre.fn.valist.call(this, _args.slice(i));
+        this.args = _args.slice(i).map(timbre);
     };
     
     var set_params = function(time, fb, wet) {

@@ -66,7 +66,7 @@ var Clip = (function() {
             break;
         }
         
-        this.args = timbre.fn.valist.call(this, _args.slice(i));
+        this.args = _args.slice(i).map(timbre);
     };
     
     $this.seq = function(seq_id) {

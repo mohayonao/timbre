@@ -28,7 +28,7 @@ var Dac = (function() {
     
     var initialize = function(_args) {
         var _ = this._ = {};
-        this.args = timbre.fn.valist.call(this, _args);
+        this.args = _args.map(timbre);
         this.pan = 0.5;
         this.L = new Float32Array(timbre.cellsize);
         this.R = new Float32Array(timbre.cellsize);

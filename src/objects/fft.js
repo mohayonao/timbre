@@ -92,7 +92,7 @@ var FFT = (function() {
             this.onfft = _args[i++];
         }
         
-        timbre.fn.valist.call(this, _args.slice(i));
+        this.args = _args.slice(i).map(timbre);
         
         _.status   = 0;
         _.samples  = 0;

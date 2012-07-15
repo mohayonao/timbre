@@ -73,7 +73,7 @@ var EfxChorus = (function() {
         _.pointerWrite = _.offset;
         _.lfo = timbre("sin", _.rate, _.depth * _.offset).kr();
         
-        this.args = timbre.fn.valist.call(this, _args.slice(i));
+        this.args = _args.slice(i).map(timbre);
     };
 
     $this.clone = function(deep) {

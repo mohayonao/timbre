@@ -75,7 +75,7 @@ var Record = (function() {
         if (typeof _args[i] === "function") {
             this.onrecorded = _args[i++];
         }
-        this.args = timbre.fn.valist.call(this, _args.slice(i));
+        this.args = _args.slice(i).map(timbre);
         
         _.index   =  0;
         _.samples =  0;

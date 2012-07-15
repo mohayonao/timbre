@@ -100,7 +100,7 @@ var EfxComp = (function() {
         
         set_params.call(this, _.ratio, _.attack, _.release);
         
-        this.args = timbre.fn.valist.call(this, _args.slice(i));
+        this.args = _args.slice(i).map(timbre);
     };
 
     var set_params = function(ratio, attack, release) {

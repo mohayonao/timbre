@@ -40,7 +40,7 @@ var Timeout = (function() {
         } else {
             this.timeout = 1000;
         }
-        this.args = timbre.fn.valist.call(this, _args.slice(i));
+        this.args = _args.slice(i).map(timbre);
         
         _.ison = false;
         _.samples = 0;

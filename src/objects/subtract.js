@@ -16,7 +16,7 @@ var Subtract = (function() {
     
     
     var initialize = function(_args) {
-        this.args = timbre.fn.valist.call(this, _args);
+        this.args = _args.map(timbre);
     };
     
     $this.seq = function(seq_id) {

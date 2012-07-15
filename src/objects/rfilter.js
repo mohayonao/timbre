@@ -85,7 +85,7 @@ var ResonantFilter = (function() {
         } else {
             _.depth = timbre(0.5);
         }
-        this.args = timbre.fn.valist.call(this, _args.slice(i));
+        this.args = _args.slice(i).map(timbre);
         
         _.prev_cutoff = undefined;
         _.prev_Q      = undefined;
