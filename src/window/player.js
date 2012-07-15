@@ -41,19 +41,16 @@ var setupTimbre = function(defaultSamplerate) {
 
 
 var WebKitPlayer = function(sys) {
-    var self = this;
-    var ctx, onaudioprocess;
-    var samplerate, dx;
     
-    ctx = new webkitAudioContext();
-    samplerate = ctx.sampleRate;
+    this.ctx = new webkitAudioContext();
+    var samplerate = this.ctx.sampleRate;
     
     this.setup = function() {
         setupTimbre(samplerate);
         this.streamsize = timbre.streamsize;
         
         if (timbre.samplerate === samplerate) {
-            onaudioprocess = function(e) {
+            this.onaudioprocess = function(e) {
                 var inL, inR, outL, outR, i;
                 sys.process();
                 
@@ -67,8 +64,8 @@ var WebKitPlayer = function(sys) {
                 }
             };
         } else {
-            dx = timbre.samplerate / samplerate;
-            onaudioprocess = function(e) {
+            var dx = timbre.samplerate / samplerate;
+            this.onaudioprocess = function(e) {
                 var inL, inR, outL, outR, outLen;
                 var streamsize, x, prevL, prevR;
                 var index, delta, x0, x1, xx;
@@ -80,10 +77,10 @@ var WebKitPlayer = function(sys) {
                 outR = e.outputBuffer.getChannelData(1);
                 outLen = outL.length;
                 
-                streamsize = self.streamsize;
-                x = self.x;
-                prevL = self.prevL;
-                prevR = self.prevR;
+                streamsize = this.streamsize;
+                x = this.x;
+                prevL = this.prevL;
+                prevR = this.prevR;
                 for (i = 0, imax = outL.length; i < imax; ++i) {
                     if (x >= streamsize) {
                         sys.process();
@@ -105,10 +102,10 @@ var WebKitPlayer = function(sys) {
                     
                     x += dx;
                 }
-                self.x = x;
-                self.prevL = prevL;
-                self.prevR = prevR;
-            };
+                this.x = x;
+                this.prevL = prevL;
+                this.prevR = prevR;
+            }.bind(this);
         }
         
         return this;
@@ -117,9 +114,9 @@ var WebKitPlayer = function(sys) {
     this.on = function() {
         this.x = this.streamsize;
         this.prevL = this.prevR = 0;
-        this.node = ctx.createJavaScriptNode(sys.streamsize, 1, sys.channels);
-        this.node.onaudioprocess = onaudioprocess;
-        this.node.connect(ctx.destination);
+        this.node = this.ctx.createJavaScriptNode(sys.streamsize, 1, sys.channels);
+        this.node.onaudioprocess = this.onaudioprocess;
+        this.node.connect(this.ctx.destination);
     };
     this.off = function() {
         this.node.disconnect();
@@ -130,11 +127,9 @@ var WebKitPlayer = function(sys) {
 };
 
 var MozPlayer = function(sys) {
-    var timer = new MutekiTimer();
+    this.timer = new MutekiTimer();
     
     this.setup = function() {
-        var self = this;
-        
         setupTimbre(44100);
         
         this.audio = new Audio();
@@ -142,33 +137,35 @@ var MozPlayer = function(sys) {
         timbre.samplerate = this.audio.mozSampleRate;
         timbre.channels   = this.audio.mozChannels;
         
-        this.interval = (timbre.streamsize / timbre.samplerate) * 1000;
+        this.written  = 0;
         this.interleaved = new Float32Array(timbre.streamsize * timbre.channels);
         
         this.onaudioprocess = function() {
-            var interleaved;
-            var inL, inR, i, j;
             
-            interleaved = self.interleaved;
-            self.audio.mozWriteAudio(interleaved);
+            if (this.written > this.audio.mozCurrentSampleOffset() + 16384) {
+                return this;
+            }
+            
+            var interleaved = this.interleaved;
+            this.audio.mozWriteAudio(interleaved);
             sys.process();
             
-            inL  = sys.L;
-            inR  = sys.R;
+            var inL = sys.L, inR = sys.R;
+            var i = interleaved.length, j = inL.length;
             
-            i = interleaved.length;
-            j = inL.length;
             while (j--) {
                 interleaved[--i] = inR[j];            
                 interleaved[--i] = inL[j];
             }
-        };
+            this.written += interleaved.length;
+        }.bind(this);
         
         return this;
     };
     
     this.on = function() {
-        timer.setInterval(this.onaudioprocess, this.interval);
+        this.written  = 0;
+        this.timer.setInterval(this.onaudioprocess, 20);
     };
     
     this.off = function() {
@@ -176,7 +173,7 @@ var MozPlayer = function(sys) {
         for (var i = interleaved.length; i--; ) {
             interleaved[i] = 0.0;
         }
-        timer.clearInterval();
+        this.timer.clearInterval();
     }
     
     return this;
