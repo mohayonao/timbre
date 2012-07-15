@@ -312,49 +312,48 @@ timbre.fn = (function(timbre) {
     
     
     fn.register = function(key, klass, func) {
-        if (typeof klass !== "function") return;
+        if (typeof key !== "string") return;
         
-        var p = klass.prototype;
-        var q = TimbreObject.prototype;
-        var _ = new TimbreObject.PrototypeValue();
-        
-        if (typeof p._ === "object") {
-            for (var i in p._) _[i] = p._[i];
-        }
-        p._ = _;
-        
-        if (!(p instanceof TimbreObject)) {
-            for (var i in q) {
-                if (typeof q[i] === "function") {
-                    if (!(p[i] instanceof Function)) p[i] = q[i];
+        if (klass instanceof Function) {
+            var p = klass.prototype;
+            var q = TimbreObject.prototype;
+            var _ = new TimbreObject.PrototypeValue();
+            
+            if (typeof p._ === "object") {
+                for (var i in p._) _[i] = p._[i];
+            }
+            p._ = _;
+            
+            if (!(p instanceof TimbreObject)) {
+                for (var i in q) {
+                    if (typeof q[i] === "function") {
+                        if (!(p[i] instanceof Function)) p[i] = q[i];
+                    }
+                }
+                for (var i in TimbreObjectPropertiesDescription) {
+                    if (Object.getOwnPropertyDescriptor(p, i) === undefined) {
+                        Object.defineProperty(p, i, TimbreObjectPropertiesDescription[i]);
+                    }
                 }
             }
-            for (var i in TimbreObjectPropertiesDescription) {
-                if (Object.getOwnPropertyDescriptor(p, i) === undefined) {
-                    Object.defineProperty(p, i, TimbreObjectPropertiesDescription[i]);
+            
+            if (typeof p.ar !== "function") {
+                fn.setPrototypeOf.call(p, "ar-kr");
+            }
+            
+            for (var j in p) {
+                if (p.hasOwnProperty(j) && p[j] instanceof Function) {
+                    if (q[j] === undefined) q[j] = NOP;
                 }
             }
         }
         
-        
-        if (typeof p.ar !== "function") {
-            fn.setPrototypeOf.call(p, "ar-kr");
-        }
-        
-        for (var j in p) {
-            if (p.hasOwnProperty(j) && p[j] instanceof Function) {
-                if (q[j] === undefined) q[j] = NOP;
-            }
-        }
-        
-        if (typeof key === "string") {
-            if (func instanceof Function) {
-                TimbreObject.klasses[key]  = func;
-            } else {
-                p._.klassname = key;
-                p._.klass     = klass;
-                TimbreObject.klasses[key] = klass;
-            }
+        if (func instanceof Function) {
+            TimbreObject.klasses[key]  = func;
+        } else {
+            p._.klassname = key;
+            p._.klass     = klass;
+            TimbreObject.klasses[key] = klass;
         }
     }; // fn.register
     
