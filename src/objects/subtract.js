@@ -14,53 +14,44 @@ var Subtract = (function() {
         base: "ar-kr"
     });
     
-    
     var initialize = function(_args) {
         this.args = _args.map(timbre);
     };
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var args, cell, mul, add;
-        var tmp, i, imax, j, jmax;
+            var tmp, i, imax, j, jmax;
         
-        cell = this.cell;
+        var cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
             
-            args = this.args.slice(0);
-            mul  = _.mul;
-            add  = _.add;
+            var args = this.args.slice(0);
+            var mul = _.mul, add = _.add;
 
             if (args.length > 0) {
-                if (_.ar) {
+                if (_.ar) { // ar-mode
                     tmp = args[0].seq(seq_id);
                     for (j = jmax = cell.length; j--; ) {
                         cell[j] = tmp[j];
                     }
                     for (i = 1, imax = args.length; i < imax; ++i) {
                         tmp = args[i].seq(seq_id);
-                        for (j = jmax; j--; ) {
-                            cell[j] -= tmp[j];
-                        }
+                        for (j = jmax; j--; ) cell[j] -= tmp[j];
                     }
                     for (j = jmax; j--; ) {
                         cell[j] = cell[j] * mul + add;
                     }
-                } else {
+                } else {    // kr-mode
                     tmp = args[0].seq(seq_id)[0];
                     for (i = 1, imax = args.length; i < imax; ++i) {
                         tmp -= args[i].seq(seq_id)[0];
                     }
                     tmp = tmp * mul + add;
-                    for (j = cell.length; j--; ) {
-                        cell[j] = tmp;
-                    }
+                    for (j = cell.length; j--; ) cell[j] = tmp;
                 }
-            } else {
-                for (i = cell.length; i--; ) {
-                    cell[i] = add;
-                }
+            } else {        // none args
+                for (i = cell.length; i--; ) cell[i] = add;
             }
         }
         return cell;

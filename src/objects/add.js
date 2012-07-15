@@ -15,7 +15,6 @@ var Add = (function() {
         base: "ar-kr"
     });
     
-    
     var initialize = function(_args) {
         this.args = _args.map(timbre);
     };
@@ -25,29 +24,24 @@ var Add = (function() {
     };
     
     $this.seq = function(seq_id) {
-        var _ = this._;
-        var cell, args, mul, add;
-        var tmp, i;
+        var tmp, _ = this._;
         
-        cell = this.cell;
+        var cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
             
-            args = this.args.slice(0);
-            mul  = _.mul;
-            add  = _.add;
+            var args = this.args.slice(0);
+            var mul = _.mul, add = _.add;
             
-            if (_.ar) {
+            if (_.ar) { // ar-mode
                 cell = timbre.fn.sumargsAR(this, args, seq_id);
-                
-                for (i = cell.length; i--; ) {
+                for (var i = cell.length; i--; ) {
                     cell[i] = cell[i] * mul + add;
                 }
-            } else {
+            } else {    // kr-mode
                 tmp = timbre.fn.sumargsKR(this, args, seq_id);
-                
                 tmp = tmp * mul + add;
-                for (i = cell.length; i--; ) {
+                for (var i = cell.length; i--; ) {
                     cell[i] = tmp;
                 }
             }

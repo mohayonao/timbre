@@ -15,7 +15,6 @@ var Multiply = (function() {
         base: "ar-kr"
     });
     
-    
     var initialize = function(_args) {
         this.args = _args.map(timbre);
     };
@@ -26,44 +25,32 @@ var Multiply = (function() {
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var args, cell;
-        var mul, add;
         var tmp, i, imax, j, jmax;
-        cell = this.cell;
+        
+        var cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
-            args = this.args.slice(0);
-            mul  = _.mul;
-            add  = _.add;
+            
+            var args = this.args.slice(0);
+            var mul = _.mul, add = _.add;
+            
             jmax = timbre.cellsize;
-            if (_.ar) {
-                for (j = jmax; j--; ) {
-                    cell[j] = mul;
-                }
+            if (_.ar) { // ar-mode
+                for (j = jmax; j--; ) cell[j] = mul;
                 for (i = 0, imax = args.length; i < imax; ++i) {
                     tmp = args[i].seq(seq_id);
-                    for (j = jmax; j--; ) {
-                        cell[j] *= tmp[j];
-                    }
+                    for (j = jmax; j--; ) cell[j] *= tmp[j];
                 }
-                if (add !== 0) {
-                    for (j = jmax; j--; ) {
-                        cell[j] += add;
-                    }
+                if (add) {
+                    for (j = jmax; j--; ) cell[j] += add;
                 }
-            } else {
+            } else {    // kr-mode
                 tmp = mul;
                 for (i = 0, imax = args.length; i < imax; ++i) {
-                    if (args[i].seq_id === seq_id) {
-                        tmp *= args[i].cell[0];
-                    } else {
-                        tmp *= args[i].seq(seq_id)[0];
-                    }
+                    tmp *= args[i].seq(seq_id)[0];
                 }
                 tmp += add;
-                for (j = jmax; j--; ) {
-                    cell[j] = tmp;
-                }
+                for (j = jmax; j--; ) cell[j] = tmp;
             }
         }
         return cell;
