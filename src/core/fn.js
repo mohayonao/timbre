@@ -464,28 +464,24 @@ timbre.fn = (function(timbre) {
         return this;
     };
     
-    fn.valist = function(_args) {
-        var args = [], i = _args.length;
-        
-        while (i--) {
-            args.unshift(timbre(_args[i]));
+    fn.valist = function(args) {
+        if (args instanceof Array) {
+            return args.map(timbre);
+        } else {
+            return Array.prototype.map.call(args, timbre);
         }
-        
-        return args;
     };
     
     fn.arrayset = (function() {
         var append = function() {
-            var args, i, imax;
-            args = fn.valist(arguments);
-            for (i = 0, imax = args.length; i < imax; ++i) {
+            var args = fn.valist(arguments);
+            for (var i = 0, imax = args.length; i < imax; ++i) {
                 if (this.indexOf(args[i]) === -1) this.push(args[i]);
             }
             return this;
         };
         var remove = function() {
-            var i, j;
-            for (i = arguments.length; i--; ) {
+            for (var i = arguments.length, j; i--; ) {
                 if ((j = this.indexOf(arguments[i])) !== -1) {
                     this.splice(j, 1);
                 }
@@ -501,9 +497,9 @@ timbre.fn = (function(timbre) {
             return this;
         };
         return function(self) {
-            var i, imax, find, remindexes = [];
-            for (i = 1, imax = self.length; i < imax; ++i) {
-                find = self.indexOf(self[i]);
+            var remindexes = [];
+            for (var i = 1, imax = self.length; i < imax; ++i) {
+                var find = self.indexOf(self[i]);
                 if (find !== -1 && find < i) remindexes.push(i);
             }
             while (remindexes.length) {
