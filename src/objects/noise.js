@@ -1,7 +1,8 @@
 /**
- * WhiteNoise: v12.07.13
+ * WhiteNoise: v12.07.15
  * White noise generator
- * v0.1.0: first version
+ * v 0. 1. 0: first version
+ * v12.07.15: add args ".mul"
  */
 "use strict";
 
@@ -15,9 +16,13 @@ var WhiteNoise = (function() {
         base: "ar-kr"
     });
     
-    
     var initialize = function(_args) {
+        var _ = this._ = {};
         
+        var i = 0;
+        if (typeof _args[i] === "number") {
+            _.mul = _args[i++];
+        }
     };
     
     $this.clone = function(deep) {
@@ -26,24 +31,22 @@ var WhiteNoise = (function() {
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell, r;
-        var mul, add, x, i;
         
         if (!_.ison) return timbre._.none;
         
-        cell = this.cell;
+        var cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
-            mul = _.mul;
-            add = _.add;
+            var mul = _.mul;
+            var add = _.add;
             if (_.ar) {
-                r = Math.random;
-                for (i = cell.length; i--; ) {
+                var r = Math.random;
+                for (var i = cell.length; i--; ) {
                     cell[i] = (r() * 2.0 - 1.0) * mul + add;
                 }
             } else {
-                x = (Math.random() * 2.0 - 1.0) * mul + add;
-                for (i = cell.length; i--; ) {
+                var x = (Math.random() * 2.0 - 1.0) * mul + add;
+                for (var i = cell.length; i--; ) {
                     cell[i] = x;
                 }
             }

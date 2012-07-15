@@ -1,7 +1,8 @@
 /**
- * PinkNoise: v12.07.13
+ * PinkNoise: v12.07.15
  * Pink noise generator
- * v0.3.5: first version
+ * v 0. 3. 5: first version
+ * v12.07.15: add args ".mul"
  */
 "use strict";
 
@@ -15,12 +16,15 @@ var PinkNoise = (function() {
         base: "ar-kr"
     });
     
-    
     var initialize = function(_args) {
-        this._ = {};
-        this._.b0 = 0;
-        this._.b1 = 0;
-        this._.b2 = 0;
+        var _ = this._ = {};
+        
+        _.b0 = 0; _.b1 = 0; _.b2 = 0;
+        
+        var i = 0;
+        if (typeof _args[i] === "number") {
+            _.mul = _args[i++];
+        }
     };
     
     $this.clone = function(deep) {
@@ -29,33 +33,30 @@ var PinkNoise = (function() {
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell, r, b0, b1, b2;
-        var mul, add, x, i, j;
         
         if (!_.ison) return timbre._.none;
         
-        cell = this.cell;
+        var cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
             
-            b0  = _.b0;
-            b1  = _.b1;
-            b2  = _.b2;
-            mul = _.mul;
-            add = _.add;
+            var b0 = _.b0, b1 = _.b1, b2 = _.b2;
+            var mul = _.mul, add = _.add;
             
-            r = Math.random;
-            for (i = cell.length; i--; ) {
-                x = r() * 2.0 - 1.0;
+            var r = Math.random;
+            for (var i = cell.length; i--; ) {
+                var x = (r() - 0.5) * 0.5;
                 b0 = 0.99765 * b0 + x * 0.0990460;
                 b1 = 0.96300 * b1 + x * 0.2965164;
                 b2 = 0.57000 * b2 + x * 1.0526913;
                 x = b0 + b1 + b2 + x * 0.1848;
                 cell[i] = x * mul + add;
             }
-            _.b0 = b0;
-            _.b1 = b1;
-            _.b2 = b2;
+            _.b0 = b0; _.b1 = b1; _.b2 = b2;
+            
+            if (!_.ar) { // kr-mode
+                for (i = cell.length; i--; ) cell[i] = cell[0];
+            }
         }
         return cell;
     };

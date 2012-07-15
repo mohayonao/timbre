@@ -1,7 +1,8 @@
 /**
- * EightBitNoise: v12.07.13
+ * EightBitNoise: v12.07.15
  * 8bit Noise Generator
  * v12.07.12: first version
+ * v12.07.15: add args ".mul"
  */
 "use strict";
 
@@ -23,26 +24,26 @@ var EightBitNoise = (function() {
         } // properties
     });
     
-    
     var initialize = function(_args) {
-        var i, _;
-
-        this._ = _ = {};
-        i = 0;
+        var _ = this._ = {};
         
+        _.x = 0;
+        _.y = 1;
+        
+        var i = 0;
         if (typeof _args[i] !== "undefined") {
             this.freq = _args[i++];
         } else {
             this.freq = 440;
         }
-        
-        _.phase = 0;
-        _.noise = 1;
+        if (typeof _args[i] === "number") {
+            _.mul = _args[i++];
+        }
     };
     
     $this.clone = function(deep) {
-        var newone, _ = this._;
-        newone = timbre("8bitnoise");
+        var _ = this._;
+        var newone = timbre("8bitnoise");
         if (deep) {
             newone._.freq = _.freq.clone(true);
         } else {
@@ -52,51 +53,43 @@ var EightBitNoise = (function() {
     };
     
     $this.bang = function() {
-        this._.phase = 0;
-        this._.noise = 1;
+        var _ = this._;
+        _.x = 0; _.y = 1;
         timbre.fn.doEvent(this, "bang");
         return this;
     };
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell, phase, noise;
-        var freq, phaseStep, mul, add;
-        var i, imax;
         
-        cell = this.cell;
+        if (!_.ison) return timbre._.none;
+        
+        var cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
             
-            freq  = _.freq.seq(seq_id)[0];
-            phase = _.phase;
-            noise = _.noise;
-            mul   = _.mul;
-            add   = _.add;
+            var freq = _.freq.seq(seq_id)[0];
+            var x = _.x, y = _.y;
+            var mul = _.mul, add = _.add;
+            var dx = freq / timbre.samplerate;
+            var r  = Math.random;
             
-            phaseStep = freq / timbre.samplerate;
-            
-            for (i = 0, imax = cell.length; i < imax; ++i) {
-                if (phase >= 0.25) {
-                    noise = Math.random() < 0.5 ? -1 : +1;
-                }
-                cell[i] = noise * mul + add;
-                phase += phaseStep;
-                while (phase > 1) phase -= 1;
+            for (var i = 0, imax = cell.length; i < imax; ++i) {
+                if (x >= 0.25) y = r() < 0.5 ? -1 : +1;
+                cell[i] = y * mul + add;
+                x += dx;
+                while (x > 1) x -= 1;
             }
-            _.phase = phase;
-            _.noise = noise;
+            _.x = x; _.y = y;
             
             if (!_.ar) { // kr-mode
-                for (i = imax; i--; ) {
-                    cell[i] = cell[0];
-                }
+                for (i = imax; i--; ) cell[i] = cell[0];
             }
         }
         
         return cell;
     };
-
+    
     return EightBitNoise;
 }());
 timbre.fn.register("8bitnoise", EightBitNoise);
