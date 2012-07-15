@@ -40,7 +40,7 @@ var PercussiveEnvelope = (function() {
         copies: [
             "env.table", "env.delay", "env.reversed", "env.currentTime"
         ]
-    });
+    }), Envelope = timbre.fn.getClass("env");
     
     var STATUSES = ["off","delay","a","r"];
     

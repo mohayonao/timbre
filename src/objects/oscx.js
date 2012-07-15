@@ -30,7 +30,7 @@ var PhaseOscillator = (function() {
         copies: [
             "osc.wave"
         ]
-    });
+    }), Oscillator = timbre.fn.getClass("osc");
     
     
     var initialize = function(_args) {
