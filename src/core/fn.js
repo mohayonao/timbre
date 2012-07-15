@@ -223,6 +223,8 @@ timbre.fn = (function(timbre) {
     
     
     fn.init = function() {
+        if (TimbreObject.objectId === 0) timbre.setup();
+        
         var klass, instance;
         var isThrougOut, isUndefined;
         
@@ -275,7 +277,6 @@ timbre.fn = (function(timbre) {
             if (!instance.hasOwnProperty("_")) instance._ = {};
             instance._.proto = p;
             instance._.isUndefined = !!isUndefined;
-            if (TimbreObject.objectId === 0) timbre.setup();
             instance._.id = TimbreObject.objectId++;
             
             if (typeof instance._.ev      !== "object") {
