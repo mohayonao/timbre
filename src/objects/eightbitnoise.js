@@ -71,14 +71,16 @@ var EightBitNoise = (function() {
             var freq = _.freq.seq(seq_id)[0];
             var x = _.x, y = _.y;
             var mul = _.mul, add = _.add;
-            var dx = freq / timbre.samplerate;
-            var r  = Math.random;
+            var dx  = freq / timbre.samplerate;
+            var rnd = Math.random;
             
             for (var i = 0, imax = cell.length; i < imax; ++i) {
-                if (x >= 0.25) y = r() < 0.5 ? -1 : +1;
+                if (x >= 0.25) {
+                    y = rnd() * 2 - 1;
+                    do { x -= 0.25 } while (x >= 0.25);
+                }
                 cell[i] = y * mul + add;
                 x += dx;
-                while (x > 1) x -= 1;
             }
             _.x = x; _.y = y;
             
