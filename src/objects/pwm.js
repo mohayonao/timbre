@@ -1,6 +1,7 @@
 /**
- * Pwm: v12.07.13
- * v0.3.3: first version
+ * Pwm: v12.07.16
+ * v 0. 3. 3: first version
+ * v12.07.16: add 'pwm125', 'pwm25', 'pwm50'
  */
 "use strict";
 
@@ -28,13 +29,13 @@ var Pwm = (function() {
         } // properties
     });
     
-    
     var initialize = function(_args) {
-        var i, _;
+        var _ = this._ = {};
         
-        this._ = _ = {};
-        i = 0;
+        _.x     = 0;
+        _.coeff = 1 / timbre.samplerate;
         
+        var i = 0;
         if (typeof _args[i] !== "undefined") {
             this.width = _args[i++];
         } else {
@@ -45,14 +46,17 @@ var Pwm = (function() {
         } else {
             this.freq = 440;
         }
-        
-        _.x     = 0;
-        _.coeff = 1 / timbre.samplerate;
+        if (typeof _args[i] === "number") {
+            _.mul = _args[i++];    
+        }
+        if (typeof _args[i] === "number") {
+            _.add = _args[i++];    
+        }
     };
     
     $this.clone = function(deep) {
-        var newone, _ = this._;
-        newone = T("pwm");
+        var _ = this._;
+        var newone = T("pwm");
         if (deep) {
             newone._.width = _.width.clone(true);
             newone._.freq  = _.freq.clone(true);
@@ -71,41 +75,36 @@ var Pwm = (function() {
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell;
-        var width, freq, mul, add;
-        var x, dx, coeff, xx;
-        var i, imax;
         
         if (!_.ison) return timbre._.none;
         
-        cell = this.cell;
+        var cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
             
-            width = _.width.seq(seq_id)[0];
-            freq  = _.freq .seq(seq_id);
-            mul   = _.mul;
-            add   = _.add;
-            x     = _.x;
-            coeff = _.coeff;
-            if (_.ar) {
+            var width = _.width.seq(seq_id)[0];
+            var freq  = _.freq .seq(seq_id);
+            var mul = _.mul, add = _.add;
+            var x = _.x, coeff = _.coeff;
+            
+            if (_.ar) { // ar-mode
                 if (_.freq.isAr) {
-                    for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
-                        cell[i] = ((x < width) ? -1 : +1) * mul + add;
+                    for (var i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                        cell[i] = ((x < width) ? +1 : -1) * mul + add;
                         x += freq[i] * coeff;
-                        while (x > 1.0) x -= 1.0;
+                        while (x > 1) x -= 1;
                     }
                 } else {
-                    dx = freq[0] * coeff;
-                    for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
-                        cell[i] = ((x < width) ? -1 : +1) * mul + add;
+                    var dx = freq[0] * coeff;
+                    for (var i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                        cell[i] = ((x < width) ? +1 : -1) * mul + add;
                         x += dx;
-                        while (x > 1.0) x -= 1.0;
+                        while (x > 1) x -= 1;
                     }
                 }
-            } else {
-                xx = ((_.x < width) ? -1 : +1) * _.mul + add;
-                for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+            } else {    // kr-mode
+                var xx = ((_.x < width) ? +1 : -1) * mul + add;
+                for (var i = 0, imax = timbre.cellsize; i < imax; ++i) {
                     cell[i] = xx;
                 }
                 x += freq[0] * coeff * imax;
@@ -119,6 +118,16 @@ var Pwm = (function() {
     return Pwm;
 }());
 timbre.fn.register("pwm", Pwm);
+
+timbre.fn.register("pwm125", Pwm, function(_args) {
+    return new Pwm([0.125].concat(_args));
+});
+timbre.fn.register("pwm25", Pwm, function(_args) {
+    return new Pwm([0.25].concat(_args));
+});
+timbre.fn.register("pwm50", Pwm, function(_args) {
+    return new Pwm([0.5].concat(_args));
+});
 
 // __END__
 if (module.parent && !module.parent.parent) {
