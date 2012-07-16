@@ -2,6 +2,7 @@
  * ADSREnvelope: v12.07.13
  * ADSR envelope generator
  * v12.07.12: add ar-mode
+ * v12.07.16: mv PercussiveEnvelope -> ADSREnvelope
  */
 "use strict";
 
@@ -68,38 +69,36 @@ var ADSREnvelope = (function() {
             }
         }, // properties
         copies: [
-            "env.table", "env.delay", "env.reversed", "env.currentTime"
+            "env.table", "env.delay", "env.reversed", "env.currentTime",
+            "env.seq()"
         ]
     });
     
     var STATUSES = ["off","delay","a","d","s","r"];
     
-    
     var initialize = function(_args) {
-        var i, nums, _;
+        var _ = this._ = {};
         
-        _ = this._ = {};
+        _.a  = 0; _.d  = 0; _.s  = Infinity; _.r  = 0;
+        _.al = 0; _.dl = 1; _.sl = 0       ; _.rl = 0;
+        _.delay = 0;
+        _.status = -1;
+        _.samples = Infinity;
+        _.x0 = 0;
+        _.dx = 0;
+        _.currentTime = 0;
+        _.reversed = false;
         
-        i = 0;
+        var i = 0;
         if (typeof _args[i] === "string") {
             this.table = _args[i++];
         }
         if (_.table === undefined) this.table = "linear";
         
-        nums = [];
+        var nums = [];
         while (typeof _args[i] === "number") {
             nums.push(_args[i++]);
         }
-        
-        _.delay = 0;
-        _.a = 0;
-        _.d = 0;
-        _.s = Infinity;
-        _.r = 0;
-        _.al = 0;
-        _.dl = 1;
-        _.sl = 0;
-        _.rl = 0;
         
         switch (nums.length) {
         case 0: // T("adsr");
@@ -135,29 +134,23 @@ var ADSREnvelope = (function() {
             _.a  = nums[1]; _.d  = nums[2]; _.s  = nums[3]; _.r  = nums[4];
             _.al = nums[5]; _.dl = nums[6]; _.sl = nums[7]; _.rl = nums[5];
             break;
-        default: // // T("adsr", delay, attack, decay, sustain, release, attack-level, decay-level, sustain-level, release-level);
+        default: // T("adsr", delay, attack, decay, sustain, release, attack-level, decay-level, sustain-level, release-level);
             _.delay = nums[0];
             _.a  = nums[1]; _.d  = nums[2]; _.s  = nums[3]; _.r  = nums[4];
             _.al = nums[5]; _.dl = nums[6]; _.sl = nums[7]; _.rl = nums[8];
             break;
         }
         
-        _.reversed = false;
         if (typeof _args[i] === "boolean") {
             _.reversed = _args[i++];
         }
         
-        _.status = -1;
-        _.samples = Infinity;
-        _.x0 = _.rl;
-        _.dx = 0;
-        _.currentTime = 0;
+        _.changeState = changeState;
     };
     
     $this.clone = function(deep) {
-        var newone, _ = this._;
-        var args, i, imax;
-        newone = timbre("adsr", _.tableName);
+        var _ = this._;
+        var newone = timbre("adsr", _.tableName);
         newone._.delay = _.delay;
         newone._.a = _.a; newone._.al = _.al;
         newone._.d = _.d; newone._.dl = _.dl;
@@ -172,9 +165,8 @@ var ADSREnvelope = (function() {
         
         // off -> delay
         _.status  = 0;
-        if (_.delay < 0) {
-            _.samples = 0;
-            _.dx = 0;
+        if (_.delay <= 0) {
+            _.samples = _.dx = 0;
         } else {
             _.samples = (timbre.samplerate * (_.delay / 1000))|0;
             _.dx = timbre.cellsize * (_.al - _.rl) / _.samples;
@@ -191,7 +183,7 @@ var ADSREnvelope = (function() {
         if (_.status <= 3) {
             // (delay, A, D, S) -> R
             _.status  = 4;
-            if (_.r < 0 || _.r === Infinity) {
+            if (_.r <= 0 || _.r === Infinity) {
                 _.samples = Infinity;
                 _.dx = 0;
             } else {
@@ -201,113 +193,163 @@ var ADSREnvelope = (function() {
             timbre.fn.doEvent(this, "R");
         }
     };
-    
-    $this.seq = function(seq_id) {
-        var _ = this._;
-        var cell, x0, x1, dx, i, imax;
-        var mul, add;
-        
-        if (!_.ison) return timbre._.none;
-        
-        cell = this.cell;
-        if (seq_id !== this.seq_id) {
-            this.seq_id = seq_id;
-            
-            while (_.samples <= 0) {
-                if (_.status === 0) { // delay -> A
-                    _.status = 1;
-                    if (_.a < 0 || _.a === Infinity) {
-                        _.samples = Infinity;
-                        _.dx = 0;
-                    } else {
-                        _.samples += (timbre.samplerate * (_.a / 1000))|0;
-                        _.dx = (timbre.cellsize * (_.dl -_.al)) / _.samples;
-                    }
-                    _.x0 = _.al;
-                    timbre.fn.doEvent(this, "A");
-                    continue;
-                }
-                if (_.status === 1) { // A -> D
-                    _.status = 2;
-                    if (_.d < 0) {
-                        _.samples = Infinity;
-                        _.dx = 0;
-                    } else {
-                        _.samples += (timbre.samplerate * (_.d / 1000))|0;
-                        _.dx = -timbre.cellsize * (_.dl - _.sl) / _.samples;
-                    }
-                    _.x0 = _.dl;
-                    timbre.fn.doEvent(this, "D");
-                    continue;
-                }
-                if (_.status === 2) { // D -> S
-                    if (_.sl === 0) {
-                        _.status = 4;
-                        continue;
-                    }
-                    _.status = 3;
-                    _.x0 = _.sl;
-                    if (_.s < 0 || _.s === Infinity) {
-                        _.samples = Infinity;
-                        _.dx = 0;
-                    } else {
-                        _.samples += (timbre.samplerate * (_.s / 1000))|0;
-                        _.dx = -timbre.cellsize * (_.sl - _.rl) / _.samples;
-                    }
-                    timbre.fn.doEvent(this, "S");
-                    continue;
-                }
-                if (_.status <= 4) { // (S, R) -> end
-                    _.status  = -1;
-                    _.samples = Infinity;
-                    _.x0 = _.rl;
-                    _.dx = 0;
-                    timbre.fn.doEvent(this, "ended");
-                    continue;
-                }
-            }
-            
-            if (_.ar) { // ar-mode (v12.07.12)
-                
-                mul = _.mul;
-                add = _.add;
 
-                if (_.x0 === 1) {
-                    x0 = x1 = 1;
+    var changeState = function() {
+        var _ = this._;
+        
+        while (_.samples <= 0) {
+            if (_.status === 0) { // delay -> A
+                _.status = 1;
+                if (_.a <= 0 || _.a === Infinity) {
+                    _.samples = Infinity;
+                    _.dx = 0;
                 } else {
-                    x0 = _.table[((_.x0       ) * 512)|0];
-                    x1 = _.table[((_.x0 + _.dx) * 512)|0];
-                    if (x1 === undefined) x1 = x0;
+                    _.samples += (timbre.samplerate * _.a / 1000)|0;
+                    _.dx = (timbre.cellsize * (_.dl -_.al)) / _.samples;
                 }
-                if (_.reversed) {
-                    x0 = 1 - x0; x1 = 1 - x1;
-                }
-                dx = (x1 - x0) / cell.length;
-                for (i = 0, imax = cell.length; i < imax; ++i) {
-                    cell[i] = x0 * mul + add;
-                    x0 += dx;
-                }
-                
-            } else {   // kr-mode
-            
-                x0 = (_.x0 === 1) ? 1 : _.table[(_.x0 * 512)|0];
-                if (_.reversed) x = 1 - x0;
-                
-                x0 = x0 * _.mul + _.add;
-                for (i = 0, imax = cell.length; i < imax; ++i) {
-                    cell[i] = x0;
-                }
+                _.x0 = _.al;
+                timbre.fn.doEvent(this, "A");
+                continue;
             }
-            _.x0 += _.dx;
-            _.samples -= imax;
-            _.currentTime += imax * 1000 / timbre.samplerate;
+            if (_.status === 1) { // A -> D
+                _.status = 2;
+                if (_.d <= 0) {
+                    _.samples = Infinity;
+                    _.dx = 0;
+                } else {
+                    _.samples += (timbre.samplerate * _.d / 1000)|0;
+                    _.dx = -timbre.cellsize * (_.dl - _.sl) / _.samples;
+                }
+                _.x0 = _.dl;
+                timbre.fn.doEvent(this, "D");
+                continue;
+            }
+            if (_.status === 2) { // D -> S
+                if (_.sl === 0) {
+                    _.status = 4;
+                    continue;
+                }
+                _.status = 3;
+                _.x0 = _.sl;
+                if (_.s <= 0 || _.s === Infinity) {
+                    _.samples = Infinity;
+                    _.dx = 0;
+                } else {
+                    _.samples += (timbre.samplerate * _.s / 1000)|0;
+                    _.dx = -timbre.cellsize * (_.sl - _.rl) / _.samples;
+                }
+                timbre.fn.doEvent(this, "S");
+                continue;
+            }
+            if (_.status <= 4) { // (S, R) -> end
+                _.status  = -1;
+                _.samples = Infinity;
+                _.x0 = _.rl;
+                _.dx = 0;
+                timbre.fn.doEvent(this, "ended");
+                continue;
+            }
         }
-        return cell;
     };
     
     return ADSREnvelope;
 }());
 timbre.fn.register("adsr", ADSREnvelope);
+
+
+(function() { // PercussiveEnvelope
+    
+    var changeState = function() {
+        var _ = this._;
+        
+        while (_.samples <= 0) {
+            if (_.status === 0) { // delay -> A
+                _.status = 1;
+                if (_.a <= 0) {
+                    _.samples = 0;
+                    _.dx = 0;
+                } else {
+                    _.samples += (timbre.samplerate * _.a / 1000)|0;
+                    _.dx = (timbre.cellsize * (1 -_.al)) / _.samples;
+                }
+                _.x0 = _.al;
+                timbre.fn.doEvent(this, "A");
+                continue;
+            }
+            if (_.status === 1) {
+                // A -> R
+                _.status  = 4;
+                if (_.r <= 0) {
+                    _.x0 = 0;
+                    _.samples = 0;
+                    _.dx = 0;
+                } else {
+                    _.x0 = 1;
+                    _.samples = (timbre.samplerate * _.r / 1000)|0;
+                    _.dx = -timbre.cellsize / _.samples;
+                }
+                timbre.fn.doEvent(this, "R");
+                continue;
+            }
+            if (_.status === 4) {
+                // R -> end
+                _.status  = -1;
+                _.samples = Infinity;
+                _.x0 = _.dx = 0;
+                timbre.fn.doEvent(this, "ended");
+                continue;
+            }
+        }
+    };
+    
+    timbre.fn.register("perc", ADSREnvelope, function(_args) {
+        var i = 0;
+        
+        var args = [];
+        if (typeof _args[i] === "string") {
+            args.push(_args[i++]);
+        }
+        
+        var nums = [];
+        while (typeof _args[i] === "number") {
+            nums.push(_args[i++]);
+        }
+        
+        switch (nums.length) {
+        case 0: // T("perc");
+            args = args.concat([0,
+                                0, 0, 0, 1000,
+                                0, 1, 0, 0]);
+            break;
+        case 1: // T("perc", release);
+            args = args.concat([0,
+                                0, 0, 0, nums[0],
+                                0, 1, 0, 0]);
+            break;
+        case 2: // T("perc", attack, release);
+            args = args.concat([0,
+                                nums[0], 0, 0, nums[1],
+                                0      , 1, 0, 0]);
+            break;
+        case 3: // T("perc", delay, attack, release);
+            args = args.concat([nums[0],
+                                nums[1], 0, 0, nums[2],
+                                0      , 1, 0, 0]);
+            break;
+        default: // T("perc", delay, attack, release, attack-level);
+            args = args.concat([nums[0],
+                                nums[1], 0, 0, nums[2],
+                                nums[3], 1, 0, 0]);
+            break;
+        }
+        if (typeof _args[i] === "boolean" ) args.push(_args[i++]);
+        if (typeof _args[i] === "function") args.push(_args[i++]);
+        
+        var adsr = new ADSREnvelope(args);
+        adsr._.changeState = changeState;
+        return adsr;
+    });
+}());
 
 // __END__
 if (module.parent && !module.parent.parent) {

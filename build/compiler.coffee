@@ -33,7 +33,6 @@ TIMBRE_SOURCES = [
 
     "objects/env"
     "objects/adsr"
-    "objects/perc"
 
     "objects/filter"
     "objects/rfilter"
