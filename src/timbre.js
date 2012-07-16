@@ -23,46 +23,43 @@ timbre.context    = {};
 timbre.utils      = {};
 timbre._ = { ev:{}, amp:0.8,
              autorun:true, verbose:true, workerpath:"",
-             none: new Float32Array(timbre.cellsize) };
+             none:new Float32Array(timbre.cellsize) };
 
-Object.defineProperty(timbre, "amp", {
-    set: function(value) {
-        if (typeof value === "number") {
-            timbre._.amp = value;
-        }
+Object.defineProperties(timbre, {
+    amp: {
+        set: function(value) {
+            if (typeof value === "number") timbre._.amp = value;
+        },
+        get: function() { return timbre._.amp; }
     },
-    get: function() { return timbre._.amp; }
-});
-Object.defineProperty(timbre, "autorun", {
-    set: function(value) {
-        timbre._.autorun = !!value;
+    autorun: {
+        set: function(value) {
+            timbre._.autorun = !!value;
+        },
+        get: function() { return timbre._.autorun; }
     },
-    get: function() { return timbre._.autorun; }
-});
-Object.defineProperty(timbre, "workerpath", {
-    set: function(value) {
-        if (typeof value === "string") {
-            timbre._.workerpath = value;
-        }
+    workerpath: {
+        set: function(value) {
+            if (typeof value === "string") timbre._.workerpath = value;
+        },
+        get: function() { return timbre._.workerpath; }
     },
-    get: function() { return timbre._.workerpath; }
-});
-Object.defineProperty(timbre, "verbose", {
-    set: function(value) {
-        timbre._.verbose = !!value;
+    verbose: {
+        set: function(value) {
+            timbre._.verbose = !!value;
+        },
+        get: function() { return timbre._.verbose; }
     },
-    get: function() { return timbre._.verbose; }
+    isOn: {
+        get: function() { return timbre.sys._.ison; }
+    },
+    isOff: {
+        get: function() { return !timbre.sys._.ison; }
+    }
 });
-Object.defineProperty(timbre, "isOn", {
-    get: function() { return timbre.sys._.ison; }
-});
-Object.defineProperty(timbre, "isOff", {
-    get: function() { return !timbre.sys._.ison; }
-});
+
 
 timbre.setup = function(params) {
-    var samplerate, channels, cellsize, streamsize;
-    
     if (!Object.isFrozen(timbre)) {
         if (typeof params === "object") {
             if (typeof params.samplerate === "number") {
@@ -79,6 +76,7 @@ timbre.setup = function(params) {
             }
         }
         timbre.sys.setup();
+        timbre._.none = new Float32Array(timbre.cellsize);
         Object.freeze(timbre);
     } else {
         if (timbre._.verbose && params) {
@@ -103,13 +101,12 @@ timbre.off = function() {
     return timbre;
 };
 timbre.addEventListener = function(name, func) {
-    var list, rm, i;
     if (typeof func === "function") {
         if (name[0] === "~") {
             name = name.substr(1);
             func.rm = true;
         }
-        list = this._.ev[name];
+        var i, list = this._.ev[name];
         if (list === undefined) {
             this._.ev[name] = list = [];
         }
@@ -120,9 +117,8 @@ timbre.addEventListener = function(name, func) {
     return this;
 };
 timbre.removeEventListener = function(name, func) {
-    var list, i;
     if (typeof name === "string" && name !== "") {
-        list = this._.ev[name];
+        var i, list = this._.ev[name];
         if (list !== undefined) {
             if ((i = list.indexOf(func)) !== -1) {
                 list.splice(i, 1);
@@ -142,10 +138,9 @@ timbre.removeAllEventListeners = function(name) {
 
 (function() {
     var append = function() {
-        var args, p, b, i, imax;
-        args = timbre.fn.valist(arguments);
-        for (i = 0, imax = args.length, b = false; i < imax; ++i) {
-            p = args[i]._.proto;
+        var args = timbre.fn.valist(arguments);
+        for (var i = 0, imax = args.length, b = false; i < imax; ++i) {
+            var p = args[i]._.proto;
             if (p._.type === this.type) {
                 if (this.indexOf(args[i]) === -1) {
                     this.push(args[i]);
@@ -157,8 +152,7 @@ timbre.removeAllEventListeners = function(name) {
         return this;
     };
     var remove = function() {
-        var i, j;
-        for (i = arguments.length; i--; ) {
+        for (var i = arguments.length, j; i--; ) {
             if ((j = this.indexOf(arguments[i])) !== -1) {
                 this.splice(j, 1);
             }
@@ -176,8 +170,7 @@ timbre.removeAllEventListeners = function(name) {
         return this;
     };
     
-    var i, x;
-    for (i = arguments.length; i--; ) {
+    for (var x, i = arguments.length; i--; ) {
         x = arguments[i];
         x.append    = append;
         x.remove    = remove;
