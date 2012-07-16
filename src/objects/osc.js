@@ -79,7 +79,7 @@ var Oscillator = (function() {
             this.wave = _args[i++];
         }
         
-        if (typeof _args[i] !== "undefined") {
+        if (_args[i] !== undefined) {
             this.freq = _args[i++];
         } else {
             this.freq = 440;
