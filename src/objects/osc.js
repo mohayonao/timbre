@@ -2,7 +2,7 @@
  * Oscillator: v12.07.12
  * Table lookup oscillator
  * v 0. 0. 1: first version
- * v12.07.12: add "pwm125", "pwm25", "pwm50"
+ * v12.07.16: wave shaping
  */
 "use strict";
 
@@ -17,25 +17,24 @@ var Oscillator = (function() {
         properties: {
             wave: {
                 set: function(value) {
-                    var wave, i, dx;
-                    wave = this._.wave;
+                    var dx, wave = this._.wave;
                     if (typeof value === "function") {
-                        for (i = 0; i < 1024; i++) {
+                        for (var i = 0; i < 1024; i++) {
                             wave[i] = value(i / 1024);
                         }
                     } else if (typeof value === "object" &&
-                               (value instanceof Array || value.buffer instanceof ArrayBuffer)) {
+                               (value instanceof Array ||
+                                value.buffer instanceof ArrayBuffer)) {
                         if (value.length === 1024) {
                             this._.wave = value;
                         } else {
                             dx = value.length / 1024;
-                            for (i = 0; i < 1024; i++) {
+                            for (var i = 0; i < 1024; i++) {
                                 wave[i] = value[(i * dx)|0] || 0.0;
                             }
                         }
                     } else if (typeof value === "string") {
-                        if ((dx = Oscillator.Wavetables[value]) !== undefined) {
-                            if (typeof dx === "function") dx = dx();
+                        if ((dx = this.getWavetable(value)) !== undefined) {
                             this._.wave = dx;
                         }
                     }
@@ -62,24 +61,24 @@ var Oscillator = (function() {
         } // properties
     });
     
-    
     var initialize = function(_args) {
-        var i, _;
-
-        this._ = _ = {};
-        i = 0;
+        var _ = this._ = {};
         
-        _.wave = new Float32Array(1024);        
+        _.wave  = new Float32Array(1024);
+        _.phase = 0;
+        _.x     = 0;
+        _.coeff = 1024 / timbre.samplerate;
         
+        var i = 0;
+        this.wave = "sin";
         if (typeof _args[i] === "function") {
             this.wave = _args[i++];
-        } else if (typeof _args[i] === "object" && _args[i] instanceof Float32Array) {
+        } else if (_args[i] instanceof Float32Array) {
             this.wave = _args[i++];
-        } else if (typeof _args[i] === "string" && Oscillator.Wavetables[_args[i]]) {
+        } else if (typeof _args[i] === "string") {
             this.wave = _args[i++];
-        } else {
-            this.wave = "sin";
         }
+        
         if (typeof _args[i] !== "undefined") {
             this.freq = _args[i++];
         } else {
@@ -91,15 +90,11 @@ var Oscillator = (function() {
         if (typeof _args[i] === "number") {
             _.add = _args[i++];    
         }
-        
-        _.phase = 0;
-        _.x = 1024 * _.phase;
-        _.coeff = 1024 / timbre.samplerate;
     };
     
     $this.clone = function(deep) {
-        var newone, _ = this._;
-        newone = timbre("osc", _.wave);
+        var _ = this._;
+        var newone = timbre("osc", _.wave);
         if (deep) {
             newone._.freq = _.freq.clone(true);
         } else {
@@ -110,97 +105,166 @@ var Oscillator = (function() {
     };
     
     $this.bang = function() {
-        this._.x = 1024 * this._.phase;
+        var _ = this._;
+        _.x = 1024 * _.phase;
         timbre.fn.doEvent(this, "bang");
         return this;
     };
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var cell;
-        var freq, mul, add, wave;
-        var x, dx, coeff;
         var index, delta, x0, x1, xx;
         var i, imax;
         
         if (!_.ison) return timbre._.none;
         
-        cell = this.cell;
+        var cell = this.cell;
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
             
-            freq = _.freq.seq(seq_id);
+            var freq = _.freq.seq(seq_id);
+            var mul  = _.mul , add = _.add;
+            var wave = _.wave, x   = _.x, coeff = _.coeff;
             
-            mul  = _.mul;
-            add  = _.add;
-            wave = _.wave;
-            x = _.x;
-            coeff = _.coeff;
-            if (_.ar) {
+            if (_.ar) { // ar-mode
                 if (_.freq.isAr) {
                     for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
-                        index = x|0;
-                        delta = x - index;
-                        x0 = wave[(index  ) & 1023];
-                        x1 = wave[(index+1) & 1023];
-                        xx = (1.0 - delta) * x0 + delta * x1;
-                        cell[i] = xx * mul + add;
+                        index = x|0; delta = x - index;
+                        x0 = wave[index & 1023]; x1 = wave[(index+1) & 1023];
+                        cell[i] = ((1.0 - delta) * x0 + delta * x1) * mul + add;
                         x += freq[i] * coeff;
                     }
                 } else {
-                    dx = freq[0] * coeff;
+                    var dx = freq[0] * coeff;
                     for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
-                        index = x|0;
-                        delta = x - index;
-                        x0 = wave[(index  ) & 1023];
-                        x1 = wave[(index+1) & 1023];
-                        xx = (1.0 - delta) * x0 + delta * x1;
-                        cell[i] = xx * mul + add;
+                        index = x|0; delta = x - index;
+                        x0 = wave[index & 1023]; x1 = wave[(index+1) & 1023];
+                        cell[i] = ((1.0 - delta) * x0 + delta * x1) * mul + add;
                         x += dx;
                     }
                 }
-            } else {
-                index = x|0;
-                delta = x - index;
-                x0 = wave[(index  ) & 1023];
-                x1 = wave[(index+1) & 1023];
-                xx = (1.0 - delta) * x0 + delta * x1;
-                xx = xx * mul + add;
-                for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
-                    cell[i] = xx;
-                }
+            } else {    // kr-mode
+                index = x|0; delta = x - index;
+                x0 = wave[index & 1023]; x1 = wave[(index+1) & 1023];
+                xx = ((1.0 - delta) * x0 + delta * x1) * mul + add;
+                for (i = timbre.cellsize; i--; ) cell[i] = xx;
                 x += freq[0] * coeff * imax;
             }
+            while (x > 1024) x -= 1024;
             _.x = x;
         }
         
         return cell;
     };
     
-    $this.getWavetable = function(name) {
-        var wave = Oscillator.Wavetables[name];
+    
+    var shapeWave = function(shape, wave) {
+        var i, _wave;
+        switch (shape) {
+        case "@1":
+            for (i = 512; i < 1024; ++i) wave[i] = 0;
+            break;
+        case "@2":
+            for (i = 512; i < 1024; ++i) wave[i] = Math.abs(wave[i]);
+            break;
+        case "@3":
+            for (i = 256; i <  512; ++i) wave[i] = 0;
+            for (i = 512; i <  768; ++i) wave[i] = Math.abs(wave[i]);
+            for (i = 768; i < 1024; ++i) wave[i] = 0;
+            break;
+        case "@4":
+            _wave = new Float32Array(1024);
+            for (i = 0; i < 512; ++i) _wave[i] = wave[i<<1];
+            wave = _wave;
+            break;
+        case "@5":
+            _wave = new Float32Array(1024);
+            for (i = 0; i < 512; ++i) _wave[i] = Math.abs(wave[i<<1]);
+            wave = _wave;
+            break;
+        }
+        return wave;
+    };
+
+    var phaseDistortion = function(width, wave) {
+        if (width !== undefined) {
+            width *= 0.01;
+            width = (width < 0) ? 0 : (width > 1) ? 1 : width;
+            
+            var _wave = new Float32Array(1024);            
+            var tp = (1024 * width)|0;
+            var x  = 0;
+            var dx = (width > 0) ? 0.5 / width : 0;
+            var index, delta, x0, x1;
+            
+            for (var i = 0; i < 1024; ++i) {
+                index = x|0; delta = x - index;
+                x0 = wave[index & 1023]; x1 = wave[(index+1) & 1023];
+                _wave[i] = ((1.0 - delta) * x0 + delta * x1);
+                if (i === tp) {
+                    x  = 512;
+                    dx = (width < 1) ? 0.5 / (1-width) : 0;
+                }
+                x += dx;
+            }
+            wave = _wave;
+        }
+        return wave;
+    };
+    
+    $this.getWavetable = function(key) {
+        var m, wave = Oscillator.Wavetables[key];
         if (wave !== undefined) {
-            if (typeof wave === "function") wave = wave();
+            if (wave instanceof Function) wave = wave();
             return wave;
+        } else {
+            m = /^([-+]?)(\w+)(?:\((@[0-7])?:?(\d+\.?\d*)?\))?$/.exec(key);
+            if (m !== null) { // wave shape
+                var sign = m[1], name = m[2], shape = m[3], width = m[4];
+                wave = Oscillator.Wavetables[name];
+                if (wave !== undefined) {
+                    wave = (wave instanceof Function) ? wave() : wave;
+                    wave = shapeWave(shape, wave);
+                    wave = phaseDistortion(width, wave);
+                    if (sign === "+") {
+                        for (var i = 1024; i--; )
+                            wave[i] = wave[i] * +0.5 + 0.5;
+                    } else if (sign === "-") {
+                        for (var i = 1024; i--; )
+                            wave[i] *= -1;
+                    }
+                    return Oscillator.Wavetables[key] = wave;
+                }
+            }
+            m = /^wavb\(((?:[0-9a-fA-F][0-9a-fA-F])+)\)$/.exec(key);
+            if (m !== null) {
+                wave = timbre.utils.wavb(m[1]);
+                return Oscillator.Wavetables[key] = wave;
+            }
+            m = /^wavc\(([0-9a-fA-F]{8})\)$/.exec(key);
+            if (m !== null) {
+                wave = timbre.utils.wavc(m[1]);
+                return Oscillator.Wavetables[key] = wave;
+            }
         }
     };
     
     $this.setWavetable = function(name, value) {
-        var wave, i;
         if (typeof value === "function") {
-            wave = new Float32Array(1024);
-            for (i = 0; i < 1024; i++) {
+            var wave = new Float32Array(1024);
+            for (var i = 0; i < 1024; i++) {
                 wave[i] = value(i / 1024);
             }
             Oscillator.Wavetables[name] = wave;
         } else if (typeof value === "object" &&
-                   (value instanceof Array || value.buffer instanceof ArrayBuffer)) {
+                   (value instanceof Array ||
+                    value.buffer instanceof ArrayBuffer)) {
             if (value.length === 1024) {
                 Oscillator.Wavetables[name] = value;
             } else {
-                wave = new Float32Array(1024);
-                dx = value.length / 1024;
-                for (i = 0; i < 1024; i++) {
+                var wave = new Float32Array(1024);
+                var dx = value.length / 1024;
+                for (var i = 0; i < 1024; i++) {
                     wave[i] = value[(i * dx)|0] || 0.0;
                 }
                 Oscillator.Wavetables[name] = value;
@@ -212,160 +276,71 @@ var Oscillator = (function() {
 }());
 timbre.fn.register("osc", Oscillator);
 
-Oscillator.Wavetables = {};
-Oscillator.Wavetables["sin"] = function() {
-    var l, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        l[i] = Math.sin(2 * Math.PI * (i/1024));
+Oscillator.Wavetables = {
+    sin: function() {
+        var l = new Float32Array(1024);
+        for (var i = 1024; i--; )
+            l[i] = Math.sin(2 * Math.PI * (i/1024));
+        return l;
+    },
+    cos: function() {
+        var l = new Float32Array(1024);
+        for (var i = 1024; i--; )
+            l[i] = Math.cos(2 * Math.PI * (i/1024));
+        return l;
+    },
+    pulse: function() {
+        var l = new Float32Array(1024);
+        for (var i = 1024; i--; )
+            l[i] = (i < 512) ? +1 : -1;
+        return l;
+    },
+    tri: function() {
+        var l = new Float32Array(1024);
+        for (var x, i = 1024; i--; ) {
+            x = (i / 1024) - 0.25;
+            l[i] = 1.0 - 4.0 * Math.abs(Math.round(x) - x);
+        }
+        return l;
+    },
+    sawup: function() {
+        var l = new Float32Array(1024);
+        for (var x, i = 1024; i--; ) {
+            x = (i / 1024);
+            l[i] = +2.0 * (x - Math.round(x));
+        }
+        return l;
+    },
+    sawdown: function() {
+        var l = new Float32Array(1024);
+        for (var x, i = 1024; i--; ) {
+            x = (i / 1024);
+            l[i] = -2.0 * (x - Math.round(x));
+        }
+        return l;
+    },
+    fami: function() {
+        var d = [ +0.000, +0.125, +0.250, +0.375, +0.500, +0.625, +0.750, +0.875,
+                  +0.875, +0.750, +0.625, +0.500, +0.375, +0.250, +0.125, +0.000,
+                  -0.125, -0.250, -0.375, -0.500, -0.625, -0.750, -0.875, -1.000,
+                  -1.000, -0.875, -0.750, -0.625, -0.500, -0.375, -0.250, -0.125 ];
+        var l = new Float32Array(1024);
+        for (var i = 1024; i--; )
+            l[i] = d[(i / 1024 * d.length)|0];
+        return l;
+    },
+    konami: function() {
+        var d = [-0.625, -0.875, -0.125, +0.750, + 0.500, +0.125, +0.500, +0.750,
+                 +0.250, -0.125, +0.500, +0.875, + 0.625, +0.000, +0.250, +0.375,
+                 -0.125, -0.750, +0.000, +0.625, + 0.125, -0.500, -0.375, -0.125,
+                 -0.750, -1.000, -0.625, +0.000, - 0.375, -0.875, -0.625, -0.250 ];
+        var l = new Float32Array(1024);
+        for (var i = 1024; i--; )
+            l[i] = d[(i / 1024 * d.length)|0];
+        return l;
     }
-    return l;
 };
-Oscillator.Wavetables["+sin"] = function() {
-    var l, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        l[i] = Math.sin(2 * Math.PI * (i/1024)) * 0.5 + 0.5;
-    }
-    return l;
-};
-Oscillator.Wavetables["cos"] = function() {
-    var l, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        l[i] = Math.cos(2 * Math.PI * (i/1024));
-    }
-    return l;
-};
-Oscillator.Wavetables["+cos"] = function() {
-    var l, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        l[i] = Math.cos(2 * Math.PI * (i/1024)) * 0.5 + 0.5;
-    }
-    return l;
-};
-Oscillator.Wavetables["pulse"] = function() {
-    var l, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        l[i] = i < 512 ? -1 : +1;
-    }
-    return l;
-};
-Oscillator.Wavetables["pwm125"] = function() {
-    var l, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        l[i] = i < 128 ? -1 : +1;
-    }
-    return l;
-};
-Oscillator.Wavetables["pwm25"] = function() {
-    var l, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        l[i] = i < 256 ? -1 : +1;
-    }
-    return l;
-};
-Oscillator.Wavetables["pwm50"] = function() {
-    var l, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        l[i] = i < 512 ? -1 : +1;
-    }
-    return l;
-};
-Oscillator.Wavetables["+pulse"] = function() {
-    var l, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        l[i] = i < 512 ? 0 : 1;
-    }
-    return l;
-};
-Oscillator.Wavetables["tri"] = function() {
-    var l, x, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        x = (i / 1024) - 0.25;
-        l[i] = 1.0 - 4.0 * Math.abs(Math.round(x) - x);
-    }
-    return l;
-};
-Oscillator.Wavetables["+tri"] = function() {
-    var l, x, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        x = (i / 1024) - 0.25;
-        l[i] = (1.0 - 4.0 * Math.abs(Math.round(x) - x)) * 0.5 + 0.5;
-    }
-    return l;
-};
-Oscillator.Wavetables["sawup"] = function() {
-    var l, x, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        x = (i / 1024);
-        l[i] = +2.0 * (x - Math.round(x));
-    }
-    return l;
-};
-Oscillator.Wavetables["+sawup"] = function() {
-    var l, x, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        x = (i / 1024);
-        l[i] = (+2.0 * (x - Math.round(x))) * 0.5 + 0.5;
-    }
-    return l;
-};
-Oscillator.Wavetables["saw"]  = Oscillator.Wavetables["sawup"];
-Oscillator.Wavetables["+saw"] = Oscillator.Wavetables["+sawup"];
-Oscillator.Wavetables["sawdown"] = function() {
-    var l, x, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        x = (i / 1024);
-        l[i] = -2.0 * (x - Math.round(x));
-    }
-    return l;
-};
-Oscillator.Wavetables["+sawdown"] = function() {
-    var l, x, i;
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        x = (i / 1024);
-        l[i] = (-2.0 * (x - Math.round(x))) * 0.5 + 0.5;
-    }
-    return l;
-};
-Oscillator.Wavetables["fami"] = function() {
-    var l, d, x, i, j;
-    d = [ +0.000, +0.125, +0.250, +0.375, +0.500, +0.625, +0.750, +0.875,
-          +0.875, +0.750, +0.625, +0.500, +0.375, +0.250, +0.125, +0.000,
-          -0.125, -0.250, -0.375, -0.500, -0.625, -0.750, -0.875, -1.000,
-          -1.000, -0.875, -0.750, -0.625, -0.500, -0.375, -0.250, -0.125 ];
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        l[i] = d[((i / 1024) * d.length)|0];
-    }
-    return l;
-};
-Oscillator.Wavetables["konami"] = function() {
-    var l, d, x, i, j;
-        d = [-0.625, -0.875, -0.125, +0.750, + 0.500, +0.125, +0.500, +0.750,
-             +0.250, -0.125, +0.500, +0.875, + 0.625, +0.000, +0.250, +0.375,
-             -0.125, -0.750, +0.000, +0.625, + 0.125, -0.500, -0.375, -0.125,
-             -0.750, -1.000, -0.625, +0.000, - 0.375, -0.875, -0.625, -0.250 ];
-    l = new Float32Array(1024);
-    for (i = 0; i < 1024; ++i) {
-        l[i] = d[((i / 1024) * d.length)|0];
-    }
-    return l;
-};
-
+Oscillator.Wavetables["saw"] = Oscillator.Wavetables["sawup" ];
 
 timbre.fn.register("sin", Oscillator, function(_args) {
     return new Oscillator(["sin"].concat(_args));
@@ -375,15 +350,6 @@ timbre.fn.register("cos", Oscillator, function(_args) {
 });
 timbre.fn.register("pulse", Oscillator, function(_args) {
     return new Oscillator(["pulse"].concat(_args));
-});
-timbre.fn.register("pwm125", Oscillator, function(_args) {
-    return new Oscillator(["pwm125"].concat(_args));
-});
-timbre.fn.register("pwm25", Oscillator, function(_args) {
-    return new Oscillator(["pwm25"].concat(_args));
-});
-timbre.fn.register("pwm50", Oscillator, function(_args) {
-    return new Oscillator(["pwm50"].concat(_args));
 });
 timbre.fn.register("tri", Oscillator, function(_args) {
     return new Oscillator(["tri"].concat(_args));
