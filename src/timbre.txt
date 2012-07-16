@@ -1,6 +1,5 @@
 /**
- * Timbre.js ${VERSION} / JavaScript Library for Objective Sound Programming
- * build: ${DATE}
+ * timbre.js ${VERSION} / JavaScript Library for Objective Sound Programming
  */
 ;
 var timbre = (function(context, timbre) {
