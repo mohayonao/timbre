@@ -42,20 +42,18 @@ var Interval = (function() {
         } // properties
     });
     
-    
     var initialize = function(_args) {
-        var i, nums, _;
+        var _ = this._ = {};
         
-        this._ = _ = {};
-        nums = [];
+        _.ison = false;
+        _.samples = _.count = _.currentTime = 0;
         
-        i = 0;
-        if (typeof _args[i] === "number") {
+        var i = 0;
+        var nums = [];
+        while (typeof _args[i] === "number") {
             nums.push(_args[i++]);
-            if (typeof _args[i] === "number") {
-                nums.push(_args[i++]);
-            }
         }
+        
         switch (nums.length) {
         case 1:
             this.delay    = 0;
@@ -72,11 +70,6 @@ var Interval = (function() {
         }
         
         this.args = _args.slice(i).map(timbre);
-        
-        _.ison = false;
-        _.samples = 0;
-        _.count = 0;
-        _.currentTime = 0;
     };
     
     $this.clone = function(deep) {
@@ -85,30 +78,27 @@ var Interval = (function() {
     
     $this.bang = function() {
         var _ = this._;
-        _.delaySamples = (timbre.samplerate * (_.delay / 1000))|0;;
-        _.samples = 0;
-        _.count   = 0;
-        _.currentTime = 0;
+        _.delaySamples = (timbre.samplerate * (_.delay / 1000))|0;
+        _.samples = _.count = _.currentTime = 0;
         timbre.fn.doEvent(this, "bang");
-        
         return this;
     };
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var args, i, imax;
         
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
             if (_.delaySamples > 0) {
                 _.delaySamples -= timbre.cellsize;
             }
+            
             if (_.delaySamples <= 0) {
                 _.samples -= timbre.cellsize;
                 if (_.samples <= 0) {
-                    _.samples += (timbre.samplerate * (_.interval / 1000))|0;
-                    args = this.args.slice(0);
-                    for (i = 0, imax = args.length; i < imax; ++i) {
+                    _.samples += (timbre.samplerate * _.interval / 1000)|0;
+                    var args = this.args.slice(0);
+                    for (var i = 0, imax = args.length; i < imax; ++i) {
                         args[i].bang();
                     }
                     ++_.count;

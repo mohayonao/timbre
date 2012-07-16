@@ -28,23 +28,19 @@ var Timeout = (function() {
         } // properties
     });
     
-    
     var initialize = function(_args) {
-        var i, _;
-
-        this._ = _ = {};
+        var _ = this._ = {};
         
-        i = 0;
+        _.ison = false;
+        _.samples = _.currentTime = 0;
+        
+        var i = 0;
         if (typeof _args[i] === "number") {
             this.timeout = _args[i++];
         } else {
             this.timeout = 1000;
         }
         this.args = _args.slice(i).map(timbre);
-        
-        _.ison = false;
-        _.samples = 0;
-        _.currentTime = 0;
     };
     
     $this.clone = function(deep) {
@@ -57,24 +53,22 @@ var Timeout = (function() {
     
     $this.bang = function() {
         var _ = this._;
-        
         _.samples = _.timeout_samples;
         _.currentTime = 0;
         timbre.fn.doEvent(this, "bang");
-        
         return this;
     };
     
     $this.seq = function(seq_id) {
         var _ = this._;
-        var args, i, imax;
+        
         if (seq_id !== this.seq_id) {
             this.seq_id = seq_id;
             _.samples -= timbre.cellsize;
             if (_.samples <= 0) {
                 _.samples = 0;
-                args = this.args.slice(0);
-                for (i = 0, imax = args.length; i < imax; ++i) {
+                var args = this.args.slice(0);
+                for (var i = 0, imax = args.length; i < imax; ++i) {
                     args[i].bang();
                 }
                 if (_.samples <= 0) this.off();
