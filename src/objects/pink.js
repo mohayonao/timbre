@@ -43,9 +43,9 @@ var PinkNoise = (function() {
             var b0 = _.b0, b1 = _.b1, b2 = _.b2;
             var mul = _.mul, add = _.add;
             
-            var r = Math.random;
+            var rnd = Math.random;
             for (var i = cell.length; i--; ) {
-                var x = (r() - 0.5) * 0.5;
+                var x = rnd() * 2 - 1;
                 b0 = 0.99765 * b0 + x * 0.0990460;
                 b1 = 0.96300 * b1 + x * 0.2965164;
                 b2 = 0.57000 * b2 + x * 1.0526913;
