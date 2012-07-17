@@ -167,6 +167,9 @@ var ADSREnvelope = (function() {
         _.status  = 0;
         if (_.delay <= 0) {
             _.samples = _.dx = 0;
+        } else if (_.delay === Infinity) {
+            _.samples = Infinity;
+            _.dx = 0;
         } else {
             _.samples = (timbre.samplerate * (_.delay / 1000))|0;
             _.dx = timbre.cellsize * (_.al - _.rl) / _.samples;
@@ -183,11 +186,13 @@ var ADSREnvelope = (function() {
         if (_.status <= 3) {
             // (delay, A, D, S) -> R
             _.status  = 4;
-            if (_.r <= 0 || _.r === Infinity) {
+            if (_.r <= 0) {
+                _.samples = _.dx = 0;
+            } else if (_.r === Infinity) {
                 _.samples = Infinity;
                 _.dx = 0;
             } else {
-                _.samples = (timbre.samplerate * (_.r / 1000))|0;
+                _.samples = (timbre.samplerate * _.r / 1000)|0;
                 _.dx = -timbre.cellsize * (_.x0 - _.rl) / _.samples;
             }
             timbre.fn.doEvent(this, "R");
@@ -200,7 +205,9 @@ var ADSREnvelope = (function() {
         while (_.samples <= 0) {
             if (_.status === 0) { // delay -> A
                 _.status = 1;
-                if (_.a <= 0 || _.a === Infinity) {
+                if (_.a <= 0) {
+                    _.samples = _.dx = 0;
+                } else if (_.a === Infinity) {
                     _.samples = Infinity;
                     _.dx = 0;
                 } else {
@@ -214,6 +221,8 @@ var ADSREnvelope = (function() {
             if (_.status === 1) { // A -> D
                 _.status = 2;
                 if (_.d <= 0) {
+                    _.samples = _.dx = 0;
+                } else if (_.d === Infinity) {
                     _.samples = Infinity;
                     _.dx = 0;
                 } else {
@@ -231,7 +240,9 @@ var ADSREnvelope = (function() {
                 }
                 _.status = 3;
                 _.x0 = _.sl;
-                if (_.s <= 0 || _.s === Infinity) {
+                if (_.s <= 0) {
+                    _.samples = _.dx = 0;
+                } else if (_.s === Infinity) {
                     _.samples = Infinity;
                     _.dx = 0;
                 } else {
@@ -266,7 +277,9 @@ timbre.fn.register("adsr", ADSREnvelope);
             if (_.status === 0) { // delay -> A
                 _.status = 1;
                 if (_.a <= 0) {
-                    _.samples = 0;
+                    _.samples = _.dx = 0;
+                } else if (_.a === Infinity) {
+                    _.samples = Infinity;
                     _.dx = 0;
                 } else {
                     _.samples += (timbre.samplerate * _.a / 1000)|0;
@@ -282,6 +295,10 @@ timbre.fn.register("adsr", ADSREnvelope);
                 if (_.r <= 0) {
                     _.x0 = 0;
                     _.samples = 0;
+                    _.dx = 0;
+                } else if (_.r === Infinity) {
+                    _.x0 = 1;
+                    _.samples = Infinity;
                     _.dx = 0;
                 } else {
                     _.x0 = 1;
