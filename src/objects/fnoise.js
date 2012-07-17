@@ -1,18 +1,18 @@
 /**
- * EightBitNoise: v12.07.15
- * 8bit Noise Generator
+ * FrequencyNoise: v12.07.15
  * v12.07.12: first version
  * v12.07.15: add args ".mul"
+ * v12.07.17: rename 8bitnoise -> fnoise
  */
 "use strict";
 
 var timbre = require("../timbre");
 // __BEGIN__
 
-var EightBitNoise = (function() {
-    var EightBitNoise = function() {
+var FrequencyNoise = (function() {
+    var FrequencyNoise = function() {
         initialize.apply(this, arguments);
-    }, $this = timbre.fn.buildPrototype(EightBitNoise, {
+    }, $this = timbre.fn.buildPrototype(FrequencyNoise, {
         base: "ar-kr",
         properties: {
             freq: {
@@ -92,14 +92,14 @@ var EightBitNoise = (function() {
         return cell;
     };
     
-    return EightBitNoise;
+    return FrequencyNoise;
 }());
-timbre.fn.register("8bitnoise", EightBitNoise);
+timbre.fn.register("fnoise", FrequencyNoise);
 
 
 // __END__
 if (module.parent && !module.parent.parent) {
-    describe("8bitnoise", function() {
-        object_test(EightBitNoise, "8bitnoise");
+    describe("fnoise", function() {
+        object_test(FrequencyNoise, "fnoise");
     });
 }

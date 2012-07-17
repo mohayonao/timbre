@@ -29,7 +29,7 @@ TIMBRE_SOURCES = [
     "objects/oscx"
     "objects/phasor"
     "objects/pwm"
-    "objects/eightbitnoise"
+    "objects/fnoise"
 
     "objects/env"
     "objects/adsr"
