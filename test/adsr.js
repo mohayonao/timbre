@@ -25,7 +25,7 @@ tests = (function() {
         return synth;
     }; tests[i++].desc = "adsr";
     
-    /*
+
     tests[i] = function() {
         var synth, tri, env;
         synth = T("*", tri = T("tri" , 1340, 0.5),
@@ -88,7 +88,6 @@ tests = (function() {
         
         return synth;
     }; tests[i++].desc = "adsr: sustain-rate & reversed";
-    */
     
     return tests;
 }());

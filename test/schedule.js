@@ -2,7 +2,7 @@ tests = (function() {
     "use strict";
     
     var i = 0, tests = [];
-    tests.require = ["/draft/scale.js", "/draft/schedule.js"];
+    // tests.require = ["/draft/scale.js", "/draft/schedule.js"];
     
     tests[i] = function() {
         var array = T([[0, 0, -1], 0, 2, 1, -1]);
@@ -63,7 +63,7 @@ tests = (function() {
     tests[i] = function() {
         timbre.utils.exports("random.choice");
         
-        var synth = T("+");
+        var synth = T("efx.comp");
         
         function hh(vol, len) {
             var tone = T("*", T("hpf", 8000, T("noise")),
