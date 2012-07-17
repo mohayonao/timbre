@@ -7,46 +7,13 @@ var timbre = require("../timbre");
 var window = {};
 // __BEGIN__
 
-var setupTimbre = function(defaultSamplerate) {
-    switch (timbre.samplerate) {
-    case  8000: case 11025: case 12000:
-    case 16000: case 22050: case 24000:
-    case 32000: case 44100: case 48000:
-        break;
-    default:
-        timbre.samplerate = defaultSamplerate;
-    }
-    
-    switch (timbre.channels) {
-    default:
-        timbre.channels = 2;
-    }
-    
-    switch (timbre.cellsize) {
-    case 64: case 128:
-    case 256: case 512:
-        break;
-    default:
-        timbre.cellsize = 128;
-    }
-    
-    switch (timbre.streamsize) {
-    case  512: case 1024: case 2048:
-    case 4096: case 8192:
-        break;
-    default:
-        timbre.streamsize = 1024;
-    }
-};
-
-
 var WebKitPlayer = function(sys) {
     
     this.ctx = new webkitAudioContext();
     var samplerate = this.ctx.sampleRate;
     
     this.setup = function() {
-        setupTimbre(samplerate);
+        timbre.fn._setupTimbre(samplerate);
         this.streamsize = timbre.streamsize;
         
         if (timbre.samplerate === samplerate) {
@@ -130,7 +97,7 @@ var MozPlayer = function(sys) {
     this.timer = new MutekiTimer();
     
     this.setup = function() {
-        setupTimbre(44100);
+        timbre.fn._setupTimbre(44100);
         
         this.audio = new Audio();
         this.audio.mozSetup(timbre.channels, timbre.samplerate);

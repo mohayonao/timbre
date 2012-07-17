@@ -8,38 +8,6 @@ var timbre = require("../timbre");
 var node   = {};
 // __BEGIN__
 
-var setupTimbre = function(defaultSamplerate) {
-    switch (timbre.samplerate) {
-    case  8000: case 11025: case 12000:
-    case 16000: case 22050: case 24000:
-    case 32000: case 44100: case 48000:
-        break;
-    default:
-        timbre.samplerate = defaultSamplerate;
-    }
-    
-    switch (timbre.channels) {
-    default:
-        timbre.channels = 2;
-    }
-    
-    switch (timbre.cellsize) {
-    case 64: case 128:
-    case 256: case 512:
-        break;
-    default:
-        timbre.cellsize = 128;
-    }
-    
-    switch (timbre.streamsize) {
-    case  512: case 1024: case 2048:
-    case 4096: case 8192:
-        break;
-    default:
-        timbre.streamsize = 1024;
-    }
-};
-
 var ctimbre = null;
 
 var CTimbrePlayer = function(sys) {
@@ -48,7 +16,7 @@ var CTimbrePlayer = function(sys) {
     this.setup = function() {
         var samplerate, dx, onaudioprocess;
         
-        setupTimbre(44100);
+        timbre.fn._setupTimbre(44100);        
         this.jsnode = new ctimbre.JavaScriptOutputNode(timbre.streamsize);
         samplerate = this.jsnode.sampleRate;
         this.streamsize = timbre.streamsize;
@@ -128,9 +96,35 @@ var CTimbrePlayer = function(sys) {
 };
 
 var NopPlayer = function(sys) {
-     this.setup = this.on = this.off = function() {};
+    this.timerId = 0;
+    
+    this.setup = function() {
+        timbre.fn._setupTimbre(44100);
+        
+        this.interval = timbre.streamsize * 1000 / timbre.samplerate;
+        
+        this.onaudioprocess = function() {
+            sys.process();
+        }.bind(this);
+        
+        return this;
+    };
+    
+    this.on = function() {
+        if (this.timerId !== 0) {
+            clearInterval(this.timerId);
+        }
+        this.timerId = setInterval(this.onaudioprocess, this.interval);
+    };
+    
+    this.off = function() {
+        if (this.timerId !== 0) {
+            clearInterval(this.timerId);
+        }
+    }
+    
+    return this;
 };
-
 
 try {
     ctimbre = require("ctimbre");
