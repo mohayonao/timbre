@@ -60,6 +60,7 @@ TIMBRE_SOURCES = [
     "objects/interval"
     "objects/timeout"
     "objects/schedule"
+    "objects/mml"
 
     "objects/timbre"
 ]
