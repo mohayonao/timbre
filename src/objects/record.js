@@ -1,6 +1,7 @@
 /**
- * Record: v12.07.13
+ * Record
  * Record sound into a buffer
+ * v 0. 1. 0: first version
  */
 "use strict";
 
@@ -17,21 +18,21 @@ var Record = (function() {
                 get: function() { return this._.buffer; }
             },
             recTime: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number" && value > 0) {
-                        _.recTime = value;
+                    if (typeof val === "number" && val > 0) {
+                        _.recTime = val;
                         _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
                     }
                 },
                 get: function() { return this._.recTime; }
             },
             interval: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") {
-                        _.interval = value;
-                        _.interval_samples = (timbre.samplerate * (value / 1000))|0;
+                    if (typeof val === "number") {
+                        _.interval = val;
+                        _.interval_samples = (timbre.samplerate * (val / 1000))|0;
                         if (_.interval_samples < _.buffer.length) {
                             _.interval_samples = _.buffer.length;
                             _.interval = _.buffer.length * timbre.samplerate / 1000;
@@ -47,7 +48,7 @@ var Record = (function() {
                 get: function() { return this._.ison; }
             },
             overwrite: {
-                set: function(value) { this._.overwrite = !!value; },
+                set: function(val) { this._.overwrite = !!val; },
                 get: function() { return this._.overwrite; }
             }
         } // properties

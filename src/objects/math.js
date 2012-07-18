@@ -1,7 +1,6 @@
 /**
- * MathFunction: v12.07.13
- * [ar-kr]
- * v0.3.7: first version
+ * MathFunction
+ * v 0. 3. 7: first version
  */
 "use strict";
 

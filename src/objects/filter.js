@@ -1,5 +1,6 @@
 /**
- * Filter: v12.07.13
+ * Filter
+ * v 0. 1. 0: first version
  */
 "use strict";
 
@@ -13,11 +14,11 @@ var Filter = (function() {
         base: "ar-only",
         properties: {
             type: {
-                set: function(value) {
+                set: function(val) {
                     var f;
-                    if (typeof value === "string") {
-                        if ((f = Filter.Types[value]) !== undefined) {
-                            this._.type = value;
+                    if (typeof val === "string") {
+                        if ((f = Filter.Types[val]) !== undefined) {
+                            this._.type = val;
                             this._.set_params = f.set_params;
                         }
                     }
@@ -25,20 +26,20 @@ var Filter = (function() {
                 get: function() { return this._.type; }
             },
             freq: {
-                set: function(value) {
-                    this._.freq = timbre(value);
+                set: function(val) {
+                    this._.freq = timbre(val);
                 },
                 get: function() { return this._.freq; }
             },
             band: {
-                set: function(value) {
-                    this._.band = timbre(value);
+                set: function(val) {
+                    this._.band = timbre(val);
                 },
                 get: function() { return this._.band; }
             },
             gain: {
-                set: function(value) {
-                    this._.gain = timbre(value);
+                set: function(val) {
+                    this._.gain = timbre(val);
                 },
                 get: function() { return this._.gain; }
             },

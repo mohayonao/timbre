@@ -1,6 +1,7 @@
 /**
- * Dac: v12.07.13
+ * Dac
  * Audio output
+ * v 0. 1. 0: first version
  */
 "use strict";
 
@@ -17,8 +18,8 @@ var Dac = (function() {
                 get: function() { return this; }
             },
             pan: {
-                set: function(value) {
-                    this._.pan = timbre(value);
+                set: function(val) {
+                    this._.pan = timbre(val);
                 },
                 get: function() { return this._.pan; }
             }

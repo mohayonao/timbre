@@ -1,6 +1,6 @@
 /**
- * EfxComp v12.07.15
- * v12.07.15: first version
+ * EfxComp
+ * <WORKING>: first version
  */
 "use strict";
 
@@ -15,49 +15,49 @@ var EfxComp = (function() {
         base: "ar-only",
         properties: {
             thres: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") {
-                        _.thres  = value;
-                        _.thres2 = value * value;
+                    if (typeof val === "number") {
+                        _.thres  = val;
+                        _.thres2 = val * val;
                     }
                 },
                 get: function() { return this._.thres; }
             },
             ratio: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") {
-                        _.ratio = value;
+                    if (typeof val === "number") {
+                        _.ratio = val;
                         set_params.call(this, _.ratio, _.attack, _.release);
                     }
                 },
                 get: function() { return this._.ratio; }
             },
             attack: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") {
-                        _.attack = value;
+                    if (typeof val === "number") {
+                        _.attack = val;
                         set_params.call(this, _.ratio, _.attack, _.release);
                     }
                 },
                 get: function() { return this._.attack; }
             },
             release: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") {
-                        _.release = value;
+                    if (typeof val === "number") {
+                        _.release = val;
                         set_params.call(this, _.ratio, _.attack, _.release);
                     }
                 },
                 get: function() { return this._.release; }
             },
             gain: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") _.gain = value;
+                    if (typeof val === "number") _.gain = val;
                 },
                 get: function() { return this._.gain; }
             }

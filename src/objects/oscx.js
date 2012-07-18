@@ -1,6 +1,6 @@
 /**
- * PhaseOscillator: v12.07.13
- * v0.2.0: first version
+ * PhaseOscillator
+ * v 0. 2. 0: first version
  */
 "use strict";
 
@@ -15,14 +15,14 @@ var PhaseOscillator = (function() {
         base: "ar-kr",
         properties: {
             phase: {
-                set: function(value) {
-                    this._.phase = timbre(value);
+                set: function(val) {
+                    this._.phase = timbre(val);
                 },
                 get: function() { return this._.phase; }
             },
             fb: {
-                set: function(value) {
-                    if (typeof value === "number") this._.fb = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.fb = val;
                 },
                 get: function() { return this._.fb; }
             }

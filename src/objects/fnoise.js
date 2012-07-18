@@ -1,8 +1,6 @@
 /**
- * FrequencyNoise: v12.07.15
- * v12.07.12: first version
- * v12.07.15: add args ".mul"
- * v12.07.17: rename 8bitnoise -> fnoise
+ * FrequencyNoise
+ * <WORKING>: first version
  */
 "use strict";
 
@@ -16,8 +14,8 @@ var FrequencyNoise = (function() {
         base: "ar-kr",
         properties: {
             freq: {
-                set: function(value) {
-                    this._.freq = timbre(value);
+                set: function(val) {
+                    this._.freq = timbre(val);
                 },
                 get: function() { return this._.freq; }
             }

@@ -1,5 +1,6 @@
 /**
- * EfxDistortion: v12.07.13
+ * EfxDistortion
+ * v 0. 1. 0: first version
  */
 "use strict";
 
@@ -13,20 +14,20 @@ var EfxDistortion = (function() {
         base: "ar-only",
         properties: {
             pre: {
-                set: function(value) {
-                    this._.preGain = timbre(value);
+                set: function(val) {
+                    this._.preGain = timbre(val);
                 },
                 get: function() { return this._.preGain; }
             },
             post: {
-                set: function(value) {
-                    this._.postGain = timbre(value);
+                set: function(val) {
+                    this._.postGain = timbre(val);
                 },
                 get: function() { return this._.postGain; }
             },
             freq: {
-                set: function(value) {
-                    this._.lpfFreq = timbre(value);
+                set: function(val) {
+                    this._.lpfFreq = timbre(val);
                 },
                 get: function() { return this._.lpfFreq; }
             }

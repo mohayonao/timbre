@@ -1,7 +1,7 @@
 /**
- * Modulo: v12.07.13
+ * Modulo
  * Divide signals, output the remainder
- * v0.3.7: first version
+ * v 0. 3. 7: first version
  */
 "use strict";
 

@@ -1,6 +1,7 @@
 /**
- * Divide: v12.07.13
+ * Divide
  * Divide signals
+ * v 0. 3. 7: first version
  */
 "use strict";
 

@@ -1,6 +1,6 @@
 /**
- * SampleAndHold: v12.07.13
- * v0.3.6: first version
+ * SampleAndHold
+ * v 0. 3. 6: first version
  */
 "use strict";
 
@@ -14,8 +14,8 @@ var SampleAndHold = (function() {
         base: "ar-kr",
         properties: {
             sample: {
-                set: function(value) {
-                    if (typeof value === "number") this._.sampleMax = value|0;
+                set: function(val) {
+                    if (typeof val === "number") this._.sampleMax = val|0;
                 },
                 get: function() { return this._.sampleMax; }
             }

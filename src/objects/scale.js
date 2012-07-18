@@ -1,6 +1,6 @@
 /**
- * Scale v12.07.13
- * v0.3.2: first version
+ * Scale
+ * v 0. 3. 2: first version
  */
 "use strict";
 
@@ -14,28 +14,28 @@ var Scale = (function() {
         base: "kr-only",
         properties: {
             scale: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "string" &&
-                        Scale.Scales[value] !== undefined) {
-                        _.scale = value;
-                        _.list = Scale.Scales[value];
-                    } else if (value instanceof Array) {
+                    if (typeof val === "string" &&
+                        Scale.Scales[val] !== undefined) {
+                        _.scale = val;
+                        _.list = Scale.Scales[val];
+                    } else if (val instanceof Array) {
                         _.scale = "";
-                        _.list = value;
+                        _.list = val;
                     }
                 },
                 get: function() { return this._.scale; }
             },
             root: {
-                set: function(value) {
-                    this._.root = timbre(value);
+                set: function(val) {
+                    this._.root = timbre(val);
                 },
                 get: function() { return this._.root; }
             },
             octave: {
-                set: function(value) {
-                    if (typeof value === "number") this._.octave = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.octave = val;
                 },
                 get: function() { return this._.octave; }
             }

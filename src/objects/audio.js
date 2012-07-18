@@ -1,6 +1,7 @@
 /**
- * AudioDecoder: v12.07.14
+ * AudioDecoder
  * Store audio samples
+ * v 0. 1. 0: first version
  */
 "use strict";
 
@@ -33,27 +34,27 @@ var AudioDecoder = {
     },
     setPrototype: function() {
         Object.defineProperty(this, "src", {
-            set: function(value) {
-                if (typeof value === "string") {
-                    if (this._.src !== value) {
-                        this._.src = value;
+            set: function(val) {
+                if (typeof val === "string") {
+                    if (this._.src !== val) {
+                        this._.src = val;
                         this._.isloaded = false;
                     }
-                } else if (timbre.platform === "web" && value instanceof File) {
-                    this._.src = value;
+                } else if (timbre.platform === "web" && val instanceof File) {
+                    this._.src = val;
                     this._.isloaded = false;
                 }
             },
             get: function() { return this._.src; }
         });
         Object.defineProperty(this, "loop", {
-            set: function(value) { this._.loop = !!value; },
+            set: function(val) { this._.loop = !!val; },
             get: function() { return this._.loop; }
         });
         Object.defineProperty(this, "reversed", {
-            set: function(value) {
+            set: function(val) {
                 var _ = this._;
-                _.reversed = !!value;
+                _.reversed = !!val;
                 if (_.reversed && _.phase === 0) {
                     _.phase = Math.max(0, _.buffer.length - 1);
                 }
@@ -67,11 +68,11 @@ var AudioDecoder = {
             get: function() { return this._.duration; }
         });
         Object.defineProperty(this, "currentTime", {
-            set: function(value) {
+            set: function(val) {
                 var _ = this._;
-                if (typeof value === "number") {
-                    if (0 <= value && value <= _.duration) {
-                        _.phase = ((value / 1000) * timbre.samplerate)|0;
+                if (typeof val === "number") {
+                    if (0 <= val && val <= _.duration) {
+                        _.phase = ((val / 1000) * timbre.samplerate)|0;
                     }
                 }
             },
@@ -191,9 +192,9 @@ var AudioDecoder = {
 
 
 /**
- * WebKitAudio: v12.07.14
+ * WebKitAudio
  * Store audio samples (WebAudioAPI)
- * [ar-only]
+ * v 0. 1. 0: first version
  */
 var WebKitAudio = (function() {
     var WebKitAudio = function() {
@@ -274,9 +275,9 @@ timbre.fn.register("-webkit-audio", WebKitAudio);
 
 
 /**
- * MozAudio: v12.07.14
+ * MozAudio
  * Store audio samples (AudioDataAPI)
- * [ar-only]
+ * v 0. 1. 0: first version
  */
 var MozAudio = (function() {
     var MozAudio = function() {

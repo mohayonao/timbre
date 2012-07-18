@@ -1,7 +1,7 @@
 /**
- * NumberWrapper: v12.07.13
+ * NumberWrapper
  * Constant signal of a number
- * v0.1.0: first version
+ * v 0. 1. 0: first version
  */
 "use strict";
 
@@ -15,27 +15,27 @@ var NumberWrapper = (function() {
         base: "kr-only",
         properties: {
             value: {
-                set: function(value) {
-                    if (typeof value === "number") {
-                        this._.value = value;
+                set: function(val) {
+                    if (typeof val === "number") {
+                        this._.value = val;
                         changeTheValue.call(this);
                     }
                 },
                 get: function() { return this._.value; }
             },
             mul: {
-                set: function(value) {
-                    if (typeof value === "number") {
-                        this._.mul = value;
+                set: function(val) {
+                    if (typeof val === "number") {
+                        this._.mul = val;
                         changeTheValue.call(this);
                     }
                 },
                 get: function() { return this._.mul; }
             },
             add: {
-                set: function(value) {
-                    if (typeof value === "number") {
-                        this._.add = value;
+                set: function(val) {
+                    if (typeof val === "number") {
+                        this._.add = val;
                         changeTheValue.call(this);
                     }
                 },

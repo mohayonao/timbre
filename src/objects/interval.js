@@ -1,6 +1,7 @@
 /**
- * Interval: v12.07.13
+ * Interval
  * Calls a bang() repeatedly at regular intervals
+ * v 0. 1. 0: first version
  */
 "use strict";
 
@@ -14,25 +15,25 @@ var Interval = (function() {
         base: ["kr-only", "timer"],
         properties: {
             interval: {
-                set: function(value) {
-                    if (typeof value === "number" && value >= 0) {
-                        this._.interval = value;
+                set: function(val) {
+                    if (typeof val === "number" && val >= 0) {
+                        this._.interval = val;
                     }
                 },
                 get: function() { return this._.interval; }
             },
             delay: {
-                set: function(value) {
-                    if (typeof value === "number" && value >= 0) {
-                        this._.delay = value;
-                        this._.delaySamples = (timbre.samplerate * (value / 1000))|0;
+                set: function(val) {
+                    if (typeof val === "number" && val >= 0) {
+                        this._.delay = val;
+                        this._.delaySamples = (timbre.samplerate * (val / 1000))|0;
                     }
                 },
                 get: function() { return this._.delay; }
             },
             count: {
-                set: function(value) {
-                    if (typeof value === "number") this._.count = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.count = val;
                 },
                 get: function() { return this._.count; }
             },

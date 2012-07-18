@@ -1,5 +1,6 @@
 /**
- * Clip: v12.07.13
+ * Clip
+ * v 0. 3. 3: first version
  */
 "use strict";
 
@@ -13,14 +14,14 @@ var Clip = (function() {
         base: "ar-kr",
         properties: {
             min: {
-                set: function(value) {
-                    if (typeof value === "number") this._.min = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.min = val;
                 },
                 get: function() { return this._.min; }
             },
             max: {
-                set: function(value) {
-                    if (typeof value === "number") this._.max = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.max = val;
                 },
                 get: function() { return this._.max; }
             }

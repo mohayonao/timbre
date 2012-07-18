@@ -1,6 +1,7 @@
 /**
- * WavDecoder: v12.07.13
+ * WavDecoder
  * Decode wav file and play it
+ * v 0. 1. 0: first version
  */
 "use strict";
 
@@ -14,10 +15,10 @@ var WavDecoder = (function() {
         base: "ar-only",
         properties: {
             src: {
-                set: function(value) {
-                    if (typeof value === "string") {
-                        if (this._.src !== value) {
-                            this._.src = value;
+                set: function(val) {
+                    if (typeof val === "string") {
+                        if (this._.src !== val) {
+                            this._.src = val;
                             this._.isloaded = false;
                         }
                     }
@@ -25,13 +26,13 @@ var WavDecoder = (function() {
                 get: function() { return this._.src; }
             },
             loop: {
-                set: function(value) { this._.loop = !!value; },
+                set: function(val) { this._.loop = !!val; },
                 get: function() { return this._.loop; }
             },
             reversed: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    _.reversed = !!value;
+                    _.reversed = !!val;
                     if (_.reversed && _.phase === 0) {
                         _.phase = Math.max(0, _.buffer.length - 1);
                     }
@@ -45,10 +46,10 @@ var WavDecoder = (function() {
                 get: function() { return this._.duration; }
             },
             currentTime: {
-                set: function(value) {
-                    if (typeof value === "number") {
-                        if (0 <= value && value <= this._.duration) {
-                            this._.phase = (value / 1000) * this._.samplerate;
+                set: function(val) {
+                    if (typeof val === "number") {
+                        if (0 <= val && val <= this._.duration) {
+                            this._.phase = (val / 1000) * this._.samplerate;
                         }
                     }
                 },

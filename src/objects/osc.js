@@ -1,8 +1,8 @@
 /**
- * Oscillator: v12.07.12
+ * Oscillator
  * Table lookup oscillator
  * v 0. 0. 1: first version
- * v12.07.16: wave shaping
+ * <WORKING>: wave shaping
  */
 "use strict";
 
@@ -16,25 +16,25 @@ var Oscillator = (function() {
         base: "ar-kr",
         properties: {
             wave: {
-                set: function(value) {
+                set: function(val) {
                     var dx, wave = this._.wave;
-                    if (typeof value === "function") {
+                    if (typeof val === "function") {
                         for (var i = 0; i < 1024; i++) {
-                            wave[i] = value(i / 1024);
+                            wave[i] = val(i / 1024);
                         }
-                    } else if (typeof value === "object" &&
-                               (value instanceof Array ||
-                                value.buffer instanceof ArrayBuffer)) {
-                        if (value.length === 1024) {
-                            this._.wave = value;
+                    } else if (typeof val === "object" &&
+                               (val instanceof Array ||
+                                val.buffer instanceof ArrayBuffer)) {
+                        if (val.length === 1024) {
+                            this._.wave = val;
                         } else {
-                            dx = value.length / 1024;
+                            dx = val.length / 1024;
                             for (var i = 0; i < 1024; i++) {
-                                wave[i] = value[(i * dx)|0] || 0.0;
+                                wave[i] = val[(i * dx)|0] || 0.0;
                             }
                         }
-                    } else if (typeof value === "string") {
-                        if ((dx = this.getWavetable(value)) !== undefined) {
+                    } else if (typeof val === "string") {
+                        if ((dx = this.getWavetable(val)) !== undefined) {
                             this._.wave = dx;
                         }
                     }
@@ -42,17 +42,17 @@ var Oscillator = (function() {
                 get: function() { return this._.wave; }
             },
             freq: {
-                set: function(value) {
-                    this._.freq = timbre(value);
+                set: function(val) {
+                    this._.freq = timbre(val);
                 },
                 get: function() { return this._.freq; }
             },
             phase: {
-                set: function(value) {
-                    if (typeof value === "number") {
-                        while (value >= 1.0) value -= 1.0;
-                        while (value <  0.0) value += 1.0;
-                        this._.phase = value;
+                set: function(val) {
+                    if (typeof val === "number") {
+                        while (val >= 1.0) val -= 1.0;
+                        while (val <  0.0) val += 1.0;
+                        this._.phase = val;
                         this._.x = 1024 * this._.phase;
                     }
                 },

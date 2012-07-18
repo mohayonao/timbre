@@ -1,5 +1,5 @@
 /**
- * Envelope: v12.07.13
+ * Envelope
  * Envelope generator
  */
 "use strict";
@@ -14,10 +14,10 @@ var Envelope = (function() {
         base: "kr-ar",
         properties: {
             table: {
-                set: function(value) {
+                set: function(val) {
                     var dx, name, _ = this._;
-                    if (typeof value === "string") {
-                        if (value === "~") {
+                    if (typeof val === "string") {
+                        if (val === "~") {
                             name = _.tableName;
                             if (name.charAt(0) === "~") {
                                 name = name.substr(1);
@@ -25,7 +25,7 @@ var Envelope = (function() {
                                 name = "~" + name;
                             }
                         } else {
-                            name = value;
+                            name = val;
                         }
                         
                         if ((dx = Envelope.AmpTables[name]) !== undefined) {
@@ -35,17 +35,17 @@ var Envelope = (function() {
                         }
                     }
                 },
-                get: function(value) { return this._.tableName; }
+                get: function() { return this._.tableName; }
             },
             delay: {
-                set: function(value) {
-                    if (typeof value === "number") this._.delay = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.delay = val;
                 },
                 get: function() { return this._.delay; }
             },
             reversed: {
-                set: function(value) {
-                    this._.reversed = !!value;
+                set: function(val) {
+                    this._.reversed = !!val;
                 },
                 get: function() { return this._.reversed; }
             },

@@ -1,5 +1,6 @@
 /**
- * ResonantFilter: v12.07.13
+ * ResonantFilter
+ * v 0. 1. 0: first version
  */
 "use strict";
 
@@ -13,11 +14,11 @@ var ResonantFilter = (function() {
         base: "ar-only",
         properties: {
             type: {
-                set: function(value) {
+                set: function(val) {
                     var mode;
-                    if (typeof value === "string") {
-                        if ((mode = ResonantFilter.Types[value]) !== undefined) {
-                            this._.type = value;
+                    if (typeof val === "string") {
+                        if ((mode = ResonantFilter.Types[val]) !== undefined) {
+                            this._.type = val;
                             this._.mode = mode;
                         }
                     }
@@ -25,20 +26,20 @@ var ResonantFilter = (function() {
                 get: function() { return this._.type; }
             },
             cutoff: {
-                set: function(value) {
-                    this._.cutoff = timbre(value);
+                set: function(val) {
+                    this._.cutoff = timbre(val);
                 },
                 get: function() { return this._.cutoff; }
             },
             Q: {
-                set: function(value) {
-                    this._.Q = timbre(value);
+                set: function(val) {
+                    this._.Q = timbre(val);
                 },
                 get: function() { return this._.Q; }
             },
             depth: {
-                set: function(value) {
-                    this._.depth = timbre(value);
+                set: function(val) {
+                    this._.depth = timbre(val);
                 },
                 get: function() { return this._.depth; }
             }

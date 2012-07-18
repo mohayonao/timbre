@@ -1,7 +1,7 @@
 /**
- * FuncOscillator: v12.07.13
+ * FuncOscillator
  * Signal generator
- * [ar-kr] TODO: kr
+ * v 0. 1. 0: first version
  */
 "use strict";
 
@@ -15,32 +15,32 @@ var FuncOscillator = (function() {
         base: "ar-kr",
         properties: {
             func: {
-                set: function(value) {
-                    if (typeof value === "function") this._.func = value;
+                set: function(val) {
+                    if (typeof val === "function") this._.func = val;
                 },
                 get: function() { return this._.func; }
             },
             numOfSamples: {
-                set: function(value) {
-                    if (typeof value === "number") {
-                        this._.saved = new Float32Array(value);
-                        this._.numOfSamples = value;
+                set: function(val) {
+                    if (typeof val === "number") {
+                        this._.saved = new Float32Array(val);
+                        this._.numOfSamples = val;
                     }
                 },
                 get: function() { return this._.numOfSamples; }
             },
             freq: {
-                set: function(value) {
-                    this._.freq = timbre(value);
+                set: function(val) {
+                    this._.freq = timbre(val);
                 },
                 get: function() { return this._.freq; }
             },
             phase: {
-                set: function(value) {
-                    if (typeof value === "number") {
-                        while (value >= 1.0) value -= 1.0;
-                        while (value <  0.0) value += 1.0;
-                        this._.phase = this._.x = value;
+                set: function(val) {
+                    if (typeof val === "number") {
+                        while (val >= 1.0) val -= 1.0;
+                        while (val <  0.0) val += 1.0;
+                        this._.phase = this._.x = val;
                     }
                 },
                 get: function() { return this._.phase; }

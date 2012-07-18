@@ -1,6 +1,7 @@
 /**
- * Glide: v12.07.13
- * v12.07.12: add ar-mode
+ * Glide
+ * v 0. 1. 0: first version
+ * <WORKING>: add ar-mode
  */
 "use strict";
 
@@ -15,12 +16,12 @@ var Glide = (function() {
         base: "kr-ar",
         properties: {
             value: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") {
+                    if (typeof val === "number") {
                         _.status = 0;
                         _.start  = _.value;
-                        _.stop   = value;
+                        _.stop   = val;
                         _.samples = (timbre.samplerate * (_.delay / 1000))|0;
                         _.x0 = 0; _.dx = 0;
                     }

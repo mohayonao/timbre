@@ -1,5 +1,6 @@
 /**
- * ArrayWrapper: v12.07.13
+ * ArrayWrapper
+ * v 0. 1. 0: first version
  */
 "use strict";
 
@@ -13,49 +14,49 @@ var ArrayWrapper = (function() {
         base: "kr-only",
         properties: {
             value: {
-                set: function(value) {
-                    if (typeof value === "object" && 
-                        (value instanceof Array ||
-                         value.buffer instanceof ArrayBuffer)) {
-                        this._.value = compile(value);
+                set: function(val) {
+                    if (typeof val === "object" && 
+                        (val instanceof Array ||
+                         val.buffer instanceof ArrayBuffer)) {
+                        this._.value = compile(val);
                         this._.index = 0;
                     }
                 },
                 get: function() { return this._.value; }
             },
             index: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") {
-                        value = value|0;
-                        if (value < 0) value = _.value.length + value;
-                        if (0 <= value && value < _.value.length) {
-                            _.index = value;
-                            changeTheValue.call(this, value);
+                    if (typeof val === "number") {
+                        val = val|0;
+                        if (val < 0) val = _.value.length + val;
+                        if (0 <= val && val < _.value.length) {
+                            _.index = val;
+                            changeTheValue.call(this, val);
                         }
                     }
                 },
                 get: function() { return this._.index; }
             },
             repeat: {
-                set: function(value) {
-                    if (typeof value === "number") this._.repeat1 = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.repeat1 = val;
                 },
                 get: function() { return this._.repeat1; }
             },
             mul: {
-                set: function(value) {
-                    if (typeof value === "number") {
-                        this._.mul = value;
+                set: function(val) {
+                    if (typeof val === "number") {
+                        this._.mul = val;
                         changeTheValue.call(this, this._.index);
                     }
                 },
                 get: function() { return this._.mul; }
             },
             add: {
-                set: function(value) {
-                    if (typeof value === "number") {
-                        this._.add = value;
+                set: function(val) {
+                    if (typeof val === "number") {
+                        this._.add = val;
                         changeTheValue.call(this, this._.index);
                     }
                 },

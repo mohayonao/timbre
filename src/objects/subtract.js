@@ -1,6 +1,6 @@
 /**
- * Subtract: v12.07.13
- * v0.3.7: first version
+ * Subtract
+ * v 0. 3. 7: first version
  */
 "use strict";
 

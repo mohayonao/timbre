@@ -1,6 +1,8 @@
 /**
- * FFT: v12.07.13
+ * FFT
  * Fast Fourier transform
+ * v 0. 1. 0: first version
+ * <WORKING>: use timbre.utils.FFT
  */
 
 "use strict";

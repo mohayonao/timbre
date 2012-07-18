@@ -1,7 +1,8 @@
 /**
- * Easing: 12.07.13
+ * Easing
  * 'Easing.Functions' refered to https://github.com/sole/tween.js
- * v12.07.12: add ar-mode
+ * v 0. 1. 0: first version
+ * <WORKING>: add ar-mode
  */
 "use strict";
 
@@ -15,29 +16,29 @@ var Easing = (function() {
         base: "kr-ar",
         properties: {
             type: {
-                set: function(value) {
+                set: function(val) {
                     var f;
-                    if (typeof value === "string") {
-                        if ((f = Easing.Functions[value]) !== undefined) {
-                            this._.type = value;
+                    if (typeof val === "string") {
+                        if ((f = Easing.Functions[val]) !== undefined) {
+                            this._.type = val;
                             this._.func = f;
                         }
-                    } else if (typeof value === "function") {
+                    } else if (typeof val === "function") {
                         this._.type = "function";
-                        this._.func = value;
+                        this._.func = val;
                     }
                 },
                 get: function() { return this._.type; }
             },
             delay: {
-                set: function(value) {
-                    if (typeof value === "number") this._.delay = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.delay = val;
                 },
                 get: function() { return this._.delay; }
             },
             duration: {
-                set: function(value) {
-                    if (typeof value === "number") this._.duration = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.duration = val;
                 },
                 get: function() { return this._.duration; }
             },
@@ -45,14 +46,14 @@ var Easing = (function() {
                 get: function() { return this._.currentTime; }
             },
             start: {
-                set: function(value) {
-                    if (typeof value === "number") this._.start = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.start = val;
                 },
                 get: function() { return this._.start; }
             },
             stop: {
-                set: function(value) {
-                    if (typeof value === "number") this._.stop = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.stop = val;
                 },
                 get: function() { return this._.stop; }
             },

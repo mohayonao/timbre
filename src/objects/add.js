@@ -1,7 +1,7 @@
 /**
- * Add: v12.07.13
+ * Add
  * Add signals
- * [ar-kr]
+ * v 0. 1. 0: first version
  */
 "use strict";
 

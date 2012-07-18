@@ -1,6 +1,7 @@
 /**
- * Buffer: v12.07.13
+ * Buffer
  * Store audio samples
+ * v 0. 1. 0
  */
 "use strict";
 
@@ -14,16 +15,16 @@ var Buffer = (function() {
         base: "ar-only",
         properties: {
             buffer: {
-                set: function(value) {
+                set: function(val) {
                     var buffer, i, _ = this._;
-                    if (typeof value === "object") {
-                        if (value instanceof Float32Array) {
-                            _.buffer = value;
-                        } else if (value instanceof Array ||
-                                   value.buffer instanceof ArrayBuffer) {
-                            buffer = new Float32Array(value.length);
+                    if (typeof val === "object") {
+                        if (val instanceof Float32Array) {
+                            _.buffer = val;
+                        } else if (val instanceof Array ||
+                                   val.buffer instanceof ArrayBuffer) {
+                            buffer = new Float32Array(val.length);
                             for (i = buffer.length; i--; ) {
-                                buffer[i] = value[i];
+                                buffer[i] = val[i];
                             }
                             _.buffer = buffer;
                             _.duration = buffer.length / timbre.samplerate * 1000;
@@ -38,13 +39,13 @@ var Buffer = (function() {
                 get: function() { return this._.buffer; }
             },
             loop: {
-                set: function(value) { this._.loop = !!value; },
+                set: function(val) { this._.loop = !!val; },
                 get: function() { return this._.loop; }
             },
             reversed: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    _.reversed = !!value;
+                    _.reversed = !!val;
                     if (_.reversed && _.phase === 0) {
                         _.phase = Math.max(0, _.buffer.length - 1);
                     }
@@ -55,10 +56,10 @@ var Buffer = (function() {
                 get: function() { return this._.duration; }
             },
             currentTime: {
-                set: function(value) {
-                    if (typeof value === "number") {
-                        if (0 <= value && value <= this._.duration) {
-                            this._.phase = (value / 1000) * this._.samplerate;
+                set: function(val) {
+                    if (typeof val === "number") {
+                        if (0 <= val && val <= this._.duration) {
+                            this._.phase = (val / 1000) * this._.samplerate;
                         }
                     }
                 },

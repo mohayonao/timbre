@@ -1,6 +1,6 @@
 /**
- * Schedule v12.07.13
- * v0.3.1: first version
+ * Schedule
+ * v 0. 3. 1: first version
  */
 "use strict";
 
@@ -17,10 +17,10 @@ var Schedule = (function() {
                 get: function() { return this._.mode; }
             },
             bpm: {
-                set: function(value) {
+                set: function(val) {
                     if (this._.mode === "bpm") {
-                        if (typeof value === "number" && value > 0) {
-                            changeBPM.call(this, value);
+                        if (typeof val === "number" && val > 0) {
+                            changeBPM.call(this, val);
                         }
                     }
                 },

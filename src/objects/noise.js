@@ -1,8 +1,8 @@
 /**
- * WhiteNoise: v12.07.15
+ * WhiteNoise
  * White noise generator
  * v 0. 1. 0: first version
- * v12.07.15: add args ".mul"
+ * <WORKING>: add args ".mul"
  */
 "use strict";
 

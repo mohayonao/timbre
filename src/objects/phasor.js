@@ -1,6 +1,6 @@
 /**
- * Phasor: v12.07.13
- * v0.2.0: first version
+ * Phasor
+ * v 0. 2. 0: first version
  */
 "use strict";
 
@@ -14,25 +14,25 @@ var Phasor = (function() {
         base: "ar-kr",
         properties: {
             freq: {
-                set: function(value) {
-                    this._.freq = timbre(value);
+                set: function(val) {
+                    this._.freq = timbre(val);
                 },
                 get: function() { return this._.freq; }
             },
             fmul: {
-                set: function(value) {
-                    if (typeof value === "number" && value >= 0) {
-                        this._.fmul = value;
+                set: function(val) {
+                    if (typeof val === "number" && val >= 0) {
+                        this._.fmul = val;
                     }
                 },
                 get: function() { return this._.fmul; }
             },
             phase: {
-                set: function(value) {
-                    if (typeof value === "number") {
-                        while (value >= 1.0) value -= 1.0;
-                        while (value <  0.0) value += 1.0;
-                        this._.phase = this._.x = value;
+                set: function(val) {
+                    if (typeof val === "number") {
+                        while (val >= 1.0) val -= 1.0;
+                        while (val <  0.0) val += 1.0;
+                        this._.phase = this._.x = val;
                     }
                 },
                 get: function() { return this._.phase; }

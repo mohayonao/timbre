@@ -1,7 +1,7 @@
 /**
- * Multiply: v12.07.13
+ * Multiply
  * Multiply signals
- * v0.1.0: first version
+ * v 0. 1. 0: first version
  */
 "use strict";
 

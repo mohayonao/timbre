@@ -1,6 +1,6 @@
 /**
- * EfxReverb v12.07.14
- * v12.07.14: first version
+ * EfxReverb
+ * <WORKING>: first version
  */
 "use strict";
 
@@ -17,30 +17,30 @@ var EfxReverb = (function() {
         base: "ar-only",
         properties: {
             time: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") {
-                        _.time = value;
+                    if (typeof val === "number") {
+                        _.time = val;
                         set_params.call(this, _.time, _.fb, _.wet);
                     }
                 },
                 get: function() { return this._.time; }
             },
             fb: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") {
-                        _.fb = value;
+                    if (typeof val === "number") {
+                        _.fb = val;
                         set_params.call(this, _.time, _.fb, _.wet);
                     }
                 },
                 get: function() { return this._.fb; }
             },
             wet: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") {
-                        _.wet = value;
+                    if (typeof val === "number") {
+                        _.wet = val;
                         set_params.call(this, _.time, _.fb, _.wet);
                     }
                 },

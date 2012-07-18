@@ -1,6 +1,7 @@
 /**
- * MML: v12.07.17
+ * MML
  * Music Macro Language Processor
+ * <WORKING>: first version
  */
 "use strict";
 
@@ -14,19 +15,19 @@ var MML = (function() {
         base: ["kr-only", "timer"],
         properties: {
             mml: {
-                set: function(value) {
-                    if (typeof value === "string") {
-                        this._.mml = value;
-                        compile.call(this, value);
+                set: function(val) {
+                    if (typeof val === "string") {
+                        this._.mml = val;
+                        compile.call(this, val);
                     }
                 },
                 get: function() { return this._.mml; }
             },
             bpm: {
-                set: function(value) {
-                    if (typeof value === "number") {
-                        if (1 <= value && value <= 511) {
-                            this._.bpm = value;
+                set: function(val) {
+                    if (typeof val === "number") {
+                        if (1 <= val && val <= 511) {
+                            this._.bpm = val;
                         }
                     }
                 },

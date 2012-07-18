@@ -1,5 +1,6 @@
 /**
- * FunctionWrapper: v12.07.13
+ * FunctionWrapper
+ * v 0. 1. 0: first version
  */
 "use strict";
 
@@ -13,15 +14,15 @@ var FunctionWrapper = (function() {
         base: "kr-only",
         properties: {
             value: {
-                set: function(value) {
-                    if (typeof value === "function") this._.value = value;
+                set: function(val) {
+                    if (typeof val === "function") this._.value = val;
                 },
                 get: function() { return this._.value; }
             },
             args: {
-                set: function(value) {
-                    if (typeof value === "object" && value instanceof Array) {
-                        this._.args = value;
+                set: function(val) {
+                    if (typeof val === "object" && val instanceof Array) {
+                        this._.args = val;
                     }
                 },
                 get: function() { return this._.args; }

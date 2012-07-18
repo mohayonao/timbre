@@ -1,7 +1,7 @@
 /**
- * Pong: v12.07.13
+ * Pong
  * Variable range signal folding
- * v0.3.6: first version
+ * v 0. 3. 6: first version
  */
 "use strict";
 

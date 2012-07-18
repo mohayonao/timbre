@@ -1,5 +1,6 @@
 /**
- * EfxChorus: v12.07.13
+ * EfxChorus
+ * v 0. 1. 0: first version
  */
 "use strict";
 
@@ -13,33 +14,33 @@ var EfxChorus = (function() {
         base: "ar-only",
         properties: {
             depth: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") {
-                        _.depth = value;
+                    if (typeof val === "number") {
+                        _.depth = val;
                         _.lfo.mul = _.depth * _.offset;
                     }
                 },
                 get: function() { return this._.depth; }
             },
             rate: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") {
-                        _.rate = value;
-                        _.lfo.freq.value = value;
+                    if (typeof val === "number") {
+                        _.rate = val;
+                        _.lfo.freq.value = val;
                     }
                 },
                 get: function() { return this._.rate; }
             },
             wet: {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") {
-                        if (0 <= value && value <= 1.0) {
-                            _.wet = value;
-                            _.wet0 = Math.sin(0.25 * Math.PI * value);
-                            _.dry0 = Math.cos(0.25 * Math.PI * value);
+                    if (typeof val === "number") {
+                        if (0 <= val && val <= 1.0) {
+                            _.wet = val;
+                            _.wet0 = Math.sin(0.25 * Math.PI * val);
+                            _.dry0 = Math.cos(0.25 * Math.PI * val);
                         }
                     }
                 },

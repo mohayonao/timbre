@@ -1,6 +1,7 @@
 /**
- * Timeout: v12.07.13
+ * Timeout
  * Calls a bang() after specified delay
+ * v 0. 1. 0: first version
  */
 "use strict";
 
@@ -14,10 +15,10 @@ var Timeout = (function() {
         base: ["kr-only", "timer"],
         properties: {
             timeout: {
-                set: function(value) {
-                    if (typeof value === "number" && value > 0) {
-                        this._.timeout = value;
-                        this._.timeout_samples = (timbre.samplerate * (value / 1000))|0;
+                set: function(val) {
+                    if (typeof val === "number" && val > 0) {
+                        this._.timeout = val;
+                        this._.timeout_samples = (timbre.samplerate * (val / 1000))|0;
                     }
                 },
                 get: function() { return this._.timeout; }

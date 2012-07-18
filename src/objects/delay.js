@@ -1,5 +1,5 @@
 /**
- * Delay: v12.07.13
+ * Delay
  */
 "use strict";
 
@@ -13,8 +13,8 @@ var Delay = (function() {
         base: "ar-kr",
         properties: {
             delay: {
-                set: function(value) {
-                    if (typeof value === "number") this._.delayTime = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.delayTime = val;
                 },
                 get: function() { return this._.delayTime; }
             }

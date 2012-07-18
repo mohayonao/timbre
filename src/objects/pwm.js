@@ -1,7 +1,8 @@
 /**
- * Pwm: v12.07.16
+ * Pwm
+ * Pulse Width Modulation
  * v 0. 3. 3: first version
- * v12.07.16: add 'pwm125', 'pwm25', 'pwm50'
+ * <WORKING>: add 'pwm125', 'pwm25', 'pwm50'
  */
 "use strict";
 
@@ -15,14 +16,14 @@ var Pwm = (function() {
         base: "ar-kr",
         properties: {
             width: {
-                set: function(value) {
-                    this._.width = timbre(value);
+                set: function(val) {
+                    this._.width = timbre(val);
                 },
                 get: function() { return this._.width; }
             },
             freq: {
-                set: function(value) {
-                    this._.freq = timbre(value);
+                set: function(val) {
+                    this._.freq = timbre(val);
                 },
                 get: function() { return this._.freq; }
             }

@@ -1,8 +1,9 @@
 /**
- * ADSREnvelope: v12.07.13
+ * ADSREnvelope
  * ADSR envelope generator
- * v12.07.12: add ar-mode
- * v12.07.16: mv PercussiveEnvelope -> ADSREnvelope
+ * v 0. 1. 0: first version
+ * <WORKING>: add ar-mode
+ *            mv PercussiveEnvelope -> ADSREnvelope
  */
 "use strict";
 
@@ -20,50 +21,50 @@ var ADSREnvelope = (function() {
                 get: function() { return STATUSES[this._.status+1]; }
             },
             a: { // atack-time
-                set: function(value) {
-                    if (typeof value === "number") this._.a = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.a = val;
                 },
                 get: function() { return this._.a; }
             },
             d: { // decay-time
-                set: function(value) {
-                    if (typeof value === "number") this._.d = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.d = val;
                 },
                 get: function() { return this._.d; }
             },
             s: { // sustain-time
-                set: function(value) {
-                    if (typeof value === "number") this._.s = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.s = val;
                 },
                 get: function() { return this._.s; }
             },
             r: { // release-time
-                set: function(value) {
-                    if (typeof value === "number") this._.r = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.r = val;
                 },
                 get: function() { return this._.r; }
             },
             al: { // attack-level
-                set: function(value) {
-                    if (typeof value === "number") this._.al = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.al = val;
                 },
                 get: function() { return this._.al; }
             },
             dl: { // decay-level
-                set: function(value) {
-                    if (typeof value === "number") this._.dl = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.dl = val;
                 },
                 get: function() { return this._.dl; }
             },
             sl: { // sustain-level
-                set: function(value) {
-                    if (typeof value === "number") this._.sl = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.sl = val;
                 },
                 get: function() { return this._.sl; }
             },
             rl: { // release-level
-                set: function(value) {
-                    if (typeof value === "number") this._.rl = value;
+                set: function(val) {
+                    if (typeof val === "number") this._.rl = val;
                 },
                 get: function() { return this._.rl; }
             }
