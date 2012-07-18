@@ -2,7 +2,7 @@
  * Pwm
  * Pulse Width Modulation
  * v 0. 3. 3: first version
- * <WORKING>: add 'pwm125', 'pwm25', 'pwm50'
+ * v12.07.18: add 'pwm125', 'pwm25', 'pwm50'
  */
 "use strict";
 

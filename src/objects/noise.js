@@ -2,7 +2,7 @@
  * WhiteNoise
  * White noise generator
  * v 0. 1. 0: first version
- * <WORKING>: add args ".mul"
+ * v12.07.18: add args ".mul"
  */
 "use strict";
 

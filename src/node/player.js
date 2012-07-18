@@ -1,6 +1,6 @@
 /**
  * Player
- * <WORKING>: first version
+ * v12.07.18: first version
  */
 "use strict";
 

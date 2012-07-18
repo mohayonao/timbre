@@ -264,7 +264,7 @@ var timbre = (function(context, timbre) {
                 timbre.fn.copyBaseArguments(this, newone, deep);
                 return newone;
             },
-            // v12.07.14
+            // v12.07.18: buddy
             buddy: function(name, list, altMethod) {
                 var buddies = this._.buddies;
                 
@@ -708,7 +708,7 @@ var timbre = (function(context, timbre) {
             };
         }());
         
-        // v12.07.14
+        // v12.07.18: for buddy
         var buddyCall = function(name, list, altMethod) {
             var func;
             for (var i = 0, imax = list.length; i < imax; ++i) {
@@ -737,7 +737,7 @@ var timbre = (function(context, timbre) {
                 }
             }
             
-            // v12.07.14
+            // v12.07.18: for buddy
             if (obj._.buddies && (list = obj._.buddies[name]) !== undefined) {
                 buddyCall(name, list[0], list[1]);
             }
@@ -839,8 +839,7 @@ var timbre = (function(context, timbre) {
             return tmp;
         };
         
-        
-        // v12.07.13
+        // v12.07.18:
         fn.buildPrototype = function(constructor, options) {
             var TimbreObject = function() {};
             TimbreObject.prototype = timbre.TimbreBasePrototype;
@@ -1080,27 +1079,27 @@ var timbre = (function(context, timbre) {
             base: "kr-only",
             properties: {
                 value: {
-                    set: function(value) {
-                        if (typeof value === "number") {
-                            this._.value = value;
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            this._.value = val;
                             changeTheValue.call(this);
                         }
                     },
                     get: function() { return this._.value; }
                 },
                 mul: {
-                    set: function(value) {
-                        if (typeof value === "number") {
-                            this._.mul = value;
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            this._.mul = val;
                             changeTheValue.call(this);
                         }
                     },
                     get: function() { return this._.mul; }
                 },
                 add: {
-                    set: function(value) {
-                        if (typeof value === "number") {
-                            this._.add = value;
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            this._.add = val;
                             changeTheValue.call(this);
                         }
                     },
@@ -1152,25 +1151,25 @@ var timbre = (function(context, timbre) {
             base: "kr-only",
             properties: {
                 value: {
-                    set: function(value) {
-                        this._.value = !!value;
+                    set: function(val) {
+                        this._.value = !!val;
                         changeTheValue.call(this);
                     },
                     get: function() { return this._.value; }
                 },
                 mul: {
-                    set: function(value) {
-                        if (typeof value === "number") {
-                            this._.mul = value;
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            this._.mul = val;
                             changeTheValue.call(this);
                         }
                     },
                     get: function() { return this._.mul; }
                 },
                 add: {
-                    set: function(value) {
-                        if (typeof value === "number") {
-                            this._.add = value;
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            this._.add = val;
                             changeTheValue.call(this);
                         }
                     },
@@ -1228,49 +1227,49 @@ var timbre = (function(context, timbre) {
             base: "kr-only",
             properties: {
                 value: {
-                    set: function(value) {
-                        if (typeof value === "object" && 
-                            (value instanceof Array ||
-                             value.buffer instanceof ArrayBuffer)) {
-                            this._.value = compile(value);
+                    set: function(val) {
+                        if (typeof val === "object" && 
+                            (val instanceof Array ||
+                             val.buffer instanceof ArrayBuffer)) {
+                            this._.value = compile(val);
                             this._.index = 0;
                         }
                     },
                     get: function() { return this._.value; }
                 },
                 index: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            value = value|0;
-                            if (value < 0) value = _.value.length + value;
-                            if (0 <= value && value < _.value.length) {
-                                _.index = value;
-                                changeTheValue.call(this, value);
+                        if (typeof val === "number") {
+                            val = val|0;
+                            if (val < 0) val = _.value.length + val;
+                            if (0 <= val && val < _.value.length) {
+                                _.index = val;
+                                changeTheValue.call(this, val);
                             }
                         }
                     },
                     get: function() { return this._.index; }
                 },
                 repeat: {
-                    set: function(value) {
-                        if (typeof value === "number") this._.repeat1 = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.repeat1 = val;
                     },
                     get: function() { return this._.repeat1; }
                 },
                 mul: {
-                    set: function(value) {
-                        if (typeof value === "number") {
-                            this._.mul = value;
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            this._.mul = val;
                             changeTheValue.call(this, this._.index);
                         }
                     },
                     get: function() { return this._.mul; }
                 },
                 add: {
-                    set: function(value) {
-                        if (typeof value === "number") {
-                            this._.add = value;
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            this._.add = val;
                             changeTheValue.call(this, this._.index);
                         }
                     },
@@ -1401,15 +1400,15 @@ var timbre = (function(context, timbre) {
             base: "kr-only",
             properties: {
                 value: {
-                    set: function(value) {
-                        if (typeof value === "function") this._.value = value;
+                    set: function(val) {
+                        if (typeof val === "function") this._.value = val;
                     },
                     get: function() { return this._.value; }
                 },
                 args: {
-                    set: function(value) {
-                        if (typeof value === "object" && value instanceof Array) {
-                            this._.args = value;
+                    set: function(val) {
+                        if (typeof val === "object" && val instanceof Array) {
+                            this._.args = val;
                         }
                     },
                     get: function() { return this._.args; }
@@ -1461,28 +1460,28 @@ var timbre = (function(context, timbre) {
             base: "kr-only",
             properties: {
                 scale: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "string" &&
-                            Scale.Scales[value] !== undefined) {
-                            _.scale = value;
-                            _.list = Scale.Scales[value];
-                        } else if (value instanceof Array) {
+                        if (typeof val === "string" &&
+                            Scale.Scales[val] !== undefined) {
+                            _.scale = val;
+                            _.list = Scale.Scales[val];
+                        } else if (val instanceof Array) {
                             _.scale = "";
-                            _.list = value;
+                            _.list = val;
                         }
                     },
                     get: function() { return this._.scale; }
                 },
                 root: {
-                    set: function(value) {
-                        this._.root = timbre(value);
+                    set: function(val) {
+                        this._.root = timbre(val);
                     },
                     get: function() { return this._.root; }
                 },
                 octave: {
-                    set: function(value) {
-                        if (typeof value === "number") this._.octave = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.octave = val;
                     },
                     get: function() { return this._.octave; }
                 }
@@ -1635,8 +1634,8 @@ var timbre = (function(context, timbre) {
                     get: function() { return this; }
                 },
                 pan: {
-                    set: function(value) {
-                        this._.pan = timbre(value);
+                    set: function(val) {
+                        this._.pan = timbre(val);
                     },
                     get: function() { return this._.pan; }
                 }
@@ -2228,25 +2227,25 @@ var timbre = (function(context, timbre) {
             base: "ar-kr",
             properties: {
                 wave: {
-                    set: function(value) {
+                    set: function(val) {
                         var dx, wave = this._.wave;
-                        if (typeof value === "function") {
+                        if (typeof val === "function") {
                             for (var i = 0; i < 1024; i++) {
-                                wave[i] = value(i / 1024);
+                                wave[i] = val(i / 1024);
                             }
-                        } else if (typeof value === "object" &&
-                                   (value instanceof Array ||
-                                    value.buffer instanceof ArrayBuffer)) {
-                            if (value.length === 1024) {
-                                this._.wave = value;
+                        } else if (typeof val === "object" &&
+                                   (val instanceof Array ||
+                                    val.buffer instanceof ArrayBuffer)) {
+                            if (val.length === 1024) {
+                                this._.wave = val;
                             } else {
-                                dx = value.length / 1024;
+                                dx = val.length / 1024;
                                 for (var i = 0; i < 1024; i++) {
-                                    wave[i] = value[(i * dx)|0] || 0.0;
+                                    wave[i] = val[(i * dx)|0] || 0.0;
                                 }
                             }
-                        } else if (typeof value === "string") {
-                            if ((dx = this.getWavetable(value)) !== undefined) {
+                        } else if (typeof val === "string") {
+                            if ((dx = this.getWavetable(val)) !== undefined) {
                                 this._.wave = dx;
                             }
                         }
@@ -2254,17 +2253,17 @@ var timbre = (function(context, timbre) {
                     get: function() { return this._.wave; }
                 },
                 freq: {
-                    set: function(value) {
-                        this._.freq = timbre(value);
+                    set: function(val) {
+                        this._.freq = timbre(val);
                     },
                     get: function() { return this._.freq; }
                 },
                 phase: {
-                    set: function(value) {
-                        if (typeof value === "number") {
-                            while (value >= 1.0) value -= 1.0;
-                            while (value <  0.0) value += 1.0;
-                            this._.phase = value;
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            while (val >= 1.0) val -= 1.0;
+                            while (val <  0.0) val += 1.0;
+                            this._.phase = val;
                             this._.x = 1024 * this._.phase;
                         }
                     },
@@ -2340,7 +2339,7 @@ var timbre = (function(context, timbre) {
                 
                 if (_.ar) { // ar-mode
                     if (_.freq.isAr) {
-                        for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                        for (i = 0, imax = cell.length; i < imax; ++i) {
                             index = x|0; delta = x - index;
                             x0 = wave[index & 1023]; x1 = wave[(index+1) & 1023];
                             cell[i] = ((1.0 - delta) * x0 + delta * x1) * mul + add;
@@ -2348,7 +2347,7 @@ var timbre = (function(context, timbre) {
                         }
                     } else {
                         var dx = freq[0] * coeff;
-                        for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                        for (i = 0, imax = cell.length; i < imax; ++i) {
                             index = x|0; delta = x - index;
                             x0 = wave[index & 1023]; x1 = wave[(index+1) & 1023];
                             cell[i] = ((1.0 - delta) * x0 + delta * x1) * mul + add;
@@ -2359,7 +2358,7 @@ var timbre = (function(context, timbre) {
                     index = x|0; delta = x - index;
                     x0 = wave[index & 1023]; x1 = wave[(index+1) & 1023];
                     xx = ((1.0 - delta) * x0 + delta * x1) * mul + add;
-                    for (i = timbre.cellsize; i--; ) cell[i] = xx;
+                    for (i = imax = cell.length; i--; ) cell[i] = xx;
                     x += freq[0] * coeff * imax;
                 }
                 while (x > 1024) x -= 1024;
@@ -2599,32 +2598,32 @@ var timbre = (function(context, timbre) {
             base: "ar-kr",
             properties: {
                 func: {
-                    set: function(value) {
-                        if (typeof value === "function") this._.func = value;
+                    set: function(val) {
+                        if (typeof val === "function") this._.func = val;
                     },
                     get: function() { return this._.func; }
                 },
                 numOfSamples: {
-                    set: function(value) {
-                        if (typeof value === "number") {
-                            this._.saved = new Float32Array(value);
-                            this._.numOfSamples = value;
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            this._.saved = new Float32Array(val);
+                            this._.numOfSamples = val;
                         }
                     },
                     get: function() { return this._.numOfSamples; }
                 },
                 freq: {
-                    set: function(value) {
-                        this._.freq = timbre(value);
+                    set: function(val) {
+                        this._.freq = timbre(val);
                     },
                     get: function() { return this._.freq; }
                 },
                 phase: {
-                    set: function(value) {
-                        if (typeof value === "number") {
-                            while (value >= 1.0) value -= 1.0;
-                            while (value <  0.0) value += 1.0;
-                            this._.phase = this._.x = value;
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            while (val >= 1.0) val -= 1.0;
+                            while (val <  0.0) val += 1.0;
+                            this._.phase = this._.x = val;
                         }
                     },
                     get: function() { return this._.phase; }
@@ -2847,14 +2846,14 @@ var timbre = (function(context, timbre) {
             base: "ar-kr",
             properties: {
                 phase: {
-                    set: function(value) {
-                        this._.phase = timbre(value);
+                    set: function(val) {
+                        this._.phase = timbre(val);
                     },
                     get: function() { return this._.phase; }
                 },
                 fb: {
-                    set: function(value) {
-                        if (typeof value === "number") this._.fb = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.fb = val;
                     },
                     get: function() { return this._.fb; }
                 }
@@ -2993,25 +2992,25 @@ var timbre = (function(context, timbre) {
             base: "ar-kr",
             properties: {
                 freq: {
-                    set: function(value) {
-                        this._.freq = timbre(value);
+                    set: function(val) {
+                        this._.freq = timbre(val);
                     },
                     get: function() { return this._.freq; }
                 },
                 fmul: {
-                    set: function(value) {
-                        if (typeof value === "number" && value >= 0) {
-                            this._.fmul = value;
+                    set: function(val) {
+                        if (typeof val === "number" && val >= 0) {
+                            this._.fmul = val;
                         }
                     },
                     get: function() { return this._.fmul; }
                 },
                 phase: {
-                    set: function(value) {
-                        if (typeof value === "number") {
-                            while (value >= 1.0) value -= 1.0;
-                            while (value <  0.0) value += 1.0;
-                            this._.phase = this._.x = value;
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            while (val >= 1.0) val -= 1.0;
+                            while (val <  0.0) val += 1.0;
+                            this._.phase = this._.x = val;
                         }
                     },
                     get: function() { return this._.phase; }
@@ -3118,14 +3117,14 @@ var timbre = (function(context, timbre) {
             base: "ar-kr",
             properties: {
                 width: {
-                    set: function(value) {
-                        this._.width = timbre(value);
+                    set: function(val) {
+                        this._.width = timbre(val);
                     },
                     get: function() { return this._.width; }
                 },
                 freq: {
-                    set: function(value) {
-                        this._.freq = timbre(value);
+                    set: function(val) {
+                        this._.freq = timbre(val);
                     },
                     get: function() { return this._.freq; }
                 }
@@ -3240,8 +3239,8 @@ var timbre = (function(context, timbre) {
             base: "ar-kr",
             properties: {
                 freq: {
-                    set: function(value) {
-                        this._.freq = timbre(value);
+                    set: function(val) {
+                        this._.freq = timbre(val);
                     },
                     get: function() { return this._.freq; }
                 }
@@ -3329,10 +3328,10 @@ var timbre = (function(context, timbre) {
             base: "kr-ar",
             properties: {
                 table: {
-                    set: function(value) {
+                    set: function(val) {
                         var dx, name, _ = this._;
-                        if (typeof value === "string") {
-                            if (value === "~") {
+                        if (typeof val === "string") {
+                            if (val === "~") {
                                 name = _.tableName;
                                 if (name.charAt(0) === "~") {
                                     name = name.substr(1);
@@ -3340,7 +3339,7 @@ var timbre = (function(context, timbre) {
                                     name = "~" + name;
                                 }
                             } else {
-                                name = value;
+                                name = val;
                             }
                             
                             if ((dx = Envelope.AmpTables[name]) !== undefined) {
@@ -3350,17 +3349,17 @@ var timbre = (function(context, timbre) {
                             }
                         }
                     },
-                    get: function(value) { return this._.tableName; }
+                    get: function() { return this._.tableName; }
                 },
                 delay: {
-                    set: function(value) {
-                        if (typeof value === "number") this._.delay = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.delay = val;
                     },
                     get: function() { return this._.delay; }
                 },
                 reversed: {
-                    set: function(value) {
-                        this._.reversed = !!value;
+                    set: function(val) {
+                        this._.reversed = !!val;
                     },
                     get: function() { return this._.reversed; }
                 },
@@ -3466,50 +3465,50 @@ var timbre = (function(context, timbre) {
                     get: function() { return STATUSES[this._.status+1]; }
                 },
                 a: { // atack-time
-                    set: function(value) {
-                        if (typeof value === "number") this._.a = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.a = val;
                     },
                     get: function() { return this._.a; }
                 },
                 d: { // decay-time
-                    set: function(value) {
-                        if (typeof value === "number") this._.d = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.d = val;
                     },
                     get: function() { return this._.d; }
                 },
                 s: { // sustain-time
-                    set: function(value) {
-                        if (typeof value === "number") this._.s = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.s = val;
                     },
                     get: function() { return this._.s; }
                 },
                 r: { // release-time
-                    set: function(value) {
-                        if (typeof value === "number") this._.r = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.r = val;
                     },
                     get: function() { return this._.r; }
                 },
                 al: { // attack-level
-                    set: function(value) {
-                        if (typeof value === "number") this._.al = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.al = val;
                     },
                     get: function() { return this._.al; }
                 },
                 dl: { // decay-level
-                    set: function(value) {
-                        if (typeof value === "number") this._.dl = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.dl = val;
                     },
                     get: function() { return this._.dl; }
                 },
                 sl: { // sustain-level
-                    set: function(value) {
-                        if (typeof value === "number") this._.sl = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.sl = val;
                     },
                     get: function() { return this._.sl; }
                 },
                 rl: { // release-level
-                    set: function(value) {
-                        if (typeof value === "number") this._.rl = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.rl = val;
                     },
                     get: function() { return this._.rl; }
                 }
@@ -3814,6 +3813,75 @@ var timbre = (function(context, timbre) {
         });
     }());
     
+    ///// objects/aux.js /////
+    var Aux = (function() {
+        var Aux = function() {
+            initialize.apply(this, arguments);
+        }, $this = timbre.fn.buildPrototype(Aux, {
+            base: "ar-only",
+            properties: {
+                list: {
+                    set: function(val) {
+                        if (val instanceof Array) {
+                            this._.list = val;
+                            compile.call(this);
+                        }
+                    },
+                    get: function() { return this._.list; }
+                }
+            }
+        });
+        
+        var initialize = function(_args) {
+            var _ = this._ = {};
+            
+            _.list = [];
+            _.workcell = new Float32Array(timbre.cellsize);
+            _.stub = { seq: function() { return _.workcell; } };
+            
+            this.args = _args.map(timbre);
+        };
+    
+        var compile = function() {
+            var _ = this._;
+            var list = _.list, stub = _.stub;
+            for (var i = list.length; i--; ) {
+                list[i].args.removeAll().push(stub);
+            }
+        };
+        
+        $this.seq = function(seq_id) {
+            var tmp, _ = this._;
+            
+            var cell = this.cell;
+            if (seq_id !== this.seq_id) {
+                this.seq_id = seq_id;
+                
+                var args = this.args.slice(0);
+                var workcell = _.workcell;
+                var list = _.list;
+                var mul = _.mul, add = _.add;
+                var i, imax;
+                
+                cell = timbre.fn.sumargsAR(this, args, seq_id);
+                
+                workcell.set(cell);
+                var xx = workcell[0];
+                for (i = 0, imax = list.length; i < imax; ++i) {
+                    workcell.set(list[i].seq(seq_id));
+                }
+                
+                for (i = cell.length; i--; ) {
+                    cell[i] = workcell[i] * mul + add;
+                }
+            }
+            return cell;
+        };
+        
+        return Aux;
+    }());
+    timbre.fn.register("aux", Aux);
+    
     ///// objects/filter.js /////
     var Filter = (function() {
         var Filter = function() {
@@ -3822,11 +3890,11 @@ var timbre = (function(context, timbre) {
             base: "ar-only",
             properties: {
                 type: {
-                    set: function(value) {
+                    set: function(val) {
                         var f;
-                        if (typeof value === "string") {
-                            if ((f = Filter.Types[value]) !== undefined) {
-                                this._.type = value;
+                        if (typeof val === "string") {
+                            if ((f = Filter.Types[val]) !== undefined) {
+                                this._.type = val;
                                 this._.set_params = f.set_params;
                             }
                         }
@@ -3834,20 +3902,20 @@ var timbre = (function(context, timbre) {
                     get: function() { return this._.type; }
                 },
                 freq: {
-                    set: function(value) {
-                        this._.freq = timbre(value);
+                    set: function(val) {
+                        this._.freq = timbre(val);
                     },
                     get: function() { return this._.freq; }
                 },
                 band: {
-                    set: function(value) {
-                        this._.band = timbre(value);
+                    set: function(val) {
+                        this._.band = timbre(val);
                     },
                     get: function() { return this._.band; }
                 },
                 gain: {
-                    set: function(value) {
-                        this._.gain = timbre(value);
+                    set: function(val) {
+                        this._.gain = timbre(val);
                     },
                     get: function() { return this._.gain; }
                 },
@@ -4213,11 +4281,11 @@ var timbre = (function(context, timbre) {
             base: "ar-only",
             properties: {
                 type: {
-                    set: function(value) {
+                    set: function(val) {
                         var mode;
-                        if (typeof value === "string") {
-                            if ((mode = ResonantFilter.Types[value]) !== undefined) {
-                                this._.type = value;
+                        if (typeof val === "string") {
+                            if ((mode = ResonantFilter.Types[val]) !== undefined) {
+                                this._.type = val;
                                 this._.mode = mode;
                             }
                         }
@@ -4225,20 +4293,20 @@ var timbre = (function(context, timbre) {
                     get: function() { return this._.type; }
                 },
                 cutoff: {
-                    set: function(value) {
-                        this._.cutoff = timbre(value);
+                    set: function(val) {
+                        this._.cutoff = timbre(val);
                     },
                     get: function() { return this._.cutoff; }
                 },
                 Q: {
-                    set: function(value) {
-                        this._.Q = timbre(value);
+                    set: function(val) {
+                        this._.Q = timbre(val);
                     },
                     get: function() { return this._.Q; }
                 },
                 depth: {
-                    set: function(value) {
-                        this._.depth = timbre(value);
+                    set: function(val) {
+                        this._.depth = timbre(val);
                     },
                     get: function() { return this._.depth; }
                 }
@@ -4412,30 +4480,30 @@ var timbre = (function(context, timbre) {
             base: "ar-only",
             properties: {
                 time: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            _.time = value;
+                        if (typeof val === "number") {
+                            _.time = val;
                             set_params.call(this, _.time, this._.fb, _.wet);
                         }
                     },
                     get: function() { return this._.time; }
                 },
                 fb: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            _.fb = value;
+                        if (typeof val === "number") {
+                            _.fb = val;
                             set_params.call(this, _.time, _.fb, _.wet);
                         }
                     },
                     get: function() { return this._.fb; }
                 },
                 wet: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            _.wet = value;
+                        if (typeof val === "number") {
+                            _.wet = val;
                             set_params.call(this, _.time, _.fb, _.wet);
                         }
                     },
@@ -4560,30 +4628,30 @@ var timbre = (function(context, timbre) {
             base: "ar-only",
             properties: {
                 time: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            _.time = value;
+                        if (typeof val === "number") {
+                            _.time = val;
                             set_params.call(this, _.time, _.fb, _.wet);
                         }
                     },
                     get: function() { return this._.time; }
                 },
                 fb: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            _.fb = value;
+                        if (typeof val === "number") {
+                            _.fb = val;
                             set_params.call(this, _.time, _.fb, _.wet);
                         }
                     },
                     get: function() { return this._.fb; }
                 },
                 wet: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            _.wet = value;
+                        if (typeof val === "number") {
+                            _.wet = val;
                             set_params.call(this, _.time, _.fb, _.wet);
                         }
                     },
@@ -4737,20 +4805,20 @@ var timbre = (function(context, timbre) {
             base: "ar-only",
             properties: {
                 pre: {
-                    set: function(value) {
-                        this._.preGain = timbre(value);
+                    set: function(val) {
+                        this._.preGain = timbre(val);
                     },
                     get: function() { return this._.preGain; }
                 },
                 post: {
-                    set: function(value) {
-                        this._.postGain = timbre(value);
+                    set: function(val) {
+                        this._.postGain = timbre(val);
                     },
                     get: function() { return this._.postGain; }
                 },
                 freq: {
-                    set: function(value) {
-                        this._.lpfFreq = timbre(value);
+                    set: function(val) {
+                        this._.lpfFreq = timbre(val);
                     },
                     get: function() { return this._.lpfFreq; }
                 }
@@ -4917,33 +4985,33 @@ var timbre = (function(context, timbre) {
             base: "ar-only",
             properties: {
                 depth: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            _.depth = value;
+                        if (typeof val === "number") {
+                            _.depth = val;
                             _.lfo.mul = _.depth * _.offset;
                         }
                     },
                     get: function() { return this._.depth; }
                 },
                 rate: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            _.rate = value;
-                            _.lfo.freq.value = value;
+                        if (typeof val === "number") {
+                            _.rate = val;
+                            _.lfo.freq.value = val;
                         }
                     },
                     get: function() { return this._.rate; }
                 },
                 wet: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            if (0 <= value && value <= 1.0) {
-                                _.wet = value;
-                                _.wet0 = Math.sin(0.25 * Math.PI * value);
-                                _.dry0 = Math.cos(0.25 * Math.PI * value);
+                        if (typeof val === "number") {
+                            if (0 <= val && val <= 1.0) {
+                                _.wet = val;
+                                _.wet0 = Math.sin(0.25 * Math.PI * val);
+                                _.dry0 = Math.cos(0.25 * Math.PI * val);
                             }
                         }
                     },
@@ -5067,49 +5135,49 @@ var timbre = (function(context, timbre) {
             base: "ar-only",
             properties: {
                 thres: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            _.thres  = value;
-                            _.thres2 = value * value;
+                        if (typeof val === "number") {
+                            _.thres  = val;
+                            _.thres2 = val * val;
                         }
                     },
                     get: function() { return this._.thres; }
                 },
                 ratio: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            _.ratio = value;
+                        if (typeof val === "number") {
+                            _.ratio = val;
                             set_params.call(this, _.ratio, _.attack, _.release);
                         }
                     },
                     get: function() { return this._.ratio; }
                 },
                 attack: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            _.attack = value;
+                        if (typeof val === "number") {
+                            _.attack = val;
                             set_params.call(this, _.ratio, _.attack, _.release);
                         }
                     },
                     get: function() { return this._.attack; }
                 },
                 release: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            _.release = value;
+                        if (typeof val === "number") {
+                            _.release = val;
                             set_params.call(this, _.ratio, _.attack, _.release);
                         }
                     },
                     get: function() { return this._.release; }
                 },
                 gain: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") _.gain = value;
+                        if (typeof val === "number") _.gain = val;
                     },
                     get: function() { return this._.gain; }
                 }
@@ -5257,27 +5325,27 @@ var timbre = (function(context, timbre) {
         },
         setPrototype: function() {
             Object.defineProperty(this, "src", {
-                set: function(value) {
-                    if (typeof value === "string") {
-                        if (this._.src !== value) {
-                            this._.src = value;
+                set: function(val) {
+                    if (typeof val === "string") {
+                        if (this._.src !== val) {
+                            this._.src = val;
                             this._.isloaded = false;
                         }
-                    } else if (timbre.platform === "web" && value instanceof File) {
-                        this._.src = value;
+                    } else if (timbre.platform === "web" && val instanceof File) {
+                        this._.src = val;
                         this._.isloaded = false;
                     }
                 },
                 get: function() { return this._.src; }
             });
             Object.defineProperty(this, "loop", {
-                set: function(value) { this._.loop = !!value; },
+                set: function(val) { this._.loop = !!val; },
                 get: function() { return this._.loop; }
             });
             Object.defineProperty(this, "reversed", {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    _.reversed = !!value;
+                    _.reversed = !!val;
                     if (_.reversed && _.phase === 0) {
                         _.phase = Math.max(0, _.buffer.length - 1);
                     }
@@ -5291,11 +5359,11 @@ var timbre = (function(context, timbre) {
                 get: function() { return this._.duration; }
             });
             Object.defineProperty(this, "currentTime", {
-                set: function(value) {
+                set: function(val) {
                     var _ = this._;
-                    if (typeof value === "number") {
-                        if (0 <= value && value <= _.duration) {
-                            _.phase = ((value / 1000) * timbre.samplerate)|0;
+                    if (typeof val === "number") {
+                        if (0 <= val && val <= _.duration) {
+                            _.phase = ((val / 1000) * timbre.samplerate)|0;
                         }
                     }
                 },
@@ -5415,9 +5483,9 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * WebKitAudio: v12.07.14
+     * WebKitAudio
      * Store audio samples (WebAudioAPI)
-     * [ar-only]
+     * v 0. 1. 0: first version
      */
     var WebKitAudio = (function() {
         var WebKitAudio = function() {
@@ -5498,9 +5566,9 @@ var timbre = (function(context, timbre) {
     
     
     /**
-     * MozAudio: v12.07.14
+     * MozAudio
      * Store audio samples (AudioDataAPI)
-     * [ar-only]
+     * v 0. 1. 0: first version
      */
     var MozAudio = (function() {
         var MozAudio = function() {
@@ -5607,10 +5675,10 @@ var timbre = (function(context, timbre) {
             base: "ar-only",
             properties: {
                 src: {
-                    set: function(value) {
-                        if (typeof value === "string") {
-                            if (this._.src !== value) {
-                                this._.src = value;
+                    set: function(val) {
+                        if (typeof val === "string") {
+                            if (this._.src !== val) {
+                                this._.src = val;
                                 this._.isloaded = false;
                             }
                         }
@@ -5618,13 +5686,13 @@ var timbre = (function(context, timbre) {
                     get: function() { return this._.src; }
                 },
                 loop: {
-                    set: function(value) { this._.loop = !!value; },
+                    set: function(val) { this._.loop = !!val; },
                     get: function() { return this._.loop; }
                 },
                 reversed: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        _.reversed = !!value;
+                        _.reversed = !!val;
                         if (_.reversed && _.phase === 0) {
                             _.phase = Math.max(0, _.buffer.length - 1);
                         }
@@ -5638,10 +5706,10 @@ var timbre = (function(context, timbre) {
                     get: function() { return this._.duration; }
                 },
                 currentTime: {
-                    set: function(value) {
-                        if (typeof value === "number") {
-                            if (0 <= value && value <= this._.duration) {
-                                this._.phase = (value / 1000) * this._.samplerate;
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            if (0 <= val && val <= this._.duration) {
+                                this._.phase = (val / 1000) * this._.samplerate;
                             }
                         }
                     },
@@ -6035,8 +6103,8 @@ var timbre = (function(context, timbre) {
             base: "ar-kr",
             properties: {
                 delay: {
-                    set: function(value) {
-                        if (typeof value === "number") this._.delayTime = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.delayTime = val;
                     },
                     get: function() { return this._.delayTime; }
                 }
@@ -6117,8 +6185,8 @@ var timbre = (function(context, timbre) {
             base: "ar-kr",
             properties: {
                 sample: {
-                    set: function(value) {
-                        if (typeof value === "number") this._.sampleMax = value|0;
+                    set: function(val) {
+                        if (typeof val === "number") this._.sampleMax = val|0;
                     },
                     get: function() { return this._.sampleMax; }
                 }
@@ -6268,14 +6336,14 @@ var timbre = (function(context, timbre) {
             base: "ar-kr",
             properties: {
                 min: {
-                    set: function(value) {
-                        if (typeof value === "number") this._.min = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.min = val;
                     },
                     get: function() { return this._.min; }
                 },
                 max: {
-                    set: function(value) {
-                        if (typeof value === "number") this._.max = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.max = val;
                     },
                     get: function() { return this._.max; }
                 }
@@ -6379,29 +6447,29 @@ var timbre = (function(context, timbre) {
             base: "kr-ar",
             properties: {
                 type: {
-                    set: function(value) {
+                    set: function(val) {
                         var f;
-                        if (typeof value === "string") {
-                            if ((f = Easing.Functions[value]) !== undefined) {
-                                this._.type = value;
+                        if (typeof val === "string") {
+                            if ((f = Easing.Functions[val]) !== undefined) {
+                                this._.type = val;
                                 this._.func = f;
                             }
-                        } else if (typeof value === "function") {
+                        } else if (typeof val === "function") {
                             this._.type = "function";
-                            this._.func = value;
+                            this._.func = val;
                         }
                     },
                     get: function() { return this._.type; }
                 },
                 delay: {
-                    set: function(value) {
-                        if (typeof value === "number") this._.delay = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.delay = val;
                     },
                     get: function() { return this._.delay; }
                 },
                 duration: {
-                    set: function(value) {
-                        if (typeof value === "number") this._.duration = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.duration = val;
                     },
                     get: function() { return this._.duration; }
                 },
@@ -6409,14 +6477,14 @@ var timbre = (function(context, timbre) {
                     get: function() { return this._.currentTime; }
                 },
                 start: {
-                    set: function(value) {
-                        if (typeof value === "number") this._.start = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.start = val;
                     },
                     get: function() { return this._.start; }
                 },
                 stop: {
-                    set: function(value) {
-                        if (typeof value === "number") this._.stop = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.stop = val;
                     },
                     get: function() { return this._.stop; }
                 },
@@ -6710,12 +6778,12 @@ var timbre = (function(context, timbre) {
             base: "kr-ar",
             properties: {
                 value: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
+                        if (typeof val === "number") {
                             _.status = 0;
                             _.start  = _.value;
-                            _.stop   = value;
+                            _.stop   = val;
                             _.samples = (timbre.samplerate * (_.delay / 1000))|0;
                             _.x0 = 0; _.dx = 0;
                         }
@@ -6802,21 +6870,21 @@ var timbre = (function(context, timbre) {
                     get: function() { return this._.buffer; }
                 },
                 recTime: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number" && value > 0) {
-                            _.recTime = value;
+                        if (typeof val === "number" && val > 0) {
+                            _.recTime = val;
                             _.buffer = new Float32Array((timbre.samplerate * _.recTime / 1000)|0);
                         }
                     },
                     get: function() { return this._.recTime; }
                 },
                 interval: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        if (typeof value === "number") {
-                            _.interval = value;
-                            _.interval_samples = (timbre.samplerate * (value / 1000))|0;
+                        if (typeof val === "number") {
+                            _.interval = val;
+                            _.interval_samples = (timbre.samplerate * (val / 1000))|0;
                             if (_.interval_samples < _.buffer.length) {
                                 _.interval_samples = _.buffer.length;
                                 _.interval = _.buffer.length * timbre.samplerate / 1000;
@@ -6832,7 +6900,7 @@ var timbre = (function(context, timbre) {
                     get: function() { return this._.ison; }
                 },
                 overwrite: {
-                    set: function(value) { this._.overwrite = !!value; },
+                    set: function(val) { this._.overwrite = !!val; },
                     get: function() { return this._.overwrite; }
                 }
             } // properties
@@ -6971,16 +7039,16 @@ var timbre = (function(context, timbre) {
             base: "ar-only",
             properties: {
                 buffer: {
-                    set: function(value) {
+                    set: function(val) {
                         var buffer, i, _ = this._;
-                        if (typeof value === "object") {
-                            if (value instanceof Float32Array) {
-                                _.buffer = value;
-                            } else if (value instanceof Array ||
-                                       value.buffer instanceof ArrayBuffer) {
-                                buffer = new Float32Array(value.length);
+                        if (typeof val === "object") {
+                            if (val instanceof Float32Array) {
+                                _.buffer = val;
+                            } else if (val instanceof Array ||
+                                       val.buffer instanceof ArrayBuffer) {
+                                buffer = new Float32Array(val.length);
                                 for (i = buffer.length; i--; ) {
-                                    buffer[i] = value[i];
+                                    buffer[i] = val[i];
                                 }
                                 _.buffer = buffer;
                                 _.duration = buffer.length / timbre.samplerate * 1000;
@@ -6995,13 +7063,13 @@ var timbre = (function(context, timbre) {
                     get: function() { return this._.buffer; }
                 },
                 loop: {
-                    set: function(value) { this._.loop = !!value; },
+                    set: function(val) { this._.loop = !!val; },
                     get: function() { return this._.loop; }
                 },
                 reversed: {
-                    set: function(value) {
+                    set: function(val) {
                         var _ = this._;
-                        _.reversed = !!value;
+                        _.reversed = !!val;
                         if (_.reversed && _.phase === 0) {
                             _.phase = Math.max(0, _.buffer.length - 1);
                         }
@@ -7012,10 +7080,10 @@ var timbre = (function(context, timbre) {
                     get: function() { return this._.duration; }
                 },
                 currentTime: {
-                    set: function(value) {
-                        if (typeof value === "number") {
-                            if (0 <= value && value <= this._.duration) {
-                                this._.phase = (value / 1000) * this._.samplerate;
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            if (0 <= val && val <= this._.duration) {
+                                this._.phase = (val / 1000) * this._.samplerate;
                             }
                         }
                     },
@@ -7326,25 +7394,25 @@ var timbre = (function(context, timbre) {
             base: ["kr-only", "timer"],
             properties: {
                 interval: {
-                    set: function(value) {
-                        if (typeof value === "number" && value >= 0) {
-                            this._.interval = value;
+                    set: function(val) {
+                        if (typeof val === "number" && val >= 0) {
+                            this._.interval = val;
                         }
                     },
                     get: function() { return this._.interval; }
                 },
                 delay: {
-                    set: function(value) {
-                        if (typeof value === "number" && value >= 0) {
-                            this._.delay = value;
-                            this._.delaySamples = (timbre.samplerate * (value / 1000))|0;
+                    set: function(val) {
+                        if (typeof val === "number" && val >= 0) {
+                            this._.delay = val;
+                            this._.delaySamples = (timbre.samplerate * (val / 1000))|0;
                         }
                     },
                     get: function() { return this._.delay; }
                 },
                 count: {
-                    set: function(value) {
-                        if (typeof value === "number") this._.count = value;
+                    set: function(val) {
+                        if (typeof val === "number") this._.count = val;
                     },
                     get: function() { return this._.count; }
                 },
@@ -7433,10 +7501,10 @@ var timbre = (function(context, timbre) {
             base: ["kr-only", "timer"],
             properties: {
                 timeout: {
-                    set: function(value) {
-                        if (typeof value === "number" && value > 0) {
-                            this._.timeout = value;
-                            this._.timeout_samples = (timbre.samplerate * (value / 1000))|0;
+                    set: function(val) {
+                        if (typeof val === "number" && val > 0) {
+                            this._.timeout = val;
+                            this._.timeout_samples = (timbre.samplerate * (val / 1000))|0;
                         }
                     },
                     get: function() { return this._.timeout; }
@@ -7512,10 +7580,10 @@ var timbre = (function(context, timbre) {
                     get: function() { return this._.mode; }
                 },
                 bpm: {
-                    set: function(value) {
+                    set: function(val) {
                         if (this._.mode === "bpm") {
-                            if (typeof value === "number" && value > 0) {
-                                changeBPM.call(this, value);
+                            if (typeof val === "number" && val > 0) {
+                                changeBPM.call(this, val);
                             }
                         }
                     },
@@ -7763,19 +7831,19 @@ var timbre = (function(context, timbre) {
             base: ["kr-only", "timer"],
             properties: {
                 mml: {
-                    set: function(value) {
-                        if (typeof value === "string") {
-                            this._.mml = value;
-                            compile.call(this, value);
+                    set: function(val) {
+                        if (typeof val === "string") {
+                            this._.mml = val;
+                            compile.call(this, val);
                         }
                     },
                     get: function() { return this._.mml; }
                 },
                 bpm: {
-                    set: function(value) {
-                        if (typeof value === "number") {
-                            if (1 <= value && value <= 511) {
-                                this._.bpm = value;
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            if (1 <= val && val <= 511) {
+                                this._.bpm = val;
                             }
                         }
                     },
@@ -8141,12 +8209,12 @@ var timbre = (function(context, timbre) {
             base: "ar-kr",
             properties: {
                 version: {
-                    set: function(value) {
+                    set: function(val) {
                         var synth, _ = this._;
-                        if (typeof value === "string") {
-                            if (value !== _.version) {
-                                if ((synth = AwesomeTimbre.Versions[value]) !== undefined) {
-                                    _.version = value;
+                        if (typeof val === "string") {
+                            if (val !== _.version) {
+                                if ((synth = AwesomeTimbre.Versions[val]) !== undefined) {
+                                    _.version = val;
                                     if (_.synth && _.synth.destroy) {
                                         _.synth.destroy(this);
                                     }

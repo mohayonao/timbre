@@ -2,7 +2,7 @@
  * Oscillator
  * Table lookup oscillator
  * v 0. 0. 1: first version
- * <WORKING>: wave shaping
+ * v12.07.18: wave shaping
  */
 "use strict";
 

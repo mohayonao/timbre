@@ -1,7 +1,7 @@
 /**
  * MML
  * Music Macro Language Processor
- * <WORKING>: first version
+ * v12.07.18: first version
  */
 "use strict";
 

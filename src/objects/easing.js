@@ -2,7 +2,7 @@
  * Easing
  * 'Easing.Functions' refered to https://github.com/sole/tween.js
  * v 0. 1. 0: first version
- * <WORKING>: add ar-mode
+ * v12.07.18: add ar-mode
  */
 "use strict";
 

@@ -2,7 +2,7 @@
  * PinkNoise
  * Pink noise generator
  * v 0. 3. 5: first version
- * <WORKING>: add args ".mul"
+ * v12.07.18: add args ".mul"
  */
 "use strict";
 
