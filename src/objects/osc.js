@@ -128,7 +128,7 @@ var Oscillator = (function() {
             
             if (_.ar) { // ar-mode
                 if (_.freq.isAr) {
-                    for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                    for (i = 0, imax = cell.length; i < imax; ++i) {
                         index = x|0; delta = x - index;
                         x0 = wave[index & 1023]; x1 = wave[(index+1) & 1023];
                         cell[i] = ((1.0 - delta) * x0 + delta * x1) * mul + add;
@@ -136,7 +136,7 @@ var Oscillator = (function() {
                     }
                 } else {
                     var dx = freq[0] * coeff;
-                    for (i = 0, imax = timbre.cellsize; i < imax; ++i) {
+                    for (i = 0, imax = cell.length; i < imax; ++i) {
                         index = x|0; delta = x - index;
                         x0 = wave[index & 1023]; x1 = wave[(index+1) & 1023];
                         cell[i] = ((1.0 - delta) * x0 + delta * x1) * mul + add;
@@ -147,7 +147,7 @@ var Oscillator = (function() {
                 index = x|0; delta = x - index;
                 x0 = wave[index & 1023]; x1 = wave[(index+1) & 1023];
                 xx = ((1.0 - delta) * x0 + delta * x1) * mul + add;
-                for (i = timbre.cellsize; i--; ) cell[i] = xx;
+                for (i = imax = cell.length; i--; ) cell[i] = xx;
                 x += freq[0] * coeff * imax;
             }
             while (x > 1024) x -= 1024;
