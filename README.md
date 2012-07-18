@@ -48,6 +48,17 @@ T("*", T("+", T("sin", 523.35),
 MIT
 
 ### ChangeLog ###
+2012 07 18 - **v12.07.18** (334.32 KB, minified:120.13 KB)
+* Add `T("mml")` mml scheduler
+* Add `T("fnoise")` frequency noise
+* Add `T("aux")`
+* Add `T("efx.comp")` compressor
+* Add `T("efx.reverb)` reverb
+* Improved `T("noise")`, `T("pink")` add mul argument for constructor
+* Improved `T("adsr")`, `T("ease")`, `T("glide)` add ar-mode
+* Improved `T("osc")` add wave shaping
+
+
 2012 07 08 - **v0.3.7** (294.64 KB, minified:110.66 KB)
 * Add `T("-")` subtract signals
 * Add `T("/")` divide signals
@@ -59,7 +70,7 @@ MIT
 2012 06 21 - **v0.3.6** (272.25 KB, minified:103.22 KB)
 * Added `T("pink")` pink noise generator
 * Added `T("pong)` signal folding
-* Added `T("a&h")` sample & hold
+* Added `T("s&h")` sample & hold
 * Improved `T("adsr")`, `T("perc")` arguments for constructor
 
 
