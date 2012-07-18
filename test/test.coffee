@@ -30,7 +30,7 @@ app.get "/draft/:name", (req, res)->
     if path.existsSync(filepath)
         res.send fetch_source filepath, {"Content-Type":"text/javascript"}
     else
-        filepath = "#{__dirname}/../src/timbre/#{req.params.name}"
+        filepath = "#{__dirname}/../src/objects/#{req.params.name}"
         if path.existsSync(filepath)
             res.send fetch_source filepath, {"Content-Type":"text/javascript"}
         else res.send(404)
