@@ -34,6 +34,7 @@ TIMBRE_SOURCES = [
     "objects/env"
     "objects/adsr"
 
+    "objects/aux"
     "objects/filter"
     "objects/rfilter"
     "objects/efx.delay"
