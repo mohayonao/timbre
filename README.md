@@ -49,6 +49,7 @@ MIT
 
 ### ChangeLog ###
 2012 07 18 - **v12.07.18** (334.32 KB, minified:120.13 KB)
+* Note: Change the version format (Ubuntu style version numbering)
 * Add `T("mml")` mml scheduler
 * Add `T("fnoise")` frequency noise
 * Add `T("aux")`
