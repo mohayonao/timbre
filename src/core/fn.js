@@ -1,5 +1,5 @@
 /**
- * timbre.fn: v12.07.13
+ * timbre.fn
  */
 "use strict";
 
@@ -86,7 +86,7 @@ timbre.fn = (function(timbre) {
             timbre.fn.copyBaseArguments(this, newone, deep);
             return newone;
         },
-        // v12.07.14
+        // <WORKING>: buddy
         buddy: function(name, list, altMethod) {
             var buddies = this._.buddies;
             
@@ -530,7 +530,7 @@ timbre.fn = (function(timbre) {
         };
     }());
     
-    // v12.07.14
+    // <WORKING>: for buddy
     var buddyCall = function(name, list, altMethod) {
         var func;
         for (var i = 0, imax = list.length; i < imax; ++i) {
@@ -559,7 +559,7 @@ timbre.fn = (function(timbre) {
             }
         }
         
-        // v12.07.14
+        // <WORKING>: for buddy
         if (obj._.buddies && (list = obj._.buddies[name]) !== undefined) {
             buddyCall(name, list[0], list[1]);
         }
@@ -661,8 +661,7 @@ timbre.fn = (function(timbre) {
         return tmp;
     };
     
-    
-    // v12.07.13
+    // <WORKING>:
     fn.buildPrototype = function(constructor, options) {
         var TimbreObject = function() {};
         TimbreObject.prototype = timbre.TimbreBasePrototype;
