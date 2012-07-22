@@ -497,7 +497,7 @@ var MML = (function() {
                     } else if (cmd.type === EXTERNAL) {
                         // send external
                         var value = null;
-                        if (cmd.value !== undefined) {
+                        if (cmd.length !== undefined) {
                             value = cmd.length;
                             if (cmd.sign === "-") value *= -1;
                         }
