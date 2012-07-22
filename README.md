@@ -48,6 +48,11 @@ T("*", T("+", T("sin", 523.35),
 MIT
 
 ### ChangeLog ###
+2012 07 22 - **v12.07.22** (340.72 KB, minified:121.92 KB)
+* Fix `T("mml")` segno cannot jump correct
+* Improve `T("mml")` selected property
+
+
 2012 07 18 - **v12.07.18** (334.32 KB, minified:120.13 KB)
 * Note: Change the version format (Ubuntu style version numbering)
 * Add `T("mml")` mml scheduler
