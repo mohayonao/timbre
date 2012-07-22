@@ -2,7 +2,7 @@
  * MML
  * Music Macro Language Processor
  * v12.07.18: first version
- * <WORKING>: bugfix segno(n)
+ * v12.07.22: bugfix segno(n)
  *            bugfix Synth API send opts as synth.keyon(opts), synth.keyoff(opts)
  *            add properties .synth, .synthdef
  *            add selected
