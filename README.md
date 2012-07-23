@@ -48,6 +48,10 @@ T("*", T("+", T("sin", 523.35),
 MIT
 
 ### ChangeLog ###
+2012 07 23 - **v12.07.23** (341.36 KB, minified:122.06 KB)
+* Fix timing control of audioprocessing for Firefox/Linux
+
+
 2012 07 22 - **v12.07.22** (340.72 KB, minified:121.92 KB)
 * Fix `T("mml")` segno cannot jump correct
 * Improve `T("mml")` selected property
