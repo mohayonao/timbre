@@ -1,5 +1,5 @@
 /**
- * timbre.js v12.07.22 / JavaScript Library for Objective Sound Programming
+ * timbre.js v12.07.23 / JavaScript Library for Objective Sound Programming
  */
 ;
 var timbre = (function(context, timbre) {
@@ -9,7 +9,7 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "v12.07.22";
+    timbre.VERSION    = "v12.07.23";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 0;
@@ -9181,13 +9181,26 @@ var timbre = (function(context, timbre) {
             }, $this = MutekiTimer.prototype;
             
             var TIMER_PATH = (function() {
-                var BlobBuilder, URL, builder;
-                BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
-                URL = window.URL || window.webkitURL;
-                if (BlobBuilder && URL) {
-                    builder = new BlobBuilder();
-                    builder.append("onmessage=t=function(e){clearInterval(t);if(i=e.data)t=setInterval(function(){postMessage(0)},i)}");
-                    return URL.createObjectURL(builder.getBlob());
+                var src = "var t=0;onmessage=function(e){clearInterval(t);if(i=e.data)t=setInterval(function(){postMessage(0)},i)}";
+                
+                var blob = null;
+                if (window.Blob) {
+                    try { blob = new Blob([src], {type:"text\/javascript"});
+                    } catch (e) { blob = null; }
+                }
+                
+                if (blob === null) {
+                    var BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
+                    if (BlobBuilder) {
+                        var builder = new BlobBuilder();
+                        builder.append(src);
+                        blob = builder.getBlob();
+                    }
+                }
+                
+                if (blob !== null) {
+                    var URL = window.URL || window.webkitURL;
+                    return URL.createObjectURL(blob);
                 }
                 return null;
             }());
@@ -9337,7 +9350,11 @@ var timbre = (function(context, timbre) {
                 
                 this.onaudioprocess = function() {
                     
-                    if (this.written > this.audio.mozCurrentSampleOffset() + 16384) {
+                    var mozCurrentSampleOffset = this.audio.mozCurrentSampleOffset();
+                    
+                    // v12.07.23: bugfix for linux (mozCurrentSampleOffset > 0)
+                    if (mozCurrentSampleOffset > 0 &&
+                        this.written > mozCurrentSampleOffset + 16384) {
                         return this;
                     }
                     
