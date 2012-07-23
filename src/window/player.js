@@ -1,5 +1,5 @@
 /**
- * Player: 0.3.4
+ * Player
  */
 "use strict";
 
@@ -109,7 +109,11 @@ var MozPlayer = function(sys) {
         
         this.onaudioprocess = function() {
             
-            if (this.written > this.audio.mozCurrentSampleOffset() + 16384) {
+            var mozCurrentSampleOffset = this.audio.mozCurrentSampleOffset();
+            
+            // v12.07.23: bugfix for linux (mozCurrentSampleOffset > 0)
+            if (mozCurrentSampleOffset > 0 &&
+                this.written > mozCurrentSampleOffset + 16384) {
                 return this;
             }
             
