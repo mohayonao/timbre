@@ -1,5 +1,7 @@
 /**
- * MutekiTimer: 0.3.4
+ * MutekiTimer
+ * v 0. 1. 0: first version
+ * v12.07.23: BlobBuilder is deprecated, Use "Blob" constructor instead.
  */
 "use strict";
 
@@ -12,13 +14,26 @@ var MutekiTimer = (function() {
     }, $this = MutekiTimer.prototype;
     
     var TIMER_PATH = (function() {
-        var BlobBuilder, URL, builder;
-        BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
-        URL = window.URL || window.webkitURL;
-        if (BlobBuilder && URL) {
-            builder = new BlobBuilder();
-            builder.append("onmessage=t=function(e){clearInterval(t);if(i=e.data)t=setInterval(function(){postMessage(0)},i)}");
-            return URL.createObjectURL(builder.getBlob());
+        var src = "var t=0;onmessage=function(e){clearInterval(t);if(i=e.data)t=setInterval(function(){postMessage(0)},i)}";
+        
+        var blob = null;
+        if (window.Blob) {
+            try { blob = new Blob([src], {type:"text\/javascript"});
+            } catch (e) { blob = null; }
+        }
+        
+        if (blob === null) {
+            var BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
+            if (BlobBuilder) {
+                var builder = new BlobBuilder();
+                builder.append(src);
+                blob = builder.getBlob();
+            }
+        }
+        
+        if (blob !== null) {
+            var URL = window.URL || window.webkitURL;
+            return URL.createObjectURL(blob);
         }
         return null;
     }());
