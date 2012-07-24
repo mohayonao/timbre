@@ -4,6 +4,7 @@
  * v 0. 1. 0: first version
  * v12.07.18: add ar-mode
  *            mv PercussiveEnvelope -> ADSREnvelope
+ * <WORKING>: fix constructor .onended
  */
 "use strict";
 
@@ -145,7 +146,9 @@ var ADSREnvelope = (function() {
         if (typeof _args[i] === "boolean") {
             _.reversed = _args[i++];
         }
-        
+        if (typeof _args[i] === "function") {
+            this.onended = _args[i++];
+        }
         _.changeState = changeState;
     };
     
