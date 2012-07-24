@@ -29,7 +29,7 @@ utils.ftom = function(f) {
 };
 
 utils.mtoa = (function() {
-    var tone_table = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    var tone_table = ["c", "c+", "d", "d+", "e", "f", "f+", "g", "g+", "a", "a+", "b"];
     return function(a) {
         var i = (a|0) % 12;
         var j = (a|0) / 12;
@@ -42,12 +42,12 @@ utils.ftoa = function(f) {
 };
 
 utils.atom = (function() {
-    var re = /^([CDEFGAB])([-+#b]?)([0-9]?)$/;
-    var map = {C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+    var re = /^([CDEFGABcdefgab])([-+#b]?)([0-9]?)$/;
+    var map = {c:0,d:2,e:4,f:5,g:7,a:9,b:11};
     return function(a) {
         var m, result = 0;
         if ((m = a.match(re)) !== null) {
-            result = map[m[1]];
+            result = map[m[1].toLowerCase()];
             switch (m[2]) {
             case "+": case "#":
                 ++result;
@@ -56,7 +56,7 @@ utils.atom = (function() {
                 --result;
                 break;
             }
-            result += 12 * ((m[3]|0)+2);
+            result += 12 * ((m[3]|0) + 1);
         }
         return result;
     };
