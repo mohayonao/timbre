@@ -713,7 +713,19 @@ timbre.fn = (function(timbre) {
         
         return p;
     };
-    
+
+    // v12.07.24
+    fn.fix = function() {
+        for (var i = 0, imax = arguments.length; i < imax; ++i) {
+            var name = arguments[i];
+            switch (name) {
+            case "atom":
+                timbre.utils.atom.octaveshift = -1;
+                break;
+            }
+        }
+        return timbre;
+    };
     
     fn._setupTimbre = function(defaultSamplerate) {
         switch (timbre.samplerate) {
