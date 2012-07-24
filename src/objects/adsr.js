@@ -4,7 +4,7 @@
  * v 0. 1. 0: first version
  * v12.07.18: add ar-mode
  *            mv PercussiveEnvelope -> ADSREnvelope
- * <WORKING>: fix constructor .onended
+ * v12.07.24: fix constructor .onended
  */
 "use strict";
 

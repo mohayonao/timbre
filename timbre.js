@@ -1,5 +1,5 @@
 /**
- * timbre.js v12.07.23 / JavaScript Library for Objective Sound Programming
+ * timbre.js v12.07.24 / JavaScript Library for Objective Sound Programming
  */
 ;
 var timbre = (function(context, timbre) {
@@ -9,7 +9,7 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "v12.07.23";
+    timbre.VERSION    = "v12.07.24";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 0;
@@ -891,7 +891,19 @@ var timbre = (function(context, timbre) {
             
             return p;
         };
-        
+    
+        // v12.07.24
+        fn.fix = function() {
+            for (var i = 0, imax = arguments.length; i < imax; ++i) {
+                var name = arguments[i];
+                switch (name) {
+                case "atom":
+                    timbre.utils.atom.octaveshift = -1;
+                    break;
+                }
+            }
+            return timbre;
+        };
         
         fn._setupTimbre = function(defaultSamplerate) {
             switch (timbre.samplerate) {
@@ -3589,7 +3601,9 @@ var timbre = (function(context, timbre) {
             if (typeof _args[i] === "boolean") {
                 _.reversed = _args[i++];
             }
-            
+            if (typeof _args[i] === "function") {
+                this.onended = _args[i++];
+            }
             _.changeState = changeState;
         };
         
@@ -7840,15 +7854,19 @@ var timbre = (function(context, timbre) {
                             } else {
                                 _.tracks[_.selected] = new MMLTrack(this, val);
                             }
-                        } else if (val instanceof Array) {
-                            var typeofval0 = typeof val[0];
-                            if ((typeofval0 === "string" || typeofval0 === "number")) {
-                                if (typeof val[1] === "string") {
-                                    var track = _.tracks[val[0]];
+                        } else if (val === null) {
+                            delete _.tracks[_.selected];
+                            
+                        } else if (typeof val === "object") {
+                            for (var key in val) {
+                                var x = val[key], track = _.tracks[key];
+                                if (x === null) {
+                                    delete _.tracks[key];
+                                } else {
                                     if (track) {
-                                        track.compile(val[1]);
+                                        track.compile(x);
                                     } else {
-                                        _.tracks[val[0]] = new MMLTrack(this, val[1]);
+                                        _.tracks[key] = new MMLTrack(this, x);
                                     }
                                 }
                             }
@@ -7904,6 +7922,14 @@ var timbre = (function(context, timbre) {
                     },
                     get: function() { return this._.synthdef; }
                 },
+                synthpoly: {
+                    set: function(val) {
+                        if (typeof val === "number") {
+                            this._.synthpoly = val;
+                        }
+                    },
+                    get: function() { return this._.synthpoly; }
+                },
                 currentTime: {
                     get: function() { return this._.currentTime; }
                 }
@@ -7946,7 +7972,7 @@ var timbre = (function(context, timbre) {
             } else if (sign === "+" || sign === "#") {
                 ++x;
             }
-            x += octave * 12;
+            x += (octave + 1) * 12;
             return x;
         };
         atom.table = {c:0,d:2,e:4,f:5,g:7,a:9,b:11};
@@ -7974,7 +8000,7 @@ var timbre = (function(context, timbre) {
                 this.parent = parent;
                 this.mml = mml;
                 
-                this.octave   = 5;   // (0 .. 9)
+                this.octave   = 4;   // (0 .. 9)
                 this.length   = 4;   // (1 .. 1920)
                 this.dot      = 0;   // (0 .. 3)
                 this.detune   = 0;   // (-8192 .. 8191)
@@ -8143,7 +8169,10 @@ var timbre = (function(context, timbre) {
             _.samples = Infinity;
             _.keyons  = [];
             _.keyons.samples = 0;
-            _.tie = false;
+            _.tie       = false;
+            _.synth     = null;
+            _.synthdef  = null;
+            _.synthpoly = 4;
             
             var tracks = {};
             if (typeof _args[0] === "object") {
@@ -8161,9 +8190,7 @@ var timbre = (function(context, timbre) {
             _.selected     = 0;
             _.endedEvent  = false;
             
-            if (tracks[_.selected]) {
-                _.samples = 0;
-            }
+            if (tracks[_.selected]) _.samples = 0;
             
             this.onmml = onmml;
         };
@@ -8201,7 +8228,7 @@ var timbre = (function(context, timbre) {
                     x.removeFrom(synth).appendTo(synth); // LRU
                 }
                 if (x.keyon) x.keyon(opts);
-                if (synth.args.length > 4) {
+                if (synth.args.length > _.synthpoly) {
                     delete synth.keyon[ synth.args.shift().tnum ];
                 }
             } else if (opts.cmd === "keyoff") {
@@ -8474,7 +8501,7 @@ var timbre = (function(context, timbre) {
         };
         
         utils.mtoa = (function() {
-            var tone_table = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+            var tone_table = ["c", "c+", "d", "d+", "e", "f", "f+", "g", "g+", "a", "a+", "b"];
             return function(a) {
                 var i = (a|0) % 12;
                 var j = (a|0) / 12;
@@ -8487,12 +8514,12 @@ var timbre = (function(context, timbre) {
         };
         
         utils.atom = (function() {
-            var re = /^([CDEFGAB])([-+#b]?)([0-9]?)$/;
-            var map = {C:0,D:2,E:4,F:5,G:7,A:9,B:11};
-            return function(a) {
+            var re = /^([CDEFGABcdefgab])([-+#b]?)([0-9]?)$/;
+            var map = {c:0,d:2,e:4,f:5,g:7,a:9,b:11};
+            var atom = function(a) {
                 var m, result = 0;
                 if ((m = a.match(re)) !== null) {
-                    result = map[m[1]];
+                    result = map[m[1].toLowerCase()];
                     switch (m[2]) {
                     case "+": case "#":
                         ++result;
@@ -8501,10 +8528,12 @@ var timbre = (function(context, timbre) {
                         --result;
                         break;
                     }
-                    result += 12 * ((m[3]|0)+2);
+                    result += 12 * ((m[3]|0) + 2 + atom.octaveshift);
                 }
                 return result;
             };
+            atom.octaveshift = 0;
+            return atom;
         }());
         
         utils.atof = function(a) {

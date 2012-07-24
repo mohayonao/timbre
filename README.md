@@ -48,6 +48,11 @@ T("*", T("+", T("sin", 523.35),
 MIT
 
 ### ChangeLog ###
+2012 07 24 - **v12.07.23** (342.42 KB, minified:122.46 KB)
+* Fix `T("adsr", ..., onended)`
+* Add `T("mml")` synthpoly property
+
+
 2012 07 23 - **v12.07.23** (341.36 KB, minified:122.06 KB)
 * Fix timing control of audioprocessing for Firefox/Linux
 

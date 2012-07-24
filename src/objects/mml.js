@@ -6,7 +6,7 @@
  *            bugfix Synth API send opts as synth.keyon(opts), synth.keyoff(opts)
  *            add properties .synth, .synthdef
  *            add selected
- * <WORKING>: add properties .synthpoly
+ * v12.07.24: add properties .synthpoly
  *            fix tnum (+1octave)
  *            fix property .mml (setter)
  */
