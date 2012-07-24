@@ -1,140 +1,141 @@
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Timbre.js - JavaScript Library for Objective Sound Programming</title>
-    <link type="text/css" rel="stylesheet" href="public/css/index.css" />
+    <title>timbre.js - JavaScript Library for Objective Sound Programming</title>
+    <link type="text/css" rel="stylesheet" href="public/css/bootstrap.min.css" />
     <link type="text/css" rel="stylesheet" href="public/css/prettify.css" />
-    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Comfortaa:700">
+    <style>
+      body {font-size:1.5em;line-height:1.5em;padding:10px 0px;}
+      h1 {font-size:6em;height:100px;}
+      p {font-size:0.8em;}
+      footer {font-size:0.6em;color:#666}
+      .container {padding:40px;}
+      .download strong {}
+      .download div {padding:5px;}
+      .system img {width:36px;margin:-2px 10px 4px 0px;}
+
+    </style>
   </head>
   <body>
-    <canvas id="waveviewer"></canvas>
-    <section id="body">
-      <header style="margin:5px 0px 15px 0px">
-        <h1 id="title"><a href="/timbre">Timbre.js</a></h1>
-        <span>JavaScript Library for Objective Sound Programming</span><br/>
-      </header>
-      
-      <section id="description">
-        
-      </section>
-      
-      <section id="contents">
-        <h3>Latest Version</h3>
-        <div>
-          Right-click, and use "Save As"
-          <ul style="padding:15px">
-            <li><a href="timbre.js">12.07.23</a> (341.36 KB)</li>
-            <li><a href="timbre.min.js">minified</a> (122.06 KB)</li>
-          </ul>
+    <div class="container">
+      <h1>timbre.js</h1>
+      <h2>JavaScript Library for Objective Sound Programming</h2>
+      <hr/>
+      <div class="row">
+        <div class="span6">
+          <h3>Latest Version</h3>
+          <div class="well download" style="height:140px">
+            <strong>v12.07.24</strong>
+            <div>
+              <a href="timbre.min.js">minified (122.46KB)</a> or<br/>
+              <a href="timbre.js">development (342.42KB)</a>
+            </div>
+          </div>
         </div>
-        
-        <h3>System Requirement</h3>
-        <div>
-          <ul>
-            <li>Chrome 14.0- (Web Audio API)</li>
-            <li>Safari 6.0- (Web Audio API)</li>
-            <li>Firefox 4.0- (Audio Data API)</li>
-          </ul>
+        <div class="span6">
+          <h3>System Requirements</h3>
+          <div class="well system" style="height:140px">
+            <ul class="unstyled">
+              <li><img src="public/img/chrome.png"/>Chrome 14.0- (Web Audio API)</li>
+              <li><img src="public/img/safari.png"/>Safari 6.0- (Web Audio API)</li>
+              <li><img src="public/img/firefox.png"/>Firefox 4.0- (Audio Data API)</li>
+            </ul>
+          </div>
         </div>
-        
-        <h3><a href="./documents">Documents</a></h3>
-        
-        <h3>Examples</h3>
-        <div>
-          <span><a href="./examples/004_timbresynth.html">01</a></span> - 
-          <span><a href="./examples/002_rhythmsequencer.html">02</a></span> -
-          <span><a href="./examples/003_loadwavfiles.html">03</a></span>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h3>Documents</h3>
+          <div class="well documents">
+            <a href="./documents">here</a>
+          </div>
         </div>
-        
-        <h3>Overview</h3>
-        <div>
-          <p>
-            Timbre.js is so easy.
-          </p>
-          <pre id="ex0" class="prettyprint">
-// generate a 523.25Hz(C4) sine
-T("sin", 523.25).play();</pre>
+        <div class="span6">
+          <h3>Examples</h3>
+          <div class="well examples">
+            <span><a href="./examples/004_timbresynth.html">01</a></span> - 
+            <span><a href="./examples/002_rhythmsequencer.html">02</a></span> -
+            <span><a href="./examples/003_loadwavfiles.html">03</a></span> -
+            <span><a href="http://thisis.herokuapp.com/song3">04</a></span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="span12">
+          <h3>Overview</h3>
+          <p>Timbre.js is so easy. Open the WebConsole and run the below code or push [Play] button.</p>
+          <a class="btn btn-small" href="javascript:play(0)"><i class="icon-play"></i> Play</a>
+          <a class="btn btn-small" href="javascript:play(-1)"><i class="icon-pause"></i> Pause</a>
+<pre id="ex0" class="prettyprint linenums">
+// Generate a 523.25Hz(C4) sinewave
+T("sin", 523.25).play();
+</pre>
 
-          <p>
-            It's useful and powerful.
-          </p>
-          <pre id="ex1" class="prettyprint">
+          <p>It's useful and powerful.</p>
+          <a class="btn btn-small" href="javascript:play(1)"><i class="icon-play"></i> Play</a>
+          <a class="btn btn-small" href="javascript:play(-1)"><i class="icon-pause"></i> Pause</a>
+<pre id="ex1" class="prettyprint linenums">
 // generate a chord C-major            
 T("+", T("sin", 523.35),
        T("sin", 659.25),
-       T("sin", 783.99)).set({mul: 0.25}).play();</pre>
-          
-          <p>
-            Looks a bit like CUI Max/MSP??? SuperCollider??
-          </p>
-          <pre id="ex2" class="prettyprint">
+       T("sin", 783.99)).set({mul: 0.25}).play();
+</pre>
+
+          <a class="btn btn-small" href="javascript:play(2)"><i class="icon-play"></i> Play</a>
+          <a class="btn btn-small" href="javascript:play(-1)"><i class="icon-pause"></i> Pause</a>
+<pre id="ex2" class="prettyprint linenums">
 // tremolo & decay            
 T("*", T("+", T("sin", 523.35),
               T("sin", 659.25),
               T("sin", 783.99)).set({mul: 0.25}),
        T("+tri", 2),
-       T("adsr", 100, 2500)).play();</pre>
-          
-          <p>
-            You can so easily learn it. Because it is pure JavaScript. Fun!!!
-          </p>
-          <pre id="ex3" class="prettyprint">
-timbre.utils.exports("atof");
+       T("perc", 15000)).play();
+</pre>
 
-var synth = T("efx.delay", 150, 0.8);
-
-function tone(freq) {
-    synth.append( T("*", T("+", T("sin", freq, 0.25),
-                                T("sin", freq + 4, 0.1)),
-                         T("perc", 2500).bang()) );
-    if (synth.args.length > 4) synth.args.shift();
-}
-
-var sch = T("schedule", "bpm (116, 2)", [
-    [0, tone, [atof("G3")]],
-    [1, tone, [atof("B4")]], [1, tone, [atof("D5")]], [1, tone, [atof("F#5")]],
-    [3, tone, [atof("D3")]],
-    [4, tone, [atof("A4")]], [4, tone, [atof("C#5")]], [4, tone, [atof("F#5")]],
-    [6],
-], true);
-
-synth.onplay = function() {
-    sch.on();
+          <p>And Awesome!!</p>
+          <a class="btn btn-small" href="javascript:play(3)"><i class="icon-play"></i> Play</a>
+          <a class="btn btn-small" href="javascript:play(-1)"><i class="icon-pause"></i> Pause</a>
+<pre id="ex3" class="prettyprint linenums">
+var mml   = T("mml", "t116 o3 $ l2 g l1 &lt;b0&lt;d0f+&gt;&gt; l2 d l1 &lt;a0&lt;c+0f+&gt;&gt;");
+            
+mml.synth = T("efx.reverb");
+mml.synthdef = function(freq, opts) {
+    var synth = T("*", T("+", T("tri", freq + 1, 0.25),
+                              T("tri", freq - 1, 0.25)),
+                       T("adsr", "24db", 100, 2500, 0.6, 1500));
+    synth.keyon = function(opts) {
+        synth.args[1].bang();
+    };
+    synth.keyoff = function(opts) {
+        synth.args[1].keyoff();
+    };
+    return synth;
 };
-synth.onpause = function() {
-    sch.off();
+
+mml.synth.onplay = function() {
+    mml.on().bang();
 };
-synth.play();</pre>
+mml.synth.onpause = function() {
+    mml.off();
+};
+
+return mml.synth;
+</pre>
+
         </div>
-        
-        <footer>
-          2012 Timbre.js - JavaScript Library for Objective Sound Programming
-        </footer>
-      </section>
-    </section>
+      </div>
+      
+      <footer>
+        2012 <a href="http://mohayonao.github.com" target="github">mohayonao</a> / timbre.js - JavaScript Library for Objective Sound Programming
+      </footer>
+    </div> <!-- /container -->
 
+    <!-- Fork me on GitHub -->
     <a href="https://github.com/mohayonao/timbre"><img style="position: fixed; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
     
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-21613416-5']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>    
-    
+    <script type="text/javascript" src="public/js/prettify.js"></script>
+    <script type="text/javascript" src="timbre.min.js"></script>
+    <script type="text/javascript" src="index.js"></script>
   </body>
-  <script type="text/javascript" src="public/js/prettify.js"></script>
-  <script type="text/javascript">prettyPrint();</script>
-  <script type="text/javascript" src="public/js/jquery.min.js"></script>
-  <script type="text/javascript" src="public/js/waveviewer.js"></script>
-  <script type="text/javascript" src="public/js/main.js"></script>
-  <script type="text/javascript" src="timbre.js"></script>
-  <script type="text/javascript" src="index.js"></script>  
 </html>
