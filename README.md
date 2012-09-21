@@ -48,6 +48,10 @@ T("*", T("+", T("sin", 523.35),
 MIT
 
 ### ChangeLog ###
+2012 09 21 - **v12.09.21** (342.43 KB, minified:122.46 KB)
+* Fix: for iOS6
+
+
 2012 07 24 - **v12.07.23** (342.42 KB, minified:122.46 KB)
 * Fix `T("adsr", ..., onended)`
 * Add `T("mml")` synthpoly property
