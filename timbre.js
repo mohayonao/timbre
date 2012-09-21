@@ -1,5 +1,5 @@
 /**
- * timbre.js v12.07.24 / JavaScript Library for Objective Sound Programming
+ * timbre.js v12.09.21 / JavaScript Library for Objective Sound Programming
  */
 ;
 var timbre = (function(context, timbre) {
@@ -9,7 +9,7 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "v12.07.24";
+    timbre.VERSION    = "v12.09.21";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 0;
@@ -5046,9 +5046,9 @@ var timbre = (function(context, timbre) {
             
             i = 0;
             _.delay = 10;
-            _.depth = (typeof _args[i] === "number") ? _args[i] : 0.8;
-            _.rate  = (typeof _args[i] === "number") ? _args[i] : 0.5;
-            _.wet   = (typeof _args[i] === "number") ? _args[i] : 0.5;
+            _.depth = (typeof _args[i] === "number") ? _args[i++] : 0.8;
+            _.rate  = (typeof _args[i] === "number") ? _args[i++] : 0.5;
+            _.wet   = (typeof _args[i] === "number") ? _args[i++] : 0.5;
             
             _.wet0 = Math.sin(0.25 * Math.PI * _.wet);
             _.dry0 = Math.cos(0.25 * Math.PI * _.wet);
@@ -9351,13 +9351,17 @@ var timbre = (function(context, timbre) {
             this.on = function() {
                 this.x = this.streamsize;
                 this.prevL = this.prevR = 0;
+                this.src = this.ctx.createBufferSource();
                 this.node = this.ctx.createJavaScriptNode(sys.streamsize, 1, sys.channels);
                 this.node.onaudioprocess = this.onaudioprocess;
+                this.src.noteOn(0);
+                this.src.connect(this.node);
                 this.node.connect(this.ctx.destination);
             };
             this.off = function() {
+                this.src.disconnect();
                 this.node.disconnect();
-                this.node = null;
+                this.src = this.node = null;
             };
             
             return this;
