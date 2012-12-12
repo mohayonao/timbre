@@ -81,13 +81,17 @@ var WebKitPlayer = function(sys) {
     this.on = function() {
         this.x = this.streamsize;
         this.prevL = this.prevR = 0;
+        this.src = this.ctx.createBufferSource();
         this.node = this.ctx.createJavaScriptNode(sys.streamsize, 1, sys.channels);
         this.node.onaudioprocess = this.onaudioprocess;
+        this.src.noteOn(0);
+        this.src.connect(this.node);
         this.node.connect(this.ctx.destination);
     };
     this.off = function() {
+        this.src.disconnect();
         this.node.disconnect();
-        this.node = null;
+        this.src = this.node = null;
     };
     
     return this;

@@ -61,9 +61,9 @@ var EfxChorus = (function() {
         
         i = 0;
         _.delay = 10;
-        _.depth = (typeof _args[i] === "number") ? _args[i] : 0.8;
-        _.rate  = (typeof _args[i] === "number") ? _args[i] : 0.5;
-        _.wet   = (typeof _args[i] === "number") ? _args[i] : 0.5;
+        _.depth = (typeof _args[i] === "number") ? _args[i++] : 0.8;
+        _.rate  = (typeof _args[i] === "number") ? _args[i++] : 0.5;
+        _.wet   = (typeof _args[i] === "number") ? _args[i++] : 0.5;
         
         _.wet0 = Math.sin(0.25 * Math.PI * _.wet);
         _.dry0 = Math.cos(0.25 * Math.PI * _.wet);
