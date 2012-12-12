@@ -48,6 +48,10 @@ T("*", T("+", T("sin", 523.35),
 MIT
 
 ### ChangeLog ###
+2012 12 12 - **v12.12.12** (342.09 KB, minified:122.40 KB)
+* Fix issue [#4](https://github.com/mohayonao/timbre/issues/4)
+
+
 2012 07 24 - **v12.07.23** (342.42 KB, minified:122.46 KB)
 * Fix `T("adsr", ..., onended)`
 * Add `T("mml")` synthpoly property
