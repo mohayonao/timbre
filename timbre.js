@@ -1,5 +1,5 @@
 /**
- * timbre.js v12.07.24 / JavaScript Library for Objective Sound Programming
+ * timbre.js v12.12.12 / JavaScript Library for Objective Sound Programming
  */
 ;
 var timbre = (function(context, timbre) {
@@ -9,7 +9,7 @@ var timbre = (function(context, timbre) {
     var timbre = function() {
         return timbre.fn.init.apply(timbre, arguments);
     };
-    timbre.VERSION    = "v12.07.24";
+    timbre.VERSION    = "v12.12.12";
     timbre.env        = "";
     timbre.platform   = "";
     timbre.samplerate = 0;
@@ -9373,19 +9373,12 @@ var timbre = (function(context, timbre) {
                 this.audio.mozSetup(timbre.channels, timbre.samplerate);
                 timbre.samplerate = this.audio.mozSampleRate;
                 timbre.channels   = this.audio.mozChannels;
-                
-                this.written  = 0;
+        
                 this.interleaved = new Float32Array(timbre.streamsize * timbre.channels);
                 
                 this.onaudioprocess = function() {
                     
                     var mozCurrentSampleOffset = this.audio.mozCurrentSampleOffset();
-                    
-                    // v12.07.23: bugfix for linux (mozCurrentSampleOffset > 0)
-                    if (mozCurrentSampleOffset > 0 &&
-                        this.written > mozCurrentSampleOffset + 16384) {
-                        return this;
-                    }
                     
                     var interleaved = this.interleaved;
                     this.audio.mozWriteAudio(interleaved);
@@ -9398,15 +9391,14 @@ var timbre = (function(context, timbre) {
                         interleaved[--i] = inR[j];            
                         interleaved[--i] = inL[j];
                     }
-                    this.written += interleaved.length;
                 }.bind(this);
                 
                 return this;
             };
             
             this.on = function() {
-                this.written  = 0;
-                this.timer.setInterval(this.onaudioprocess, 20);
+                var interval = timbre.streamsize / timbre.samplerate * 1000;
+                this.timer.setInterval(this.onaudioprocess, interval);
             };
             
             this.off = function() {
