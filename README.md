@@ -1,6 +1,20 @@
 Timbre.js
 ========
 
+- - -
+
+# NEW: timbre.js
+I started working on timbre.js successor, v13.xx.  
+It's almost a full rewrite, so this project page is no longer recent working.
+
+The new project page is here: http://mohayonao.github.com/timbre.js/
+
+## CAUTION!!
+The new timbre.js(v13.xx) is not compatible old timbre.js(v12.xx), but you may approve the new version, because that is truly convenient and super awesome than old.  
+See Also: {{TODO:url}}
+
+- - -
+
 #### JavaScript Library for Objective Sound Programming ####
 
 [Project Page](http://mohayonao.github.com/timbre/) — [Documentation](http://mohayonao.github.com/timbre/documents) — [Example01](http://mohayonao.github.com/timbre/examples/002_rhythmsequencer.html)  — [Example02](http://mohayonao.github.com/timbre/examples/003_loadwavfiles.html)  — [Example03](http://mohayonao.github.com/timbre/examples/004_timbresynth.html)
