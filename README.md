@@ -11,7 +11,7 @@ The new project page is here: http://mohayonao.github.com/timbre.js/
 
 ## CAUTION!!
 The new timbre.js(v13.xx) is not compatible old timbre.js(v12.xx), but you may approve the new version, because that is truly convenient and super awesome than old.  
-See Also: {{TODO:url}}
+See Also: [Overview of what's new and changed from old timbre.js v12.XX](https://github.com/mohayonao/timbre.js/wiki/Overview-of-what's-new-and-changed-from-old-timbre.js-v12.XX)
 
 - - -
 
