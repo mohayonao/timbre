@@ -4,7 +4,7 @@ Timbre.js
 - - -
 
 # The repository has been moved
-to: https://github.com/mohayonao/timbre.js
+https://github.com/mohayonao/timbre.js
 
 I started working on timbre.js successor, v13.xx.  
 It's almost a full rewrite, so this project page is no longer recent working.
