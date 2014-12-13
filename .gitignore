@@ -1,5 +1,0 @@
-.DS_STORE
-node_modules
-build/ctimbre/build
-.lock-wscript
-*.log
