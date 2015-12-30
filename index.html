@@ -17,7 +17,7 @@
     </style>
   </head>
   <body>
-    
+
     <div class="container">
       <h1>timbre.js</h1>
       <h2>JavaScript Library for Objective Sound Programming</h2>
@@ -40,7 +40,7 @@
         </div>
       </div>
       <hr/>
-      <div class="row">
+      <!-- <div class="row">
         <div class="span6">
           <h3>Latest Version</h3>
           <div class="well download" style="height:140px">
@@ -62,8 +62,8 @@
             </ul>
           </div>
         </div>
-      </div>
-      <div class="row">
+      </div> -->
+      <!-- <div class="row">
         <div class="span6">
           <h3>Documents</h3>
           <div class="well documents">
@@ -73,14 +73,14 @@
         <div class="span6">
           <h3>Examples</h3>
           <div class="well examples">
-            <span><a href="./examples/004_timbresynth.html">01</a></span> - 
+            <span><a href="./examples/004_timbresynth.html">01</a></span> -
             <span><a href="./examples/002_rhythmsequencer.html">02</a></span> -
             <span><a href="./examples/003_loadwavfiles.html">03</a></span> -
             <span><a href="http://the.mohayonao.com/khoomii/">04</a></span>
           </div>
         </div>
-      </div>
-      <div class="row">
+      </div> -->
+      <!-- <div class="row">
         <div class="span12">
           <h3>Overview</h3>
           <p>Timbre.js is so easy. Open the WebConsole and run the below code or push [Play] button.</p>
@@ -95,7 +95,7 @@ T("sin", 523.25).play();
           <a class="btn btn-small" href="javascript:play(1)"><i class="icon-play"></i> Play</a>
           <a class="btn btn-small" href="javascript:play(-1)"><i class="icon-pause"></i> Pause</a>
 <pre id="ex1" class="prettyprint linenums">
-// generate a chord C-major            
+// generate a chord C-major
 T("+", T("sin", 523.35),
        T("sin", 659.25),
        T("sin", 783.99)).set({mul: 0.25}).play();
@@ -104,7 +104,7 @@ T("+", T("sin", 523.35),
           <a class="btn btn-small" href="javascript:play(2)"><i class="icon-play"></i> Play</a>
           <a class="btn btn-small" href="javascript:play(-1)"><i class="icon-pause"></i> Pause</a>
 <pre id="ex2" class="prettyprint linenums">
-// tremolo & decay            
+// tremolo & decay
 T("*", T("+", T("sin", 523.35),
               T("sin", 659.25),
               T("sin", 783.99)).set({mul: 0.25}),
@@ -117,7 +117,7 @@ T("*", T("+", T("sin", 523.35),
           <a class="btn btn-small" href="javascript:play(-1)"><i class="icon-pause"></i> Pause</a>
 <pre id="ex3" class="prettyprint linenums">
 var mml   = T("mml", "t116 o3 $ l2 g l1 &lt;b0&lt;d0f+&gt;&gt; l2 d l1 &lt;a0&lt;c+0f+&gt;&gt;");
-            
+
 mml.synth = T("efx.reverb");
 mml.synthdef = function(freq, opts) {
     var synth = T("*", T("+", T("tri", freq + 1, 0.25),
@@ -144,16 +144,16 @@ return mml.synth;
 
         </div>
       </div>
-      
+
       <footer>
         2012 <a href="http://mohayonao.github.com" target="github">mohayonao</a> / timbre.js - JavaScript Library for Objective Sound Programming
-      </footer>
+      </footer> -->
     </div> <!-- /container -->
 
     <!-- Fork me on GitHub -->
-    <a href="https://github.com/mohayonao/timbre"><img style="position: fixed; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
-    
-<script type="text/javascript">
+    <!-- <a href="https://github.com/mohayonao/timbre"><img style="position: fixed; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a> -->
+
+<!-- <script type="text/javascript">
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-21613416-5']);
@@ -165,10 +165,10 @@ return mml.synth;
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 
-</script>
+</script> -->
 
-    <script type="text/javascript" src="public/js/prettify.js"></script>
+    <!-- <script type="text/javascript" src="public/js/prettify.js"></script>
     <script type="text/javascript" src="timbre.min.js"></script>
-    <script type="text/javascript" src="index.js"></script>
+    <script type="text/javascript" src="index.js"></script> -->
   </body>
 </html>
